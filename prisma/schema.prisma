@@ -1,0 +1,263 @@
+// Prisma schema for KACCP
+// Database: PostgreSQL (recommended: Neon, Supabase, RDS). Configure DATABASE_URL in .env
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+
+enum UserRole {
+  ADMIN
+  TRANSCRIBER
+}
+
+enum AudioStatus {
+  UPLOADED
+  PROCESSING
+  READY
+  TRANSCRIBING
+  COMPLETED
+  FAILED
+}
+
+enum ChunkStatus {
+  AVAILABLE
+  ASSIGNED
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum ReviewDecision {
+  APPROVED
+  REJECTED
+  EDIT_REQUESTED
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  PAID
+  FAILED
+}
+
+enum Currency {
+  USD
+  SLL
+}
+
+// Core models
+
+model User {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  email         String   @unique
+  passwordHash  String
+  isActive      Boolean  @default(true)
+  lastLoginAt   DateTime?
+  displayName   String?
+  role          UserRole @default(TRANSCRIBER)
+
+  // Metrics
+  qualityScore  Float    @default(0)
+  totalEarningsCents Int @default(0) // stored in minor units (USD cents)
+
+  // Relations
+  transcriptions Transcription[]
+  reviews        Review[]
+  assignments    ChunkAssignment[]
+  payments       Payment[]
+  walletTxns     WalletTransaction[]
+  uploads        AudioSource[] @relation("UserUploads")
+}
+
+model AudioSource {
+  id            String      @id @default(cuid())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  title         String
+  description   String?
+  sourceRef     String?     // e.g., "Krio Bible - John 1"
+
+  // Storage
+  originalUri   String      // gs://bucket/path/original.wav or s3://...
+  totalDurationSeconds Int   @default(0)
+
+  status        AudioStatus @default(UPLOADED)
+  statusMessage String?
+
+  // Admin uploader
+  uploadedById  String?
+  uploadedBy    User?       @relation("UserUploads", fields: [uploadedById], references: [id])
+
+  // Relations
+  chunks        AudioChunk[]
+}
+
+model AudioChunk {
+  id            String      @id @default(cuid())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  sourceId      String
+  source        AudioSource @relation(fields: [sourceId], references: [id])
+
+  index         Int         // chunk number within a source (0-based or 1-based)
+  startSec      Int
+  endSec        Int
+  durationSec   Int
+
+  storageUri    String      // gs://bucket/audio_chunks/source_x/chunk_0001.wav
+
+  status        ChunkStatus @default(AVAILABLE)
+
+  // Assignment workflow
+  assignments   ChunkAssignment[]
+  transcriptions Transcription[]
+  // Latest accepted transcription shortcut
+  approvedTranscriptionId String? @unique
+  approvedTranscription   Transcription? @relation("ApprovedTranscription", fields: [approvedTranscriptionId], references: [id])
+
+  // Indexes
+  @@unique([sourceId, index])
+}
+
+model ChunkAssignment {
+  id            String      @id @default(cuid())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  chunkId       String
+  chunk         AudioChunk  @relation(fields: [chunkId], references: [id])
+
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+
+  // Time-bounded lock to prevent hoarding
+  expiresAt     DateTime?
+  releasedAt    DateTime?
+
+  // One assignment can yield zero or more submissions
+  submissions   Transcription[]
+
+  // Prevent duplicate active assignments for same user+chunk
+  @@index([userId, chunkId])
+}
+
+model Transcription {
+  id            String      @id @default(cuid())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  assignmentId  String
+  assignment    ChunkAssignment @relation(fields: [assignmentId], references: [id])
+
+  chunkId       String
+  chunk         AudioChunk  @relation(fields: [chunkId], references: [id])
+  approvedForChunk AudioChunk? @relation("ApprovedTranscription")
+
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+
+  text          String
+  language      String      @default("en") // target language is English
+
+  // Quality hints from in-app model/rules
+  guidanceScore Float?      // 0-1 guidance score
+  notes         String?
+
+  // Review linkage
+  review        Review?
+
+  // Status flags
+  submittedAt   DateTime?
+}
+
+model Review {
+  id            String      @id @default(cuid())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  transcriptionId String    @unique
+  transcription   Transcription @relation(fields: [transcriptionId], references: [id])
+
+  reviewerId    String
+  reviewer      User        @relation(fields: [reviewerId], references: [id])
+
+  decision      ReviewDecision
+  comments      String?
+
+  // If approved, snapshot the payout basis
+  approvedDurationSec Int?  // for payment calc (usually equals chunk duration)
+}
+
+model PaymentRatePlan {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  name          String   @unique
+  // rate per minute in USD cents, e.g., 5 cents per minute => 5
+  ratePerMinuteCents Int
+  currency      Currency @default(USD)
+  active        Boolean  @default(true)
+}
+
+model Payment {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+
+  // Aggregated payout in minor units (USD cents)
+  amountCents   Int
+  currency      Currency @default(USD)
+  status        PaymentStatus @default(PENDING)
+
+  // Optional metadata
+  reference     String?
+  notes         String?
+
+  // Relations
+  walletTransactions WalletTransaction[]
+}
+
+model WalletTransaction {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+
+  // Positive for credit, negative for debit, in cents
+  deltaCents    Int
+  description   String?
+  relatedPaymentId String?
+  relatedPayment   Payment? @relation(fields: [relatedPaymentId], references: [id])
+}
+
+// Materialized export rows (optional for performance); otherwise generate on the fly
+model ExportRecord {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+
+  chunkId       String   @unique
+  audioPath     String   // gs://kac_platform_bucket/audio_chunks/.../chunk_0001.wav
+  englishText   String
+
+  // basic metadata for ML
+  durationSec   Int
+  sourceId      String
+}
