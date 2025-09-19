@@ -17,7 +17,7 @@ export async function GET(req: Request) {
     const limit = limitParam ? Number(limitParam) : 50;
 
     const chunks = await prisma.audioChunk.findMany({
-      where: { sourceId, status: ChunkStatus.AVAILABLE },
+      where: { sourceId, status: ChunkStatus.AVAILABLE, approvedTranscriptionId: null as any },
       orderBy: { index: 'asc' },
       take: Number.isFinite(limit) && limit > 0 ? limit : 50,
     });

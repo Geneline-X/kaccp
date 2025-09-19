@@ -9,7 +9,7 @@ import { useRequireTranscriberAuth } from '@/lib/useTranscriberAuth'
 import NotificationsBell from '@/components/transcriber/NotificationsBell'
 import { apiFetch } from '@/lib/client'
 import { clearToken } from '@/lib/client'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 
 export default function TranscriberDashboardPage() {
   const ready = useRequireTranscriberAuth()
@@ -148,6 +148,8 @@ export default function TranscriberDashboardPage() {
 
   if (!ready) return null
   const [menuOpen, setMenuOpen] = useState(false)
+  const pathname = usePathname()
+  useEffect(() => { setMenuOpen(false) }, [pathname])
 
   return (
     <div className="min-h-screen p-4 max-w-5xl mx-auto space-y-6">
@@ -200,6 +202,17 @@ export default function TranscriberDashboardPage() {
           >Logout</Button>
         </div>
       )}
+
+      {/* Sticky bottom navbar for mobile */}
+      <nav className="fixed bottom-0 left-0 right-0 sm:hidden bg-white border-t shadow-inner">
+        <div className="max-w-5xl mx-auto grid grid-cols-5 text-xs">
+          <Button variant="ghost" className="rounded-none" onClick={() => { setTab('available'); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>Available</Button>
+          <Button variant="ghost" className="rounded-none" onClick={() => { setTab('my'); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>My Work</Button>
+          <Button variant="ghost" className="rounded-none" onClick={() => { setTab('drafts'); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>Drafts</Button>
+          <Button variant="ghost" className="rounded-none" asChild><Link href="/leaderboard">Leaders</Link></Button>
+          <Button variant="ghost" className="rounded-none" asChild><Link href="/transcriber/profile">Profile</Link></Button>
+        </div>
+      </nav>
 
       {me && (
         <Card>
