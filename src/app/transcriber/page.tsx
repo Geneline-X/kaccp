@@ -20,6 +20,10 @@ export default function TranscriberDashboardPage() {
   const [claimingNext, setClaimingNext] = useState(false)
   const [claimingChunkId, setClaimingChunkId] = useState<string | null>(null)
   const [releasingId, setReleasingId] = useState<string | null>(null)
+  // Hooks that must run unconditionally (before any early return)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const pathname = usePathname()
+  useEffect(() => { setMenuOpen(false) }, [pathname])
   const [available, setAvailable] = useState<any[]>([])
   const [loadingAvail, setLoadingAvail] = useState(false)
   const [me, setMe] = useState<any | null>(null)
@@ -147,12 +151,9 @@ export default function TranscriberDashboardPage() {
   }
 
   if (!ready) return null
-  const [menuOpen, setMenuOpen] = useState(false)
-  const pathname = usePathname()
-  useEffect(() => { setMenuOpen(false) }, [pathname])
 
   return (
-    <div className="min-h-screen p-4 max-w-5xl mx-auto space-y-6">
+    <div className="min-h-screen p-4 pb-20 max-w-5xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Transcriber Dashboard</h1>
         {/* Desktop actions */}
