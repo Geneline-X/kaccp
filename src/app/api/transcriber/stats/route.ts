@@ -41,6 +41,22 @@ export async function GET(req: NextRequest) {
     const approvedMinutes = approvedSeconds / 60
     const earningsEstimateSLE = approvedMinutes * RATE_PER_MIN_SLE
 
+    // Weekly eligibility (last 7 days by default)
+    const weekCutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+    const weeklyApproved = await prisma.review.findMany({
+      where: {
+        decision: 'APPROVED' as any,
+        createdAt: { gte: weekCutoff },
+        transcription: { userId: user.id },
+      },
+      select: { transcription: { select: { chunk: { select: { durationSec: true } } } } },
+    })
+    const weeklySeconds = weeklyApproved.reduce((acc, r) => acc + (r.transcription?.chunk?.durationSec || 0), 0)
+    const weeklyMinutes = weeklySeconds / 60
+    const weeklySLE = weeklyMinutes * RATE_PER_MIN_SLE
+    const CASHOUT_THRESHOLD_SLE = 30
+    const eligible = weeklySLE >= CASHOUT_THRESHOLD_SLE
+
     return NextResponse.json({
       submitted: {
         seconds: submittedSeconds,
@@ -54,6 +70,13 @@ export async function GET(req: NextRequest) {
       },
       rate: { perMinuteSLE: RATE_PER_MIN_SLE },
       earnings: { estimatedSLE: earningsEstimateSLE },
+      week: {
+        cutoffIso: weekCutoff.toISOString(),
+        approved: { minutes: weeklyMinutes, seconds: weeklySeconds },
+        estimatedSLE: weeklySLE,
+        eligible,
+        thresholdSLE: CASHOUT_THRESHOLD_SLE,
+      },
     })
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || 'Internal Server Error' }, { status: 500 })

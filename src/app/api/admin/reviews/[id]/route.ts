@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { requireAdmin } from '@/lib/auth'
 import { z } from 'zod'
-import { creditUserForApproval } from '@/lib/payments'
 
 const ReviewSchema = z.object({
   decision: z.enum(['APPROVED', 'REJECTED', 'EDIT_REQUESTED']),
@@ -18,81 +17,76 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     const { id } = params // transcriptionId
     const { decision, comments, useAiSuggestion } = ReviewSchema.parse(await req.json())
 
-    const result = await prisma.$transaction(async (tx) => {
-      const sub = await tx.transcription.findUnique({
-        where: { id },
-        include: { chunk: true, user: true },
-      })
-      if (!sub) throw new Error('Transcription not found')
+    // Load submission with related chunk and user
+    const sub = await prisma.transcription.findUnique({
+      where: { id },
+      include: { chunk: true, user: true },
+    })
+    if (!sub) return NextResponse.json({ error: 'Transcription not found' }, { status: 404 })
 
-      if (await tx.review.findUnique({ where: { transcriptionId: id } })) {
-        throw new Error('Already reviewed')
-      }
+    // If already reviewed (unique on transcriptionId), bail
+    const existing = await prisma.review.findUnique({ where: { transcriptionId: id } })
+    if (existing) return NextResponse.json({ error: 'Already reviewed' }, { status: 400 })
 
-      // Create review
-      const review = await tx.review.create({
-        data: {
-          transcriptionId: id,
-          reviewerId: admin.id,
-          decision,
-          comments: comments ?? null,
-          useAiSuggestion: Boolean(useAiSuggestion),
-          approvedDurationSec: decision === 'APPROVED' ? sub.chunk.durationSec : null,
+    // For APPROVED, first attempt to set the chunk approved optimistically
+    if (decision === 'APPROVED') {
+      const updated = await prisma.audioChunk.updateMany({
+        where: {
+          id: sub.chunkId,
+          OR: [
+            { approvedTranscriptionId: null },
+            { approvedTranscriptionId: sub.id },
+          ],
         },
+        data: { status: 'APPROVED', approvedTranscriptionId: sub.id },
       })
-
-      if (decision === 'APPROVED') {
-        // Check if another transcription already approved for this chunk
-        const chunk = await tx.audioChunk.findUnique({ where: { id: sub.chunkId } })
-        if (!chunk) throw new Error('Chunk not found')
-        if (chunk.approvedTranscriptionId && chunk.approvedTranscriptionId !== sub.id) {
-          throw new Error('Chunk already has an approved transcription')
-        }
-
-        await tx.audioChunk.update({
-          where: { id: sub.chunkId },
-          data: {
-            status: 'APPROVED',
-            approvedTranscriptionId: sub.id,
-          },
-        })
-
-        // Credit the transcriber
-        await creditUserForApproval(tx as any, {
-          userId: sub.userId,
-          chunkId: sub.chunkId,
-          durationSec: sub.chunk.durationSec,
-        })
-      } else if (decision === 'REJECTED') {
-        await tx.audioChunk.update({ where: { id: sub.chunkId }, data: { status: 'REJECTED' } })
-      } else if (decision === 'EDIT_REQUESTED') {
-        await tx.audioChunk.update({ where: { id: sub.chunkId }, data: { status: 'UNDER_REVIEW' } })
+      if (updated.count === 0) {
+        return NextResponse.json({ error: 'Chunk already has an approved transcription' }, { status: 409 })
       }
+    } else if (decision === 'REJECTED') {
+      await prisma.audioChunk.update({ where: { id: sub.chunkId }, data: { status: 'REJECTED' } })
+    } else if (decision === 'EDIT_REQUESTED') {
+      await prisma.audioChunk.update({ where: { id: sub.chunkId }, data: { status: 'UNDER_REVIEW' } })
+    }
 
-      // Notify the transcriber about the decision
-      const title =
-        decision === 'APPROVED'
-          ? 'Submission approved'
-          : decision === 'REJECTED'
-          ? 'Submission rejected'
-          : 'Edits requested'
-      const body = comments ? comments : null
-      await tx.notification.create({
-        data: {
-          userId: sub.userId,
-          type: 'REVIEW',
-          title,
-          body,
-          transcriptionId: id,
-        },
-      })
-
-      return { reviewId: review.id }
+    // Create review (unique on transcriptionId enforces idempotence)
+    const review = await prisma.review.create({
+      data: {
+        transcriptionId: id,
+        reviewerId: admin.id,
+        decision,
+        comments: comments ?? null,
+        useAiSuggestion: Boolean(useAiSuggestion),
+        approvedDurationSec: decision === 'APPROVED' ? sub.chunk.durationSec : null,
+      },
     })
 
-    return NextResponse.json({ ok: true, ...result })
+    // Notify the transcriber about the decision
+    const title =
+      decision === 'APPROVED'
+        ? 'Submission approved'
+        : decision === 'REJECTED'
+        ? 'Submission rejected'
+        : 'Edits requested'
+    const body = comments ? comments : null
+    await prisma.notification.create({
+      data: {
+        userId: sub.userId,
+        type: 'REVIEW',
+        title,
+        body,
+        transcriptionId: id,
+      },
+    })
+
+    return NextResponse.json({ ok: true, reviewId: review.id })
   } catch (e: any) {
     console.error('admin/reviews/[id] error', e)
-    return NextResponse.json({ error: e?.message || 'Internal Server Error' }, { status: 500 })
+    const msg = e?.message || 'Internal Server Error'
+    // If unique constraint on review, surface friendly error
+    if (msg.includes('Unique') || msg.toLowerCase().includes('already')) {
+      return NextResponse.json({ error: 'Already reviewed' }, { status: 400 })
+    }
+    return NextResponse.json({ error: msg }, { status: 500 })
   }
 }

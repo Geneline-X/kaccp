@@ -105,6 +105,12 @@ model User {
   displayName   String?
   role          UserRole @default(TRANSCRIBER)
 
+  // Profile
+  avatarUrl     String?
+  showOnLeaderboard Boolean @default(true)
+  bio           String?
+  country       String?
+
   // Metrics
   qualityScore  Float    @default(0)
   totalEarningsCents Int @default(0) // stored in minor units (USD cents)

@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogT
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { toast } from 'sonner'
 
 export default function AdminReviewsPage() {
   const [items, setItems] = useState<any[]>([])
@@ -65,7 +66,7 @@ function ReviewRow({ item, onAction }: { item: any; onAction: () => void }) {
       setOpen(false)
       onAction()
     } catch (e: any) {
-      alert(e.message || 'Failed to submit review')
+      toast.error(e.message || 'Failed to submit review')
     } finally {
       setSubmitting(false)
     }

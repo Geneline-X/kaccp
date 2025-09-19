@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'sonner'
 import { useRequireTranscriberAuth } from '@/lib/useTranscriberAuth'
 import { apiFetch } from '@/lib/client'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 
 export default function TranscriberTaskPage() {
   const ready = useRequireTranscriberAuth()
@@ -20,6 +21,9 @@ export default function TranscriberTaskPage() {
   const [text, setText] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [improving, setImproving] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [aiPreview, setAiPreview] = useState<string | null>(null)
 
   useEffect(() => {
     const load = async () => {
@@ -46,21 +50,19 @@ export default function TranscriberTaskPage() {
   const onImprove = async () => {
     if (!text.trim()) return toast.error('Enter some text first')
     try {
+      setImproving(true)
       const res = await apiFetch<{ corrected: string; model?: string; score?: number }>(`/api/transcriber/improve`, {
         method: 'POST',
         body: JSON.stringify({ text }),
       })
       const next = res.corrected || text
-      if (next !== text) {
-        const proceed = confirm('Replace your text with AI-corrected version? You can still edit before submitting.')
-        if (!proceed) return
-        setText(next)
-        toast.success('Applied AI corrections')
-      } else {
-        toast.info('No changes suggested')
-      }
+      setAiPreview(next)
+      setConfirmOpen(true)
     } catch (e: any) {
       toast.error(e.message || 'AI correction failed')
+    }
+    finally {
+      setImproving(false)
     }
   }
 
@@ -71,6 +73,8 @@ export default function TranscriberTaskPage() {
       setSaving(true)
       await apiFetch('/api/transcriber/save-draft', { method: 'POST', body: JSON.stringify({ assignmentId, text, language: 'en' }) })
       toast.success('Draft saved')
+      // Notify other tabs/pages to refresh drafts
+      try { localStorage.setItem('kaccp_drafts_updated', String(Date.now())) } catch {}
     } catch (e: any) {
       toast.error(e.message || 'Save failed')
     } finally {
@@ -129,12 +133,37 @@ export default function TranscriberTaskPage() {
         <CardContent className="space-y-3">
           <Textarea rows={10} value={text} onChange={(e) => setText(e.target.value)} placeholder="Type the transcript here..." />
           <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={onImprove}>Improve English</Button>
+            <Button variant="outline" onClick={onImprove} disabled={improving}>{improving ? 'Improving…' : 'Improve English'}</Button>
             <Button variant="secondary" onClick={onSaveDraft} disabled={saving}>{saving ? 'Saving…' : 'Save Draft'}</Button>
             <Button onClick={onSubmit} disabled={submitting}>{submitting ? 'Submitting…' : 'Submit for Review'}</Button>
           </div>
         </CardContent>
       </Card>
+
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Apply AI Corrections?</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="text-sm text-muted-foreground">Preview the corrected text. You can still edit after applying.</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+              <div>
+                <div className="font-medium mb-1">Your text</div>
+                <div className="p-2 rounded border bg-muted whitespace-pre-wrap">{text}</div>
+              </div>
+              <div>
+                <div className="font-medium mb-1">AI suggestion</div>
+                <div className="p-2 rounded border bg-muted whitespace-pre-wrap">{aiPreview || text}</div>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="secondary" onClick={() => setConfirmOpen(false)}>Cancel</Button>
+            <Button onClick={() => { if (aiPreview) setText(aiPreview); setConfirmOpen(false); toast.success('Applied AI corrections') }}>Apply</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

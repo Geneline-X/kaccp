@@ -77,6 +77,22 @@ export default function TranscriberDashboardPage() {
   useEffect(() => { loadMy(); loadMe(); loadStats(); loadDrafts(); }, [])
   useEffect(() => { loadAvailable() }, [page, pageSize])
 
+  // Refresh drafts on cross-tab save notifications
+  useEffect(() => {
+    const handler = (e: StorageEvent) => {
+      if (e.key === 'kaccp_drafts_updated') {
+        loadDrafts()
+      }
+    }
+    window.addEventListener('storage', handler)
+    return () => window.removeEventListener('storage', handler)
+  }, [])
+
+  // When switching to drafts tab, refresh list
+  useEffect(() => {
+    if (tab === 'drafts') loadDrafts()
+  }, [tab])
+
   const loadDrafts = async () => {
     try {
       setLoadingDrafts(true)
@@ -137,6 +153,21 @@ export default function TranscriberDashboardPage() {
         <h1 className="text-2xl font-semibold">Transcriber Dashboard</h1>
         <div className="flex items-center gap-3">
           <NotificationsBell />
+          {me && (
+            <Link href="/transcriber/profile" className="flex items-center gap-2 group">
+              <span className="w-8 h-8 rounded-full overflow-hidden bg-muted inline-flex items-center justify-center">
+                {me.avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={me.avatarUrl} alt="avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-[10px] text-muted-foreground">{(me.displayName||me.email||'U').slice(0,2).toUpperCase()}</span>
+                )}
+              </span>
+              <span className="hidden sm:block text-xs text-muted-foreground group-hover:underline">{me.displayName || me.email}</span>
+            </Link>
+          )}
+          <Button asChild variant="secondary"><Link href="/transcriber/profile">Profile</Link></Button>
+          <Button asChild variant="secondary"><Link href="/leaderboard">Leaderboard</Link></Button>
           <Button variant={tab === 'available' ? 'default' : 'secondary'} onClick={() => setTab('available')}>Available</Button>
           <Button variant={tab === 'my' ? 'default' : 'secondary'} onClick={() => setTab('my')}>My Work</Button>
           <Button variant={tab === 'drafts' ? 'default' : 'secondary'} onClick={() => setTab('drafts')}>My Drafts</Button>
@@ -171,6 +202,28 @@ export default function TranscriberDashboardPage() {
               <div className="text-muted-foreground">Minutes (approved/submitted)</div>
               <div>{stats ? `${(stats.approved.minutes).toFixed(1)} / ${(stats.submitted.minutes).toFixed(1)}` : '…'} min</div>
               <div className="text-xs text-muted-foreground">Rate {stats ? stats.rate.perMinuteSLE.toFixed(2) : '1.2'} SLE/min • Est. {(stats ? stats.earnings.estimatedSLE : 0).toFixed(2)} SLE</div>
+            </div>
+            {stats?.week && (
+              <div className="md:col-span-4">
+                {stats.week.eligible ? (
+                  <div className="p-3 rounded border bg-green-50 text-green-900 text-sm flex items-center justify-between">
+                    <div>
+                      Eligible for payout this week: {(stats.week.estimatedSLE).toFixed(2)} SLE (threshold {stats.week.thresholdSLE} SLE)
+                    </div>
+                    <Button asChild size="sm" variant="secondary"><Link href="/transcriber/profile">Update phone</Link></Button>
+                  </div>
+                ) : (
+                  <div className="p-3 rounded border bg-amber-50 text-amber-900 text-sm flex items-center justify-between">
+                    <div>
+                      Weekly progress: {(stats.week.estimatedSLE).toFixed(2)} SLE / {stats.week.thresholdSLE} SLE needed for payout eligibility.
+                    </div>
+                    <Button asChild size="sm" variant="secondary"><Link href="/leaderboard">See top transcribers</Link></Button>
+                  </div>
+                )}
+              </div>
+            )}
+            <div className="md:col-span-4">
+              <Button asChild size="sm" variant="secondary"><Link href="/transcriber/profile">My Profile</Link></Button>
             </div>
           </CardContent>
         </Card>

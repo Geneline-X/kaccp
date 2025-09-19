@@ -26,6 +26,9 @@ export default function Home() {
             <Button asChild variant="secondary" size="lg">
               <Link href="/transcriber/login">Transcriber Login</Link>
             </Button>
+            <Button asChild variant="outline" size="lg">
+              <Link href="/leaderboard">View Leaderboard</Link>
+            </Button>
           </div>
         </div>
       </div>
@@ -34,6 +37,37 @@ export default function Home() {
           <Feature title="Ingestion" desc="Register long-form audio and let your worker service handle chunking & uploads to GCS." />
           <Feature title="Transcription" desc="Transcribers claim chunks, submit text, and receive AI suggestions for clean English." />
           <Feature title="Review & Export" desc="Approve with or without AI-corrections and export the master dataset to your GCS bucket." />
+        </div>
+      </section>
+
+      <section className="border-t bg-gradient-to-b from-amber-50 to-white">
+        <div className="container mx-auto px-6 py-12 max-w-4xl">
+          <div className="p-5 rounded-lg border bg-white/70 shadow-sm">
+            <h3 className="text-xl font-semibold text-sky-900">Leaderboard & Community</h3>
+            <p className="mt-2 text-sky-900/80 text-sm">
+              Compete friendly with other transcribers and track progress transparently. The public leaderboard shows
+              top contributors by approved minutes and estimated earnings. Only transcribers who opt in via their profile are shown.
+            </p>
+            <div className="mt-4">
+              <Button asChild className="bg-sky-600 hover:bg-sky-700">
+                <Link href="/leaderboard">Explore the Leaderboard</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t bg-white">
+        <div className="container mx-auto px-6 py-12 max-w-4xl">
+          <div className="p-5 rounded-lg border bg-white/70 shadow-sm">
+            <h3 className="text-xl font-semibold text-sky-900">Payouts via Orange Money</h3>
+            <ul className="mt-2 text-sky-900/80 text-sm list-disc pl-5 space-y-1">
+              <li>Payouts are handled manually by our team using Orange Money. No payment gateway is needed from you.</li>
+              <li>Make sure your phone number in your profile is accurate to receive payments.</li>
+              <li>Cash-out threshold is <span className="font-semibold">30 SLE</span> in a weekly cycle.</li>
+              <li>Earnings are based on approved minutes at the current rate (1.2 SLE per minute).</li>
+            </ul>
+          </div>
         </div>
       </section>
 
@@ -60,7 +94,13 @@ export default function Home() {
       </section>
       <footer className="mt-auto border-t bg-white/80">
         <div className="container mx-auto px-6 py-4 text-xs text-sky-800/70 flex items-center justify-between">
-          <div>KACCP</div>
+          <div className="flex items-center gap-3">
+            <span>KACCP</span>
+            <span className="mx-1">•</span>
+            <Link href="/leaderboard" className="underline hover:text-sky-900">Leaderboard</Link>
+            <span className="mx-1">•</span>
+            <Link href="/transcriber/profile" className="underline hover:text-sky-900">Profile</Link>
+          </div>
           <div>
             <Link href="/admin" className="underline hover:text-sky-900">Admin Console</Link>
             <span className="mx-2">•</span>
