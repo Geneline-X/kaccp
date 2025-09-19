@@ -204,16 +204,7 @@ export default function TranscriberDashboardPage() {
         </div>
       )}
 
-      {/* Sticky bottom navbar for mobile */}
-      <nav className="fixed bottom-0 left-0 right-0 sm:hidden bg-white border-t shadow-inner">
-        <div className="max-w-5xl mx-auto grid grid-cols-5 text-xs">
-          <Button variant="ghost" className="rounded-none" onClick={() => { setTab('available'); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>Available</Button>
-          <Button variant="ghost" className="rounded-none" onClick={() => { setTab('my'); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>My Work</Button>
-          <Button variant="ghost" className="rounded-none" onClick={() => { setTab('drafts'); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>Drafts</Button>
-          <Button variant="ghost" className="rounded-none" asChild><Link href="/leaderboard">Leaders</Link></Button>
-          <Button variant="ghost" className="rounded-none" asChild><Link href="/transcriber/profile">Profile</Link></Button>
-        </div>
-      </nav>
+      {/* Bottom navbar removed per request; using header menu for navigation only */}
 
       {me && (
         <Card>

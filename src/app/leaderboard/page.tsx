@@ -1,5 +1,6 @@
 "use client"
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
@@ -42,10 +43,17 @@ export default function LeaderboardPage() {
     <div className="min-h-screen p-4 max-w-6xl mx-auto space-y-6">
       <Card className="bg-gradient-to-r from-sky-50 to-amber-50">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <span className="text-2xl">🏆 Leaderboard</span>
-          </CardTitle>
-          <CardDescription>Top transcribers by approved minutes • Rate {rate.toFixed(2)} SLE/min</CardDescription>
+          <div className="flex items-center justify-between gap-2">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <span className="text-2xl">🏆 Leaderboard</span>
+              </CardTitle>
+              <CardDescription>Top transcribers by approved minutes • Rate {rate.toFixed(2)} SLE/min</CardDescription>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button asChild variant="secondary"><Link href="/transcriber">My Dashboard</Link></Button>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-3 mb-5">
