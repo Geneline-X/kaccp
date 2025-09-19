@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    const where = { status: 'AVAILABLE' as const }
+    const where = { status: 'AVAILABLE' as const, approvedTranscriptionId: null as any }
     const [total, items] = await Promise.all([
       prisma.audioChunk.count({ where }),
       prisma.audioChunk.findMany({ where, orderBy: [{ createdAt: 'asc' }, { index: 'asc' }], skip, take: pageSize }),

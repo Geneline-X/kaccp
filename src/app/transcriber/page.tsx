@@ -147,11 +147,14 @@ export default function TranscriberDashboardPage() {
   }
 
   if (!ready) return null
+  const [menuOpen, setMenuOpen] = useState(false)
+
   return (
     <div className="min-h-screen p-4 max-w-5xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Transcriber Dashboard</h1>
-        <div className="flex items-center gap-3">
+        {/* Desktop actions */}
+        <div className="hidden sm:flex items-center gap-3">
           <NotificationsBell />
           {me && (
             <Link href="/transcriber/profile" className="flex items-center gap-2 group">
@@ -177,7 +180,26 @@ export default function TranscriberDashboardPage() {
             title="Logout"
           >Logout</Button>
         </div>
+        {/* Mobile actions */}
+        <div className="sm:hidden">
+          <Button variant="secondary" onClick={() => setMenuOpen(v => !v)} aria-label="Menu">{menuOpen ? 'Close' : 'Menu'}</Button>
+        </div>
       </div>
+      {/* Mobile menu panel */}
+      {menuOpen && (
+        <div className="sm:hidden grid grid-cols-2 gap-2">
+          <Button asChild variant="secondary"><Link href="/transcriber/profile">Profile</Link></Button>
+          <Button asChild variant="secondary"><Link href="/leaderboard">Leaderboard</Link></Button>
+          <Button variant={tab === 'available' ? 'default' : 'secondary'} onClick={() => { setTab('available'); setMenuOpen(false) }}>Available</Button>
+          <Button variant={tab === 'my' ? 'default' : 'secondary'} onClick={() => { setTab('my'); setMenuOpen(false) }}>My Work</Button>
+          <Button variant={tab === 'drafts' ? 'default' : 'secondary'} onClick={() => { setTab('drafts'); setMenuOpen(false) }}>My Drafts</Button>
+          <Button
+            variant="secondary"
+            onClick={() => { clearToken(); router.replace('/transcriber/login') }}
+            title="Logout"
+          >Logout</Button>
+        </div>
+      )}
 
       {me && (
         <Card>
