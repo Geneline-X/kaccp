@@ -1,23 +1,30 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import Image from 'next/image'
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-sky-50 to-white">
+    <main className="min-h-screen bg-gradient-to-b from-sky-50 to-white flex flex-col">
       <div className="container mx-auto px-6 py-24">
         <div className="max-w-3xl">
+          <div className="mb-4">
+            <Image src="/kaccp-logo.jpg" alt="KACCP" width={56} height={56} className="rounded-md" />
+          </div>
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-sky-900">
-            KACCP Platform
+            Become a Transcriber
           </h1>
           <p className="mt-4 text-lg text-sky-800/80">
-            Manage audio sources, crowdsourced transcriptions, AI-assisted reviews, and payouts — all in one place.
+            Help build the Krio Audio Corpus by transcribing short audio clips. Sign up and start contributing in minutes.
+          </p>
+          <p className="mt-2 text-sm text-sky-800/70">
+            Built by <Link className="underline" href="https://geneline-x.net" target="_blank">Geneline-X</Link> to crowdsource low-resource language data for research. Future support for additional languages is planned.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3">
             <Button asChild size="lg" className="bg-sky-600 hover:bg-sky-700">
-              <Link href="/admin">Go to Admin Console</Link>
+              <Link href="/transcriber/register">Sign up as Transcriber</Link>
             </Button>
             <Button asChild variant="secondary" size="lg">
-              <Link href="/admin/login">Sign in as Admin</Link>
+              <Link href="/transcriber/login">Transcriber Login</Link>
             </Button>
           </div>
         </div>
@@ -29,6 +36,38 @@ export default function Home() {
           <Feature title="Review & Export" desc="Approve with or without AI-corrections and export the master dataset to your GCS bucket." />
         </div>
       </section>
+
+      <section className="border-t bg-white">
+        <div className="container mx-auto px-6 py-12 max-w-4xl">
+          <h2 className="text-2xl font-semibold text-sky-900">How it works</h2>
+          <ol className="list-decimal pl-5 mt-4 space-y-2 text-sky-900/90">
+            <li>Create an account and sign in as a transcriber.</li>
+            <li>Go to the Dashboard and open the "Available" tab.</li>
+            <li>Pick any audio chunk from the list and click "Claim" or use "Claim next available".</li>
+            <li>Listen to the Krio audio and type the English transcription in the task page.</li>
+            <li>You can "Save Draft" and return later; your draft will be prefilled automatically.</li>
+            <li>When ready, submit for review. Approved work is counted toward your earnings.</li>
+          </ol>
+          <div className="mt-6 p-4 rounded-md border bg-sky-50">
+            <div className="font-medium text-sky-900">Rate</div>
+            <div className="text-sky-900/80 text-sm">You earn <span className="font-semibold">1.2 SLE per minute</span> of approved audio.</div>
+          </div>
+          <div className="mt-4 p-4 rounded-md border bg-sky-50">
+            <div className="font-medium text-sky-900">Track your progress</div>
+            <div className="text-sky-900/80 text-sm">Your Dashboard shows your minutes submitted and approved, and an estimated payout based on the current rate.</div>
+          </div>
+        </div>
+      </section>
+      <footer className="mt-auto border-t bg-white/80">
+        <div className="container mx-auto px-6 py-4 text-xs text-sky-800/70 flex items-center justify-between">
+          <div>KACCP</div>
+          <div>
+            <Link href="/admin" className="underline hover:text-sky-900">Admin Console</Link>
+            <span className="mx-2">•</span>
+            <Link href="/admin/login" className="underline hover:text-sky-900">Admin Login</Link>
+          </div>
+        </div>
+      </footer>
     </main>
   )
 }

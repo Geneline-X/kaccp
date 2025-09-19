@@ -5,6 +5,41 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// Sessions for cookie-based auth (httpOnly)
+model Session {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  expiresAt     DateTime
+
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+
+  sessionToken  String   @unique
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// Basic notifications for transcribers (e.g., review decisions)
+model Notification {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  readAt        DateTime?
+
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+
+  type          String   // REVIEW | SYSTEM | PAYMENT | etc.
+  title         String
+  body          String?
+
+  // Optional linking
+  transcriptionId String?
+  transcription   Transcription? @relation(fields: [transcriptionId], references: [id])
+
+  @@index([userId, createdAt])
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -63,6 +98,7 @@ model User {
   updatedAt     DateTime @updatedAt
 
   email         String   @unique
+  phone         String?  @unique
   passwordHash  String
   isActive      Boolean  @default(true)
   lastLoginAt   DateTime?
@@ -80,6 +116,10 @@ model User {
   payments       Payment[]
   walletTxns     WalletTransaction[]
   uploads        AudioSource[] @relation("UserUploads")
+
+  // Sessions & notifications
+  sessions       Session[]
+  notifications  Notification[]
 }
 
 model AudioSource {
@@ -193,6 +233,9 @@ model Transcription {
   submittedAt   DateTime?
 
   @@index([submittedAt])
+
+  // Back-relation for Notification.transcription
+  notifications Notification[]
 }
 
 model Review {

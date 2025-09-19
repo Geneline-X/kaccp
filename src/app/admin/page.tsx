@@ -22,6 +22,12 @@ export default function AdminDashboardPage() {
   const [error, setError] = useState<string | null>(null)
   const [workerHealth, setWorkerHealth] = useState<{ ok: boolean; status?: number; body?: any; error?: string } | null>(null)
   const [workerHealthLoading, setWorkerHealthLoading] = useState(false)
+  const [metrics, setMetrics] = useState<{
+    totals: { totalSeconds: number; totalMinutes: number; totalHours: number }
+    approved: { count: number; seconds: number; minutes: number; hours: number }
+    assigned: { count: number; seconds: number; minutes: number; hours: number }
+    submitted: { count: number; seconds: number; minutes: number; hours: number }
+  } | null>(null)
 
   const totalUsers = users.length
   const totalEarningsCents = useMemo(() => users.reduce((sum, u) => sum + (u.totalEarningsCents || 0), 0), [users])
@@ -35,16 +41,18 @@ export default function AdminDashboardPage() {
     setLoading(true)
     setError(null)
     try {
-      const [reviewsRes, paymentsRes, usersRes, audiosRes] = await Promise.all([
+      const [reviewsRes, paymentsRes, usersRes, audiosRes, metricsRes] = await Promise.all([
         apiFetch<{ items: any[] }>("/api/admin/reviews"),
         apiFetch<{ users: DashboardUser[]; payments: DashboardPayment[] }>("/api/admin/payments"),
         apiFetch<{ items: DashboardUser[] }>("/api/admin/users"),
         apiFetch<{ items: DashboardAudio[] }>("/api/admin/audios"),
+        apiFetch<any>("/api/admin/metrics"),
       ])
       setPendingReviews(reviewsRes.items.length)
       setUsers(usersRes.items || paymentsRes.users || [])
       setPayments(paymentsRes.payments || [])
       setAudios((audiosRes.items || []).slice(0, 5))
+      setMetrics(metricsRes as any)
     } catch (e: any) {
       const msg = e.message || 'Failed to load dashboard data'
       setError(msg)
@@ -114,6 +122,36 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">{loading ? '…' : recentPayments7d}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm text-muted-foreground">Total Audio</CardTitle>
+            <CardDescription>All chunks (hours)</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{!metrics ? '…' : metrics.totals.totalHours.toFixed(2)}</div>
+            <div className="text-xs text-muted-foreground">{!metrics ? '' : `${metrics.totals.totalMinutes.toFixed(1)} minutes`}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm text-muted-foreground">Approved</CardTitle>
+            <CardDescription>Reviewed hours</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{!metrics ? '…' : metrics.approved.hours.toFixed(2)}</div>
+            <div className="text-xs text-muted-foreground">{!metrics ? '' : `${metrics.approved.minutes.toFixed(1)} minutes`}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm text-muted-foreground">Submitted</CardTitle>
+            <CardDescription>Pending + reviewed</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{!metrics ? '…' : metrics.submitted.hours.toFixed(2)}</div>
+            <div className="text-xs text-muted-foreground">{!metrics ? '' : `${metrics.submitted.minutes.toFixed(1)} minutes`}</div>
           </CardContent>
         </Card>
       </div>

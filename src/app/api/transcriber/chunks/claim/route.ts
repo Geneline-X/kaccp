@@ -6,9 +6,11 @@ import { getAuthUser } from '@/lib/auth'
 const ClaimSchema = z.object({
   // Optional explicit sourceId to constrain pool
   sourceId: z.string().optional(),
+  // Optional specific chunkId the user wants to claim
+  chunkId: z.string().optional(),
 })
 
-const ASSIGNMENT_MINUTES = 15
+const ASSIGNMENT_MINUTES = parseInt(process.env.ASSIGNMENT_MINUTES || '15', 10)
 const MAX_ACTIVE = parseInt(process.env.MAX_ACTIVE_ASSIGNMENTS || '1', 10)
 const CLAIM_COOLDOWN_SECONDS = parseInt(process.env.CLAIM_COOLDOWN_SECONDS || '30', 10)
 
@@ -18,7 +20,7 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const body = await req.json().catch(() => ({}))
-    const { sourceId } = ClaimSchema.parse(body)
+    const { sourceId, chunkId } = ClaimSchema.parse(body)
 
     // Enforce max active assignments for this user
     const now = new Date()
@@ -51,14 +53,13 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Find next available chunk
-    const nextChunk = await prisma.audioChunk.findFirst({
-      where: {
-        status: 'AVAILABLE',
-        ...(sourceId ? { sourceId } : {}),
-      },
-      orderBy: [ { createdAt: 'asc' }, { index: 'asc' } ],
-    })
+    // Find target available chunk (specific or next)
+    const nextChunk = chunkId
+      ? await prisma.audioChunk.findFirst({ where: { id: chunkId, status: 'AVAILABLE', ...(sourceId ? { sourceId } : {}) } })
+      : await prisma.audioChunk.findFirst({
+          where: { status: 'AVAILABLE', ...(sourceId ? { sourceId } : {}) },
+          orderBy: [ { createdAt: 'asc' }, { index: 'asc' } ],
+        })
 
     if (!nextChunk) return NextResponse.json({ error: 'No chunks available' }, { status: 404 })
 

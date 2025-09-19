@@ -69,6 +69,24 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         await tx.audioChunk.update({ where: { id: sub.chunkId }, data: { status: 'UNDER_REVIEW' } })
       }
 
+      // Notify the transcriber about the decision
+      const title =
+        decision === 'APPROVED'
+          ? 'Submission approved'
+          : decision === 'REJECTED'
+          ? 'Submission rejected'
+          : 'Edits requested'
+      const body = comments ? comments : null
+      await tx.notification.create({
+        data: {
+          userId: sub.userId,
+          type: 'REVIEW',
+          title,
+          body,
+          transcriptionId: id,
+        },
+      })
+
       return { reviewId: review.id }
     })
 

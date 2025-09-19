@@ -1,0 +1,140 @@
+"use client"
+import { useEffect, useState } from 'react'
+import { useParams, useSearchParams, useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Textarea } from '@/components/ui/textarea'
+import { toast } from 'sonner'
+import { useRequireTranscriberAuth } from '@/lib/useTranscriberAuth'
+import { apiFetch } from '@/lib/client'
+
+export default function TranscriberTaskPage() {
+  const ready = useRequireTranscriberAuth()
+  const { chunkId } = useParams<{ chunkId: string }>()
+  const search = useSearchParams()
+  const router = useRouter()
+  const assignmentId = search?.get('a') || ''
+
+  const [audioUrl, setAudioUrl] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [text, setText] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    const load = async () => {
+      if (!chunkId) return
+      setLoading(true)
+      try {
+        const data = await apiFetch<{ url: string }>(`/api/chunk-url?id=${chunkId}`)
+        setAudioUrl(data.url)
+        // Load latest draft and prefill text
+        const q = new URLSearchParams()
+        if (assignmentId) q.set('assignmentId', assignmentId)
+        else q.set('chunkId', String(chunkId))
+        const draftRes = await apiFetch<{ draft?: { text?: string | null } }>(`/api/transcriber/draft?${q.toString()}`)
+        if (draftRes?.draft?.text) setText(draftRes.draft.text)
+      } catch (e: any) {
+        toast.error(e.message || 'Failed to load audio')
+      } finally {
+        setLoading(false)
+      }
+    }
+    if (ready) load()
+  }, [chunkId, ready])
+
+  const onImprove = async () => {
+    if (!text.trim()) return toast.error('Enter some text first')
+    try {
+      const res = await apiFetch<{ corrected: string; model?: string; score?: number }>(`/api/transcriber/improve`, {
+        method: 'POST',
+        body: JSON.stringify({ text }),
+      })
+      const next = res.corrected || text
+      if (next !== text) {
+        const proceed = confirm('Replace your text with AI-corrected version? You can still edit before submitting.')
+        if (!proceed) return
+        setText(next)
+        toast.success('Applied AI corrections')
+      } else {
+        toast.info('No changes suggested')
+      }
+    } catch (e: any) {
+      toast.error(e.message || 'AI correction failed')
+    }
+  }
+
+  const onSaveDraft = async () => {
+    if (!assignmentId) return toast.error('Missing assignment id')
+    if (!text.trim()) return toast.error('Nothing to save')
+    try {
+      setSaving(true)
+      await apiFetch('/api/transcriber/save-draft', { method: 'POST', body: JSON.stringify({ assignmentId, text, language: 'en' }) })
+      toast.success('Draft saved')
+    } catch (e: any) {
+      toast.error(e.message || 'Save failed')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const onSubmit = async () => {
+    if (!assignmentId) {
+      return toast.error('Missing assignment id. Open this task from your dashboard again.')
+    }
+    if (!text.trim()) {
+      return toast.error('Please enter a transcription before submitting')
+    }
+    try {
+      setSubmitting(true)
+      await apiFetch('/api/transcriber/transcriptions', { method: 'POST', body: JSON.stringify({ assignmentId, text, language: 'en' }) })
+      toast.success('Submitted for review')
+      router.replace('/transcriber')
+    } catch (e: any) {
+      toast.error(e.message || 'Submit failed')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  if (!ready) return null
+  return (
+    <div className="min-h-screen p-4 max-w-3xl mx-auto space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-semibold">Transcription Task</h1>
+        <Button variant="secondary" onClick={() => router.push('/transcriber')}>Back to Dashboard</Button>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Audio</CardTitle>
+          <CardDescription>Chunk ID: {chunkId}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <div className="flex items-center justify-center h-24"><div className="h-8 w-8 rounded-full border-b-2 border-primary animate-spin"></div></div>
+          ) : audioUrl ? (
+            <audio src={audioUrl} controls autoPlay className="w-full" />
+          ) : (
+            <div className="text-destructive">No audio URL available</div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Your Transcription</CardTitle>
+          <CardDescription>Write the English transcription for this audio.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <Textarea rows={10} value={text} onChange={(e) => setText(e.target.value)} placeholder="Type the transcript here..." />
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={onImprove}>Improve English</Button>
+            <Button variant="secondary" onClick={onSaveDraft} disabled={saving}>{saving ? 'Saving…' : 'Save Draft'}</Button>
+            <Button onClick={onSubmit} disabled={submitting}>{submitting ? 'Submitting…' : 'Submit for Review'}</Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}

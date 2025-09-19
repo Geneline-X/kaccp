@@ -4,11 +4,16 @@ import { signJwt, verifyPassword } from '@/lib/auth'
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password } = await req.json()
-    if (!email || !password) {
-      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 })
+    const body = await req.json()
+    const emailOrPhone = body.emailOrPhone || body.email
+    const password = body.password
+    if (!emailOrPhone || !password) {
+      return NextResponse.json({ error: 'Email/Phone and password are required' }, { status: 400 })
     }
-    const user = await prisma.user.findUnique({ where: { email } })
+
+    const user = emailOrPhone.includes('@')
+      ? await prisma.user.findUnique({ where: { email: emailOrPhone } })
+      : await prisma.user.findFirst({ where: { phone: emailOrPhone } })
     if (!user || !user.isActive) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
     }
