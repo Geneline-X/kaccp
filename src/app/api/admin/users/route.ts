@@ -42,7 +42,10 @@ export async function GET(req: NextRequest) {
     const admin = await requireAdmin(req)
     if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-    const users = await prisma.user.findMany({
+    const { searchParams } = new URL(req.url)
+    const withStats = searchParams.get('stats') === 'true'
+
+    const baseUsers = await prisma.user.findMany({
       orderBy: { createdAt: 'desc' },
       select: {
         id: true,
@@ -58,7 +61,26 @@ export async function GET(req: NextRequest) {
       take: 200,
     })
 
-    return NextResponse.json({ items: users })
+    if (!withStats) return NextResponse.json({ items: baseUsers })
+
+    // compute audios uploaded and reviews performed counts per user
+    const items = [] as any[]
+    for (const u of baseUsers) {
+      const [audios, reviews, approved] = await Promise.all([
+        prisma.audioSource.count({ where: { uploadedById: u.id } }),
+        prisma.review.count({ where: { reviewerId: u.id } }),
+        prisma.review.findMany({
+          where: { decision: 'APPROVED' as any, transcription: { userId: u.id } },
+          select: { transcription: { select: { chunk: { select: { durationSec: true } } } } },
+        }),
+      ])
+      const approvedSeconds = approved.reduce((acc, r) => acc + (r.transcription?.chunk?.durationSec || 0), 0)
+      const approvedMinutes = approvedSeconds / 60
+      const estimatedSLE = approvedMinutes * 1.2
+      items.push({ ...u, _count: { audios, reviews }, approvedMinutes, estimatedSLE })
+    }
+
+    return NextResponse.json({ items })
   } catch (e) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }

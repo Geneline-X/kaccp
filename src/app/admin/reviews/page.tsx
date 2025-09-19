@@ -75,7 +75,12 @@ function ReviewRow({ item, onAction }: { item: any; onAction: () => void }) {
   return (
     <div className="border rounded p-3">
       <div className="flex flex-col gap-2">
-        <div className="text-sm text-muted-foreground">Chunk #{item.chunk?.index} · Duration {item.chunk?.durationSec}s</div>
+        <div className="text-sm text-muted-foreground flex items-center gap-3 flex-wrap">
+          <span>Chunk #{item.chunk?.index} · Duration {item.chunk?.durationSec}s</span>
+          {item.chunk?.url ? (
+            <audio src={item.chunk.url} controls preload="none" className="mt-1" />
+          ) : null}
+        </div>
         <div>
           <div className="text-xs font-medium mb-1">Original</div>
           <div className="text-sm whitespace-pre-wrap">{item.text}</div>

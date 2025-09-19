@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { requireAdmin } from '@/lib/auth'
+import { getSignedUrl } from '@/lib/gcs'
 
 export async function GET(req: NextRequest) {
   try {
@@ -26,7 +27,14 @@ export async function GET(req: NextRequest) {
       }
     })
 
-    return NextResponse.json({ items: pending })
+    // Attach best-effort signed URL for audio playback
+    const items = await Promise.all(pending.map(async (t) => {
+      let url: string | null = null
+      try { url = await getSignedUrl(t.chunk.storageUri) } catch {}
+      return { ...t, chunk: { ...t.chunk, url } }
+    }))
+
+    return NextResponse.json({ items })
   } catch (e: any) {
     console.error('admin/reviews list error', e)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
