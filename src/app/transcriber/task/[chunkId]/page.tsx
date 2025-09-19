@@ -132,10 +132,10 @@ export default function TranscriberTaskPage() {
         </CardHeader>
         <CardContent className="space-y-3">
           <Textarea rows={10} value={text} onChange={(e) => setText(e.target.value)} placeholder="Type the transcript here..." />
-          <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={onImprove} disabled={improving}>{improving ? 'Improving…' : 'Improve English'}</Button>
-            <Button variant="secondary" onClick={onSaveDraft} disabled={saving}>{saving ? 'Saving…' : 'Save Draft'}</Button>
-            <Button onClick={onSubmit} disabled={submitting}>{submitting ? 'Submitting…' : 'Submit for Review'}</Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button size="sm" className="whitespace-nowrap" variant="outline" onClick={onImprove} disabled={improving}>{improving ? 'Improving…' : 'Improve English'}</Button>
+            <Button size="sm" className="whitespace-nowrap" variant="secondary" onClick={onSaveDraft} disabled={saving}>{saving ? 'Saving…' : 'Save Draft'}</Button>
+            <Button size="sm" className="whitespace-nowrap" onClick={onSubmit} disabled={submitting}>{submitting ? 'Submitting…' : 'Submit'}</Button>
           </div>
         </CardContent>
       </Card>
