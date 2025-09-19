@@ -33,6 +33,8 @@ enum ChunkStatus {
   UNDER_REVIEW
   APPROVED
   REJECTED
+  PROCESSING
+  FAILED
 }
 
 enum ReviewDecision {
@@ -50,7 +52,7 @@ enum PaymentStatus {
 
 enum Currency {
   USD
-  SLL
+  SLE
 }
 
 // Core models
@@ -130,6 +132,7 @@ model AudioChunk {
 
   // Indexes
   @@unique([sourceId, index])
+  @@index([status, createdAt])
 }
 
 model ChunkAssignment {
@@ -152,6 +155,8 @@ model ChunkAssignment {
 
   // Prevent duplicate active assignments for same user+chunk
   @@index([userId, chunkId])
+  @@index([userId, releasedAt])
+  @@index([expiresAt])
 }
 
 model Transcription {
@@ -176,11 +181,18 @@ model Transcription {
   guidanceScore Float?      // 0-1 guidance score
   notes         String?
 
+  // AI assistance
+  aiSuggestedText String?
+  aiModel         String?
+  aiScore         Float?
+
   // Review linkage
   review        Review?
 
   // Status flags
   submittedAt   DateTime?
+
+  @@index([submittedAt])
 }
 
 model Review {
@@ -196,6 +208,7 @@ model Review {
 
   decision      ReviewDecision
   comments      String?
+  useAiSuggestion Boolean   @default(false)
 
   // If approved, snapshot the payout basis
   approvedDurationSec Int?  // for payment calc (usually equals chunk duration)
@@ -209,7 +222,7 @@ model PaymentRatePlan {
   name          String   @unique
   // rate per minute in USD cents, e.g., 5 cents per minute => 5
   ratePerMinuteCents Int
-  currency      Currency @default(USD)
+  currency      Currency @default(SLE)
   active        Boolean  @default(true)
 }
 
@@ -223,7 +236,7 @@ model Payment {
 
   // Aggregated payout in minor units (USD cents)
   amountCents   Int
-  currency      Currency @default(USD)
+  currency      Currency @default(SLE)
   status        PaymentStatus @default(PENDING)
 
   // Optional metadata

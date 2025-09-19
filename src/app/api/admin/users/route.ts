@@ -36,3 +36,30 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
+
+export async function GET(req: NextRequest) {
+  try {
+    const admin = await requireAdmin(req)
+    if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+
+    const users = await prisma.user.findMany({
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        email: true,
+        displayName: true,
+        role: true,
+        isActive: true,
+        createdAt: true,
+        lastLoginAt: true,
+        qualityScore: true,
+        totalEarningsCents: true,
+      },
+      take: 200,
+    })
+
+    return NextResponse.json({ items: users })
+  } catch (e) {
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+  }
+}

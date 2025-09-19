@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
+import jwt, { SignOptions, Secret } from 'jsonwebtoken'
 import { NextRequest } from 'next/server'
 import prisma from './prisma'
 
@@ -8,7 +8,7 @@ export type JwtPayload = {
   role: 'ADMIN' | 'TRANSCRIBER'
 }
 
-const getJwtSecret = () => {
+const getJwtSecret = (): string => {
   const secret = process.env.JWT_SECRET
   if (!secret) throw new Error('JWT_SECRET not configured')
   return secret
@@ -24,12 +24,14 @@ export async function verifyPassword(password: string, hash: string) {
 }
 
 export function signJwt(payload: JwtPayload, expiresIn: string | number = '7d') {
-  return jwt.sign(payload, getJwtSecret(), { expiresIn })
+  const secret = getJwtSecret() as unknown as Secret
+  const options: SignOptions = { algorithm: 'HS256', expiresIn: expiresIn as any }
+  return jwt.sign(payload as any, secret, options)
 }
 
 export function verifyJwt(token: string): JwtPayload | null {
   try {
-    return jwt.verify(token, getJwtSecret()) as JwtPayload
+    return jwt.verify(token, getJwtSecret() as unknown as Secret) as JwtPayload
   } catch {
     return null
   }
