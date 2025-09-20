@@ -90,6 +90,23 @@ export default function Home() {
             <div className="font-medium text-sky-900">Track your progress</div>
             <div className="text-sky-900/80 text-sm">Your Dashboard shows your minutes submitted and approved, and an estimated payout based on the current rate.</div>
           </div>
+          <div className="mt-4 p-4 rounded-md border bg-sky-50">
+            <div className="font-medium text-sky-900">Claiming rules</div>
+            <ul className="mt-2 text-sky-900/80 text-sm list-disc pl-5 space-y-1">
+              <li>You can have <span className="font-semibold">one active assignment at a time</span>.</li>
+              <li>After you submit, the assignment leaves "My Work" and appears under the <span className="font-semibold">Submitted</span> tab, so you can claim a new chunk.</li>
+              <li>If you need to stop, you can release your current assignment from "My Work" at any time.</li>
+            </ul>
+          </div>
+          <div className="mt-4 p-4 rounded-md border bg-sky-50">
+            <div className="font-medium text-sky-900">What happens after you submit?</div>
+            <ul className="mt-2 text-sky-900/80 text-sm list-disc pl-5 space-y-1">
+              <li><span className="font-semibold">Pending</span>: waiting for admin review (shown in Submitted tab).</li>
+              <li><span className="font-semibold">Approved</span>: counts toward your earnings; it disappears from the default Submitted view.</li>
+              <li><span className="font-semibold">Rejected</span>: the chunk returns to the Available list for anyone to claim.</li>
+              <li><span className="font-semibold">Edit Requested</span>: the chunk is assigned back to you and will reappear in <span className="font-semibold">My Work</span> so you can make updates.</li>
+            </ul>
+          </div>
         </div>
       </section>
       <footer className="mt-auto border-t bg-white/80">
