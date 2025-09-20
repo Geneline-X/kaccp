@@ -14,7 +14,7 @@ import { useRouter, usePathname } from 'next/navigation'
 export default function TranscriberDashboardPage() {
   const ready = useRequireTranscriberAuth()
   const router = useRouter()
-  const [tab, setTab] = useState<'available'|'my'|'submitted'|'drafts'>('my')
+  const [tab, setTab] = useState<'available'|'my'|'drafts'>('my')
   const [loading, setLoading] = useState(false)
   const [assignments, setAssignments] = useState<any[]>([])
   const [claimingNext, setClaimingNext] = useState(false)
@@ -106,7 +106,7 @@ export default function TranscriberDashboardPage() {
   useEffect(() => { loadMy(); loadMe(); loadStats(); loadDrafts(); loadSubmitted(); }, [])
   useEffect(() => { loadAvailable() }, [page, pageSize])
   useEffect(() => { loadSubmitted() }, [subPage, subPageSize, subFilter])
-  useEffect(() => { if (tab === 'submitted') loadSubmitted() }, [tab])
+  useEffect(() => { if (tab === 'my') loadSubmitted() }, [tab])
 
   // Refresh drafts on cross-tab save notifications
   useEffect(() => {
@@ -224,82 +224,7 @@ export default function TranscriberDashboardPage() {
                   <span className="text-[10px] text-muted-foreground">{(me.displayName||me.email||'U').slice(0,2).toUpperCase()}</span>
                 )}
 
-      {tab === 'submitted' && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Submitted</CardTitle>
-            <CardDescription>Your submitted work awaiting review or decided</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2 mb-3">
-              <select
-                className="border rounded px-2 py-1"
-                value={subFilter}
-                onChange={(e) => { setSubFilter(e.target.value as any); setSubPage(1) }}
-              >
-                <option value="PENDING">Pending</option>
-                <option value="EDIT_REQUESTED">Edit Requested</option>
-                <option value="APPROVED">Approved</option>
-                <option value="REJECTED">Rejected</option>
-                <option value="ALL">All</option>
-              </select>
-              <div className="ml-auto flex items-center gap-2 text-sm">
-                <Button variant="secondary" size="sm" onClick={loadSubmitted} disabled={loadingSubmitted}>Refresh</Button>
-                <span>Page {subPage} of {Math.max(1, Math.ceil(subTotal / subPageSize))}</span>
-                <Button variant="secondary" size="sm" disabled={subPage <= 1 || loadingSubmitted} onClick={() => setSubPage(p => Math.max(1, p - 1))}>Prev</Button>
-                <Button variant="secondary" size="sm" disabled={subPage >= Math.ceil(subTotal / subPageSize) || loadingSubmitted} onClick={() => setSubPage(p => p + 1)}>Next</Button>
-                <select
-                  className="border rounded px-2 py-1"
-                  value={subPageSize}
-                  onChange={(e) => setSubPageSize(parseInt(e.target.value) || 25)}
-                >
-                  <option value={10}>10</option>
-                  <option value={25}>25</option>
-                  <option value={50}>50</option>
-                </select>
-              </div>
-            </div>
-            {loadingSubmitted ? (
-              <div className="flex items-center justify-center h-24"><div className="h-8 w-8 rounded-full border-b-2 border-primary animate-spin"></div></div>
-            ) : submitted.length === 0 ? (
-              <div className="text-sm text-muted-foreground">No submissions found.</div>
-            ) : (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>#</TableHead>
-                      <TableHead>Source</TableHead>
-                      <TableHead>Duration</TableHead>
-                      <TableHead>Submitted</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {submitted.map((s) => (
-                      <TableRow key={s.id}>
-                        <TableCell>#{s.chunk?.index}</TableCell>
-                        <TableCell className="text-xs">{s.chunk?.sourceId}</TableCell>
-                        <TableCell>{s.chunk?.durationSec}s</TableCell>
-                        <TableCell>{s.submittedAt ? new Date(s.submittedAt).toLocaleString() : '-'}</TableCell>
-                        <TableCell className="text-xs">{s.status}</TableCell>
-                        <TableCell className="text-right">
-                          {s.status === 'EDIT_REQUESTED' ? (
-                            <Button asChild size="sm"><Link href={`/transcriber/task/${s.chunkId}?a=${s.assignmentId || ''}`}>Continue</Link></Button>
-                          ) : (
-                            <Button asChild size="sm" variant="secondary"><Link href={`/transcriber/task/${s.chunkId}`}>View</Link></Button>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
+      
               </span>
               <span className="hidden sm:block text-xs text-muted-foreground group-hover:underline">{me.displayName || me.email}</span>
             </Link>
@@ -308,7 +233,7 @@ export default function TranscriberDashboardPage() {
           <Button asChild variant="secondary"><Link href="/leaderboard">Leaderboard</Link></Button>
           <Button variant={tab === 'available' ? 'default' : 'secondary'} onClick={() => setTab('available')}>Available</Button>
           <Button variant={tab === 'my' ? 'default' : 'secondary'} onClick={() => setTab('my')}>My Work</Button>
-          <Button variant={tab === 'submitted' ? 'default' : 'secondary'} onClick={() => setTab('submitted')}>Submitted</Button>
+          
           <Button variant={tab === 'drafts' ? 'default' : 'secondary'} onClick={() => setTab('drafts')}>My Drafts</Button>
           <Button
             variant="secondary"
@@ -329,7 +254,7 @@ export default function TranscriberDashboardPage() {
           <Button asChild variant="secondary"><Link href="/leaderboard">Leaderboard</Link></Button>
           <Button variant={tab === 'available' ? 'default' : 'secondary'} onClick={() => { setTab('available'); setMenuOpen(false) }}>Available</Button>
           <Button variant={tab === 'my' ? 'default' : 'secondary'} onClick={() => { setTab('my'); setMenuOpen(false) }}>My Work</Button>
-          <Button variant={tab === 'submitted' ? 'default' : 'secondary'} onClick={() => { setTab('submitted'); setMenuOpen(false) }}>Submitted</Button>
+          
           <Button variant={tab === 'drafts' ? 'default' : 'secondary'} onClick={() => { setTab('drafts'); setMenuOpen(false) }}>My Drafts</Button>
           <Button
             variant="secondary"
@@ -528,6 +453,83 @@ export default function TranscriberDashboardPage() {
                           <Button asChild size="sm"><Link href={`/transcriber/task/${a.chunkId}?a=${a.id}`}>Open</Link></Button>
                           <Button size="sm" variant="secondary" onClick={loadMy}>Refresh</Button>
                           <Button size="sm" variant="destructive" disabled={releasingId === a.id} onClick={() => onRelease(a.id)}>{releasingId === a.id ? 'Releasing…' : 'Release'}</Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {tab === 'my' && (
+        <Card>
+          <CardHeader>
+            <CardTitle>My Submissions</CardTitle>
+            <CardDescription>Submissions awaiting review or decided</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2 mb-3">
+              <select
+                className="border rounded px-2 py-1"
+                value={subFilter}
+                onChange={(e) => { setSubFilter(e.target.value as any); setSubPage(1) }}
+              >
+                <option value="PENDING">Pending</option>
+                <option value="EDIT_REQUESTED">Edit Requested</option>
+                <option value="APPROVED">Approved</option>
+                <option value="REJECTED">Rejected</option>
+                <option value="ALL">All</option>
+              </select>
+              <div className="ml-auto flex items-center gap-2 text-sm">
+                <Button variant="secondary" size="sm" onClick={loadSubmitted} disabled={loadingSubmitted}>Refresh</Button>
+                <span>Page {subPage} of {Math.max(1, Math.ceil(subTotal / subPageSize))}</span>
+                <Button variant="secondary" size="sm" disabled={subPage <= 1 || loadingSubmitted} onClick={() => setSubPage(p => Math.max(1, p - 1))}>Prev</Button>
+                <Button variant="secondary" size="sm" disabled={subPage >= Math.ceil(subTotal / subPageSize) || loadingSubmitted} onClick={() => setSubPage(p => p + 1)}>Next</Button>
+                <select
+                  className="border rounded px-2 py-1"
+                  value={subPageSize}
+                  onChange={(e) => setSubPageSize(parseInt(e.target.value) || 25)}
+                >
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                </select>
+              </div>
+            </div>
+            {loadingSubmitted ? (
+              <div className="flex items-center justify-center h-24"><div className="h-8 w-8 rounded-full border-b-2 border-primary animate-spin"></div></div>
+            ) : submitted.length === 0 ? (
+              <div className="text-sm text-muted-foreground">No submissions found.</div>
+            ) : (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>#</TableHead>
+                      <TableHead>Source</TableHead>
+                      <TableHead>Duration</TableHead>
+                      <TableHead>Submitted</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {submitted.map((s) => (
+                      <TableRow key={s.id}>
+                        <TableCell>#{s.chunk?.index}</TableCell>
+                        <TableCell className="text-xs">{s.chunk?.sourceId}</TableCell>
+                        <TableCell>{s.chunk?.durationSec}s</TableCell>
+                        <TableCell>{s.submittedAt ? new Date(s.submittedAt).toLocaleString() : '-'}</TableCell>
+                        <TableCell className="text-xs">{s.status}</TableCell>
+                        <TableCell className="text-right">
+                          {s.status === 'EDIT_REQUESTED' ? (
+                            <Button asChild size="sm"><Link href={`/transcriber/task/${s.chunkId}?a=${s.assignmentId || ''}`}>Continue</Link></Button>
+                          ) : (
+                            <Button asChild size="sm" variant="secondary"><Link href={`/transcriber/task/${s.chunkId}`}>View</Link></Button>
+                          )}
                         </TableCell>
                       </TableRow>
                     ))}
