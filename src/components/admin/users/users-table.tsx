@@ -126,7 +126,7 @@ function ViewUserModalTrigger({ userId, label = 'View' }: { userId: string; labe
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState<{
-    user: { id: string; email: string; displayName?: string | null; role: string; country?: string | null; avatarUrl?: string | null; createdAt: string; lastLoginAt?: string | null; totalEarningsCents?: number }
+    user: { id: string; email: string; phone?: string | null; displayName?: string | null; role: string; country?: string | null; avatarUrl?: string | null; createdAt: string; lastLoginAt?: string | null; totalEarningsCents?: number }
     stats: { reviewsCount: number; uploadsCount: number; approvedMinutes: number; statusCounts: Record<string, number> }
     recent: { reviews: any[]; payments: any[] }
   } | null>(null)
@@ -183,6 +183,7 @@ function ViewUserModalTrigger({ userId, label = 'View' }: { userId: string; labe
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <Stat label="Role" value={data.user.role} />
                 <Stat label="Country" value={data.user.country || '—'} />
+                <Stat label="Phone" value={data.user.phone || '—'} />
                 <Stat label="Approved min" value={data.stats.approvedMinutes.toFixed(1)} />
                 <Stat label="Est. SLE" value={(data.stats.approvedMinutes * 1.2).toFixed(2)} />
                 <Stat label="Reviews" value={data.stats.reviewsCount} />
