@@ -21,7 +21,19 @@ export async function GET(req: NextRequest) {
         guidanceScore: true,
         notes: true,
         aiSuggestedText: true,
-        user: { select: { id: true, email: true, displayName: true } },
+        user: { 
+          select: { 
+            id: true, 
+            email: true, 
+            displayName: true,
+            qualityScore: true,
+            totalEarningsCents: true,
+            country: true,
+            lastLoginAt: true,
+            createdAt: true,
+            role: true,
+          } 
+        },
         chunk: { select: { id: true, sourceId: true, index: true, durationSec: true, storageUri: true, status: true } },
         assignment: { select: { id: true } },
       }

@@ -7,6 +7,7 @@ const ReviewSchema = z.object({
   decision: z.enum(['APPROVED', 'REJECTED', 'EDIT_REQUESTED']),
   comments: z.string().optional(),
   useAiSuggestion: z.boolean().optional().default(false),
+  editedText: z.string().optional(),
 })
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
@@ -15,7 +16,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
     const { id } = params // transcriptionId
-    const { decision, comments, useAiSuggestion } = ReviewSchema.parse(await req.json())
+    const { decision, comments, useAiSuggestion, editedText } = ReviewSchema.parse(await req.json())
 
     // Load submission with related chunk and user
     const sub = await prisma.transcription.findUnique({
@@ -27,6 +28,11 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     // If already reviewed (unique on transcriptionId), bail
     const existing = await prisma.review.findUnique({ where: { transcriptionId: id } })
     if (existing) return NextResponse.json({ error: 'Already reviewed' }, { status: 400 })
+
+    // If editor provided updated text, persist it before status changes
+    if (decision === 'APPROVED' && typeof editedText === 'string' && editedText.trim().length > 0) {
+      await prisma.transcription.update({ where: { id }, data: { text: editedText.trim() } })
+    }
 
     // For APPROVED, first attempt to set the chunk approved optimistically
     if (decision === 'APPROVED') {

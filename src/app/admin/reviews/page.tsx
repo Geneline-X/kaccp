@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { toast } from 'sonner'
+import { AdminHeader } from '@/components/admin/AdminHeader'
 
 export default function AdminReviewsPage() {
   const [items, setItems] = useState<any[]>([])
@@ -30,7 +31,7 @@ export default function AdminReviewsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Pending Reviews</h1>
+      <AdminHeader title="Pending Reviews" description="Review, edit, and approve submissions" />
 
       <Card>
         <CardHeader><CardTitle>Queue</CardTitle></CardHeader>
@@ -55,13 +56,19 @@ function ReviewRow({ item, onAction }: { item: any; onAction: () => void }) {
   const [useAiSuggestion, setUseAiSuggestion] = useState<boolean>(true)
   const [comments, setComments] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [editedText, setEditedText] = useState<string>(item.text || '')
+  const [improving, setImproving] = useState(false)
 
   const submit = async () => {
     setSubmitting(true)
     try {
+      const payload: any = { decision, comments, useAiSuggestion }
+      if (decision === 'APPROVED') {
+        payload.editedText = editedText
+      }
       await apiFetch(`/api/admin/reviews/${item.id}`, {
         method: 'POST',
-        body: JSON.stringify({ decision, comments, useAiSuggestion })
+        body: JSON.stringify(payload)
       })
       setOpen(false)
       onAction()
@@ -69,6 +76,22 @@ function ReviewRow({ item, onAction }: { item: any; onAction: () => void }) {
       toast.error(e.message || 'Failed to submit review')
     } finally {
       setSubmitting(false)
+    }
+  }
+
+  const improve = async () => {
+    setImproving(true)
+    try {
+      const res = await apiFetch<{ corrected: string; score: number }>(`/api/admin/reviews/${item.id}/improve`, {
+        method: 'POST',
+        body: JSON.stringify({ text: editedText })
+      })
+      setEditedText(res.corrected)
+      toast.success(`Improved (confidence ${(res.score * 100).toFixed(0)}%)`)
+    } catch (e: any) {
+      toast.error(e.message || 'Failed to improve text')
+    } finally {
+      setImproving(false)
     }
   }
 
@@ -81,16 +104,41 @@ function ReviewRow({ item, onAction }: { item: any; onAction: () => void }) {
             <audio src={item.chunk.url} controls preload="none" className="mt-1" />
           ) : null}
         </div>
-        <div>
-          <div className="text-xs font-medium mb-1">Original</div>
-          <div className="text-sm whitespace-pre-wrap">{item.text}</div>
-        </div>
-        {item.aiSuggestedText && (
-          <div>
-            <div className="text-xs font-medium mb-1">AI Suggestion</div>
-            <div className="text-sm whitespace-pre-wrap">{item.aiSuggestedText}</div>
+        {/* Submitter info */}
+        <div className="rounded-md border bg-card/50 p-3 flex flex-col gap-2">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div>
+              <div className="font-medium">{item.user?.displayName || item.user?.email}</div>
+              <div className="text-xs text-muted-foreground">
+                {item.user?.email}
+                {item.user?.country ? ` • ${item.user.country}` : ''}
+              </div>
+            </div>
+            <div className="flex items-center gap-4 text-sm">
+              <div className="text-muted-foreground">Role: <span className="text-foreground">{item.user?.role}</span></div>
+              <div className="text-muted-foreground">Quality: <span className="text-foreground">{typeof item.user?.qualityScore === 'number' ? item.user.qualityScore.toFixed(2) : '—'}</span></div>
+              <div className="text-muted-foreground">Earnings: <span className="text-foreground">{typeof item.user?.totalEarningsCents === 'number' ? (item.user.totalEarningsCents/100).toFixed(2) : '0.00'} SLE</span></div>
+              <div className="text-muted-foreground">Last login: <span className="text-foreground">{item.user?.lastLoginAt ? new Date(item.user.lastLoginAt).toLocaleDateString() : '—'}</span></div>
+            </div>
           </div>
-        )}
+        </div>
+        <div className="space-y-2">
+          <div className="text-xs font-medium">Edit Text</div>
+          <Textarea value={editedText} onChange={(e) => setEditedText(e.target.value)} rows={5} />
+          <div className="flex items-center gap-2">
+            <Button size="sm" variant="secondary" onClick={improve} disabled={improving}>
+              {improving ? 'Improving…' : 'Improve Text'}
+            </Button>
+            {item.aiSuggestedText && (
+              <Button size="sm" variant="ghost" onClick={() => setEditedText(item.aiSuggestedText)}>
+                Use AI Suggestion
+              </Button>
+            )}
+            <Button size="sm" variant="ghost" onClick={() => setEditedText(item.text)}>
+              Reset to Original
+            </Button>
+          </div>
+        </div>
         <div className="flex items-center gap-2">
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
@@ -131,6 +179,10 @@ function ReviewRow({ item, onAction }: { item: any; onAction: () => void }) {
                         <Label htmlFor={`ai-no-${item.id}`}>No</Label>
                       </div>
                     </RadioGroup>
+                    <div className="space-y-2">
+                      <Label>Final Approved Text</Label>
+                      <Textarea value={editedText} onChange={(e) => setEditedText(e.target.value)} rows={5} />
+                    </div>
                   </div>
                 )}
                 <div className="space-y-2">
