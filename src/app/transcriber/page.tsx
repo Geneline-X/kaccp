@@ -106,6 +106,7 @@ export default function TranscriberDashboardPage() {
   useEffect(() => { loadMy(); loadMe(); loadStats(); loadDrafts(); loadSubmitted(); }, [])
   useEffect(() => { loadAvailable() }, [page, pageSize])
   useEffect(() => { loadSubmitted() }, [subPage, subPageSize, subFilter])
+  useEffect(() => { if (tab === 'submitted') loadSubmitted() }, [tab])
 
   // Refresh drafts on cross-tab save notifications
   useEffect(() => {
@@ -234,6 +235,7 @@ export default function TranscriberDashboardPage() {
                 <option value="ALL">All</option>
               </select>
               <div className="ml-auto flex items-center gap-2 text-sm">
+                <Button variant="secondary" size="sm" onClick={loadSubmitted} disabled={loadingSubmitted}>Refresh</Button>
                 <span>Page {subPage} of {Math.max(1, Math.ceil(subTotal / subPageSize))}</span>
                 <Button variant="secondary" size="sm" disabled={subPage <= 1 || loadingSubmitted} onClick={() => setSubPage(p => Math.max(1, p - 1))}>Prev</Button>
                 <Button variant="secondary" size="sm" disabled={subPage >= Math.ceil(subTotal / subPageSize) || loadingSubmitted} onClick={() => setSubPage(p => p + 1)}>Next</Button>
