@@ -7,7 +7,7 @@ import { AdminHeader } from '@/components/admin/AdminHeader'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { toastError } from '@/lib/toast'
+import { toastError, toastSuccess } from '@/lib/toast'
 
 type DashboardUser = { id: string; email: string; displayName?: string | null; totalEarningsCents: number }
 type DashboardPayment = { id: string; amountCents: number; currency: 'USD' | 'SLE'; status: string; createdAt: string }
@@ -62,6 +62,26 @@ export default function AdminDashboardPage() {
     }
   }
 
+  const runSanitize = async () => {
+    try {
+      const json = await apiFetch<{ ok: true; fixed: { approved: number; submitted: number; assigned: number; available: number } }>(
+        '/api/admin/maintenance/sanitize-chunks',
+        { method: 'POST' }
+      )
+      const f = (json as any)?.fixed || {}
+      toastSuccess(`Sanitized: approved=${f.approved||0}, submitted=${f.submitted||0}, assigned=${f.assigned||0}, available=${f.available||0}`)
+      // Optionally refresh dashboard metrics
+      load()
+    } catch (e: any) {
+      const msg = e?.message || ''
+      if (msg.toLowerCase().includes('forbidden') || msg.toLowerCase().includes('unauthorized')) {
+        toastError('Sanitize failed', 'You must be logged in as an admin to run maintenance.')
+      } else {
+        toastError('Sanitize failed', msg || 'Unknown error')
+      }
+    }
+  }
+
   const checkWorkerHealth = async () => {
     try {
       setWorkerHealthLoading(true)
@@ -85,6 +105,7 @@ export default function AdminDashboardPage() {
         description="Overview of system activity and performance"
         actions={(
           <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={runSanitize}>Sanitize Chunks</Button>
             <Button asChild variant="secondary"><Link href="/admin/approved">Approved Data</Link></Button>
             <Button asChild><Link href="/admin/export">Export Dataset</Link></Button>
           </div>
