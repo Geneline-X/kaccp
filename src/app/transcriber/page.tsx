@@ -143,7 +143,17 @@ export default function TranscriberDashboardPage() {
       await loadMy()
       setTab('my')
     } catch (e: any) {
-      toast.error(e.message || 'Claim failed')
+      // Friendly message if user hit active assignment limit
+      let msg = e?.message || 'Claim failed'
+      try {
+        const parsed = JSON.parse(msg)
+        if (parsed?.error?.toLowerCase().includes('active assignment')) {
+          const first = parsed.assignments?.[0]
+          const chunkNo = first?.chunk?.index != null ? `#${first.chunk.index}` : ''
+          msg = `You can only work on one chunk at a time. Please finish or release your current assignment ${chunkNo} before claiming another.`
+        }
+      } catch {}
+      toast.error(msg)
     } finally {
       setClaimingNext(false)
     }
@@ -170,7 +180,16 @@ export default function TranscriberDashboardPage() {
       await Promise.all([loadMy(), loadAvailable()])
       setTab('my')
     } catch (e: any) {
-      toast.error(e.message || 'Claim failed')
+      let msg = e?.message || 'Claim failed'
+      try {
+        const parsed = JSON.parse(msg)
+        if (parsed?.error?.toLowerCase().includes('active assignment')) {
+          const first = parsed.assignments?.[0]
+          const chunkNo = first?.chunk?.index != null ? `#${first.chunk.index}` : ''
+          msg = `You can only work on one chunk at a time. Please finish or release your current assignment ${chunkNo} before claiming another.`
+        }
+      } catch {}
+      toast.error(msg)
     } finally {
       setClaimingChunkId(null)
     }
