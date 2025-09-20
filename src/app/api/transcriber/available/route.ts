@@ -32,7 +32,20 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    const where = { status: 'AVAILABLE' as const, approvedTranscriptionId: null as any }
+    // Only show chunks that are truly AVAILABLE and have no approved transcription
+    // and do NOT have any pending (unreviewed) submissions.
+    const where = {
+      status: 'AVAILABLE' as const,
+      approvedTranscriptionId: null as any,
+      NOT: {
+        transcriptions: {
+          some: {
+            submittedAt: { not: null },
+            review: null,
+          },
+        },
+      },
+    }
     const [total, items] = await Promise.all([
       prisma.audioChunk.count({ where }),
       prisma.audioChunk.findMany({ where, orderBy: [{ createdAt: 'asc' }, { index: 'asc' }], skip, take: pageSize }),
