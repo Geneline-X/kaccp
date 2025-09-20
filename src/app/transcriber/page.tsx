@@ -14,7 +14,7 @@ import { useRouter, usePathname } from 'next/navigation'
 export default function TranscriberDashboardPage() {
   const ready = useRequireTranscriberAuth()
   const router = useRouter()
-  const [tab, setTab] = useState<'available'|'my'|'drafts'>('my')
+  const [tab, setTab] = useState<'available'|'my'|'submitted'|'drafts'>('my')
   const [loading, setLoading] = useState(false)
   const [assignments, setAssignments] = useState<any[]>([])
   const [claimingNext, setClaimingNext] = useState(false)
@@ -26,6 +26,12 @@ export default function TranscriberDashboardPage() {
   useEffect(() => { setMenuOpen(false) }, [pathname])
   const [available, setAvailable] = useState<any[]>([])
   const [loadingAvail, setLoadingAvail] = useState(false)
+  const [submitted, setSubmitted] = useState<any[]>([])
+  const [loadingSubmitted, setLoadingSubmitted] = useState(false)
+  const [subFilter, setSubFilter] = useState<'PENDING'|'APPROVED'|'REJECTED'|'EDIT_REQUESTED'|'ALL'>('PENDING')
+  const [subPage, setSubPage] = useState(1)
+  const [subPageSize, setSubPageSize] = useState(25)
+  const [subTotal, setSubTotal] = useState(0)
   const [me, setMe] = useState<any | null>(null)
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(25)
@@ -43,6 +49,25 @@ export default function TranscriberDashboardPage() {
       toast.error(e.message || 'Failed to load assignments')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const loadSubmitted = async () => {
+    try {
+      setLoadingSubmitted(true)
+      const q = new URLSearchParams()
+      q.set('status', subFilter)
+      q.set('page', String(subPage))
+      q.set('pageSize', String(subPageSize))
+      const data = await apiFetch<{ items: any[]; page: number; pageSize: number; total: number }>(`/api/transcriber/submissions?${q.toString()}`)
+      setSubmitted(data.items || [])
+      setSubPage(data.page || subPage)
+      setSubPageSize(data.pageSize || subPageSize)
+      setSubTotal(data.total || 0)
+    } catch (e: any) {
+      toast.error(e.message || 'Failed to load submissions')
+    } finally {
+      setLoadingSubmitted(false)
     }
   }
 
@@ -78,8 +103,9 @@ export default function TranscriberDashboardPage() {
     }
   }
 
-  useEffect(() => { loadMy(); loadMe(); loadStats(); loadDrafts(); }, [])
+  useEffect(() => { loadMy(); loadMe(); loadStats(); loadDrafts(); loadSubmitted(); }, [])
   useEffect(() => { loadAvailable() }, [page, pageSize])
+  useEffect(() => { loadSubmitted() }, [subPage, subPageSize, subFilter])
 
   // Refresh drafts on cross-tab save notifications
   useEffect(() => {
@@ -168,6 +194,82 @@ export default function TranscriberDashboardPage() {
                 ) : (
                   <span className="text-[10px] text-muted-foreground">{(me.displayName||me.email||'U').slice(0,2).toUpperCase()}</span>
                 )}
+
+      {tab === 'submitted' && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Submitted</CardTitle>
+            <CardDescription>Your submitted work awaiting review or decided</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2 mb-3">
+              <select
+                className="border rounded px-2 py-1"
+                value={subFilter}
+                onChange={(e) => { setSubFilter(e.target.value as any); setSubPage(1) }}
+              >
+                <option value="PENDING">Pending</option>
+                <option value="EDIT_REQUESTED">Edit Requested</option>
+                <option value="APPROVED">Approved</option>
+                <option value="REJECTED">Rejected</option>
+                <option value="ALL">All</option>
+              </select>
+              <div className="ml-auto flex items-center gap-2 text-sm">
+                <span>Page {subPage} of {Math.max(1, Math.ceil(subTotal / subPageSize))}</span>
+                <Button variant="secondary" size="sm" disabled={subPage <= 1 || loadingSubmitted} onClick={() => setSubPage(p => Math.max(1, p - 1))}>Prev</Button>
+                <Button variant="secondary" size="sm" disabled={subPage >= Math.ceil(subTotal / subPageSize) || loadingSubmitted} onClick={() => setSubPage(p => p + 1)}>Next</Button>
+                <select
+                  className="border rounded px-2 py-1"
+                  value={subPageSize}
+                  onChange={(e) => setSubPageSize(parseInt(e.target.value) || 25)}
+                >
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                </select>
+              </div>
+            </div>
+            {loadingSubmitted ? (
+              <div className="flex items-center justify-center h-24"><div className="h-8 w-8 rounded-full border-b-2 border-primary animate-spin"></div></div>
+            ) : submitted.length === 0 ? (
+              <div className="text-sm text-muted-foreground">No submissions found.</div>
+            ) : (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>#</TableHead>
+                      <TableHead>Source</TableHead>
+                      <TableHead>Duration</TableHead>
+                      <TableHead>Submitted</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {submitted.map((s) => (
+                      <TableRow key={s.id}>
+                        <TableCell>#{s.chunk?.index}</TableCell>
+                        <TableCell className="text-xs">{s.chunk?.sourceId}</TableCell>
+                        <TableCell>{s.chunk?.durationSec}s</TableCell>
+                        <TableCell>{s.submittedAt ? new Date(s.submittedAt).toLocaleString() : '-'}</TableCell>
+                        <TableCell className="text-xs">{s.status}</TableCell>
+                        <TableCell className="text-right">
+                          {s.status === 'EDIT_REQUESTED' ? (
+                            <Button asChild size="sm"><Link href={`/transcriber/task/${s.chunkId}?a=${s.assignmentId || ''}`}>Continue</Link></Button>
+                          ) : (
+                            <Button asChild size="sm" variant="secondary"><Link href={`/transcriber/task/${s.chunkId}`}>View</Link></Button>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
               </span>
               <span className="hidden sm:block text-xs text-muted-foreground group-hover:underline">{me.displayName || me.email}</span>
             </Link>
@@ -176,6 +278,7 @@ export default function TranscriberDashboardPage() {
           <Button asChild variant="secondary"><Link href="/leaderboard">Leaderboard</Link></Button>
           <Button variant={tab === 'available' ? 'default' : 'secondary'} onClick={() => setTab('available')}>Available</Button>
           <Button variant={tab === 'my' ? 'default' : 'secondary'} onClick={() => setTab('my')}>My Work</Button>
+          <Button variant={tab === 'submitted' ? 'default' : 'secondary'} onClick={() => setTab('submitted')}>Submitted</Button>
           <Button variant={tab === 'drafts' ? 'default' : 'secondary'} onClick={() => setTab('drafts')}>My Drafts</Button>
           <Button
             variant="secondary"
@@ -184,17 +287,23 @@ export default function TranscriberDashboardPage() {
           >Logout</Button>
         </div>
         {/* Mobile actions */}
-        <div className="sm:hidden">
+        <div className="sm:hidden flex items-center gap-2">
+          <NotificationsBell />
           <Button variant="secondary" onClick={() => setMenuOpen(v => !v)} aria-label="Menu">{menuOpen ? 'Close' : 'Menu'}</Button>
         </div>
       </div>
       {/* Mobile menu panel */}
       {menuOpen && (
         <div className="sm:hidden grid grid-cols-2 gap-2">
+          <div className="col-span-2 flex items-center justify-between p-1">
+            <div className="text-sm text-muted-foreground">Notifications</div>
+            <NotificationsBell />
+          </div>
           <Button asChild variant="secondary"><Link href="/transcriber/profile">Profile</Link></Button>
           <Button asChild variant="secondary"><Link href="/leaderboard">Leaderboard</Link></Button>
           <Button variant={tab === 'available' ? 'default' : 'secondary'} onClick={() => { setTab('available'); setMenuOpen(false) }}>Available</Button>
           <Button variant={tab === 'my' ? 'default' : 'secondary'} onClick={() => { setTab('my'); setMenuOpen(false) }}>My Work</Button>
+          <Button variant={tab === 'submitted' ? 'default' : 'secondary'} onClick={() => { setTab('submitted'); setMenuOpen(false) }}>Submitted</Button>
           <Button variant={tab === 'drafts' ? 'default' : 'secondary'} onClick={() => { setTab('drafts'); setMenuOpen(false) }}>My Drafts</Button>
           <Button
             variant="secondary"
