@@ -50,9 +50,24 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         return NextResponse.json({ error: 'Chunk already has an approved transcription' }, { status: 409 })
       }
     } else if (decision === 'REJECTED') {
-      await prisma.audioChunk.update({ where: { id: sub.chunkId }, data: { status: 'REJECTED' } })
+      // Return chunk to available pool so another transcriber can claim it
+      await prisma.audioChunk.update({ where: { id: sub.chunkId }, data: { status: 'AVAILABLE', approvedTranscriptionId: null } })
     } else if (decision === 'EDIT_REQUESTED') {
-      await prisma.audioChunk.update({ where: { id: sub.chunkId }, data: { status: 'UNDER_REVIEW' } })
+      // Route the chunk back to the original transcriber for edits.
+      // If there is an active assignment to the same user, keep it; otherwise, create a fresh assignment.
+      const existingActive = await prisma.chunkAssignment.findFirst({
+        where: { chunkId: sub.chunkId, userId: sub.userId, releasedAt: null },
+        orderBy: { createdAt: 'desc' },
+        select: { id: true },
+      })
+      if (!existingActive) {
+        const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000) // 48 hours
+        await prisma.chunkAssignment.create({
+          data: { chunkId: sub.chunkId, userId: sub.userId, expiresAt },
+        })
+      }
+      // Mark chunk as ASSIGNED so it does not show up in the public Available list
+      await prisma.audioChunk.update({ where: { id: sub.chunkId }, data: { status: 'ASSIGNED' } })
     }
 
     // Create review (unique on transcriptionId enforces idempotence)
