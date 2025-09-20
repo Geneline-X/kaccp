@@ -128,7 +128,13 @@ export default function TranscriberDashboardPage() {
       }
     }
     window.addEventListener('storage', handler)
-    return () => window.removeEventListener('storage', handler)
+    // Close mobile menu if other panels (like notifications) request it
+    const closeMenuHandler = () => setMenuOpen(false)
+    window.addEventListener('kaccp_close_menu' as any, closeMenuHandler as any)
+    return () => {
+      window.removeEventListener('storage', handler)
+      window.removeEventListener('kaccp_close_menu' as any, closeMenuHandler as any)
+    }
   }, [])
 
   // When switching to drafts tab, refresh list
@@ -484,10 +490,10 @@ export default function TranscriberDashboardPage() {
             )}</CardTitle>
             <CardDescription>Submissions awaiting review or decided</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2 mb-3">
+          <CardContent className="overflow-x-hidden">
+            <div className="flex flex-wrap items-center gap-2 mb-3">
               <select
-                className="border rounded px-2 py-1"
+                className="border rounded px-2 py-1 text-sm max-w-[60%] sm:max-w-none"
                 value={subFilter}
                 onChange={(e) => { setSubFilter(e.target.value as any); setSubPage(1) }}
               >
@@ -497,13 +503,15 @@ export default function TranscriberDashboardPage() {
                 <option value="REJECTED">Rejected</option>
                 <option value="ALL">All</option>
               </select>
-              <div className="ml-auto flex items-center gap-2 text-sm">
+              <div className="w-full sm:w-auto ml-0 sm:ml-auto flex flex-wrap items-center gap-2 text-xs sm:text-sm justify-between">
                 <Button variant="secondary" size="sm" onClick={loadSubmitted} disabled={loadingSubmitted}>Refresh</Button>
-                <span>Page {subPage} of {Math.max(1, Math.ceil(subTotal / subPageSize))}</span>
-                <Button variant="secondary" size="sm" disabled={subPage <= 1 || loadingSubmitted} onClick={() => setSubPage(p => Math.max(1, p - 1))}>Prev</Button>
-                <Button variant="secondary" size="sm" disabled={subPage >= Math.ceil(subTotal / subPageSize) || loadingSubmitted} onClick={() => setSubPage(p => p + 1)}>Next</Button>
+                <span className="min-w-0 truncate">Page {subPage} of {Math.max(1, Math.ceil(subTotal / subPageSize))}</span>
+                <div className="flex items-center gap-2">
+                  <Button variant="secondary" size="sm" disabled={subPage <= 1 || loadingSubmitted} onClick={() => setSubPage(p => Math.max(1, p - 1))}>Prev</Button>
+                  <Button variant="secondary" size="sm" disabled={subPage >= Math.ceil(subTotal / subPageSize) || loadingSubmitted} onClick={() => setSubPage(p => p + 1)}>Next</Button>
+                </div>
                 <select
-                  className="border rounded px-2 py-1"
+                  className="border rounded px-2 py-1 text-sm max-w-[40%] sm:max-w-none"
                   value={subPageSize}
                   onChange={(e) => setSubPageSize(parseInt(e.target.value) || 25)}
                 >

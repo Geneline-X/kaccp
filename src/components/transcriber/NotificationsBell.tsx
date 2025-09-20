@@ -52,22 +52,32 @@ export default function NotificationsBell() {
 
   return (
     <div className="relative">
-      <Button variant="secondary" onClick={() => setOpen(!open)} aria-label="Notifications">
+      <Button
+        variant="secondary"
+        onClick={() => {
+          const next = !open
+          setOpen(next)
+          if (next) {
+            try { window.dispatchEvent(new CustomEvent('kaccp_close_menu')) } catch {}
+          }
+        }}
+        aria-label="Notifications"
+      >
         🔔 {unread > 0 && <span className="ml-1 inline-flex items-center justify-center rounded-full bg-red-600 text-white text-xs px-1.5 py-0.5">{unread}</span>}
       </Button>
       {open && (
-        <div className="absolute right-0 mt-2 w-80 max-w-[80vw] bg-white shadow-lg border rounded-md z-50">
+        <div className="absolute mt-2 w-72 sm:w-80 max-w-[85vw] bg-white shadow-lg border rounded-md z-50 left-1/2 -translate-x-1/2 sm:left-auto sm:right-0 sm:translate-x-0">
           <div className="flex items-center justify-between p-2 border-b">
-            <div className="text-sm font-medium">Notifications</div>
-            <Button size="sm" variant="ghost" onClick={markAllRead} disabled={loading || unread === 0}>Mark all read</Button>
+            <div className="text-xs sm:text-sm font-medium">Notifications</div>
+            <Button size="sm" className="text-xs" variant="ghost" onClick={markAllRead} disabled={loading || unread === 0}>Mark all read</Button>
           </div>
-          <div className="max-h-80 overflow-auto">
+          <div className="max-h-[60vh] overflow-auto">
             {items.length === 0 ? (
-              <div className="p-4 text-sm text-muted-foreground">No unread notifications</div>
+              <div className="p-3 text-xs sm:text-sm text-muted-foreground">No unread notifications</div>
             ) : (
               items.map((n) => (
                 <div key={n.id} className="p-3 border-b last:border-0">
-                  <div className="text-sm font-medium">{n.title}</div>
+                  <div className="text-sm sm:text-base font-medium">{n.title}</div>
                   {n.body && <div className="text-xs text-muted-foreground mt-1">{n.body}</div>}
                   <div className="text-[10px] text-muted-foreground mt-1">{new Date(n.createdAt).toLocaleString()}</div>
                 </div>
