@@ -59,7 +59,9 @@ export async function POST(req: NextRequest) {
         },
       })
 
+      // Mark chunk as submitted and release the assignment so it drops from 'My Work'
       await tx.audioChunk.update({ where: { id: assignment.chunkId }, data: { status: 'SUBMITTED' } })
+      await tx.chunkAssignment.update({ where: { id: assignment.id }, data: { releasedAt: new Date() } })
 
       return created
     })
