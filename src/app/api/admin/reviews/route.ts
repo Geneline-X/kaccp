@@ -10,9 +10,14 @@ export async function GET(req: NextRequest) {
 
     // Pending = transcriptions without a review yet
     const pending = await prisma.transcription.findMany({
-      where: { review: null },
+      where: {
+        review: null,
+        // Do not show any submission whose chunk is already approved
+        chunk: { approvedTranscriptionId: null },
+      },
       orderBy: { submittedAt: 'asc' },
-      take: 100,
+      take: 200,
+      distinct: ['chunkId'], // show only the oldest pending per chunk to avoid duplicates
       select: {
         id: true,
         submittedAt: true,

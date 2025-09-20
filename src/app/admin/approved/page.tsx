@@ -5,6 +5,7 @@ import { AdminHeader } from '@/components/admin/AdminHeader'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { apiFetch } from '@/lib/client'
 
 export default function AdminApprovedPage() {
@@ -14,6 +15,8 @@ export default function AdminApprovedPage() {
   const [pageSize, setPageSize] = useState(25)
   const [total, setTotal] = useState(0)
   const [revertingId, setRevertingId] = useState<string | null>(null)
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [targetId, setTargetId] = useState<string | null>(null)
 
   const load = async () => {
     try {
@@ -36,11 +39,18 @@ export default function AdminApprovedPage() {
   useEffect(() => { load() }, [page, pageSize])
 
   const onRevert = async (chunkId: string) => {
-    if (!confirm('Revert this approved item back to submitted for re-review?')) return
+    setTargetId(chunkId)
+    setConfirmOpen(true)
+  }
+
+  const confirmRevert = async () => {
+    if (!targetId) return
     try {
-      setRevertingId(chunkId)
-      await apiFetch(`/api/admin/approved/${chunkId}/revert`, { method: 'POST' })
+      setRevertingId(targetId)
+      await apiFetch(`/api/admin/approved/${targetId}/revert`, { method: 'POST' })
       await load()
+      setConfirmOpen(false)
+      setTargetId(null)
     } catch (e) {
       console.error(e)
     } finally {
@@ -115,6 +125,23 @@ export default function AdminApprovedPage() {
           )}
         </CardContent>
       </Card>
+
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Revert Approved Item</DialogTitle>
+            <DialogDescription>
+              This will move the item back to Submitted for re-review and remove the approval record. Are you sure?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="secondary" onClick={() => setConfirmOpen(false)}>Cancel</Button>
+            <Button variant="destructive" onClick={confirmRevert} disabled={!!revertingId}>
+              {revertingId ? 'Reverting…' : 'Revert'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -32,6 +32,7 @@ export default function TranscriberDashboardPage() {
   const [subPage, setSubPage] = useState(1)
   const [subPageSize, setSubPageSize] = useState(25)
   const [subTotal, setSubTotal] = useState(0)
+  const [pendingCount, setPendingCount] = useState<number>(0)
   const [me, setMe] = useState<any | null>(null)
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(25)
@@ -71,6 +72,17 @@ export default function TranscriberDashboardPage() {
     }
   }
 
+  const loadPendingCount = async () => {
+    try {
+      const q = new URLSearchParams()
+      q.set('status', 'PENDING')
+      q.set('page', '1')
+      q.set('pageSize', '1')
+      const data = await apiFetch<{ items: any[]; page: number; pageSize: number; total: number }>(`/api/transcriber/submissions?${q.toString()}`)
+      setPendingCount(data.total || 0)
+    } catch {}
+  }
+
   const loadMe = async () => {
     try {
       const data = await apiFetch<{ user: any }>(`/api/auth/me`)
@@ -105,8 +117,8 @@ export default function TranscriberDashboardPage() {
 
   useEffect(() => { loadMy(); loadMe(); loadStats(); loadDrafts(); loadSubmitted(); }, [])
   useEffect(() => { loadAvailable() }, [page, pageSize])
-  useEffect(() => { loadSubmitted() }, [subPage, subPageSize, subFilter])
-  useEffect(() => { if (tab === 'my') loadSubmitted() }, [tab])
+  useEffect(() => { loadSubmitted(); loadPendingCount() }, [subPage, subPageSize, subFilter])
+  useEffect(() => { if (tab === 'my') { loadSubmitted(); loadPendingCount() } }, [tab])
 
   // Refresh drafts on cross-tab save notifications
   useEffect(() => {
@@ -467,7 +479,9 @@ export default function TranscriberDashboardPage() {
       {tab === 'my' && (
         <Card>
           <CardHeader>
-            <CardTitle>My Submissions</CardTitle>
+            <CardTitle className="flex items-center gap-2">My Submissions{typeof pendingCount === 'number' && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] bg-amber-100 text-amber-800">{pendingCount} pending</span>
+            )}</CardTitle>
             <CardDescription>Submissions awaiting review or decided</CardDescription>
           </CardHeader>
           <CardContent>
