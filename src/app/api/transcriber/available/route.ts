@@ -45,7 +45,11 @@ export async function GET(req: NextRequest) {
       }))
     )
 
-    return NextResponse.json({ items: withUrls, page, pageSize, total })
+    const res = NextResponse.json({ items: withUrls, page, pageSize, total })
+    res.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+    res.headers.set('Pragma', 'no-cache')
+    res.headers.set('Expires', '0')
+    return res
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || 'Internal Server Error' }, { status: 500 })
   }

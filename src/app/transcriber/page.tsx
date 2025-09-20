@@ -148,10 +148,15 @@ export default function TranscriberDashboardPage() {
       let msg = e?.message || 'Claim failed'
       try {
         const parsed = JSON.parse(msg)
-        if (parsed?.error?.toLowerCase().includes('active assignment')) {
+        const errorText = String(parsed?.error || '').toLowerCase()
+        if (errorText.includes('active assignment')) {
           const first = parsed.assignments?.[0]
           const chunkNo = first?.chunk?.index != null ? `#${first.chunk.index}` : ''
           msg = `You can only work on one chunk at a time. Please finish or release your current assignment ${chunkNo} before claiming another.`
+        } else if (errorText.includes('no longer available')) {
+          msg = 'That chunk was just claimed by someone else. Please pick another.'
+          // Refresh list so user sees up-to-date availability
+          loadAvailable()
         }
       } catch {}
       toast.error(msg)
@@ -184,10 +189,14 @@ export default function TranscriberDashboardPage() {
       let msg = e?.message || 'Claim failed'
       try {
         const parsed = JSON.parse(msg)
-        if (parsed?.error?.toLowerCase().includes('active assignment')) {
+        const errorText = String(parsed?.error || '').toLowerCase()
+        if (errorText.includes('active assignment')) {
           const first = parsed.assignments?.[0]
           const chunkNo = first?.chunk?.index != null ? `#${first.chunk.index}` : ''
           msg = `You can only work on one chunk at a time. Please finish or release your current assignment ${chunkNo} before claiming another.`
+        } else if (errorText.includes('no longer available')) {
+          msg = 'That chunk was just claimed by someone else. Please pick another.'
+          loadAvailable()
         }
       } catch {}
       toast.error(msg)

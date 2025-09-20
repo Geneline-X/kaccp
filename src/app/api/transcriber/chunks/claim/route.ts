@@ -68,7 +68,10 @@ export async function POST(req: NextRequest) {
     const assignment = await prisma.$transaction(async (tx) => {
       // Recheck and lock the chunk
       const chunk = await tx.audioChunk.findUnique({ where: { id: nextChunk.id } })
-      if (!chunk || chunk.status !== 'AVAILABLE') throw new Error('Chunk no longer available')
+      if (!chunk || chunk.status !== 'AVAILABLE') {
+        // Flag with a known error that we convert to 409 below
+        throw new Error('ERR_NOT_AVAILABLE')
+      }
 
       const created = await tx.chunkAssignment.create({
         data: {
@@ -87,7 +90,11 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ assignment: { id: assignment.id, expiresAt: assignment.expiresAt, chunk } }, { status: 201 })
   } catch (e: any) {
+    const msg = e?.message || ''
+    if (msg === 'ERR_NOT_AVAILABLE') {
+      return NextResponse.json({ error: 'Chunk no longer available. Please pick another.' }, { status: 409 })
+    }
     console.error('transcriber/chunks/claim error', e)
-    return NextResponse.json({ error: e?.message || 'Internal Server Error' }, { status: 500 })
+    return NextResponse.json({ error: msg || 'Internal Server Error' }, { status: 500 })
   }
 }

@@ -83,7 +83,12 @@ export default function AdminDashboardPage() {
       <AdminHeader 
         title="Dashboard"
         description="Overview of system activity and performance"
-        actions={<Button asChild><Link href="/admin/export">Export Dataset</Link></Button>}
+        actions={(
+          <div className="flex items-center gap-2">
+            <Button asChild variant="secondary"><Link href="/admin/approved">Approved Data</Link></Button>
+            <Button asChild><Link href="/admin/export">Export Dataset</Link></Button>
+          </div>
+        )}
       />
 
       {/* KPI Cards */}
