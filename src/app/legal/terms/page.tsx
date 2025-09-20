@@ -7,12 +7,10 @@ export default function TermsPage() {
       <div className="container mx-auto px-6 py-10 max-w-4xl">
         <Card>
           <CardHeader>
-            <CardTitle>Terms of Service and Data Policy (Draft)</CardTitle>
+            <CardTitle>Terms of Service and Data Policy</CardTitle>
           </CardHeader>
           <CardContent className="prose prose-sm max-w-none">
-            <p><em>This draft is for informational purposes only and is not legal advice. Please consult a qualified legal professional.</em></p>
-
-            <h3>A. Draft Terms of Service</h3>
+            <h3>Terms of Service</h3>
             <ol>
               <li><strong>Acceptance of Terms:</strong> By creating an account, accessing, or using the KACCP Platform ("the Platform"), you agree to be bound by these Terms of Service. If you do not agree, you may not use the Platform. You must be at least 18 years of age or older to use this service.</li>
               <li><strong>User Accounts:</strong> You agree to provide accurate and complete information during registration and to keep this information updated. You are responsible for maintaining the confidentiality of your account password and for all activities that occur under your account. You agree to notify us immediately of any unauthorized use of your account.</li>
@@ -29,7 +27,7 @@ export default function TermsPage() {
               <li><strong>Termination:</strong> We reserve the right to suspend or terminate your account and access to the Platform at any time, with or without cause, including for any violation of these Terms.</li>
             </ol>
 
-            <h3>B. Data Protection and Privacy Policy Considerations</h3>
+            <h3>Data Protection and Privacy Policy</h3>
             <p>While Sierra Leone may not yet have a comprehensive data protection law, it is a best practice and an ethical obligation to protect user data in line with international standards.</p>
             <ol>
               <li><strong>Data Collection:</strong> We collect the following information from transcribers:
