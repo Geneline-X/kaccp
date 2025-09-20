@@ -314,10 +314,6 @@ export default function TranscriberDashboardPage() {
       {/* Mobile menu panel */}
       {menuOpen && (
         <div className="sm:hidden grid grid-cols-2 gap-2">
-          <div className="col-span-2 flex items-center justify-between p-1">
-            <div className="text-sm text-muted-foreground">Notifications</div>
-            <NotificationsBell />
-          </div>
           <Button asChild variant="secondary"><Link href="/transcriber/profile">Profile</Link></Button>
           <Button asChild variant="secondary"><Link href="/leaderboard">Leaderboard</Link></Button>
           <Button variant={tab === 'available' ? 'default' : 'secondary'} onClick={() => { setTab('available'); setMenuOpen(false) }}>Available</Button>
