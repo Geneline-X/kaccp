@@ -9,6 +9,13 @@ const UpdateSchema = z.object({
   country: z.string().trim().max(64).optional(),
   showOnLeaderboard: z.boolean().optional(),
   avatarUrl: z.string().url().optional(),
+  // allow simple E.164-like or digits with optional + and spaces/hyphens
+  phone: z
+    .string()
+    .trim()
+    .max(32)
+    .regex(/^[+]?[- 0-9]{7,32}$/i, 'Invalid phone number')
+    .optional(),
 })
 
 export async function GET(req: NextRequest) {
@@ -21,6 +28,7 @@ export async function GET(req: NextRequest) {
       select: {
         id: true,
         email: true,
+        phone: true,
         displayName: true,
         bio: true,
         country: true,
@@ -42,19 +50,27 @@ export async function POST(req: NextRequest) {
     const body = await req.json().catch(() => ({}))
     const data = UpdateSchema.parse(body)
 
-    const updated = await (prisma as any).user.update({
-      where: { id: user.id },
-      data: {
-        ...(data.displayName !== undefined ? { displayName: data.displayName } : {}),
-        ...(data.bio !== undefined ? { bio: data.bio } : {}),
-        ...(data.country !== undefined ? { country: data.country } : {}),
-        ...(data.showOnLeaderboard !== undefined ? { showOnLeaderboard: data.showOnLeaderboard } : {}),
-        ...(data.avatarUrl !== undefined ? { avatarUrl: data.avatarUrl } : {}),
-      } as any,
-      select: { id: true },
-    })
-
-    return NextResponse.json({ ok: true, id: updated.id })
+    try {
+      const updated = await (prisma as any).user.update({
+        where: { id: user.id },
+        data: {
+          ...(data.displayName !== undefined ? { displayName: data.displayName } : {}),
+          ...(data.bio !== undefined ? { bio: data.bio } : {}),
+          ...(data.country !== undefined ? { country: data.country } : {}),
+          ...(data.showOnLeaderboard !== undefined ? { showOnLeaderboard: data.showOnLeaderboard } : {}),
+          ...(data.avatarUrl !== undefined ? { avatarUrl: data.avatarUrl } : {}),
+          ...(data.phone !== undefined ? { phone: data.phone || null } : {}),
+        } as any,
+        select: { id: true },
+      })
+      return NextResponse.json({ ok: true, id: updated.id })
+    } catch (err: any) {
+      const msg = String(err?.message || '')
+      if (msg.toLowerCase().includes('unique') && msg.toLowerCase().includes('phone')) {
+        return NextResponse.json({ error: 'Phone number already in use' }, { status: 409 })
+      }
+      throw err
+    }
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || 'Internal Server Error' }, { status: 500 })
   }

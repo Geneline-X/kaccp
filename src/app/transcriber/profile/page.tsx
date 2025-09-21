@@ -21,6 +21,7 @@ export default function ProfilePage() {
   const [displayName, setDisplayName] = useState('')
   const [bio, setBio] = useState('')
   const [country, setCountry] = useState('')
+  const [phone, setPhone] = useState('')
   const [showOnLeaderboard, setShowOnLeaderboard] = useState(true)
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
 
@@ -33,6 +34,7 @@ export default function ProfilePage() {
         setDisplayName(u.displayName || '')
         setBio(u.bio || '')
         setCountry(u.country || '')
+        setPhone(u.phone || '')
         setShowOnLeaderboard(Boolean(u.showOnLeaderboard))
         setAvatarUrl(u.avatarUrl || null)
       }
@@ -50,12 +52,19 @@ export default function ProfilePage() {
       setSaving(true)
       await apiFetch('/api/transcriber/profile', {
         method: 'POST',
-        body: JSON.stringify({ displayName, bio, country, showOnLeaderboard, avatarUrl: avatarUrl || undefined })
+        body: JSON.stringify({ displayName, bio, country, phone, showOnLeaderboard, avatarUrl: avatarUrl || undefined })
       })
       toast.success('Profile updated')
       router.replace('/transcriber')
     } catch (e: any) {
-      toast.error(e.message || 'Failed to save profile')
+      let msg = e?.message || 'Failed to save profile'
+      try {
+        const parsed = JSON.parse(msg)
+        if (String(parsed?.error || '').toLowerCase().includes('phone')) {
+          msg = parsed.error
+        }
+      } catch {}
+      toast.error(msg)
     } finally {
       setSaving(false)
     }
@@ -94,6 +103,11 @@ export default function ProfilePage() {
             <div className="space-y-1">
               <Label htmlFor="country">Country</Label>
               <Input id="country" value={country} onChange={(e) => setCountry(e.target.value)} />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="phone">Phone for payouts</Label>
+              <Input id="phone" placeholder="e.g. +232 76 123 456" value={phone} onChange={(e) => setPhone(e.target.value)} />
+              <div className="text-xs text-muted-foreground">We'll use this number to send your earnings.</div>
             </div>
           </div>
 
