@@ -9,6 +9,7 @@ import { toastSuccess, toastError } from '@/lib/toast'
 import { apiFetch } from '@/lib/client'
 import { useEffect, useState } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 
 export type UserWithStats = {
   id: string
@@ -17,13 +18,16 @@ export type UserWithStats = {
   role: UserRole
   createdAt: Date
   updatedAt: Date
+  isActive?: boolean
+  phone?: string | null
   _count?: {
     audios?: number
     reviews?: number
   }
-  totalEarningsCents?: number
   approvedMinutes?: number
   estimatedSLE?: number
+  paidSLE?: number
+  balanceSLE?: number
 }
 
 export const columns: ColumnDef<UserWithStats>[] = [
@@ -59,8 +63,14 @@ export const columns: ColumnDef<UserWithStats>[] = [
       const user = row.original
       return (
         <div className="text-sm space-y-1">
-          <div>Audios: {user._count?.audios || 0}</div>
-          <div>Reviews: {user._count?.reviews || 0}</div>
+          {user.role === 'TRANSCRIBER' ? (
+            <>
+              <div>Approved min: {(user.approvedMinutes ?? 0).toFixed(1)}</div>
+              {!!(user._count?.audios || 0) && <div>Audios: {user._count?.audios || 0}</div>}
+            </>
+          ) : (
+            <div>Reviews: {user._count?.reviews || 0}</div>
+          )}
         </div>
       )
     },
@@ -71,8 +81,10 @@ export const columns: ColumnDef<UserWithStats>[] = [
     cell: ({ row }) => {
       const user = row.original
       return (
-        <div className="font-medium">
-          {user.totalEarningsCents ? (user.totalEarningsCents / 100).toFixed(2) : '0.00'} SLE
+        <div className="text-sm space-y-0.5">
+          <div>Est: {(user.estimatedSLE ?? 0).toFixed(2)} SLE</div>
+          <div className="text-muted-foreground">Paid: {(user.paidSLE ?? 0).toFixed(2)} SLE</div>
+          <div className="font-medium">Balance: {(user.balanceSLE ?? 0).toFixed(2)} SLE</div>
         </div>
       )
     },
@@ -89,33 +101,92 @@ export const columns: ColumnDef<UserWithStats>[] = [
     id: "actions",
     cell: ({ row }) => {
       const user = row.original
-      
-      const handleDelete = async () => {
-        if (!confirm(`Are you sure you want to delete ${user.email}?`)) return
-        
+      const [openRole, setOpenRole] = useState(false)
+      const [openDeactivate, setOpenDeactivate] = useState(false)
+      const [loading, setLoading] = useState(false)
+
+      const submitRoleChange = async (nextRole: 'ADMIN' | 'TRANSCRIBER') => {
         try {
-          await apiFetch(`/api/admin/users/${user.id}`, {
-            method: 'DELETE',
-          })
-          toastSuccess('User deleted successfully')
-          // You might want to refresh the users list here
+          setLoading(true)
+          await apiFetch(`/api/admin/users/${user.id}`, { method: 'PATCH', body: JSON.stringify({ role: nextRole }) })
+          toastSuccess(`Role updated to ${nextRole}`)
           window.location.reload()
-        } catch (error: any) {
-          toastError('Failed to delete user', error.message)
+        } catch (e: any) {
+          toastError('Failed to update role', e.message)
+        } finally {
+          setLoading(false)
+          setOpenRole(false)
+        }
+      }
+
+      const handleDeactivate = async () => {
+        try {
+          setLoading(true)
+          await apiFetch(`/api/admin/users/${user.id}`, { method: 'DELETE' })
+          toastSuccess('User deactivated')
+          window.location.reload()
+        } catch (e: any) {
+          toastError('Failed to deactivate user', e.message)
+        } finally {
+          setLoading(false)
+          setOpenDeactivate(false)
         }
       }
       
       return (
-        <div className="flex space-x-2">
-          <ViewUserModalTrigger userId={user.id} label="View" />
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={handleDelete}
-            className="text-destructive hover:text-destructive"
-          >
-            Delete
-          </Button>
+        <div className="flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">Actions</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <button onClick={() => (document.querySelector(`#view-user-${user.id}-btn`) as HTMLButtonElement)?.click()} className="w-full text-left">View</button>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <a href={`/admin/payments?userId=${user.id}`}>Pay</a>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setOpenRole(true)}>Change Role</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setOpenDeactivate(true)} className="text-destructive focus:text-destructive">{user.isActive === false ? 'Inactive' : 'Deactivate'}</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          {/* Hidden View trigger to reuse the existing modal */}
+          <ViewUserModalTrigger userId={user.id} label={<span id={`view-user-${user.id}-btn`} className="sr-only">View</span> as any} />
+
+          {/* Change Role Dialog */}
+          <Dialog open={openRole} onOpenChange={setOpenRole}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Change Role</DialogTitle>
+                <DialogDescription>
+                  Update the role for {user.displayName || user.email}. This affects their access rights.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex items-center gap-2">
+                <Button disabled={loading || user.role === 'TRANSCRIBER'} onClick={() => submitRoleChange('TRANSCRIBER')}>Make Transcriber</Button>
+                <Button disabled={loading || user.role === 'ADMIN'} onClick={() => submitRoleChange('ADMIN')}>Make Admin</Button>
+              </div>
+              <DialogFooter>
+                <Button variant="secondary" onClick={() => setOpenRole(false)}>Close</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* Deactivate Dialog */}
+          <Dialog open={openDeactivate} onOpenChange={setOpenDeactivate}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Deactivate User</DialogTitle>
+                <DialogDescription>
+                  This will disable login for {user.displayName || user.email}. You can’t delete the last active admin.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button variant="secondary" onClick={() => setOpenDeactivate(false)}>Cancel</Button>
+                <Button variant="destructive" disabled={loading} onClick={handleDeactivate}>{loading ? 'Working…' : 'Deactivate'}</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       )
     },

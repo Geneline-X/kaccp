@@ -11,7 +11,21 @@ export function useRequireTranscriberAuth() {
     if (!t) {
       router.replace('/transcriber/login')
     } else {
-      setReady(true)
+      ;(async () => {
+        try {
+          const resp = await fetch('/api/auth/me', { headers: { Authorization: `Bearer ${t}` } })
+          const json = await resp.json()
+          if (!resp.ok) throw new Error(json?.error || 'Unauthorized')
+          const role = String(json?.user?.role || '').toUpperCase()
+          if (role !== 'TRANSCRIBER') {
+            router.replace('/transcriber/login')
+            return
+          }
+          setReady(true)
+        } catch {
+          router.replace('/transcriber/login')
+        }
+      })()
     }
   }, [router])
   return ready

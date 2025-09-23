@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { AdminHeader } from '@/components/admin/AdminHeader'
+import { Progress } from '@/components/ui/progress'
 import type { AudioRow } from '@/components/admin/audios/audios-table'
 import { toastError, toastSuccess } from '@/lib/toast'
 import Link from 'next/link'
@@ -15,6 +16,9 @@ export default function AdminAudiosPage() {
   const [items, setItems] = useState<AudioRow[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(25)
+  const [total, setTotal] = useState(0)
 
   const [title, setTitle] = useState('')
   const [originalUri, setOriginalUri] = useState('')
@@ -34,8 +38,9 @@ export default function AdminAudiosPage() {
   const load = async () => {
     setLoading(true)
     try {
-      const res = await apiFetch<{ items: AudioRow[] }>("/api/admin/audios")
-      setItems(res.items)
+      const res = await apiFetch<{ items: any[]; total: number; page: number; pageSize: number }>(`/api/admin/audios?page=${page}&pageSize=${pageSize}`)
+      setItems(res.items as any)
+      setTotal(res.total || 0)
     } catch (e: any) {
       const msg = e.message || 'Failed to load audios'
       setError(msg)
@@ -45,7 +50,7 @@ export default function AdminAudiosPage() {
     }
   }
 
-  useEffect(() => { load() }, [])
+  useEffect(() => { load() }, [page, pageSize])
 
   const onCreate = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -180,7 +185,9 @@ export default function AdminAudiosPage() {
       <Card>
         <CardHeader>
           <CardTitle>Sources</CardTitle>
-          <CardDescription>{items.length} source{items.length !== 1 ? 's' : ''}</CardDescription>
+          <CardDescription>
+            Page {page} of {Math.max(1, Math.ceil(total / pageSize))} · {total} total
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -198,6 +205,7 @@ export default function AdminAudiosPage() {
                     <th className="px-3 py-2">Status</th>
                     <th className="px-3 py-2">Source ID</th>
                     <th className="px-3 py-2">Chunks</th>
+                    <th className="px-3 py-2">Progress</th>
                     <th className="px-3 py-2">Actions</th>
                   </tr>
                 </thead>
@@ -218,6 +226,9 @@ export default function AdminAudiosPage() {
                         </div>
                       </td>
                       <td className="px-3 py-2 align-top">{(a as any)._count?.chunks ?? 0}</td>
+                      <td className="px-3 py-2 align-top w-[260px]">
+                        {renderProgress(a as any)}
+                      </td>
                       <td className="px-3 py-2 align-top">
                         <div className="flex flex-wrap gap-2">
                           <Button asChild size="sm" variant="secondary">
@@ -258,6 +269,19 @@ export default function AdminAudiosPage() {
                   ))}
                 </tbody>
               </table>
+              <div className="mt-4 flex items-center gap-2 justify-between text-sm">
+                <div className="flex items-center gap-2">
+                  <span>Rows per page</span>
+                  <select className="border rounded px-2 py-1" value={pageSize} onChange={(e) => { setPageSize(parseInt(e.target.value) || 25); setPage(1) }}>
+                    {[10,25,50,100,200].map(n => <option key={n} value={n}>{n}</option>)}
+                  </select>
+                </div>
+                <div className="ml-auto flex items-center gap-2">
+                  <span>Page {page} of {Math.max(1, Math.ceil(total / pageSize))}</span>
+                  <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage(p => Math.max(1, p - 1))}>Prev</Button>
+                  <Button variant="outline" size="sm" disabled={page >= Math.ceil(total / pageSize)} onClick={() => setPage(p => p + 1)}>Next</Button>
+                </div>
+              </div>
             </div>
           )}
         </CardContent>
@@ -278,5 +302,27 @@ function StatusBadge({ status }: { status: 'UPLOADED'|'PROCESSING'|'READY'|'TRAN
         <span className="ml-2 inline-block h-3 w-3 animate-spin rounded-full border-b-2 border-current"></span>
       )}
     </span>
+  )
+}
+
+function renderProgress(a: any) {
+  const total = a?._count?.chunks ?? 0
+  const progress = a?.progress || {}
+  const approved = Number(progress.APPROVED || 0)
+  const submitted = Number(progress.SUBMITTED || 0)
+  const assigned = Number(progress.ASSIGNED || 0)
+  const done = approved
+  const inProgress = submitted + assigned
+  const remaining = Math.max(0, total - done - inProgress)
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0
+  return (
+    <div className="min-w-[220px]">
+      <div className="flex items-center justify-between text-[10px] text-muted-foreground mb-1">
+        <span>Approved {done}/{total}</span>
+        <span>{pct}%</span>
+      </div>
+      <Progress value={pct} />
+      <div className="mt-1 text-[10px] text-muted-foreground">In progress: {inProgress} · Remaining: {remaining}</div>
+    </div>
   )
 }

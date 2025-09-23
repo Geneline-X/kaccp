@@ -106,6 +106,7 @@ export default function AdminDashboardPage() {
         actions={(
           <div className="flex items-center gap-2">
             <Button variant="outline" onClick={runSanitize}>Sanitize Chunks</Button>
+            <Button asChild variant="secondary"><Link href="/leaderboard">Leaderboard</Link></Button>
             <Button asChild variant="secondary"><Link href="/admin/approved">Approved Data</Link></Button>
             <Button asChild><Link href="/admin/export">Export Dataset</Link></Button>
           </div>

@@ -15,9 +15,12 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<UserWithStats[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [roleFilter, setRoleFilter] = useState<'ALL'|'TRANSCRIBER'|'ADMIN'>('ALL')
+  const [balanceOnly, setBalanceOnly] = useState(false)
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [displayName, setDisplayName] = useState('')
   const [role, setRole] = useState<'ADMIN'|'TRANSCRIBER'>('TRANSCRIBER')
   const [creating, setCreating] = useState(false)
@@ -71,15 +74,37 @@ export default function AdminUsersPage() {
     }
   }
 
+  const filtered = users.filter(u => {
+    if (roleFilter !== 'ALL' && u.role !== roleFilter) return false
+    if (balanceOnly && (u as any).balanceSLE !== undefined) return (u as any).balanceSLE > 0
+    return !balanceOnly || (u as any).balanceSLE === undefined
+  })
+
   return (
     <div className="space-y-6">
       <AdminHeader 
         title="Users" 
         description="Manage user accounts and permissions"
         actions={
-          <Button onClick={() => setShowCreateForm(!showCreateForm)}>
-            {showCreateForm ? 'Cancel' : 'Add User'}
-          </Button>
+          <div className="flex items-center gap-2">
+            <div className="hidden sm:flex items-center gap-2">
+              <Select value={roleFilter} onValueChange={(v: any) => setRoleFilter(v)}>
+                <SelectTrigger className="w-[160px]"><SelectValue placeholder="Role" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ALL">All Roles</SelectItem>
+                  <SelectItem value="TRANSCRIBER">Transcribers</SelectItem>
+                  <SelectItem value="ADMIN">Admins</SelectItem>
+                </SelectContent>
+              </Select>
+              <label className="text-sm inline-flex items-center gap-2">
+                <input type="checkbox" checked={balanceOnly} onChange={(e) => setBalanceOnly(e.target.checked)} />
+                Balance &gt; 0
+              </label>
+            </div>
+            <Button onClick={() => setShowCreateForm(!showCreateForm)}>
+              {showCreateForm ? 'Cancel' : 'Add User'}
+            </Button>
+          </div>
         }
       />
 
@@ -105,14 +130,23 @@ export default function AdminUsersPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground hover:text-foreground"
+                      onClick={() => setShowPassword(v => !v)}
+                    >
+                      {showPassword ? 'Hide' : 'Show'}
+                    </button>
+                  </div>
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -170,7 +204,7 @@ export default function AdminUsersPage() {
           ) : (
             <DataTable 
               columns={columns} 
-              data={users} 
+              data={filtered} 
               searchKey="email"
               loading={loading}
             />

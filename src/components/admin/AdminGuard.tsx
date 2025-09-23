@@ -1,10 +1,10 @@
 "use client"
 import { PropsWithChildren } from 'react'
-import { useRequireAuth } from '@/lib/useAuth'
+import { useRequireAdminAuth } from '@/lib/useAdminAuth'
 import { Loader2 } from 'lucide-react'
 
 export default function AdminGuard({ children }: PropsWithChildren) {
-  const ready = useRequireAuth()
+  const ready = useRequireAdminAuth()
   if (!ready) {
     return (
       <div className="min-h-screen flex items-center justify-center">

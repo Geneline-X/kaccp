@@ -15,14 +15,17 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     const source = await prisma.audioSource.findUnique({ where: { id: sourceId }, select: { id: true } });
     if (!source) return NextResponse.json({ error: 'source not found' }, { status: 404 });
 
-    const chunks = await prisma.audioChunk.findMany({
-      where: { sourceId },
-      orderBy: { index: 'asc' },
-      take: Number.isFinite(take) && take > 0 ? take : 100,
-      skip: Number.isFinite(skip) && skip >= 0 ? skip : 0,
-    });
+    const [total, chunks] = await Promise.all([
+      prisma.audioChunk.count({ where: { sourceId } }),
+      prisma.audioChunk.findMany({
+        where: { sourceId },
+        orderBy: { index: 'asc' },
+        take: Number.isFinite(take) && take > 0 ? take : 100,
+        skip: Number.isFinite(skip) && skip >= 0 ? skip : 0,
+      }),
+    ]);
 
-    if (!withSigned) return NextResponse.json({ items: chunks });
+    if (!withSigned) return NextResponse.json({ items: chunks, total });
 
     const withUrls = await Promise.all(
       chunks.map(async (c) => ({
@@ -30,7 +33,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         url: await getSignedUrl(c.storageUri),
       }))
     );
-    return NextResponse.json({ items: withUrls });
+    return NextResponse.json({ items: withUrls, total });
   } catch (e: any) {
     return NextResponse.json({ error: e.message ?? 'internal error' }, { status: 500 });
   }

@@ -69,18 +69,24 @@ export async function GET(req: NextRequest) {
     // compute audios uploaded and reviews performed counts per user
     const items = [] as any[]
     for (const u of baseUsers) {
-      const [audios, reviews, approved] = await Promise.all([
+      const [audios, reviews, approved, paid] = await Promise.all([
         prisma.audioSource.count({ where: { uploadedById: u.id } }),
         prisma.review.count({ where: { reviewerId: u.id } }),
         prisma.review.findMany({
           where: { decision: 'APPROVED' as any, transcription: { userId: u.id } },
           select: { transcription: { select: { chunk: { select: { durationSec: true } } } } },
         }),
+        prisma.payment.aggregate({
+          _sum: { amountCents: true },
+          where: { userId: u.id, status: 'PAID' as any, currency: 'SLE' as any },
+        }),
       ])
       const approvedSeconds = approved.reduce((acc, r) => acc + (r.transcription?.chunk?.durationSec || 0), 0)
       const approvedMinutes = approvedSeconds / 60
       const estimatedSLE = approvedMinutes * 1.2
-      items.push({ ...u, _count: { audios, reviews }, approvedMinutes, estimatedSLE })
+      const paidSLE = ((paid?._sum?.amountCents || 0) / 100)
+      const balanceSLE = Math.max(estimatedSLE - paidSLE, 0)
+      items.push({ ...u, _count: { audios, reviews }, approvedMinutes, estimatedSLE, paidSLE, balanceSLE })
     }
 
     return NextResponse.json({ items })

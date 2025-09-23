@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { requireAdmin } from '@/lib/auth'
+import { z } from 'zod'
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -70,5 +71,80 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     })
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || 'Internal Server Error' }, { status: 500 })
+  }
+}
+
+const PatchSchema = z.object({
+  role: z.enum(['ADMIN', 'TRANSCRIBER']).optional(),
+  isActive: z.boolean().optional(),
+})
+
+export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+  try {
+    const admin = await requireAdmin(req)
+    if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+
+    const { id } = params
+    const body = await req.json().catch(() => ({}))
+    const data = PatchSchema.parse(body)
+
+    const target = await prisma.user.findUnique({ where: { id }, select: { id: true, role: true, isActive: true } })
+    if (!target) return NextResponse.json({ error: 'User not found' }, { status: 404 })
+
+    // Safeguards: cannot remove last active admin; prevent self-demotion if last admin
+    const isDemotingAdmin = data.role === 'TRANSCRIBER' && target.role === 'ADMIN'
+    const isDeactivatingAdmin = data.isActive === false && target.role === 'ADMIN'
+    if (isDemotingAdmin || isDeactivatingAdmin) {
+      const otherActiveAdmins = await prisma.user.count({ where: { role: 'ADMIN' as any, isActive: true, id: { not: target.id } } })
+      if (otherActiveAdmins === 0) {
+        return NextResponse.json({ error: 'Cannot remove the last active admin' }, { status: 400 })
+      }
+    }
+    // Optional: block self-demotion if last admin
+    if ((isDemotingAdmin || isDeactivatingAdmin) && admin.id === target.id) {
+      const otherActiveAdmins = await prisma.user.count({ where: { role: 'ADMIN' as any, isActive: true, id: { not: admin.id } } })
+      if (otherActiveAdmins === 0) {
+        return NextResponse.json({ error: 'You cannot remove your own admin access as the last admin' }, { status: 400 })
+      }
+    }
+
+    const updated = await prisma.user.update({
+      where: { id },
+      data: {
+        ...(data.role ? { role: data.role as any } : {}),
+        ...(typeof data.isActive === 'boolean' ? { isActive: data.isActive } : {}),
+      },
+      select: { id: true, email: true, role: true, isActive: true },
+    })
+
+    return NextResponse.json({ user: updated })
+  } catch (e: any) {
+    return NextResponse.json({ error: e?.message || 'Invalid request' }, { status: 400 })
+  }
+}
+
+export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+  try {
+    const admin = await requireAdmin(req)
+    if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+
+    const { id } = params
+    const target = await prisma.user.findUnique({ where: { id }, select: { id: true, role: true, isActive: true } })
+    if (!target) return NextResponse.json({ error: 'User not found' }, { status: 404 })
+
+    if (target.role === 'ADMIN' && target.isActive) {
+      const otherActiveAdmins = await prisma.user.count({ where: { role: 'ADMIN' as any, isActive: true, id: { not: target.id } } })
+      if (otherActiveAdmins === 0) {
+        return NextResponse.json({ error: 'Cannot delete the last active admin' }, { status: 400 })
+      }
+    }
+    if (admin.id === target.id) {
+      return NextResponse.json({ error: 'You cannot delete your own account' }, { status: 400 })
+    }
+
+    await prisma.user.update({ where: { id }, data: { isActive: false } })
+    return NextResponse.json({}, { status: 204 })
+  } catch (e: any) {
+    return NextResponse.json({ error: e?.message || 'Invalid request' }, { status: 400 })
   }
 }

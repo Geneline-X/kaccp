@@ -14,14 +14,15 @@ export default function TranscriberLoginPage() {
   const router = useRouter()
   const [emailOrPhone, setEmailOrPhone] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     try {
-      // backend login expects email; allow either email or phone by mapping
-      const body = emailOrPhone.includes('@') ? { email: emailOrPhone, password } : { email: emailOrPhone, password }
+      // backend accepts emailOrPhone; we pass a unified body
+      const body = { email: emailOrPhone, emailOrPhone, password }
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -30,6 +31,10 @@ export default function TranscriberLoginPage() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || `Login failed: ${res.status}`)
       if (!data.token) throw new Error('No token returned')
+      const role = String(data?.user?.role || '').toUpperCase()
+      if (role !== 'TRANSCRIBER') {
+        throw new Error('This account is not a transcriber. Please use the Admin login.')
+      }
       setToken(data.token)
       toast.success('Welcome back!')
       router.replace('/transcriber')
@@ -61,7 +66,12 @@ export default function TranscriberLoginPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+              <div className="relative">
+                <Input id="password" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} required />
+                <button type="button" aria-label="Toggle password visibility" className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground hover:text-foreground" onClick={() => setShowPassword(v => !v)}>
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
             </div>
             <div className="flex items-center gap-2">
               <Button type="submit" disabled={loading}>{loading ? 'Signing in…' : 'Sign In'}</Button>

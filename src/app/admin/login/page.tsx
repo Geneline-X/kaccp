@@ -12,6 +12,7 @@ export default function AdminLoginPage() {
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -24,6 +25,10 @@ export default function AdminLoginPage() {
         method: 'POST',
         body: JSON.stringify({ email, password })
       })
+      if ((res.user?.role || '').toUpperCase() !== 'ADMIN') {
+        setError('This account does not have admin access. Please use the Transcriber login.')
+        return
+      }
       setToken(res.token)
       router.replace('/admin')
     } catch (err: any) {
@@ -51,7 +56,12 @@ export default function AdminLoginPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+              <div className="relative">
+                <Input id="password" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} required />
+                <button type="button" aria-label="Toggle password visibility" className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground hover:text-foreground" onClick={() => setShowPassword(v => !v)}>
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
             </div>
             {error && <div className="text-sm text-red-600">{error}</div>}
             <Button type="submit" disabled={loading} className="w-full">
