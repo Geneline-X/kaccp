@@ -92,12 +92,9 @@ export default function LeaderboardPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-full overflow-hidden bg-muted">
-                          {it.avatarUrl ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img src={it.avatarUrl} alt="avatar" className="w-full h-full object-cover" />
-                          ) : (
+                          
                             <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">NA</div>
-                          )}
+                         
                         </div>
                         <div>
                           <div className="font-semibold">{it.name}</div>
