@@ -24,6 +24,7 @@ export default function TranscriberTaskPage() {
   const [improving, setImproving] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [aiPreview, setAiPreview] = useState<string | null>(null)
+  const [reporting, setReporting] = useState(false)
 
   useEffect(() => {
     const load = async () => {
@@ -101,6 +102,23 @@ export default function TranscriberTaskPage() {
     }
   }
 
+  const onReportBroken = async () => {
+    if (!confirm('Report this audio as broken? It will be removed from available chunks.')) return
+    try {
+      setReporting(true)
+      await apiFetch('/api/transcriber/chunks/report-broken', {
+        method: 'POST',
+        body: JSON.stringify({ chunkId }),
+      })
+      toast.success('Audio reported as broken')
+      router.replace('/transcriber')
+    } catch (e: any) {
+      toast.error(e.message || 'Report failed')
+    } finally {
+      setReporting(false)
+    }
+  }
+
   if (!ready) return null
   return (
     <div className="min-h-screen p-4 max-w-3xl mx-auto space-y-6">
@@ -122,6 +140,16 @@ export default function TranscriberTaskPage() {
           ) : (
             <div className="text-destructive">No audio URL available</div>
           )}
+          <div className="mt-3">
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={onReportBroken}
+              disabled={reporting || loading}
+            >
+              {reporting ? 'Reporting...' : 'Report Broken Audio'}
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
