@@ -37,6 +37,7 @@ export async function GET(req: NextRequest) {
     const where = {
       status: 'AVAILABLE' as const,
       approvedTranscriptionId: null as any,
+      reportedBroken: false,
       NOT: {
         transcriptions: {
           some: {
