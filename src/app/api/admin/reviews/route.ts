@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
         chunk: { approvedTranscriptionId: null },
       },
       orderBy: { submittedAt: 'asc' },
-      take: 200,
+      take: 500,
       distinct: ['chunkId'], // show only the oldest pending per chunk to avoid duplicates
       select: {
         id: true,
