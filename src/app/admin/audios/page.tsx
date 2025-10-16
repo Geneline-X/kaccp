@@ -115,9 +115,13 @@ export default function AdminAudiosPage() {
         title="Audios" 
         description="Create and manage audio sources"
         actions={
-          <div className="flex gap-2">
-            <Button onClick={() => setShowIngestForm(!showIngestForm)}>{showIngestForm ? 'Cancel Ingest' : 'Ingest YouTube'}</Button>
-            <Button variant="secondary" onClick={() => setShowCreateForm(!showCreateForm)}>{showCreateForm ? 'Cancel Create' : 'Add Source'}</Button>
+          <div className="flex flex-wrap gap-2">
+            <Button onClick={() => setShowIngestForm(!showIngestForm)} className="text-xs md:text-sm">
+              {showIngestForm ? 'Cancel Ingest' : 'Ingest YouTube'}
+            </Button>
+            <Button variant="secondary" onClick={() => setShowCreateForm(!showCreateForm)} className="text-xs md:text-sm">
+              {showCreateForm ? 'Cancel Create' : 'Add Source'}
+            </Button>
           </div>
         }
       />
@@ -197,92 +201,146 @@ export default function AdminAudiosPage() {
           ) : error ? (
             <div className="text-destructive p-4 rounded-md bg-destructive/10">{error}</div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-left border-b">
-                    <th className="px-3 py-2">Title</th>
-                    <th className="px-3 py-2">Status</th>
-                    <th className="px-3 py-2">Source ID</th>
-                    <th className="px-3 py-2">Chunks</th>
-                    <th className="px-3 py-2">Progress</th>
-                    <th className="px-3 py-2">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {items.map((a) => (
-                    <tr key={a.id} className="border-b last:border-0">
-                      <td className="px-3 py-2 align-top">
-                        <div className="font-medium line-clamp-1">{a.title}</div>
-                        <div className="text-xs text-muted-foreground break-all line-clamp-1">{a.originalUri}</div>
-                      </td>
-                      <td className="px-3 py-2 align-top">
-                        <StatusBadge status={a.status as any} />
-                      </td>
-                      <td className="px-3 py-2 align-top">
-                        <div className="flex items-center gap-2">
-                          <code className="text-xs truncate max-w-[200px]" title={a.id}>{a.id}</code>
-                          <Button size="sm" variant="secondary" onClick={async () => { await navigator.clipboard.writeText(a.id); toast.success('Source ID copied'); }}>Copy</Button>
-                        </div>
-                      </td>
-                      <td className="px-3 py-2 align-top">{(a as any)._count?.chunks ?? 0}</td>
-                      <td className="px-3 py-2 align-top w-[260px]">
-                        {renderProgress(a as any)}
-                      </td>
-                      <td className="px-3 py-2 align-top">
-                        <div className="flex flex-wrap gap-2">
-                          <Button asChild size="sm" variant="secondary">
-                            <Link href={`/admin/audios/${a.id}/chunks`}>Manage Chunks</Link>
-                          </Button>
-                          <Button 
-                            size="sm" 
-                            variant="destructive"
-                            disabled={deletingId === a.id}
-                            onClick={async () => {
-                              if (!confirm('Delete this source and all its chunks? This can also purge storage.')) return
-                              try {
-                                setDeletingId(a.id)
-                                await toast.promise(
-                                  (async () => {
-                                    const resp = await fetch(`/api/admin/audios/${a.id}?purge=1`, { method: 'DELETE' })
-                                    if (!resp.ok) throw new Error((await resp.json()).error || `Failed: ${resp.status}`)
-                                    await load()
-                                  })(),
-                                  {
-                                    loading: 'Deleting source…',
-                                    success: 'Audio source deleted',
-                                    error: (e) => e?.message || 'Delete failed',
-                                  }
-                                )
-                              } catch (e: any) {
-                                // error handled by toast.promise
-                              } finally {
-                                setDeletingId(null)
+            <>
+              {/* Mobile Card View */}
+              <div className="md:hidden space-y-3">
+                {items.map((a) => (
+                  <div key={a.id} className="border rounded-lg p-3 space-y-2">
+                    <div>
+                      <div className="font-medium line-clamp-1">{a.title}</div>
+                      <div className="text-xs text-muted-foreground break-words line-clamp-1">{a.originalUri}</div>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <StatusBadge status={a.status as any} />
+                      <span className="text-muted-foreground">{(a as any)._count?.chunks ?? 0} chunks</span>
+                    </div>
+                    {renderProgress(a as any)}
+                    <div className="flex flex-wrap gap-2 pt-2">
+                      <Button asChild size="sm" variant="secondary" className="flex-1">
+                        <Link href={`/admin/audios/${a.id}/chunks`}>Manage</Link>
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="destructive"
+                        disabled={deletingId === a.id}
+                        onClick={async () => {
+                          if (!confirm('Delete this source and all its chunks?')) return
+                          try {
+                            setDeletingId(a.id)
+                            await toast.promise(
+                              (async () => {
+                                const resp = await fetch(`/api/admin/audios/${a.id}?purge=1`, { method: 'DELETE' })
+                                if (!resp.ok) throw new Error((await resp.json()).error || `Failed: ${resp.status}`)
+                                await load()
+                              })(),
+                              {
+                                loading: 'Deleting...',
+                                success: 'Deleted',
+                                error: (e) => e?.message || 'Failed',
                               }
-                            }}
-                          >
-                            {deletingId === a.id ? 'Deleting…' : 'Delete Source'}
-                          </Button>
-                        </div>
-                      </td>
+                            )
+                          } catch (e: any) {
+                          } finally {
+                            setDeletingId(null)
+                          }
+                        }}
+                      >
+                        {deletingId === a.id ? 'Deleting…' : 'Delete'}
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-sm">
+                 <thead>
+                    <tr className="text-left border-b">
+                      <th className="px-3 py-2">Title</th>
+                      <th className="px-3 py-2">Status</th>
+                      <th className="px-3 py-2">Source ID</th>
+                      <th className="px-3 py-2">Chunks</th>
+                      <th className="px-3 py-2">Progress</th>
+                      <th className="px-3 py-2">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-              <div className="mt-4 flex items-center gap-2 justify-between text-sm">
+                  </thead>
+                  <tbody>
+                    {items.map((a) => (
+                      <tr key={a.id} className="border-b last:border-0">
+                        <td className="px-3 py-2 align-top">
+                          <div className="font-medium line-clamp-1">{a.title}</div>
+                          <div className="text-xs text-muted-foreground break-words line-clamp-1">{a.originalUri}</div>
+                        </td>
+                        <td className="px-3 py-2 align-top">
+                          <StatusBadge status={a.status as any} />
+                        </td>
+                        <td className="px-3 py-2 align-top">
+                          <div className="flex items-center gap-2">
+                            <code className="text-xs truncate max-w-[200px]" title={a.id}>{a.id}</code>
+                            <Button size="sm" variant="secondary" onClick={async () => { await navigator.clipboard.writeText(a.id); toast.success('Source ID copied'); }}>Copy</Button>
+                          </div>
+                        </td>
+                        <td className="px-3 py-2 align-top">{(a as any)._count?.chunks ?? 0}</td>
+                        <td className="px-3 py-2 align-top w-[260px]">
+                          {renderProgress(a as any)}
+                        </td>
+                        <td className="px-3 py-2 align-top">
+                          <div className="flex flex-wrap gap-2">
+                            <Button asChild size="sm" variant="secondary">
+                              <Link href={`/admin/audios/${a.id}/chunks`}>Manage Chunks</Link>
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="destructive"
+                              disabled={deletingId === a.id}
+                              onClick={async () => {
+                                if (!confirm('Delete this source and all its chunks? This can also purge storage.')) return
+                                try {
+                                  setDeletingId(a.id)
+                                  await toast.promise(
+                                    (async () => {
+                                      const resp = await fetch(`/api/admin/audios/${a.id}?purge=1`, { method: 'DELETE' })
+                                      if (!resp.ok) throw new Error((await resp.json()).error || `Failed: ${resp.status}`)
+                                      await load()
+                                    })(),
+                                    {
+                                      loading: 'Deleting source…',
+                                      success: 'Audio source deleted',
+                                      error: (e) => e?.message || 'Delete failed',
+                                    }
+                                  )
+                                } catch (e: any) {
+                                  // error handled by toast.promise
+                                } finally {
+                                  setDeletingId(null)
+                                }
+                              }}
+                            >
+                              {deletingId === a.id ? 'Deleting…' : 'Delete Source'}
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              
+              <div className="mt-4 flex flex-col sm:flex-row items-center gap-2 justify-between text-sm">
                 <div className="flex items-center gap-2">
-                  <span>Rows per page</span>
-                  <select className="border rounded px-2 py-1" value={pageSize} onChange={(e) => { setPageSize(parseInt(e.target.value) || 25); setPage(1) }}>
+                  <span className="text-xs sm:text-sm">Rows per page</span>
+                  <select className="border rounded px-2 py-1 text-xs sm:text-sm" value={pageSize} onChange={(e) => { setPageSize(parseInt(e.target.value) || 25); setPage(1) }}>
                     {[10,25,50,100,200].map(n => <option key={n} value={n}>{n}</option>)}
                   </select>
                 </div>
-                <div className="ml-auto flex items-center gap-2">
-                  <span>Page {page} of {Math.max(1, Math.ceil(total / pageSize))}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs sm:text-sm">Page {page} of {Math.max(1, Math.ceil(total / pageSize))}</span>
                   <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage(p => Math.max(1, p - 1))}>Prev</Button>
                   <Button variant="outline" size="sm" disabled={page >= Math.ceil(total / pageSize)} onClick={() => setPage(p => p + 1)}>Next</Button>
                 </div>
               </div>
-            </div>
+            </>
           )}
         </CardContent>
       </Card>

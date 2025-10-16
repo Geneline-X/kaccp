@@ -106,7 +106,7 @@ function ReviewRow({ item, onAction }: { item: any; onAction: () => void }) {
         </div>
         {/* Submitter info */}
         <div className="rounded-md border bg-card/50 p-3 flex flex-col gap-2">
-          <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 md:gap-4">
             <div>
               <div className="font-medium">{item.user?.displayName || item.user?.email}</div>
               <div className="text-xs text-muted-foreground">
@@ -114,7 +114,7 @@ function ReviewRow({ item, onAction }: { item: any; onAction: () => void }) {
                 {item.user?.country ? ` • ${item.user.country}` : ''}
               </div>
             </div>
-            <div className="flex items-center gap-4 text-sm">
+            <div className="flex flex-wrap items-center gap-2 md:gap-4 text-xs md:text-sm">
               <div className="text-muted-foreground">Role: <span className="text-foreground">{item.user?.role}</span></div>
               <div className="text-muted-foreground">Quality: <span className="text-foreground">{typeof item.user?.qualityScore === 'number' ? item.user.qualityScore.toFixed(2) : '—'}</span></div>
               <div className="text-muted-foreground">Earnings: <span className="text-foreground">{typeof item.user?.totalEarningsCents === 'number' ? (item.user.totalEarningsCents/100).toFixed(2) : '0.00'} SLE</span></div>

@@ -104,17 +104,17 @@ export default function AdminDashboardPage() {
         title="Dashboard"
         description="Overview of system activity and performance"
         actions={(
-          <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={runSanitize}>Sanitize Chunks</Button>
-            <Button asChild variant="secondary"><Link href="/leaderboard">Leaderboard</Link></Button>
-            <Button asChild variant="secondary"><Link href="/admin/approved">Approved Data</Link></Button>
-            <Button asChild><Link href="/admin/export">Export Dataset</Link></Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button variant="outline" size="sm" onClick={runSanitize}>Sanitize Chunks</Button>
+            <Button asChild variant="secondary" size="sm"><Link href="/leaderboard">Leaderboard</Link></Button>
+            <Button asChild variant="secondary" size="sm"><Link href="/admin/approved">Approved Data</Link></Button>
+            <Button asChild size="sm"><Link href="/admin/export">Export Dataset</Link></Button>
           </div>
         )}
       />
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader>
             <CardTitle className="text-sm text-muted-foreground">Pending Reviews</CardTitle>
@@ -194,7 +194,7 @@ export default function AdminDashboardPage() {
             {workerHealthLoading ? 'Checking…' : 'Check Worker Health'}
           </Button>
           {workerHealth && (
-            <div className="text-sm text-muted-foreground break-all">
+            <div className="text-sm text-muted-foreground break-words max-w-full">
               {workerHealth.ok ? (
                 <span className="text-green-600">OK</span>
               ) : (
@@ -239,7 +239,7 @@ export default function AdminDashboardPage() {
                     <TableRow key={a.id}>
                       <TableCell>
                         <div className="font-medium line-clamp-1">{a.title}</div>
-                        <div className="text-xs text-muted-foreground break-all line-clamp-1">{a.originalUri}</div>
+                        <div className="text-xs text-muted-foreground break-words line-clamp-1">{a.originalUri}</div>
                       </TableCell>
                       <TableCell className="text-sm">{a.status}</TableCell>
                       <TableCell className="text-sm">{a._count?.chunks ?? 0}</TableCell>
