@@ -209,7 +209,7 @@ export default function ManageChunksPage() {
             ) : null}
           </CardTitle>
           <CardDescription>
-            <div className="text-sm text-muted-foreground break-all">
+          <div className="text-sm text-muted-foreground break-words max-w-full">
               <div className="flex items-center gap-2">
                 <span>Source ID: {sourceId}</span>
                 <Button

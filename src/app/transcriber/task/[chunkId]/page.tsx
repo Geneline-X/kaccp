@@ -175,14 +175,14 @@ export default function TranscriberTaskPage() {
           </DialogHeader>
           <div className="space-y-3">
             <div className="text-sm text-muted-foreground">Preview the corrected text. You can still edit after applying.</div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+            <div className="grid grid-cols-1 gap-3 text-sm">
               <div>
                 <div className="font-medium mb-1">Your text</div>
-                <div className="p-2 rounded border bg-muted whitespace-pre-wrap">{text}</div>
+                <div className="p-2 rounded border bg-muted whitespace-pre-wrap max-h-40 overflow-y-auto">{text}</div>
               </div>
               <div>
                 <div className="font-medium mb-1">AI suggestion</div>
-                <div className="p-2 rounded border bg-muted whitespace-pre-wrap">{aiPreview || text}</div>
+                <div className="p-2 rounded border bg-muted whitespace-pre-wrap max-h-40 overflow-y-auto">{aiPreview || text}</div>
               </div>
             </div>
           </div>

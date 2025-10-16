@@ -341,12 +341,29 @@ export default function TranscriberDashboardPage() {
             <CardDescription>Unsubmitted drafts you can resume</CardDescription>
           </CardHeader>
           <CardContent>
-            {loadingDrafts ? (
-              <div className="flex items-center justify-center h-24"><div className="h-8 w-8 rounded-full border-b-2 border-primary animate-spin"></div></div>
-            ) : drafts.length === 0 ? (
-              <div className="text-muted-foreground">No drafts yet.</div>
-            ) : (
-              <div className="overflow-x-auto">
+          {loadingDrafts ? (
+            <div className="flex items-center justify-center h-24"><div className="h-8 w-8 rounded-full border-b-2 border-primary animate-spin"></div></div>
+          ) : drafts.length === 0 ? (
+            <div className="text-muted-foreground">No drafts yet.</div>
+          ) : (
+            <>
+              {/* Mobile Card View */}
+              <div className="md:hidden space-y-3">
+                {drafts.map((d) => (
+                  <div key={d.id} className="border rounded-lg p-3 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium">Chunk #{d.chunk?.index}</span>
+                      <span className="text-sm text-muted-foreground">{d.chunk?.durationSec}s</span>
+                    </div>
+                    <div className="text-xs text-muted-foreground break-words line-clamp-1">{d.chunk?.sourceId}</div>
+                    <div className="text-xs text-muted-foreground line-clamp-2" title={d.text || ''}>{d.text || ''}</div>
+                    <Button asChild size="sm" className="w-full"><Link href={`/transcriber/task/${d.chunkId}?a=${d.assignmentId || ''}`}>Open</Link></Button>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -361,7 +378,7 @@ export default function TranscriberDashboardPage() {
                     {drafts.map((d) => (
                       <TableRow key={d.id}>
                         <TableCell>#{d.chunk?.index}</TableCell>
-                        <TableCell className="text-xs">{d.chunk?.sourceId}</TableCell>
+                        <TableCell className="text-xs break-words max-w-[200px]">{d.chunk?.sourceId}</TableCell>
                         <TableCell>{d.chunk?.durationSec}s</TableCell>
                         <TableCell className="max-w-[320px] text-xs truncate" title={d.text || ''}>{d.text || ''}</TableCell>
                         <TableCell className="text-right">
@@ -372,7 +389,8 @@ export default function TranscriberDashboardPage() {
                   </TableBody>
                 </Table>
               </div>
-            )}
+            </>
+          )}
           </CardContent>
         </Card>
       )}
@@ -384,14 +402,18 @@ export default function TranscriberDashboardPage() {
             <CardDescription>Click claim to get the next available chunk.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center gap-2 mb-3">
-              <Button onClick={onClaim} disabled={claimingNext}>{claimingNext ? 'Claiming…' : 'Claim next available'}</Button>
-              <div className="ml-auto flex items-center gap-2 text-sm">
-                <span>Page {page} of {Math.max(1, Math.ceil(total / pageSize))}</span>
-                <Button variant="secondary" size="sm" disabled={page <= 1 || loadingAvail} onClick={() => setPage(p => Math.max(1, p - 1))}>Prev</Button>
-                <Button variant="secondary" size="sm" disabled={page >= Math.ceil(total / pageSize) || loadingAvail} onClick={() => setPage(p => p + 1)}>Next</Button>
+           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 mb-3">
+              <Button onClick={onClaim} disabled={claimingNext} size="sm" className="w-full sm:w-auto">
+                {claimingNext ? 'Claiming…' : 'Claim next available'}
+              </Button>
+              <div className="w-full sm:w-auto sm:ml-auto flex flex-wrap items-center gap-2 text-xs sm:text-sm">
+                <span className="whitespace-nowrap">Page {page} of {Math.max(1, Math.ceil(total / pageSize))}</span>
+                <div className="flex items-center gap-2">
+                  <Button variant="secondary" size="sm" disabled={page <= 1 || loadingAvail} onClick={() => setPage(p => Math.max(1, p - 1))}>Prev</Button>
+                  <Button variant="secondary" size="sm" disabled={page >= Math.ceil(total / pageSize) || loadingAvail} onClick={() => setPage(p => p + 1)}>Next</Button>
+                </div>
                 <select
-                  className="border rounded px-2 py-1"
+                  className="border rounded px-2 py-1 text-xs sm:text-sm"
                   value={pageSize}
                   onChange={(e) => setPageSize(parseInt(e.target.value) || 25)}
                 >
@@ -406,34 +428,54 @@ export default function TranscriberDashboardPage() {
             ) : available.length === 0 ? (
               <div className="text-sm text-muted-foreground">No available chunks found.</div>
             ) : (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>#</TableHead>
-                      <TableHead>Source</TableHead>
-                      <TableHead>Duration</TableHead>
-                      <TableHead>Preview</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {available.map((c) => (
-                      <TableRow key={c.id}>
-                        <TableCell>#{c.index}</TableCell>
-                        <TableCell className="text-xs">{c.sourceId}</TableCell>
-                        <TableCell>{c.durationSec}s</TableCell>
-                        <TableCell>{c.url ? <audio src={c.url} controls preload="none" /> : '-'}</TableCell>
-                        <TableCell className="text-right">
-                          <Button size="sm" onClick={() => claimSpecific(c.id)} disabled={claimingChunkId === c.id}>
-                            {claimingChunkId === c.id ? 'Claiming…' : 'Claim'}
-                          </Button>
-                        </TableCell>
+              <>
+                {/* Mobile Card View */}
+                <div className="md:hidden space-y-3">
+                  {available.map((c) => (
+                    <div key={c.id} className="border rounded-lg p-3 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium">Chunk #{c.index}</span>
+                        <span className="text-sm text-muted-foreground">{c.durationSec}s</span>
+                      </div>
+                      <div className="text-xs text-muted-foreground break-words">{c.sourceId}</div>
+                      {c.url && <audio src={c.url} controls preload="none" className="w-full" />}
+                      <Button size="sm" onClick={() => claimSpecific(c.id)} disabled={claimingChunkId === c.id} className="w-full">
+                        {claimingChunkId === c.id ? 'Claiming…' : 'Claim'}
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Desktop Table View */}
+                <div className="hidden md:block overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>#</TableHead>
+                        <TableHead>Source</TableHead>
+                        <TableHead>Duration</TableHead>
+                        <TableHead>Preview</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                    </TableHeader>
+                    <TableBody>
+                      {available.map((c) => (
+                        <TableRow key={c.id}>
+                          <TableCell>#{c.index}</TableCell>
+                          <TableCell className="text-xs break-words max-w-[200px]">{c.sourceId}</TableCell>
+                          <TableCell>{c.durationSec}s</TableCell>
+                          <TableCell>{c.url ? <audio src={c.url} controls preload="none" /> : '-'}</TableCell>
+                          <TableCell className="text-right">
+                            <Button size="sm" onClick={() => claimSpecific(c.id)} disabled={claimingChunkId === c.id}>
+                              {claimingChunkId === c.id ? 'Claiming…' : 'Claim'}
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </>
             )}
           </CardContent>
         </Card>
@@ -451,32 +493,59 @@ export default function TranscriberDashboardPage() {
             ) : assignments.length === 0 ? (
               <div className="text-muted-foreground">No active assignments. Try claiming from the Available tab.</div>
             ) : (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Chunk</TableHead>
-                      <TableHead>Duration</TableHead>
-                      <TableHead>Expires</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {assignments.map((a) => (
-                      <TableRow key={a.id}>
-                        <TableCell>#{a.chunk?.index}</TableCell>
-                        <TableCell>{a.chunk?.durationSec}s</TableCell>
-                        <TableCell>{a.expiresAt ? new Date(a.expiresAt).toLocaleString() : '-'}</TableCell>
-                        <TableCell className="text-right space-x-2">
-                          <Button asChild size="sm"><Link href={`/transcriber/task/${a.chunkId}?a=${a.id}`}>Open</Link></Button>
-                          <Button size="sm" variant="secondary" onClick={loadMy}>Refresh</Button>
-                          <Button size="sm" variant="destructive" disabled={releasingId === a.id} onClick={() => onRelease(a.id)}>{releasingId === a.id ? 'Releasing…' : 'Release'}</Button>
-                        </TableCell>
+              <>
+                {/* Mobile Card View */}
+                <div className="md:hidden space-y-3">
+                  {assignments.map((a) => (
+                    <div key={a.id} className="border rounded-lg p-3 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium">Chunk #{a.chunk?.index}</span>
+                        <span className="text-sm text-muted-foreground">{a.chunk?.durationSec}s</span>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Expires: {a.expiresAt ? new Date(a.expiresAt).toLocaleString() : '-'}
+                      </div>
+                      <div className="flex flex-wrap gap-2 pt-2">
+                        <Button asChild size="sm" className="flex-1"><Link href={`/transcriber/task/${a.chunkId}?a=${a.id}`}>Open</Link></Button>
+                        <Button size="sm" variant="secondary" onClick={loadMy}>Refresh</Button>
+                        <Button size="sm" variant="destructive" disabled={releasingId === a.id} onClick={() => onRelease(a.id)}>
+                          {releasingId === a.id ? 'Releasing…' : 'Release'}
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Desktop Table View */}
+                <div className="hidden md:block overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Chunk</TableHead>
+                        <TableHead>Duration</TableHead>
+                        <TableHead>Expires</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                    </TableHeader>
+                    <TableBody>
+                      {assignments.map((a) => (
+                        <TableRow key={a.id}>
+                          <TableCell>#{a.chunk?.index}</TableCell>
+                          <TableCell>{a.chunk?.durationSec}s</TableCell>
+                          <TableCell>{a.expiresAt ? new Date(a.expiresAt).toLocaleString() : '-'}</TableCell>
+                          <TableCell className="text-right space-x-2">
+                            <Button asChild size="sm"><Link href={`/transcriber/task/${a.chunkId}?a=${a.id}`}>Open</Link></Button>
+                            <Button size="sm" variant="secondary" onClick={loadMy}>Refresh</Button>
+                            <Button size="sm" variant="destructive" disabled={releasingId === a.id} onClick={() => onRelease(a.id)}>
+                              {releasingId === a.id ? 'Releasing…' : 'Release'}
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </>
             )}
           </CardContent>
         </Card>
@@ -526,38 +595,67 @@ export default function TranscriberDashboardPage() {
             ) : submitted.length === 0 ? (
               <div className="text-sm text-muted-foreground">No submissions found.</div>
             ) : (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>#</TableHead>
-                      <TableHead>Source</TableHead>
-                      <TableHead>Duration</TableHead>
-                      <TableHead>Submitted</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {submitted.map((s) => (
-                      <TableRow key={s.id}>
-                        <TableCell>#{s.chunk?.index}</TableCell>
-                        <TableCell className="text-xs">{s.chunk?.sourceId}</TableCell>
-                        <TableCell>{s.chunk?.durationSec}s</TableCell>
-                        <TableCell>{s.submittedAt ? new Date(s.submittedAt).toLocaleString() : '-'}</TableCell>
-                        <TableCell className="text-xs">{s.status}</TableCell>
-                        <TableCell className="text-right">
-                          {s.status === 'EDIT_REQUESTED' ? (
-                            <Button asChild size="sm"><Link href={`/transcriber/task/${s.chunkId}?a=${s.assignmentId || ''}`}>Continue</Link></Button>
-                          ) : (
-                            <Button asChild size="sm" variant="secondary"><Link href={`/transcriber/task/${s.chunkId}`}>View</Link></Button>
-                          )}
-                        </TableCell>
+              <>
+                {/* Mobile Card View */}
+                <div className="md:hidden space-y-3">
+                  {submitted.map((s) => (
+                    <div key={s.id} className="border rounded-lg p-3 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium">Chunk #{s.chunk?.index}</span>
+                        <span className={`text-xs px-2 py-0.5 rounded ${
+                          s.status === 'APPROVED' ? 'bg-green-100 text-green-800' :
+                          s.status === 'REJECTED' ? 'bg-red-100 text-red-800' :
+                          s.status === 'EDIT_REQUESTED' ? 'bg-amber-100 text-amber-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>{s.status}</span>
+                      </div>
+                      <div className="text-xs text-muted-foreground break-words">{s.chunk?.sourceId}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {s.chunk?.durationSec}s • Submitted {s.submittedAt ? new Date(s.submittedAt).toLocaleDateString() : '-'}
+                      </div>
+                      {s.status === 'EDIT_REQUESTED' ? (
+                        <Button asChild size="sm" className="w-full"><Link href={`/transcriber/task/${s.chunkId}?a=${s.assignmentId || ''}`}>Continue</Link></Button>
+                      ) : (
+                        <Button asChild size="sm" variant="secondary" className="w-full"><Link href={`/transcriber/task/${s.chunkId}`}>View</Link></Button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Desktop Table View */}
+                <div className="hidden md:block overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>#</TableHead>
+                        <TableHead>Source</TableHead>
+                        <TableHead>Duration</TableHead>
+                        <TableHead>Submitted</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                    </TableHeader>
+                    <TableBody>
+                      {submitted.map((s) => (
+                        <TableRow key={s.id}>
+                          <TableCell>#{s.chunk?.index}</TableCell>
+                          <TableCell className="text-xs break-words max-w-[200px]">{s.chunk?.sourceId}</TableCell>
+                          <TableCell>{s.chunk?.durationSec}s</TableCell>
+                          <TableCell>{s.submittedAt ? new Date(s.submittedAt).toLocaleString() : '-'}</TableCell>
+                          <TableCell className="text-xs">{s.status}</TableCell>
+                          <TableCell className="text-right">
+                            {s.status === 'EDIT_REQUESTED' ? (
+                              <Button asChild size="sm"><Link href={`/transcriber/task/${s.chunkId}?a=${s.assignmentId || ''}`}>Continue</Link></Button>
+                            ) : (
+                              <Button asChild size="sm" variant="secondary"><Link href={`/transcriber/task/${s.chunkId}`}>View</Link></Button>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </>
             )}
           </CardContent>
         </Card>
