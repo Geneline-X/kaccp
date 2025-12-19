@@ -39,7 +39,7 @@ export default function ReviewerLogin() {
 
       setToken(data.token);
       router.push("/reviewer");
-    } catch (err) {
+    } catch {
       setError("An error occurred. Please try again.");
     } finally {
       setLoading(false);

@@ -158,7 +158,7 @@ export default function AdminReviewPage() {
       setSelectedTranscription(newList[0] || null);
       setEditedText(newList[0]?.text || "");
       setReviewNotes("");
-    } catch (err) {
+    } catch {
       alert("Failed to submit review");
     } finally {
       setSubmittingAction(null);
@@ -219,9 +219,8 @@ export default function AdminReviewPage() {
                   <button
                     key={t.id}
                     onClick={() => selectTranscription(t)}
-                    className={`w-full text-left p-4 hover:bg-gray-50 transition-colors ${
-                      selectedTranscription?.id === t.id ? "bg-blue-50" : ""
-                    }`}
+                    className={`w-full text-left p-4 hover:bg-gray-50 transition-colors ${selectedTranscription?.id === t.id ? "bg-blue-50" : ""
+                      }`}
                   >
                     <div className="text-sm font-medium text-gray-900 truncate">
                       {t.recording.prompt.englishText}
@@ -230,7 +229,7 @@ export default function AdminReviewPage() {
                       {t.recording.language.name} • {t.recording.durationSec.toFixed(1)}s
                     </div>
                     <div className="text-xs text-gray-400 mt-1 truncate">
-                      "{t.text}"
+                      &quot;{t.text}&quot;
                     </div>
                   </button>
                 ))}

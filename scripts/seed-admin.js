@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 /* Seed a master admin user using environment variables.
  * Required env:
  * - MASTER_ADMIN_EMAIL

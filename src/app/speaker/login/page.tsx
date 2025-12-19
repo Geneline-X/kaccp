@@ -32,7 +32,7 @@ export default function SpeakerLogin() {
       }
 
       setToken(data.token);
-      
+
       // V2: Redirect based on role
       if (data.user.role === "ADMIN") {
         router.push("/admin/v2");
@@ -41,7 +41,7 @@ export default function SpeakerLogin() {
       } else {
         router.push("/speaker");
       }
-    } catch (err) {
+    } catch {
       setError("An error occurred. Please try again.");
     } finally {
       setLoading(false);
@@ -105,7 +105,7 @@ export default function SpeakerLogin() {
 
           <div className="mt-6 text-center">
             <p className="text-gray-600">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link href="/speaker/register" className="text-blue-600 hover:underline">
                 Register here
               </Link>

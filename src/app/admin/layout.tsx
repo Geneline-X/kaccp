@@ -21,7 +21,7 @@ const NAV = [
   { href: '/admin/payments', label: 'Payments' },
 ]
 
-function SidebarContent({ pathname, router, onNavigate }: { pathname: string; router: any; onNavigate?: () => void }) {
+function SidebarContent({ pathname, router, onNavigate }: { pathname: string; router: ReturnType<typeof useRouter>; onNavigate?: () => void }) {
   return (
     <>
       <div className="mb-6 flex items-center gap-2">

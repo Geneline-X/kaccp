@@ -110,7 +110,7 @@ export default function TranscriberV2Dashboard() {
 
       // Navigate to transcription page
       router.push(`/transcriber/v2/task/${recordingId}`);
-    } catch (err) {
+    } catch {
       alert("Failed to claim recording");
     } finally {
       setClaimingId(null);

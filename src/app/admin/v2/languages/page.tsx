@@ -125,7 +125,7 @@ export default function AdminLanguagesPage() {
         speakerRatePerMinute: 0.05,
         transcriberRatePerMin: 0.03,
       });
-    } catch (err) {
+    } catch {
       setError("Failed to create language");
     }
   };
@@ -134,7 +134,7 @@ export default function AdminLanguagesPage() {
   const handleUpdateLanguage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingLanguage) return;
-    
+
     setError("");
     setSaving(true);
 
@@ -164,7 +164,7 @@ export default function AdminLanguagesPage() {
       // Update in list
       setLanguages(languages.map(l => l.id === editingLanguage.id ? { ...l, ...data.language } : l));
       setEditingLanguage(null);
-    } catch (err) {
+    } catch {
       setError("Failed to update language");
     } finally {
       setSaving(false);
@@ -312,11 +312,10 @@ export default function AdminLanguagesPage() {
                       </td>
                       <td className="px-6 py-4">
                         <span
-                          className={`px-2 py-1 text-xs rounded ${
-                            lang.isActive
+                          className={`px-2 py-1 text-xs rounded ${lang.isActive
                               ? "bg-green-100 text-green-800"
                               : "bg-gray-100 text-gray-800"
-                          }`}
+                            }`}
                         >
                           {lang.isActive ? "Active" : "Inactive"}
                         </span>
