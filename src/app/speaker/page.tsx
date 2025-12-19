@@ -13,12 +13,14 @@ interface Language {
   targetMinutes: number;
   collectedMinutes: number;
   approvedMinutes: number;
+  speakerRatePerMinute: number;
 }
 
 interface Stats {
   totalRecordings: number;
   totalDurationSec: number;
-  byStatus: { status: string; _count: number }[];
+  approvedDurationSec: number;
+  byStatus: { status: string; _count: number; _sum?: { durationSec: number } }[];
 }
 
 export default function SpeakerDashboard() {
@@ -69,9 +71,12 @@ export default function SpeakerDashboard() {
             (sum: number, s: any) => sum + (s._sum?.durationSec || 0),
             0
           );
+          const approvedStat = data.stats.find((s: any) => s.status === "APPROVED");
+          const approvedDuration = approvedStat?._sum?.durationSec || 0;
           setStats({
             totalRecordings: data.pagination?.total || 0,
             totalDurationSec: totalDuration,
+            approvedDurationSec: approvedDuration,
             byStatus: data.stats,
           });
         }
@@ -113,8 +118,31 @@ export default function SpeakerDashboard() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        {/* Earnings Card */}
+        <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl shadow-lg p-6 mb-8 text-white">
+          <div className="flex justify-between items-start">
+            <div>
+              <h3 className="text-sm font-medium text-green-100">Estimated Earnings</h3>
+              <p className="text-4xl font-bold mt-1">
+                ${((user?.totalEarningsCents || 0) / 100).toFixed(2)}
+              </p>
+              <p className="text-sm text-green-100 mt-2">
+                Based on {Math.round((stats?.approvedDurationSec || 0) / 60)} approved minutes
+              </p>
+            </div>
+            <div className="text-right">
+              <div className="bg-white/20 rounded-lg px-4 py-2">
+                <p className="text-xs text-green-100">Pending</p>
+                <p className="text-lg font-semibold">
+                  {Math.round(((stats?.totalDurationSec || 0) - (stats?.approvedDurationSec || 0)) / 60)} min
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-sm font-medium text-gray-500">Total Recordings</h3>
             <p className="text-3xl font-bold text-gray-900">
@@ -125,6 +153,12 @@ export default function SpeakerDashboard() {
             <h3 className="text-sm font-medium text-gray-500">Total Duration</h3>
             <p className="text-3xl font-bold text-gray-900">
               {Math.round((stats?.totalDurationSec || 0) / 60)} min
+            </p>
+          </div>
+          <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="text-sm font-medium text-gray-500">Approved</h3>
+            <p className="text-3xl font-bold text-green-600">
+              {Math.round((stats?.approvedDurationSec || 0) / 60)} min
             </p>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
@@ -183,9 +217,14 @@ export default function SpeakerDashboard() {
                             style={{ width: `${Math.min(progress, 100)}%` }}
                           ></div>
                         </div>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {Math.round(lang.approvedMinutes / 60)}h / {Math.round(lang.targetMinutes / 60)}h
-                        </p>
+                        <div className="flex justify-between items-center mt-2">
+                          <p className="text-xs text-gray-500">
+                            {Math.round(lang.approvedMinutes / 60)}h / {Math.round(lang.targetMinutes / 60)}h
+                          </p>
+                          <span className="text-xs font-medium text-green-600">
+                            ${lang.speakerRatePerMinute?.toFixed(2) || "0.00"}/min
+                          </span>
+                        </div>
                       </div>
                     </Link>
                   );

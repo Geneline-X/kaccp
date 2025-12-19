@@ -82,6 +82,11 @@ export default function TranscriberLoginPage() {
               <Button type="submit" disabled={loading}>{loading ? 'Signing in…' : 'Sign In'}</Button>
               <Button type="button" variant="secondary" onClick={() => router.push('/transcriber/v2/register')}>Register</Button>
             </div>
+            <div className="text-center mt-4">
+              <Link href="/speaker/login" className="text-sm text-muted-foreground hover:text-foreground">
+                Are you a speaker? Login here →
+              </Link>
+            </div>
             <div className="text-xs text-muted-foreground">Built by <Link href="https://geneline-x.net" className="underline" target="_blank">Geneline-X</Link></div>
           </form>
         </CardContent>

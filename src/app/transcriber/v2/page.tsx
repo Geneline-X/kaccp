@@ -45,7 +45,7 @@ export default function TranscriberV2Dashboard() {
   const [availableRecordings, setAvailableRecordings] = useState<Recording[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
-  const [claiming, setClaiming] = useState(false);
+  const [claimingId, setClaimingId] = useState<string | null>(null);
 
   const token = typeof window !== "undefined" ? getToken() : null;
 
@@ -91,7 +91,7 @@ export default function TranscriberV2Dashboard() {
 
   // Claim a recording
   const claimRecording = async (recordingId: string) => {
-    setClaiming(true);
+    setClaimingId(recordingId);
     try {
       const res = await fetch("/api/v2/transcriber/claim", {
         method: "POST",
@@ -113,7 +113,7 @@ export default function TranscriberV2Dashboard() {
     } catch (err) {
       alert("Failed to claim recording");
     } finally {
-      setClaiming(false);
+      setClaimingId(null);
     }
   };
 
@@ -260,10 +260,17 @@ export default function TranscriberV2Dashboard() {
                   </div>
                   <button
                     onClick={() => claimRecording(recording.id)}
-                    disabled={claiming || activeAssignments.length > 0}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={claimingId !== null || activeAssignments.length > 0}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
-                    {claiming ? "Claiming..." : "Claim"}
+                    {claimingId === recording.id ? (
+                      <>
+                        <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+                        Claiming...
+                      </>
+                    ) : (
+                      "Claim"
+                    )}
                   </button>
                 </div>
               ))
