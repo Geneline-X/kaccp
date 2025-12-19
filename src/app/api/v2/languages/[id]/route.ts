@@ -5,11 +5,12 @@ import { getAuthUser } from "@/lib/auth";
 // GET /api/v2/languages/[id] - Get a single language with stats
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const language = await prisma.language.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         country: true,
         _count: {
@@ -28,7 +29,7 @@ export async function GET(
     // Get recording stats by status
     const recordingStats = await prisma.recording.groupBy({
       by: ["status"],
-      where: { languageId: params.id },
+      where: { languageId: id },
       _count: true,
     });
 
@@ -53,9 +54,10 @@ export async function GET(
 // PATCH /api/v2/languages/[id] - Update a language (Admin only)
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const user = await getAuthUser(req);
     if (!user || user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -72,14 +74,14 @@ export async function PATCH(
     } = body;
 
     const language = await prisma.language.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         ...(name && { name }),
         ...(nativeName !== undefined && { nativeName }),
         ...(typeof isActive === "boolean" && { isActive }),
-        ...(targetMinutes && { targetMinutes }),
-        ...(speakerRatePerMinute && { speakerRatePerMinute }),
-        ...(transcriberRatePerMin && { transcriberRatePerMin }),
+        ...(typeof targetMinutes === "number" && { targetMinutes }),
+        ...(typeof speakerRatePerMinute === "number" && { speakerRatePerMinute }),
+        ...(typeof transcriberRatePerMin === "number" && { transcriberRatePerMin }),
       },
       include: {
         country: true,
@@ -99,9 +101,10 @@ export async function PATCH(
 // DELETE /api/v2/languages/[id] - Delete a language (Admin only)
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const user = await getAuthUser(req);
     if (!user || user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -109,7 +112,7 @@ export async function DELETE(
 
     // Check if language has recordings
     const recordingCount = await prisma.recording.count({
-      where: { languageId: params.id },
+      where: { languageId: id },
     });
 
     if (recordingCount > 0) {
@@ -121,11 +124,11 @@ export async function DELETE(
 
     // Delete prompts first
     await prisma.prompt.deleteMany({
-      where: { languageId: params.id },
+      where: { languageId: id },
     });
 
     await prisma.language.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json({ success: true });
