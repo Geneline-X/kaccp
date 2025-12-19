@@ -142,7 +142,7 @@ export default function TranscriberV2Dashboard() {
             <button
               onClick={() => {
                 clearToken();
-                router.push("/transcriber/login");
+                router.push("/transcriber/v2");
               }}
               className="text-sm text-gray-500 hover:text-gray-700"
             >
