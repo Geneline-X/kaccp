@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getToken } from "@/lib/client";
+import toWav from "audiobuffer-to-wav";
 
 interface Prompt {
   id: string;
@@ -38,8 +39,32 @@ export default function RecordPage() {
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<number>(0);
+  const audioContextRef = useRef<AudioContext | null>(null);
 
   const currentPrompt = prompts[currentPromptIndex];
+
+  // Convert audio blob to WAV format
+  const convertToWav = async (blob: Blob): Promise<Blob> => {
+    try {
+      // Create AudioContext if not exists
+      if (!audioContextRef.current) {
+        audioContextRef.current = new AudioContext({ sampleRate: 48000 });
+      }
+      const audioContext = audioContextRef.current;
+
+      // Decode the audio data
+      const arrayBuffer = await blob.arrayBuffer();
+      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+      // Convert to WAV
+      const wavBuffer = toWav(audioBuffer);
+      return new Blob([wavBuffer], { type: "audio/wav" });
+    } catch (err) {
+      console.error("Failed to convert to WAV:", err);
+      // Return original blob if conversion fails
+      return blob;
+    }
+  };
 
   // Fetch prompts
   useEffect(() => {
@@ -151,7 +176,12 @@ export default function RecordPage() {
     try {
       const token = getToken();
 
-      // 1. Get upload URL
+      // 1. Convert audio to WAV format
+      setError("Converting to WAV...");
+      const wavBlob = await convertToWav(audioBlob);
+      setError(null);
+
+      // 2. Get upload URL (always request WAV)
       const uploadUrlRes = await fetch("/api/v2/speaker/upload-url", {
         method: "POST",
         headers: {
@@ -160,7 +190,7 @@ export default function RecordPage() {
         },
         body: JSON.stringify({
           promptId: currentPrompt.id,
-          contentType: audioBlob.type,
+          contentType: "audio/wav",
         }),
       });
 
@@ -169,13 +199,13 @@ export default function RecordPage() {
         throw new Error(uploadUrlData.error);
       }
 
-      // 2. Upload audio (GCS or local)
+      // 3. Upload WAV audio (GCS or local)
       const uploadRes = await fetch(uploadUrlData.uploadUrl, {
         method: "PUT",
         headers: {
-          "Content-Type": audioBlob.type,
+          "Content-Type": "audio/wav",
         },
-        body: audioBlob,
+        body: wavBlob,
       });
 
       // Check if upload failed (for GCS, non-2xx means error)
@@ -185,7 +215,7 @@ export default function RecordPage() {
         throw new Error("Failed to upload audio to storage");
       }
 
-      // 3. Create recording record
+      // 4. Create recording record
       const recordingRes = await fetch("/api/v2/speaker/recordings", {
         method: "POST",
         headers: {
@@ -196,7 +226,7 @@ export default function RecordPage() {
           promptId: currentPrompt.id,
           audioUrl: uploadUrlData.audioUrl,
           durationSec: duration,
-          fileSize: audioBlob.size,
+          fileSize: wavBlob.size,
           sampleRate: 48000,
           deviceInfo: navigator.userAgent,
         }),
