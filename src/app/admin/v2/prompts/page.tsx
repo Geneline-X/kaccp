@@ -157,7 +157,7 @@ export default function AdminPromptsPage() {
         emotion: "NEUTRAL",
         instruction: "",
       });
-    } catch (err) {
+    } catch {
       alert("Failed to create prompt");
     }
   };
@@ -167,10 +167,10 @@ export default function AdminPromptsPage() {
     const result: string[] = [];
     let current = "";
     let inQuotes = false;
-    
+
     for (let i = 0; i < line.length; i++) {
       const char = line[i];
-      
+
       if (char === '"') {
         inQuotes = !inQuotes;
       } else if (char === ',' && !inQuotes) {
@@ -192,9 +192,9 @@ export default function AdminPromptsPage() {
     reader.onload = (event) => {
       const text = event.target?.result as string;
       const lines = text.split(/\r?\n/).filter((line) => line.trim());
-      
+
       // Parse header row
-      const headers = parseCSVLine(lines[0]).map((h) => 
+      const headers = parseCSVLine(lines[0]).map((h) =>
         h.replace(/^"|"$/g, "").trim()
       );
 
@@ -242,7 +242,7 @@ export default function AdminPromptsPage() {
         // Refresh prompts list
         setPagination({ ...pagination, page: 1 });
       }
-    } catch (err) {
+    } catch {
       setImportResult({ error: "Failed to import prompts" });
     } finally {
       setImporting(false);
@@ -394,11 +394,10 @@ export default function AdminPromptsPage() {
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className={`px-2 py-1 text-xs rounded ${
-                          prompt.isActive
+                        className={`px-2 py-1 text-xs rounded ${prompt.isActive
                             ? "bg-green-100 text-green-800"
                             : "bg-gray-100 text-gray-800"
-                        }`}
+                          }`}
                       >
                         {prompt.isActive ? "Active" : "Inactive"}
                       </span>
@@ -615,11 +614,10 @@ export default function AdminPromptsPage() {
 
             {importResult && (
               <div
-                className={`mb-4 p-3 rounded-lg ${
-                  importResult.success
+                className={`mb-4 p-3 rounded-lg ${importResult.success
                     ? "bg-green-100 text-green-800"
                     : "bg-red-100 text-red-800"
-                }`}
+                  }`}
               >
                 {importResult.success ? (
                   <>

@@ -12,7 +12,7 @@ export default function TermsPage() {
           <CardContent className="prose prose-sm max-w-none">
             <h3>Terms of Service</h3>
             <ol>
-              <li><strong>Acceptance of Terms:</strong> By creating an account, accessing, or using the KACCP Platform ("the Platform"), you agree to be bound by these Terms of Service. If you do not agree, you may not use the Platform. You must be at least 18 years of age or older to use this service.</li>
+              <li><strong>Acceptance of Terms:</strong> By creating an account, accessing, or using the KACCP Platform (&quot;the Platform&quot;), you agree to be bound by these Terms of Service. If you do not agree, you may not use the Platform. You must be at least 18 years of age or older to use this service.</li>
               <li><strong>User Accounts:</strong> You agree to provide accurate and complete information during registration and to keep this information updated. You are responsible for maintaining the confidentiality of your account password and for all activities that occur under your account. You agree to notify us immediately of any unauthorized use of your account.</li>
               <li><strong>User Conduct:</strong> You agree to use the Platform only for its intended purpose of transcribing Krio audio content. You shall not upload, submit, or transmit any content that is illegal, defamatory, obscene, or that infringes on the intellectual property or privacy rights of any third party. Your use of the Platform must comply with all applicable local, national, and international laws.</li>
               <li><strong>Intellectual Property and Data Ownership:</strong>
@@ -22,8 +22,8 @@ export default function TermsPage() {
                   <li>You represent and warrant that your transcriptions are your original work and do not infringe upon any third-party intellectual property rights. You agree that the KACCP Platform owns all rights, title, and interest in and to the final aggregated dataset.</li>
                 </ul>
               </li>
-              <li><strong>Payment and Compensation:</strong> Payment for your transcription work is based solely on the amount of work that is reviewed and approved by the KACCP Platform. The current rate is specified on the Platform and is subject to change at our discretion. Payment will be made through an agreed-upon method as specified in the Platform's payment policy.</li>
-              <li><strong>Disclaimers and Limitation of Liability:</strong> The Platform is provided "as is" and "as available." We do not make any warranties, express or implied, regarding the Platform or your use of it. We shall not be liable for any damages, including but not limited to direct, indirect, incidental, or consequential damages, arising from your use of the Platform or your inability to use it.</li>
+              <li><strong>Payment and Compensation:</strong> Payment for your transcription work is based solely on the amount of work that is reviewed and approved by the KACCP Platform. The current rate is specified on the Platform and is subject to change at our discretion. Payment will be made through an agreed-upon method as specified in the Platform&apos;s payment policy.</li>
+              <li><strong>Disclaimers and Limitation of Liability:</strong> The Platform is provided &quot;as is&quot; and &quot;as available.&quot; We do not make any warranties, express or implied, regarding the Platform or your use of it. We shall not be liable for any damages, including but not limited to direct, indirect, incidental, or consequential damages, arising from your use of the Platform or your inability to use it.</li>
               <li><strong>Termination:</strong> We reserve the right to suspend or terminate your account and access to the Platform at any time, with or without cause, including for any violation of these Terms.</li>
             </ol>
 

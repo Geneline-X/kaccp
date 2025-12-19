@@ -30,7 +30,13 @@ interface ExportData {
     totalDurationHours: number;
     uniqueSpeakers: number;
   };
-  data: any[];
+  data: Array<{
+    id: string;
+    audio_file: string;
+    transcription: string;
+    duration_sec: number;
+    category: string;
+  }>;
   exportedAt: string;
 }
 
@@ -86,7 +92,7 @@ export default function AdminExportPage() {
       }
 
       setExportData(data);
-    } catch (err) {
+    } catch {
       setError("Failed to fetch export data");
     } finally {
       setExporting(false);
@@ -271,7 +277,7 @@ export default function AdminExportPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {exportData.data.slice(0, 10).map((row: any) => (
+                    {exportData.data.slice(0, 10).map((row) => (
                       <tr key={row.id}>
                         <td className="px-4 py-2 text-sm font-mono text-gray-900">
                           {row.id}
@@ -327,7 +333,7 @@ export default function AdminExportPage() {
             </h2>
             <ol className="list-decimal list-inside space-y-2 text-gray-600">
               <li>Select a language from the dropdown above</li>
-              <li>Click "Preview Export" to see the data summary</li>
+              <li>Click &quot;Preview Export&quot; to see the data summary</li>
               <li>Download in CSV format (LJSpeech-compatible) or JSON format</li>
               <li>Use the audio file paths to download the corresponding WAV files from GCS</li>
             </ol>
@@ -338,7 +344,7 @@ export default function AdminExportPage() {
               </h3>
               <p className="text-sm text-yellow-700">
                 Audio files are stored in Google Cloud Storage. The export contains
-                the GCS paths. You'll need to use gsutil or the GCS console to
+                the GCS paths. You&apos;ll need to use gsutil or the GCS console to
                 download the actual audio files for TTS training.
               </p>
             </div>

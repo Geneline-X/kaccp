@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable @typescript-eslint/no-require-imports */
 /*
 Recompute User.totalEarningsCents from the authoritative wallet ledger.
 
@@ -16,7 +17,7 @@ Notes:
 
 try {
   require('dotenv').config()
-} catch (_) {
+} catch {
   // dotenv not installed; proceed assuming env vars are provided by the shell
 }
 const { PrismaClient } = require('@prisma/client')

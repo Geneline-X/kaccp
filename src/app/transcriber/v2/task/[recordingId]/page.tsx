@@ -81,7 +81,7 @@ export default function TranscriptionTaskPage() {
             rec = assignment.recording;
           }
         }
-        
+
         if (rec) {
           setRecording(rec);
           // Fetch signed audio URL
@@ -139,7 +139,7 @@ export default function TranscriptionTaskPage() {
 
       // Success - go back to dashboard
       router.push("/transcriber/v2");
-    } catch (err) {
+    } catch {
       setError("Failed to submit transcription");
     } finally {
       setSubmitting(false);
@@ -178,7 +178,7 @@ export default function TranscriptionTaskPage() {
 
       // Success - go back to dashboard
       router.push("/transcriber/v2");
-    } catch (err) {
+    } catch {
       setError("Failed to flag recording");
     } finally {
       setSubmitting(false);
@@ -318,7 +318,7 @@ export default function TranscriptionTaskPage() {
           <h3 className="font-semibold mb-2">Transcription Tips:</h3>
           <ul className="text-sm text-gray-400 space-y-1">
             <li>• Write exactly what you hear, including filler words</li>
-            <li>• Use the language's standard spelling if available</li>
+            <li>• Use the language&apos;s standard spelling if available</li>
             <li>• Flag recordings with poor audio quality</li>
             <li>• Listen multiple times if needed</li>
           </ul>
@@ -338,11 +338,10 @@ export default function TranscriptionTaskPage() {
               {FLAG_REASONS.map((reason) => (
                 <label
                   key={reason.value}
-                  className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors ${
-                    flagReason === reason.value
-                      ? "bg-red-900/50 border border-red-500"
-                      : "bg-gray-700 hover:bg-gray-600"
-                  }`}
+                  className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors ${flagReason === reason.value
+                    ? "bg-red-900/50 border border-red-500"
+                    : "bg-gray-700 hover:bg-gray-600"
+                    }`}
                 >
                   <input
                     type="radio"

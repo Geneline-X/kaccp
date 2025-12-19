@@ -150,7 +150,7 @@ function RecordContent() {
           stopRecording();
         }
       }, 100);
-    } catch (err) {
+    } catch {
       setError("Could not access microphone. Please allow microphone access.");
     }
   }, []);

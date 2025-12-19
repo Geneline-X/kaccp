@@ -95,7 +95,7 @@ export default function TranscriberRegister() {
 
       setToken(data.token);
       router.push("/transcriber/v2");
-    } catch (err) {
+    } catch {
       setError("An error occurred. Please try again.");
     } finally {
       setLoading(false);
@@ -218,11 +218,10 @@ export default function TranscriberRegister() {
                     key={lang.id}
                     type="button"
                     onClick={() => toggleLanguage(lang.code)}
-                    className={`p-3 rounded-lg border text-left transition-all ${
-                      selectedLanguages.includes(lang.code)
+                    className={`p-3 rounded-lg border text-left transition-all ${selectedLanguages.includes(lang.code)
                         ? "border-green-500 bg-green-50 text-green-700"
                         : "border-gray-200 hover:border-gray-300"
-                    }`}
+                      }`}
                   >
                     <div className="font-medium">{lang.name}</div>
                     <div className="text-xs text-gray-500">{lang.country.name}</div>

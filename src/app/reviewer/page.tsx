@@ -174,7 +174,7 @@ export default function ReviewerDashboard() {
       setEditedText(newList[0]?.text || "");
       setReviewNotes("");
       setSignedAudioUrl(null);
-    } catch (err) {
+    } catch {
       alert("Failed to submit review");
     } finally {
       setSubmittingAction(null);
@@ -262,9 +262,8 @@ export default function ReviewerDashboard() {
                   <button
                     key={t.id}
                     onClick={() => selectTranscription(t)}
-                    className={`w-full text-left p-4 hover:bg-gray-50 transition-colors ${
-                      selectedTranscription?.id === t.id ? "bg-purple-50" : ""
-                    }`}
+                    className={`w-full text-left p-4 hover:bg-gray-50 transition-colors ${selectedTranscription?.id === t.id ? "bg-purple-50" : ""
+                      }`}
                   >
                     <div className="text-sm font-medium text-gray-900 truncate">
                       {t.recording.prompt.englishText}
@@ -273,7 +272,7 @@ export default function ReviewerDashboard() {
                       {t.recording.language.name} • {t.recording.durationSec.toFixed(1)}s
                     </div>
                     <div className="text-xs text-gray-400 mt-1 truncate">
-                      "{t.text}"
+                      &quot;{t.text}&quot;
                     </div>
                   </button>
                 ))}

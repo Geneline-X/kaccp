@@ -95,7 +95,7 @@ export default function SpeakerRegister() {
 
       setToken(data.token);
       router.push("/speaker");
-    } catch (err) {
+    } catch {
       setError("An error occurred. Please try again.");
     } finally {
       setLoading(false);
@@ -218,11 +218,10 @@ export default function SpeakerRegister() {
                     key={lang.id}
                     type="button"
                     onClick={() => toggleLanguage(lang.code)}
-                    className={`p-3 rounded-lg border text-left transition-all ${
-                      selectedLanguages.includes(lang.code)
+                    className={`p-3 rounded-lg border text-left transition-all ${selectedLanguages.includes(lang.code)
                         ? "border-blue-500 bg-blue-50 text-blue-700"
                         : "border-gray-200 hover:border-gray-300"
-                    }`}
+                      }`}
                   >
                     <div className="font-medium">{lang.name}</div>
                     <div className="text-xs text-gray-500">{lang.country.name}</div>

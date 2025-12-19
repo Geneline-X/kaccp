@@ -63,7 +63,7 @@ export default function ProfilePage() {
         if (String(parsed?.error || '').toLowerCase().includes('phone')) {
           msg = parsed.error
         }
-      } catch {}
+      } catch { }
       toast.error(msg)
     } finally {
       setSaving(false)
@@ -107,7 +107,7 @@ export default function ProfilePage() {
             <div className="space-y-1">
               <Label htmlFor="phone">Phone for payouts</Label>
               <Input id="phone" placeholder="e.g. +232 76 123 456" value={phone} onChange={(e) => setPhone(e.target.value)} />
-              <div className="text-xs text-muted-foreground">We'll use this number to send your earnings.</div>
+              <div className="text-xs text-muted-foreground">We&apos;ll use this number to send your earnings.</div>
             </div>
           </div>
 
