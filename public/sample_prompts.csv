@@ -1,0 +1,50 @@
+english_text,category,emotion,instruction,target_duration_sec
+"Good morning, how are you?",GREETINGS,NEUTRAL,,5
+"Hello, nice to meet you!",GREETINGS,HAPPY,,4
+"Goodbye, see you tomorrow!",GREETINGS,NEUTRAL,,4
+"Thank you very much!",GREETINGS,HAPPY,"Say with gratitude",3
+"One, two, three, four, five",NUMBERS_MONEY,NEUTRAL,,5
+"The price is fifty thousand",NUMBERS_MONEY,NEUTRAL,,4
+"How much does this cost?",NUMBERS_MONEY,QUESTION,,4
+"I have one hundred dollars",NUMBERS_MONEY,NEUTRAL,,4
+"What is your name?",QUESTIONS,QUESTION,,3
+"Where are you going?",QUESTIONS,QUESTION,,3
+"When will you come back?",QUESTIONS,QUESTION,,4
+"Why did you do that?",QUESTIONS,QUESTION,,4
+"How do I get to the market?",QUESTIONS,QUESTION,,5
+"Please come here",COMMANDS_REQUESTS,NEUTRAL,,3
+"Help me with this",COMMANDS_REQUESTS,URGENT,,3
+"Wait for me please",COMMANDS_REQUESTS,NEUTRAL,,3
+"Give me some water",COMMANDS_REQUESTS,NEUTRAL,,3
+"I am so happy today!",EMOTIONS_HAPPY,HAPPY,"Say with excitement",4
+"This is wonderful news!",EMOTIONS_HAPPY,EXCITED,,4
+"I love this place!",EMOTIONS_HAPPY,HAPPY,,3
+"I am very sad",EMOTIONS_SAD,SAD,,3
+"This makes me angry",EMOTIONS_SAD,ANGRY,,4
+"I am disappointed",EMOTIONS_SAD,SAD,,3
+"I am going to work now",DAILY_LIFE,NEUTRAL,,4
+"The food is ready",DAILY_LIFE,NEUTRAL,,3
+"I need to go to the market",DAILY_LIFE,NEUTRAL,,5
+"The children are at school",DAILY_LIFE,NEUTRAL,,4
+"How much is this?",MARKET_SHOPPING,QUESTION,,3
+"That is too expensive",MARKET_SHOPPING,NEUTRAL,,4
+"Give me a discount please",MARKET_SHOPPING,NEUTRAL,,4
+"I want to buy fish",MARKET_SHOPPING,NEUTRAL,,4
+"Turn left at the corner",DIRECTIONS_PLACES,NEUTRAL,,4
+"The school is near the market",DIRECTIONS_PLACES,NEUTRAL,,5
+"Go straight ahead",DIRECTIONS_PLACES,NEUTRAL,,3
+"It is behind the church",DIRECTIONS_PLACES,NEUTRAL,,4
+"My mother is at home",FAMILY_PEOPLE,NEUTRAL,,4
+"The children are playing outside",FAMILY_PEOPLE,NEUTRAL,,5
+"My brother is coming tomorrow",FAMILY_PEOPLE,NEUTRAL,,5
+"I feel sick today",HEALTH,SAD,,3
+"Where is the hospital?",HEALTH,QUESTION,,4
+"I need medicine",HEALTH,URGENT,,3
+"My head hurts",HEALTH,SAD,,3
+"It is raining outside",WEATHER_TIME,NEUTRAL,,4
+"The sun is very hot today",WEATHER_TIME,NEUTRAL,,5
+"I will come tomorrow morning",WEATHER_TIME,NEUTRAL,,5
+"The power has gone",LOCAL_SCENARIOS,SAD,,3
+"The okada is coming",LOCAL_SCENARIOS,NEUTRAL,,3
+"Let us go to the beach",LOCAL_SCENARIOS,HAPPY,,4
+"The generator is on",LOCAL_SCENARIOS,NEUTRAL,,4

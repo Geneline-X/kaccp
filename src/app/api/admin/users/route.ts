@@ -7,12 +7,12 @@ export async function POST(req: NextRequest) {
     const admin = await requireAdmin(req)
     if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-    const { email, password, displayName, role } = await req.json()
+    const { email, phone, password, displayName, role } = await req.json()
     if (!email || !password) {
       return NextResponse.json({ error: 'Email and password are required' }, { status: 400 })
     }
     const roleNorm = (role || 'TRANSCRIBER').toUpperCase()
-    if (!['ADMIN', 'TRANSCRIBER'].includes(roleNorm)) {
+    if (!['ADMIN', 'TRANSCRIBER', 'SPEAKER'].includes(roleNorm)) {
       return NextResponse.json({ error: 'Invalid role' }, { status: 400 })
     }
 
@@ -23,11 +23,12 @@ export async function POST(req: NextRequest) {
     const user = await prisma.user.create({
       data: {
         email,
+        phone: phone || null,
         passwordHash,
         displayName: displayName || null,
-        role: roleNorm as 'ADMIN' | 'TRANSCRIBER',
+        role: roleNorm as 'ADMIN' | 'TRANSCRIBER' | 'SPEAKER',
       },
-      select: { id: true, email: true, displayName: true, role: true }
+      select: { id: true, email: true, phone: true, displayName: true, role: true }
     })
 
     return NextResponse.json({ user }, { status: 201 })
@@ -44,53 +45,65 @@ export async function GET(req: NextRequest) {
 
     const { searchParams } = new URL(req.url)
     const withStats = searchParams.get('stats') === 'true'
+    const roleFilter = searchParams.get('role')
 
+    // V2 Schema - updated fields
     const baseUsers = await prisma.user.findMany({
       orderBy: { createdAt: 'desc' },
+      where: roleFilter ? { role: roleFilter as any } : undefined,
       select: {
         id: true,
         email: true,
         phone: true,
         displayName: true,
-        bio: true,
-        country: true,
         role: true,
         isActive: true,
         createdAt: true,
         lastLoginAt: true,
         qualityScore: true,
         totalEarningsCents: true,
+        speaksLanguages: true,
+        writesLanguages: true,
+        totalRecordingsSec: true,
+        totalTranscriptions: true,
       },
       take: 200,
     })
 
     if (!withStats) return NextResponse.json({ items: baseUsers })
 
-    // compute audios uploaded and reviews performed counts per user
+    // V2: Compute stats from recordings and transcriptions
     const items = [] as any[]
     for (const u of baseUsers) {
-      const [audios, reviews, approved, paid] = await Promise.all([
-        prisma.audioSource.count({ where: { uploadedById: u.id } }),
-        prisma.review.count({ where: { reviewerId: u.id } }),
-        prisma.review.findMany({
-          where: { decision: 'APPROVED' as any, transcription: { userId: u.id } },
-          select: { transcription: { select: { chunk: { select: { durationSec: true } } } } },
+      const [recordingsCount, transcriptionsCount, approvedRecordings, approvedTranscriptions] = await Promise.all([
+        prisma.recording.count({ where: { speakerId: u.id } }),
+        prisma.transcription.count({ where: { transcriberId: u.id } }),
+        prisma.recording.aggregate({
+          _sum: { durationSec: true },
+          where: { speakerId: u.id, status: 'APPROVED' },
         }),
-        prisma.payment.aggregate({
-          _sum: { amountCents: true },
-          where: { userId: u.id, status: 'PAID' as any, currency: 'SLE' as any },
+        prisma.transcription.count({
+          where: { transcriberId: u.id, status: 'APPROVED' },
         }),
       ])
-      const approvedSeconds = approved.reduce((acc, r) => acc + (r.transcription?.chunk?.durationSec || 0), 0)
-      const approvedMinutes = approvedSeconds / 60
-      const estimatedSLE = approvedMinutes * 1.2
-      const paidSLE = ((paid?._sum?.amountCents || 0) / 100)
-      const balanceSLE = Math.max(estimatedSLE - paidSLE, 0)
-      items.push({ ...u, _count: { audios, reviews }, approvedMinutes, estimatedSLE, paidSLE, balanceSLE })
+      
+      const approvedRecordingSec = approvedRecordings._sum?.durationSec || 0
+      const approvedRecordingMin = approvedRecordingSec / 60
+      
+      items.push({
+        ...u,
+        _count: {
+          recordings: recordingsCount,
+          transcriptions: transcriptionsCount,
+        },
+        approvedRecordingMin,
+        approvedTranscriptions,
+      })
     }
 
     return NextResponse.json({ items })
   } catch (e) {
+    console.error('Admin users error', e)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }

@@ -9,13 +9,15 @@ import Image from 'next/image'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Menu, LogOut } from 'lucide-react'
 
+// V2 Navigation - Voice Data Collection Platform
 const NAV = [
-  { href: '/admin', label: 'Dashboard' },
-  { href: '/admin/audios', label: 'Audios' },
-  { href: '/admin/reviews', label: 'Reviews' },
+  { href: '/admin/v2', label: 'Dashboard' },
+  { href: '/admin/v2/countries', label: 'Countries' },
+  { href: '/admin/v2/languages', label: 'Languages' },
+  { href: '/admin/v2/prompts', label: 'Prompts' },
+  { href: '/admin/v2/review', label: 'Review' },
+  { href: '/admin/v2/export', label: 'Export' },
   { href: '/admin/users', label: 'Users' },
-  { href: '/admin/payments', label: 'Payments' },
-  { href: '/admin/export', label: 'Export' },
 ]
 
 function SidebarContent({ pathname, router, onNavigate }: { pathname: string; router: any; onNavigate?: () => void }) {

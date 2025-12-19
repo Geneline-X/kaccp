@@ -1,15 +1,21 @@
+const TOKEN_KEY = 'token'  // V2: unified token key
+
 export function getToken(): string | null {
   if (typeof window === 'undefined') return null
-  return localStorage.getItem('kaccp_token')
+  // Check both keys for backwards compatibility
+  return localStorage.getItem(TOKEN_KEY) || localStorage.getItem('kaccp_token')
 }
 
 export function setToken(token: string) {
   if (typeof window === 'undefined') return
+  localStorage.setItem(TOKEN_KEY, token)
+  // Also set old key for backwards compatibility
   localStorage.setItem('kaccp_token', token)
 }
 
 export function clearToken() {
   if (typeof window === 'undefined') return
+  localStorage.removeItem(TOKEN_KEY)
   localStorage.removeItem('kaccp_token')
 }
 
