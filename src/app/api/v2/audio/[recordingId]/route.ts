@@ -64,7 +64,8 @@ export async function GET(
     });
 
     return NextResponse.json({
-      url: signedUrl,
+      signedUrl,
+      url: signedUrl, // Keep for backwards compatibility
       expiresIn: 3600, // seconds
     });
   } catch (error) {

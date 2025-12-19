@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { hashPassword, requireAdmin } from '@/lib/auth'
+import { UserRole } from '@prisma/client'
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,7 +13,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Email and password are required' }, { status: 400 })
     }
     const roleNorm = (role || 'TRANSCRIBER').toUpperCase()
-    if (!['ADMIN', 'TRANSCRIBER', 'SPEAKER'].includes(roleNorm)) {
+    if (!['ADMIN', 'TRANSCRIBER', 'SPEAKER', 'REVIEWER'].includes(roleNorm)) {
       return NextResponse.json({ error: 'Invalid role' }, { status: 400 })
     }
 
@@ -26,7 +27,7 @@ export async function POST(req: NextRequest) {
         phone: phone || null,
         passwordHash,
         displayName: displayName || null,
-        role: roleNorm as 'ADMIN' | 'TRANSCRIBER' | 'SPEAKER',
+        role: roleNorm as UserRole,
       },
       select: { id: true, email: true, phone: true, displayName: true, role: true }
     })
