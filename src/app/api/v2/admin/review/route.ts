@@ -7,7 +7,8 @@ export async function GET(req: NextRequest) {
   try {
     const user = await getAuthUser(req);
     // Allow both ADMIN and REVIEWER roles
-    if (!user || (user.role !== "ADMIN" && user.role !== "REVIEWER")) {
+    const role = user?.role as string;
+    if (!user || (role !== "ADMIN" && role !== "REVIEWER")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -91,7 +92,8 @@ export async function POST(req: NextRequest) {
   try {
     const user = await getAuthUser(req);
     // Allow both ADMIN and REVIEWER roles
-    if (!user || (user.role !== "ADMIN" && user.role !== "REVIEWER")) {
+    const role = user?.role as string;
+    if (!user || (role !== "ADMIN" && role !== "REVIEWER")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
