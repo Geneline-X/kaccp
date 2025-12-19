@@ -169,14 +169,21 @@ export default function RecordPage() {
         throw new Error(uploadUrlData.error);
       }
 
-      // 2. Upload to GCS
-      await fetch(uploadUrlData.uploadUrl, {
+      // 2. Upload audio (GCS or local)
+      const uploadRes = await fetch(uploadUrlData.uploadUrl, {
         method: "PUT",
         headers: {
           "Content-Type": audioBlob.type,
         },
         body: audioBlob,
       });
+
+      // Check if upload failed (for GCS, non-2xx means error)
+      if (!uploadRes.ok && uploadUrlData.mode === "gcs") {
+        const errorText = await uploadRes.text();
+        console.error("GCS upload failed:", errorText);
+        throw new Error("Failed to upload audio to storage");
+      }
 
       // 3. Create recording record
       const recordingRes = await fetch("/api/v2/speaker/recordings", {
