@@ -61,15 +61,38 @@ export async function POST(req: NextRequest) {
     // Initialize GCS
     const { bucket: gcsBucket } = initGCS();
 
-    // Generate unique filename
-    const timestamp = Date.now();
-    const randomId = Math.random().toString(36).substring(2, 8);
-    const extension = contentType === "audio/wav" ? "wav" : "webm";
-    
-    // Path: {country}/{language}/recordings/{speakerId}/{timestamp}_{randomId}.wav
+    // Get speaker number for labeling (e.g., speaker_0001)
+    // Count how many speakers exist before this user to generate sequential ID
+    const speakerCount = await prisma.user.count({
+      where: {
+        role: "SPEAKER",
+        createdAt: { lte: user.createdAt },
+      },
+    });
+    const speakerLabel = `speaker_${String(speakerCount).padStart(4, "0")}`;
+
+    // Count recordings by this speaker for this language to generate sequential recording number
+    const recordingCount = await prisma.recording.count({
+      where: {
+        speakerId: user.id,
+        languageId: prompt.languageId,
+      },
+    });
+    const recordingNumber = String(recordingCount + 1).padStart(5, "0");
+
+    // Generate filename: {language}_{speaker}_{recordingNumber}.wav
+    // Path: {country}/{language}/wavs/{speakerLabel}/{language}_{speaker}_{number}.wav
     const countryCode = prompt.language.country.code.toLowerCase();
     const languageCode = prompt.language.code.toLowerCase();
-    const filePath = `${countryCode}/${languageCode}/recordings/${user.id}/${timestamp}_${randomId}.${extension}`;
+    
+    // Always use .wav extension - we'll convert on upload if needed
+    const fileName = `${languageCode}_${speakerLabel}_${recordingNumber}.wav`;
+    const filePath = `${countryCode}/${languageCode}/wavs/${speakerLabel}/${fileName}`;
+    
+    // For now, accept the browser's format (webm/mp4) and store as-is
+    // The extension in the actual upload will match contentType
+    const actualExtension = contentType === "audio/wav" ? "wav" : contentType === "audio/webm" ? "webm" : "mp4";
+    const actualFilePath = `${countryCode}/${languageCode}/wavs/${speakerLabel}/${languageCode}_${speakerLabel}_${recordingNumber}.${actualExtension}`;
 
     // If GCS is not configured, use local storage fallback
     if (!gcsBucket) {
