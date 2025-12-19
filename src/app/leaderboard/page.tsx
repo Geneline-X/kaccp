@@ -1,172 +1,304 @@
-"use client"
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table'
-import { Button } from '@/components/ui/button'
-import { apiFetch } from '@/lib/client'
-import clsx from 'clsx'
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+
+interface LeaderboardEntry {
+  rank: number;
+  id: string;
+  displayName: string;
+  languages: string[];
+  recordingsCount?: number;
+  transcriptionsCount?: number;
+  totalMinutes: number;
+  qualityScore?: number;
+}
+
+interface LeaderboardData {
+  speakers: LeaderboardEntry[];
+  transcribers: LeaderboardEntry[];
+  stats: {
+    totalSpeakers: number;
+    totalTranscribers: number;
+    totalRecordings: number;
+    totalTranscriptions: number;
+    totalHours: number;
+  };
+}
 
 export default function LeaderboardPage() {
-  const [items, setItems] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [range, setRange] = useState<'all' | '7d' | '30d'>('all')
-  const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(25)
-  const [total, setTotal] = useState(0)
-  const [rate, setRate] = useState(1.2)
+  const [data, setData] = useState<LeaderboardData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<"speakers" | "transcribers">("speakers");
 
-  const load = async () => {
-    try {
-      setLoading(true)
-      const q = new URLSearchParams({ range, page: String(page), pageSize: String(pageSize) })
-      const data = await apiFetch<{ items: any[]; total: number; page: number; pageSize: number; ratePerMinuteSLE: number }>(`/api/leaderboard?${q.toString()}`)
-      setItems(data.items || [])
-      setTotal(data.total || 0)
-      setPage(data.page || page)
-      setPageSize(data.pageSize || pageSize)
-      setRate(data.ratePerMinuteSLE || 1.2)
-    } finally {
-      setLoading(false)
+  useEffect(() => {
+    fetch("/api/v2/leaderboard?limit=20")
+      .then((res) => res.json())
+      .then((data) => {
+        setData(data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
+  const getRankEmoji = (rank: number) => {
+    switch (rank) {
+      case 1: return "🥇";
+      case 2: return "🥈";
+      case 3: return "🥉";
+      default: return null;
     }
-  }
+  };
 
-  useEffect(() => { load() }, [range, page, pageSize])
-
-  const pages = Math.max(1, Math.ceil(total / pageSize))
-
-  const rankOf = (i: number) => (page-1)*pageSize + i + 1
-  const top3 = !loading ? items.slice(0, 3) : []
-  const rest = !loading ? items.slice(3) : []
+  const getRankBg = (rank: number) => {
+    switch (rank) {
+      case 1: return "bg-gradient-to-r from-yellow-500/20 to-yellow-600/10 border-yellow-500/50";
+      case 2: return "bg-gradient-to-r from-gray-300/20 to-gray-400/10 border-gray-400/50";
+      case 3: return "bg-gradient-to-r from-amber-600/20 to-amber-700/10 border-amber-600/50";
+      default: return "bg-blue-900/30 border-blue-700/30";
+    }
+  };
 
   return (
-    <div className="min-h-screen p-4 max-w-6xl mx-auto space-y-6">
-      <Card className="bg-gradient-to-r from-sky-50 to-amber-50">
-        <CardHeader>
-          <div className="flex items-center justify-between gap-2">
-            <div>
-              <CardTitle className="flex items-center gap-2">
-                <span className="text-2xl">🏆 Leaderboard</span>
-              </CardTitle>
-              <CardDescription>Top transcribers by approved minutes • Rate {rate.toFixed(2)} SLE/min</CardDescription>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button asChild variant="secondary"><Link href="/transcriber">My Dashboard</Link></Button>
-            </div>
+    <div className="min-h-screen bg-gradient-to-b from-blue-950 to-blue-900">
+      {/* Header */}
+      <header className="border-b border-blue-800/50">
+        <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+          <Link href="/" className="flex items-center gap-3">
+            <Image src="/kaccp-logo.jpg" alt="KACCP" width={40} height={40} className="rounded-lg" />
+            <span className="text-xl font-bold text-white">KACCP</span>
+          </Link>
+          <div className="flex gap-3">
+            <Link
+              href="/speaker/login"
+              className="px-4 py-2 text-blue-200 hover:text-white transition"
+            >
+              Speaker Login
+            </Link>
+            <Link
+              href="/transcriber/login"
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition"
+            >
+              Transcriber Login
+            </Link>
           </div>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-3 mb-5">
-            <select className="border rounded px-2 py-1" value={range} onChange={(e) => setRange(e.target.value as any)}>
-              <option value="all">All-time</option>
-              <option value="7d">Last 7 days</option>
-              <option value="30d">Last 30 days</option>
-            </select>
-            <div className="ml-auto flex items-center gap-2 text-sm">
-              <span>Page {page} of {pages}</span>
-              <Button variant="secondary" size="sm" disabled={page<=1||loading} onClick={() => setPage(p=>Math.max(1,p-1))}>Prev</Button>
-              <Button variant="secondary" size="sm" disabled={page>=pages||loading} onClick={() => setPage(p=>p+1)}>Next</Button>
-              <select className="border rounded px-2 py-1" value={pageSize} onChange={(e) => setPageSize(parseInt(e.target.value)||25)}>
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-              </select>
-            </div>
-          </div>
+        </div>
+      </header>
 
-          {loading ? (
-            <div className="flex items-center justify-center h-24"><div className="h-8 w-8 rounded-full border-b-2 border-primary animate-spin"></div></div>
-          ) : items.length === 0 ? (
-            <div className="text-muted-foreground">No data.</div>
-          ) : (
-            <div className="space-y-6">
-              {/* Podium */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {top3.map((it, i) => (
-                  <div key={it.userId} className={clsx(
-                    "rounded-lg p-4 border shadow-sm bg-white/80 hover:shadow-md transition",
-                    i===0 && "ring-2 ring-yellow-400",
-                    i===1 && "ring-2 ring-gray-300",
-                    i===2 && "ring-2 ring-amber-700/40",
-                  )}>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full overflow-hidden bg-muted">
-                          
-                            <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">NA</div>
-                         
-                        </div>
-                        <div>
-                          <div className="font-semibold">{it.name}</div>
-                          <div className="text-xs text-muted-foreground">{it.country || '—'}</div>
-                        </div>
-                      </div>
-                      <div className="text-2xl">
-                        {i===0 ? '🥇' : i===1 ? '🥈' : '🥉'}
-                      </div>
-                    </div>
-                    <div className="mt-3 flex items-end justify-between">
-                      <div>
-                        <div className="text-xs text-muted-foreground">Approved minutes</div>
-                        <div className="text-xl font-bold">{it.approvedMinutes.toFixed(1)}</div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-xs text-muted-foreground">Est. SLE</div>
-                        <div className="text-xl font-bold">{it.estimatedSLE.toFixed(2)}</div>
+      {/* Hero */}
+      <div className="max-w-6xl mx-auto px-4 py-12 text-center">
+        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+          🏆 Leaderboard
+        </h1>
+        <p className="text-xl text-blue-200 mb-8">
+          Top contributors preserving African languages
+        </p>
+
+        {/* Stats */}
+        {data?.stats && (
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-12">
+            <div className="bg-blue-800/30 rounded-xl p-4 border border-blue-700/30">
+              <p className="text-3xl font-bold text-white">{data.stats.totalSpeakers}</p>
+              <p className="text-sm text-blue-300">Speakers</p>
+            </div>
+            <div className="bg-blue-800/30 rounded-xl p-4 border border-blue-700/30">
+              <p className="text-3xl font-bold text-white">{data.stats.totalTranscribers}</p>
+              <p className="text-sm text-blue-300">Transcribers</p>
+            </div>
+            <div className="bg-blue-800/30 rounded-xl p-4 border border-blue-700/30">
+              <p className="text-3xl font-bold text-white">{data.stats.totalRecordings}</p>
+              <p className="text-sm text-blue-300">Recordings</p>
+            </div>
+            <div className="bg-blue-800/30 rounded-xl p-4 border border-blue-700/30">
+              <p className="text-3xl font-bold text-white">{data.stats.totalTranscriptions}</p>
+              <p className="text-sm text-blue-300">Transcriptions</p>
+            </div>
+            <div className="bg-blue-800/30 rounded-xl p-4 border border-blue-700/30">
+              <p className="text-3xl font-bold text-white">{data.stats.totalHours}h</p>
+              <p className="text-sm text-blue-300">Audio Collected</p>
+            </div>
+          </div>
+        )}
+
+        {/* Tab Switcher */}
+        <div className="flex justify-center gap-2 mb-8">
+          <button
+            onClick={() => setActiveTab("speakers")}
+            className={`px-6 py-3 rounded-xl font-semibold transition ${
+              activeTab === "speakers"
+                ? "bg-blue-600 text-white"
+                : "bg-blue-800/30 text-blue-300 hover:bg-blue-800/50"
+            }`}
+          >
+            🎙️ Top Speakers
+          </button>
+          <button
+            onClick={() => setActiveTab("transcribers")}
+            className={`px-6 py-3 rounded-xl font-semibold transition ${
+              activeTab === "transcribers"
+                ? "bg-green-600 text-white"
+                : "bg-blue-800/30 text-blue-300 hover:bg-blue-800/50"
+            }`}
+          >
+            ✍️ Top Transcribers
+          </button>
+        </div>
+      </div>
+
+      {/* Leaderboard Content */}
+      <main className="max-w-4xl mx-auto px-4 pb-16">
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {/* Top 3 Podium */}
+            {activeTab === "speakers" && data?.speakers?.slice(0, 3).map((entry) => (
+              <div
+                key={entry.id}
+                className={`rounded-xl p-5 border ${getRankBg(entry.rank)} backdrop-blur-sm`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="text-3xl">{getRankEmoji(entry.rank)}</div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white">{entry.displayName}</h3>
+                      <div className="flex gap-2 mt-1">
+                        {entry.languages.slice(0, 3).map((lang) => (
+                          <span key={lang} className="px-2 py-0.5 bg-blue-800/50 text-blue-200 rounded text-xs">
+                            {lang}
+                          </span>
+                        ))}
                       </div>
                     </div>
                   </div>
-                ))}
+                  <div className="text-right">
+                    <p className="text-2xl font-bold text-white">{entry.totalMinutes} min</p>
+                    <p className="text-sm text-blue-300">{entry.recordingsCount} recordings</p>
+                  </div>
+                </div>
               </div>
+            ))}
 
-              {/* Rest table with progress */}
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Rank</TableHead>
-                      <TableHead>User</TableHead>
-                      <TableHead>Country</TableHead>
-                      <TableHead className="text-right">Approved min</TableHead>
-                      <TableHead className="text-right">Est. SLE</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {rest.map((it, i) => (
-                      <TableRow key={it.userId} className="hover:bg-sky-50/40">
-                        <TableCell className="font-medium">{rankOf(i+3)}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full overflow-hidden bg-muted">
-                              {it.avatarUrl ? (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img src={it.avatarUrl} alt="avatar" className="w-full h-full object-cover" />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center text-[10px] text-muted-foreground">NA</div>
-                              )}
-                            </div>
-                            <div className="text-sm">{it.name}</div>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-sm">{it.country || '-'}</TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex flex-col items-end gap-1">
-                            <div>{it.approvedMinutes.toFixed(1)}</div>
-                            <div className="w-40 h-1.5 bg-slate-200 rounded overflow-hidden">
-                              <div className="h-full bg-sky-500" style={{ width: `${Math.min(100, (it.approvedMinutes/(top3[0]?.approvedMinutes||1))*100)}%` }} />
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-right">{it.estimatedSLE.toFixed(2)}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+            {activeTab === "transcribers" && data?.transcribers?.slice(0, 3).map((entry) => (
+              <div
+                key={entry.id}
+                className={`rounded-xl p-5 border ${getRankBg(entry.rank)} backdrop-blur-sm`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="text-3xl">{getRankEmoji(entry.rank)}</div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white">{entry.displayName}</h3>
+                      <div className="flex gap-2 mt-1">
+                        {entry.languages.slice(0, 3).map((lang) => (
+                          <span key={lang} className="px-2 py-0.5 bg-green-800/50 text-green-200 rounded text-xs">
+                            {lang}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-2xl font-bold text-white">{entry.transcriptionsCount}</p>
+                    <p className="text-sm text-blue-300">transcriptions</p>
+                  </div>
+                </div>
               </div>
+            ))}
+
+            {/* Rest of the list */}
+            <div className="mt-6 bg-blue-900/30 rounded-xl border border-blue-700/30 overflow-hidden">
+              <table className="w-full">
+                <thead className="bg-blue-900/50">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-blue-300">Rank</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-blue-300">Name</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-blue-300">Languages</th>
+                    <th className="px-4 py-3 text-right text-sm font-medium text-blue-300">
+                      {activeTab === "speakers" ? "Minutes" : "Transcriptions"}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-blue-800/30">
+                  {activeTab === "speakers" && data?.speakers?.slice(3).map((entry) => (
+                    <tr key={entry.id} className="hover:bg-blue-800/20 transition">
+                      <td className="px-4 py-3 text-white font-medium">#{entry.rank}</td>
+                      <td className="px-4 py-3 text-white">{entry.displayName}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex gap-1 flex-wrap">
+                          {entry.languages.slice(0, 2).map((lang) => (
+                            <span key={lang} className="px-2 py-0.5 bg-blue-800/50 text-blue-200 rounded text-xs">
+                              {lang}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-right text-white">{entry.totalMinutes} min</td>
+                    </tr>
+                  ))}
+                  {activeTab === "transcribers" && data?.transcribers?.slice(3).map((entry) => (
+                    <tr key={entry.id} className="hover:bg-blue-800/20 transition">
+                      <td className="px-4 py-3 text-white font-medium">#{entry.rank}</td>
+                      <td className="px-4 py-3 text-white">{entry.displayName}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex gap-1 flex-wrap">
+                          {entry.languages.slice(0, 2).map((lang) => (
+                            <span key={lang} className="px-2 py-0.5 bg-green-800/50 text-green-200 rounded text-xs">
+                              {lang}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-right text-white">{entry.transcriptionsCount}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {/* Empty state */}
+              {((activeTab === "speakers" && (!data?.speakers || data.speakers.length === 0)) ||
+                (activeTab === "transcribers" && (!data?.transcribers || data.transcribers.length === 0))) && (
+                <div className="p-8 text-center text-blue-300">
+                  No data yet. Be the first to contribute!
+                </div>
+              )}
             </div>
-          )}
-        </CardContent>
-      </Card>
+          </div>
+        )}
+
+        {/* CTA */}
+        <div className="mt-12 text-center">
+          <p className="text-blue-200 mb-4">Want to see your name on the leaderboard?</p>
+          <div className="flex justify-center gap-4">
+            <Link
+              href="/speaker/register"
+              className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-500 transition"
+            >
+              🎙️ Become a Speaker
+            </Link>
+            <Link
+              href="/transcriber/v2/register"
+              className="px-6 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-500 transition"
+            >
+              ✍️ Become a Transcriber
+            </Link>
+          </div>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t border-blue-800/50 py-6">
+        <div className="max-w-6xl mx-auto px-4 text-center text-blue-400 text-sm">
+          Built by{" "}
+          <Link href="https://geneline-x.net" className="text-blue-300 hover:text-white underline" target="_blank">
+            Geneline-X
+          </Link>{" "}
+          • Preserving African Languages
+        </div>
+      </footer>
     </div>
-  )
+  );
 }

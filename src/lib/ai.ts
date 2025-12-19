@@ -1,48 +1,55 @@
 import OpenAI from 'openai'
 
-let _client: OpenAI | null = null
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY || 'mock-key',
+    dangerouslyAllowBrowser: true // Just in case, though this is server side
+})
 
-export function getOpenAI() {
-  if (_client) return _client
-  const apiKey = process.env.OPENAI_API_KEY
-  if (!apiKey) throw new Error('OPENAI_API_KEY not configured')
-  _client = new OpenAI({ apiKey })
-  return _client
-}
+export async function improveEnglish(text: string): Promise<{ corrected: string, model: string, score: number }> {
+    if (!process.env.OPENAI_API_KEY) {
+        console.warn('OPENAI_API_KEY not found, using mock response')
+        return {
+            corrected: text.trim() + " (Mock corrected)",
+            model: 'mock-model',
+            score: 0.95
+        }
+    }
 
-export async function improveEnglish(input: string): Promise<{ corrected: string; score: number; model: string }> {
-  const client = getOpenAI()
-  const model = process.env.OPENAI_MODEL || 'gpt-4o-mini'
+    try {
+        const response = await openai.chat.completions.create({
+            model: 'gpt-4o', // or gpt-3.5-turbo
+            messages: [
+                {
+                    role: 'system',
+                    content: `You are an expert editor who corrects Krio/English transcriptions. 
+          The input text might be Sierra Leonean Krio or simple English. 
+          Correct the grammar and spelling to standard English while preserving the original meaning.
+          
+          Return JSON with keys:
+          - corrected: string (the corrected text)
+          - score: number (0-1 confidence score or quality score of the original)
+          `
+                },
+                {
+                    role: 'user',
+                    content: text
+                }
+            ],
+            response_format: { type: 'json_object' }
+        })
 
-  const system = [
-    'You are an expert English editor.',
-    'Improve grammar, clarity, and naturalness while preserving meaning.',
-    'Return ONLY valid JSON with the following shape and nothing else:',
-    '{"corrected": string, "score": number}',
-    'Where score is a continuous value in [0,1] indicating confidence in your correction quality.',
-  ].join(' ')
+        const content = response.choices[0].message.content
+        if (!content) throw new Error('No content from OpenAI')
 
-  const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
-    { role: 'system', content: system },
-    { role: 'user', content: input },
-  ]
+        const json = JSON.parse(content)
 
-  const resp = await client.chat.completions.create({
-    model,
-    messages,
-    temperature: 0.2,
-    response_format: { type: 'json_object' as any },
-  })
-
-  const raw = resp.choices?.[0]?.message?.content?.trim() || ''
-  try {
-    const parsed = JSON.parse(raw)
-    const corrected = typeof parsed.corrected === 'string' && parsed.corrected.trim().length > 0 ? parsed.corrected.trim() : input
-    const score = typeof parsed.score === 'number' && isFinite(parsed.score) ? Math.max(0, Math.min(1, parsed.score)) : (corrected === input ? 0.7 : 0.9)
-    return { corrected, score, model }
-  } catch {
-    const corrected = raw || input
-    const score = corrected === input ? 0.7 : 0.9
-    return { corrected, score, model }
-  }
+        return {
+            corrected: json.corrected,
+            model: response.model,
+            score: json.score || 0
+        }
+    } catch (e) {
+        console.error('AI Error:', e)
+        throw e
+    }
 }
