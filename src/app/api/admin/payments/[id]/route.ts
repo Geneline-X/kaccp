@@ -8,12 +8,12 @@ const ActionSchema = z.object({
   notes: z.string().optional(),
 })
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const admin = await requireAdmin(req)
     if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-    const { id } = params
+    const { id } = await params
     const { action, notes } = ActionSchema.parse(await req.json())
 
     const result = await prisma.$transaction(async (tx) => {
