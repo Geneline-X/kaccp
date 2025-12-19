@@ -202,6 +202,7 @@ export default function Home() {
             <div className="flex flex-wrap justify-center gap-4 text-sm">
               <Link href="/speaker" className="hover:text-white transition-colors">Speaker Portal</Link>
               <Link href="/transcriber/v2" className="hover:text-white transition-colors">Transcriber Portal</Link>
+              <Link href="/reviewer" className="hover:text-white transition-colors">Reviewer Portal</Link>
               <Link href="/leaderboard" className="hover:text-white transition-colors">Leaderboard</Link>
               <Link href="/admin/v2" className="hover:text-white transition-colors">Admin</Link>
             </div>

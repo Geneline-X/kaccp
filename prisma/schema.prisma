@@ -280,6 +280,7 @@ enum UserRole {
   ADMIN
   SPEAKER
   TRANSCRIBER
+  REVIEWER
 }
 
 enum RecordingStatus {

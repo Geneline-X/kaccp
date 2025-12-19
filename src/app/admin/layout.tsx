@@ -48,7 +48,7 @@ function SidebarContent({ pathname, router, onNavigate }: { pathname: string; ro
           className="w-full justify-start text-muted-foreground hover:text-foreground"
           onClick={() => { 
             clearToken(); 
-            router.replace('/admin/v2') 
+            router.replace('/') 
           }}
         >
           <LogOut className="mr-2 h-4 w-4" />

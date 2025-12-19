@@ -10,7 +10,7 @@ interface UserV2 {
   email: string
   phone: string | null
   displayName: string | null
-  role: 'ADMIN' | 'SPEAKER' | 'TRANSCRIBER'
+  role: 'ADMIN' | 'SPEAKER' | 'TRANSCRIBER' | 'REVIEWER'
   isActive: boolean
   createdAt: string
   lastLoginAt: string | null
@@ -195,6 +195,7 @@ export default function AdminUsersPage() {
                 >
                   <option value="SPEAKER">Speaker</option>
                   <option value="TRANSCRIBER">Transcriber</option>
+                  <option value="REVIEWER">Reviewer</option>
                   <option value="ADMIN">Admin</option>
                 </select>
               </div>
@@ -233,6 +234,7 @@ export default function AdminUsersPage() {
                 <option value="ALL">All Roles</option>
                 <option value="SPEAKER">Speakers</option>
                 <option value="TRANSCRIBER">Transcribers</option>
+                <option value="REVIEWER">Reviewers</option>
                 <option value="ADMIN">Admins</option>
               </select>
             </div>
