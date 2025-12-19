@@ -6,11 +6,12 @@ import { PromptCategory, PromptEmotion } from "@prisma/client";
 // GET /api/v2/prompts/[id] - Get a single prompt
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const prompt = await prisma.prompt.findUnique({
-      where: { id: params.id },
+      where: { id: id },
       include: {
         language: {
           include: {
@@ -42,9 +43,10 @@ export async function GET(
 // PATCH /api/v2/prompts/[id] - Update a prompt (Admin only)
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const user = await getAuthUser(req);
     if (!user || user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -70,7 +72,7 @@ export async function PATCH(
     }
 
     const prompt = await prisma.prompt.update({
-      where: { id: params.id },
+      where: { id: id },
       data: {
         ...(englishText && { englishText }),
         ...(category && { category }),
@@ -97,9 +99,10 @@ export async function PATCH(
 // DELETE /api/v2/prompts/[id] - Delete a prompt (Admin only)
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const user = await getAuthUser(req);
     if (!user || user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -107,7 +110,7 @@ export async function DELETE(
 
     // Check if prompt has recordings
     const recordingCount = await prisma.recording.count({
-      where: { promptId: params.id },
+      where: { promptId: id },
     });
 
     if (recordingCount > 0) {
@@ -118,7 +121,7 @@ export async function DELETE(
     }
 
     await prisma.prompt.delete({
-      where: { id: params.id },
+      where: { id: id },
     });
 
     return NextResponse.json({ success: true });

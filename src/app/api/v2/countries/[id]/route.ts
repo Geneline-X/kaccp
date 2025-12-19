@@ -5,11 +5,12 @@ import { getAuthUser } from "@/lib/auth";
 // GET /api/v2/countries/[id] - Get a single country
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const country = await prisma.country.findUnique({
-      where: { id: params.id },
+      where: { id: id },
       include: {
         languages: {
           orderBy: { name: "asc" },
@@ -34,9 +35,10 @@ export async function GET(
 // PATCH /api/v2/countries/[id] - Update a country (Admin only)
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const user = await getAuthUser(req);
     if (!user || user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -46,7 +48,7 @@ export async function PATCH(
     const { name, isActive } = body;
 
     const country = await prisma.country.update({
-      where: { id: params.id },
+      where: { id: id },
       data: {
         ...(name && { name }),
         ...(typeof isActive === "boolean" && { isActive }),
@@ -66,9 +68,10 @@ export async function PATCH(
 // DELETE /api/v2/countries/[id] - Delete a country (Admin only)
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const user = await getAuthUser(req);
     if (!user || user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -76,7 +79,7 @@ export async function DELETE(
 
     // Check if country has languages
     const languageCount = await prisma.language.count({
-      where: { countryId: params.id },
+      where: { countryId: id },
     });
 
     if (languageCount > 0) {
@@ -87,7 +90,7 @@ export async function DELETE(
     }
 
     await prisma.country.delete({
-      where: { id: params.id },
+      where: { id: id },
     });
 
     return NextResponse.json({ success: true });
