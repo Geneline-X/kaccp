@@ -89,7 +89,7 @@ export default function AdminV2Dashboard() {
             <button
               onClick={() => {
                 clearToken();
-                router.push("/admin/login");
+                router.push("/admin/v2");
               }}
               className="text-sm text-red-500 hover:text-red-700"
             >
