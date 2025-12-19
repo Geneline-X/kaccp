@@ -97,19 +97,20 @@ export async function POST(req: NextRequest) {
     // If GCS is not configured, use local storage fallback
     if (!gcsBucket) {
       console.warn("GCS not configured, using local storage mode");
-      // Return a mock URL for development - audio will be uploaded via /api/v2/speaker/upload-local
-      const audioUrl = `/uploads/${filePath}`;
+      const audioUrl = `/uploads/${actualFilePath}`;
       return NextResponse.json({
-        uploadUrl: `/api/v2/speaker/upload-local?path=${encodeURIComponent(filePath)}`,
+        uploadUrl: `/api/v2/speaker/upload-local?path=${encodeURIComponent(actualFilePath)}`,
         audioUrl,
-        filePath,
+        filePath: actualFilePath,
+        speakerLabel,
+        fileName: `${languageCode}_${speakerLabel}_${recordingNumber}.${actualExtension}`,
         expiresIn: 15 * 60,
         mode: "local",
       });
     }
 
     // Generate signed URL for upload (valid for 15 minutes)
-    const [signedUrl] = await gcsBucket.file(filePath).getSignedUrl({
+    const [signedUrl] = await gcsBucket.file(actualFilePath).getSignedUrl({
       version: "v4",
       action: "write",
       expires: Date.now() + 15 * 60 * 1000, // 15 minutes
@@ -117,12 +118,14 @@ export async function POST(req: NextRequest) {
     });
 
     // Full GCS URL for the file
-    const audioUrl = `gs://${process.env.GCS_BUCKET}/${filePath}`;
+    const audioUrl = `gs://${process.env.GCS_BUCKET}/${actualFilePath}`;
 
     return NextResponse.json({
       uploadUrl: signedUrl,
       audioUrl,
-      filePath,
+      filePath: actualFilePath,
+      speakerLabel,
+      fileName: `${languageCode}_${speakerLabel}_${recordingNumber}.${actualExtension}`,
       expiresIn: 15 * 60,
       mode: "gcs",
     });
