@@ -18,6 +18,7 @@ const NAV = [
   { href: '/admin/v2/review', label: 'Review' },
   { href: '/admin/v2/export', label: 'Export' },
   { href: '/admin/users', label: 'Users' },
+  { href: '/admin/payments', label: 'Payments' },
 ]
 
 function SidebarContent({ pathname, router, onNavigate }: { pathname: string; router: any; onNavigate?: () => void }) {
@@ -29,12 +30,12 @@ function SidebarContent({ pathname, router, onNavigate }: { pathname: string; ro
       </div>
       <nav className="flex flex-col gap-1">
         {NAV.map((item) => (
-          <Link 
-            key={item.href} 
+          <Link
+            key={item.href}
             href={item.href}
             onClick={onNavigate}
-            className={`text-sm px-3 py-2 rounded-md transition-colors ${pathname === item.href 
-              ? 'bg-primary/10 text-primary font-medium' 
+            className={`text-sm px-3 py-2 rounded-md transition-colors ${pathname === item.href
+              ? 'bg-primary/10 text-primary font-medium'
               : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'}`}
           >
             {item.label}
@@ -42,13 +43,13 @@ function SidebarContent({ pathname, router, onNavigate }: { pathname: string; ro
         ))}
       </nav>
       <div className="pt-6">
-        <Button 
-          variant="ghost" 
-          size="sm" 
+        <Button
+          variant="ghost"
+          size="sm"
           className="w-full justify-start text-muted-foreground hover:text-foreground"
-          onClick={() => { 
-            clearToken(); 
-            router.replace('/') 
+          onClick={() => {
+            clearToken();
+            router.replace('/')
           }}
         >
           <LogOut className="mr-2 h-4 w-4" />
@@ -63,12 +64,12 @@ export default function AdminLayout({ children }: PropsWithChildren) {
   const pathname = usePathname()
   const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  
+
   // Show public login page without guard or sidebar
   if (pathname === '/admin/login') {
     return <div className="min-h-screen">{children}</div>
   }
-  
+
   return (
     <AdminGuard>
       <div className="min-h-screen flex bg-background">
@@ -76,7 +77,7 @@ export default function AdminLayout({ children }: PropsWithChildren) {
         <aside className="hidden lg:flex w-56 border-r p-4 space-y-2 bg-card flex-col">
           <SidebarContent pathname={pathname} router={router} />
         </aside>
-        
+
         {/* Main content area */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Top bar */}
@@ -91,14 +92,14 @@ export default function AdminLayout({ children }: PropsWithChildren) {
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="w-64 p-4">
-                  <SidebarContent 
-                    pathname={pathname} 
-                    router={router} 
+                  <SidebarContent
+                    pathname={pathname}
+                    router={router}
                     onNavigate={() => setMobileMenuOpen(false)}
                   />
                 </SheetContent>
               </Sheet>
-              
+
               <h1 className="text-base md:text-lg font-semibold">
                 {NAV.find(item => item.href === pathname)?.label || 'Dashboard'}
               </h1>
@@ -109,7 +110,7 @@ export default function AdminLayout({ children }: PropsWithChildren) {
               </span>
             </div>
           </header>
-          
+
           {/* Page content */}
           <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-background">
             {children}
