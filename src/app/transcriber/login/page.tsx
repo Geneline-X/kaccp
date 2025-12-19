@@ -32,12 +32,17 @@ export default function TranscriberLoginPage() {
       if (!res.ok) throw new Error(data.error || `Login failed: ${res.status}`)
       if (!data.token) throw new Error('No token returned')
       const role = String(data?.user?.role || '').toUpperCase()
-      if (role !== 'TRANSCRIBER') {
-        throw new Error('This account is not a transcriber. Please use the Admin login.')
-      }
       setToken(data.token)
       toast.success('Welcome back!')
-      router.replace('/transcriber')
+      
+      // V2: Route based on role
+      if (role === 'ADMIN') {
+        router.replace('/admin/v2')
+      } else if (role === 'SPEAKER') {
+        router.replace('/speaker')
+      } else {
+        router.replace('/transcriber/v2')
+      }
     } catch (e: any) {
       toast.error(e.message || 'Login failed')
     } finally {
@@ -75,7 +80,7 @@ export default function TranscriberLoginPage() {
             </div>
             <div className="flex items-center gap-2">
               <Button type="submit" disabled={loading}>{loading ? 'Signing in…' : 'Sign In'}</Button>
-              <Button type="button" variant="secondary" onClick={() => router.push('/transcriber/register')}>Register</Button>
+              <Button type="button" variant="secondary" onClick={() => router.push('/transcriber/v2/register')}>Register</Button>
             </div>
             <div className="text-xs text-muted-foreground">Built by <Link href="https://geneline-x.net" className="underline" target="_blank">Geneline-X</Link></div>
           </form>
