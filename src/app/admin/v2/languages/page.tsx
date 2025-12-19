@@ -38,6 +38,7 @@ export default function AdminLanguagesPage() {
   const [languages, setLanguages] = useState<Language[]>([]);
   const [loading, setLoading] = useState(true);
   const [showNewForm, setShowNewForm] = useState(false);
+  const [editingLanguage, setEditingLanguage] = useState<Language | null>(null);
   const [newLanguage, setNewLanguage] = useState({
     code: "",
     name: "",
@@ -48,6 +49,7 @@ export default function AdminLanguagesPage() {
     transcriberRatePerMin: 0.03,
   });
   const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
 
   const token = typeof window !== "undefined" ? getToken() : null;
 
@@ -125,6 +127,47 @@ export default function AdminLanguagesPage() {
       });
     } catch (err) {
       setError("Failed to create language");
+    }
+  };
+
+  // Update existing language
+  const handleUpdateLanguage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingLanguage) return;
+    
+    setError("");
+    setSaving(true);
+
+    try {
+      const res = await fetch(`/api/v2/languages/${editingLanguage.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name: editingLanguage.name,
+          nativeName: editingLanguage.nativeName,
+          targetMinutes: editingLanguage.targetMinutes,
+          speakerRatePerMinute: editingLanguage.speakerRatePerMinute,
+          transcriberRatePerMin: editingLanguage.transcriberRatePerMin,
+          isActive: editingLanguage.isActive,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.error) {
+        setError(data.error);
+        return;
+      }
+
+      // Update in list
+      setLanguages(languages.map(l => l.id === editingLanguage.id ? { ...l, ...data.language } : l));
+      setEditingLanguage(null);
+    } catch (err) {
+      setError("Failed to update language");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -210,6 +253,9 @@ export default function AdminLanguagesPage() {
                     Progress
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Rates ($/min)
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Prompts
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
@@ -254,6 +300,10 @@ export default function AdminLanguagesPage() {
                           {Math.round(lang.approvedMinutes / 60)}h / {Math.round(lang.targetMinutes / 60)}h
                         </div>
                       </td>
+                      <td className="px-6 py-4 text-sm">
+                        <div className="text-blue-600">Speaker: ${lang.speakerRatePerMinute?.toFixed(2)}</div>
+                        <div className="text-green-600">Transcriber: ${lang.transcriberRatePerMin?.toFixed(2)}</div>
+                      </td>
                       <td className="px-6 py-4 text-sm text-gray-500">
                         {lang._count.prompts}
                       </td>
@@ -272,12 +322,20 @@ export default function AdminLanguagesPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <Link
-                          href={`/admin/v2/prompts?languageId=${lang.id}`}
-                          className="text-sm text-blue-600 hover:underline"
-                        >
-                          Manage Prompts
-                        </Link>
+                        <div className="flex flex-col gap-1">
+                          <button
+                            onClick={() => setEditingLanguage(lang)}
+                            className="text-sm text-blue-600 hover:underline text-left"
+                          >
+                            Edit Rates
+                          </button>
+                          <Link
+                            href={`/admin/v2/prompts?languageId=${lang.id}`}
+                            className="text-sm text-gray-600 hover:underline"
+                          >
+                            Manage Prompts
+                          </Link>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -442,6 +500,153 @@ export default function AdminLanguagesPage() {
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
                   Add Language
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Language Modal */}
+      {editingLanguage && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-lg mx-4">
+            <h2 className="text-xl font-bold mb-4">
+              Edit {editingLanguage.name} Rates
+            </h2>
+
+            {error && (
+              <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleUpdateLanguage} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Language Name
+                  </label>
+                  <input
+                    type="text"
+                    value={editingLanguage.name}
+                    onChange={(e) =>
+                      setEditingLanguage({ ...editingLanguage, name: e.target.value })
+                    }
+                    required
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Native Name
+                  </label>
+                  <input
+                    type="text"
+                    value={editingLanguage.nativeName || ""}
+                    onChange={(e) =>
+                      setEditingLanguage({ ...editingLanguage, nativeName: e.target.value })
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Target Hours
+                </label>
+                <input
+                  type="number"
+                  value={Math.round(editingLanguage.targetMinutes / 60)}
+                  onChange={(e) =>
+                    setEditingLanguage({
+                      ...editingLanguage,
+                      targetMinutes: parseInt(e.target.value) * 60,
+                    })
+                  }
+                  min={1}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Speaker Rate ($/min)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={editingLanguage.speakerRatePerMinute}
+                    onChange={(e) =>
+                      setEditingLanguage({
+                        ...editingLanguage,
+                        speakerRatePerMinute: parseFloat(e.target.value) || 0,
+                      })
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Current: ${editingLanguage.speakerRatePerMinute?.toFixed(2)}/min
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Transcriber Rate ($/min)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={editingLanguage.transcriberRatePerMin}
+                    onChange={(e) =>
+                      setEditingLanguage({
+                        ...editingLanguage,
+                        transcriberRatePerMin: parseFloat(e.target.value) || 0,
+                      })
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Current: ${editingLanguage.transcriberRatePerMin?.toFixed(2)}/min
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="isActive"
+                  checked={editingLanguage.isActive}
+                  onChange={(e) =>
+                    setEditingLanguage({ ...editingLanguage, isActive: e.target.checked })
+                  }
+                  className="rounded"
+                />
+                <label htmlFor="isActive" className="text-sm text-gray-700">
+                  Language is active (visible to speakers/transcribers)
+                </label>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-4 border-t">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingLanguage(null);
+                    setError("");
+                  }}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-900"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                >
+                  {saving ? "Saving..." : "Save Changes"}
                 </button>
               </div>
             </form>
