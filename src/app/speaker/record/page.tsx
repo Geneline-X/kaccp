@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getToken } from "@/lib/client";
 import toWav from "audiobuffer-to-wav";
@@ -18,7 +18,7 @@ interface Prompt {
   };
 }
 
-export default function RecordPage() {
+function RecordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const languageId = searchParams.get("languageId");
@@ -298,6 +298,7 @@ export default function RecordPage() {
     );
   }
 
+
   if (prompts.length === 0) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
@@ -394,9 +395,8 @@ export default function RecordPage() {
             {/* Progress bar */}
             <div className="w-full bg-gray-700 rounded-full h-2 mt-4">
               <div
-                className={`h-2 rounded-full transition-all ${
-                  duration >= 10 ? "bg-red-500" : "bg-blue-500"
-                }`}
+                className={`h-2 rounded-full transition-all ${duration >= 10 ? "bg-red-500" : "bg-blue-500"
+                  }`}
                 style={{ width: `${Math.min((duration / 10) * 100, 100)}%` }}
               ></div>
             </div>
@@ -407,11 +407,10 @@ export default function RecordPage() {
             <div className="flex justify-center">
               <button
                 onClick={recording ? stopRecording : startRecording}
-                className={`w-24 h-24 rounded-full flex items-center justify-center transition-all ${
-                  recording
-                    ? "bg-red-600 hover:bg-red-700 animate-pulse"
-                    : "bg-blue-600 hover:bg-blue-700"
-                }`}
+                className={`w-24 h-24 rounded-full flex items-center justify-center transition-all ${recording
+                  ? "bg-red-600 hover:bg-red-700 animate-pulse"
+                  : "bg-blue-600 hover:bg-blue-700"
+                  }`}
               >
                 {recording ? (
                   <div className="w-8 h-8 bg-white rounded-sm"></div>
@@ -432,7 +431,7 @@ export default function RecordPage() {
                   onClick={reRecord}
                   className="px-6 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-600"
                 >
-                  Re-record
+                  re-record
                 </button>
                 <button
                   onClick={submitRecording}
@@ -471,4 +470,16 @@ export default function RecordPage() {
       </main>
     </div>
   );
+}
+
+export default function RecordPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+      </div>
+    }>
+      <RecordContent />
+    </Suspense>
+  )
 }
