@@ -101,105 +101,112 @@ export const columns: ColumnDef<UserWithStats>[] = [
     id: "actions",
     cell: ({ row }) => {
       const user = row.original
-      const [openRole, setOpenRole] = useState(false)
-      const [openDeactivate, setOpenDeactivate] = useState(false)
-      const [loading, setLoading] = useState(false)
-
-      const submitRoleChange = async (nextRole: 'ADMIN' | 'TRANSCRIBER') => {
-        try {
-          setLoading(true)
-          await apiFetch(`/api/admin/users/${user.id}`, { method: 'PATCH', body: JSON.stringify({ role: nextRole }) })
-          toastSuccess(`Role updated to ${nextRole}`)
-          window.location.reload()
-        } catch (e: any) {
-          toastError('Failed to update role', e.message)
-        } finally {
-          setLoading(false)
-          setOpenRole(false)
-        }
-      }
-
-      const handleDeactivate = async () => {
-        try {
-          setLoading(true)
-          await apiFetch(`/api/admin/users/${user.id}`, { method: 'DELETE' })
-          toastSuccess('User deactivated')
-          window.location.reload()
-        } catch (e: any) {
-          toastError('Failed to deactivate user', e.message)
-        } finally {
-          setLoading(false)
-          setOpenDeactivate(false)
-        }
-      }
-      
-      return (
-        <div className="flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">Actions</Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem asChild>
-                <button onClick={() => (document.querySelector(`#view-user-${user.id}-btn`) as HTMLButtonElement)?.click()} className="w-full text-left">View</button>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <a href={`/admin/payments?userId=${user.id}`}>Pay</a>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setOpenRole(true)}>Change Role</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setOpenDeactivate(true)} className="text-destructive focus:text-destructive">{user.isActive === false ? 'Inactive' : 'Deactivate'}</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          {/* Hidden View trigger to reuse the existing modal */}
-          <ViewUserModalTrigger userId={user.id} label={<span id={`view-user-${user.id}-btn`} className="sr-only">View</span> as any} />
-
-          {/* Change Role Dialog */}
-          <Dialog open={openRole} onOpenChange={setOpenRole}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Change Role</DialogTitle>
-                <DialogDescription>
-                  Update the role for {user.displayName || user.email}. This affects their access rights.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="flex items-center gap-2">
-                <Button disabled={loading || user.role === 'TRANSCRIBER'} onClick={() => submitRoleChange('TRANSCRIBER')}>Make Transcriber</Button>
-                <Button disabled={loading || user.role === 'ADMIN'} onClick={() => submitRoleChange('ADMIN')}>Make Admin</Button>
-              </div>
-              <DialogFooter>
-                <Button variant="secondary" onClick={() => setOpenRole(false)}>Close</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-
-          {/* Deactivate Dialog */}
-          <Dialog open={openDeactivate} onOpenChange={setOpenDeactivate}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Deactivate User</DialogTitle>
-                <DialogDescription>
-                  This will disable login for {user.displayName || user.email}. You can’t delete the last active admin.
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter>
-                <Button variant="secondary" onClick={() => setOpenDeactivate(false)}>Cancel</Button>
-                <Button variant="destructive" disabled={loading} onClick={handleDeactivate}>{loading ? 'Working…' : 'Deactivate'}</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
-      )
+      return <UserActionsCell user={user} />
     },
   },
 ]
 
-function ViewUserModalTrigger({ userId, label = 'View' }: { userId: string; label?: string }) {
+// Extract the actions cell into a proper component to avoid hooks rules violation
+function UserActionsCell({ user }: { user: UserWithStats }) {
+  const [openRole, setOpenRole] = useState(false)
+  const [openDeactivate, setOpenDeactivate] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  const submitRoleChange = async (nextRole: 'ADMIN' | 'TRANSCRIBER') => {
+    try {
+      setLoading(true)
+      await apiFetch(`/api/admin/users/${user.id}`, { method: 'PATCH', body: JSON.stringify({ role: nextRole }) })
+      toastSuccess(`Role updated to ${nextRole}`)
+      window.location.reload()
+    } catch (e: unknown) {
+      const errorMessage = e instanceof Error ? e.message : 'Unknown error'
+      toastError('Failed to update role', errorMessage)
+    } finally {
+      setLoading(false)
+      setOpenRole(false)
+    }
+  }
+
+  const handleDeactivate = async () => {
+    try {
+      setLoading(true)
+      await apiFetch(`/api/admin/users/${user.id}`, { method: 'DELETE' })
+      toastSuccess('User deactivated')
+      window.location.reload()
+    } catch (e: unknown) {
+      const errorMessage = e instanceof Error ? e.message : 'Unknown error'
+      toastError('Failed to deactivate user', errorMessage)
+    } finally {
+      setLoading(false)
+      setOpenDeactivate(false)
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" size="sm">Actions</Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem asChild>
+            <button onClick={() => (document.querySelector(`#view-user-${user.id}-btn`) as HTMLButtonElement)?.click()} className="w-full text-left">View</button>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <a href={`/admin/payments?userId=${user.id}`}>Pay</a>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setOpenRole(true)}>Change Role</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setOpenDeactivate(true)} className="text-destructive focus:text-destructive">{user.isActive === false ? 'Inactive' : 'Deactivate'}</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      {/* Hidden View trigger to reuse the existing modal */}
+      <ViewUserModalTrigger userId={user.id} label={<span id={`view-user-${user.id}-btn`} className="sr-only">View</span> as React.ReactNode} />
+
+      {/* Change Role Dialog */}
+      <Dialog open={openRole} onOpenChange={setOpenRole}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Change Role</DialogTitle>
+            <DialogDescription>
+              Update the role for {user.displayName || user.email}. This affects their access rights.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex items-center gap-2">
+            <Button disabled={loading || user.role === 'TRANSCRIBER'} onClick={() => submitRoleChange('TRANSCRIBER')}>Make Transcriber</Button>
+            <Button disabled={loading || user.role === 'ADMIN'} onClick={() => submitRoleChange('ADMIN')}>Make Admin</Button>
+          </div>
+          <DialogFooter>
+            <Button variant="secondary" onClick={() => setOpenRole(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Deactivate Dialog */}
+      <Dialog open={openDeactivate} onOpenChange={setOpenDeactivate}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Deactivate User</DialogTitle>
+            <DialogDescription>
+              This will disable login for {user.displayName || user.email}. You can&apos;t delete the last active admin.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="secondary" onClick={() => setOpenDeactivate(false)}>Cancel</Button>
+            <Button variant="destructive" disabled={loading} onClick={handleDeactivate}>{loading ? 'Working…' : 'Deactivate'}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  )
+}
+
+function ViewUserModalTrigger({ userId, label = 'View' }: { userId: string; label?: React.ReactNode }) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState<{
     user: { id: string; email: string; phone?: string | null; displayName?: string | null; role: string; country?: string | null; avatarUrl?: string | null; createdAt: string; lastLoginAt?: string | null; totalEarningsCents?: number }
     stats: { reviewsCount: number; uploadsCount: number; approvedMinutes: number; statusCounts: Record<string, number> }
-    recent: { reviews: any[]; payments: any[] }
+    recent: { reviews: unknown[]; payments: unknown[] }
   } | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -207,10 +214,15 @@ function ViewUserModalTrigger({ userId, label = 'View' }: { userId: string; labe
     try {
       setLoading(true)
       setError(null)
-      const res = await apiFetch(`/api/admin/users/${userId}`)
+      const res = await apiFetch<{
+        user: { id: string; email: string; phone?: string | null; displayName?: string | null; role: string; country?: string | null; avatarUrl?: string | null; createdAt: string; lastLoginAt?: string | null; totalEarningsCents?: number }
+        stats: { reviewsCount: number; uploadsCount: number; approvedMinutes: number; statusCounts: Record<string, number> }
+        recent: { reviews: unknown[]; payments: unknown[] }
+      }>(`/api/admin/users/${userId}`)
       setData(res)
-    } catch (e: any) {
-      setError(e.message || 'Failed to load user')
+    } catch (e: unknown) {
+      const errorMessage = e instanceof Error ? e.message : 'Failed to load user'
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -259,13 +271,13 @@ function ViewUserModalTrigger({ userId, label = 'View' }: { userId: string; labe
                 <Stat label="Est. SLE" value={(data.stats.approvedMinutes * 1.2).toFixed(2)} />
                 <Stat label="Reviews" value={data.stats.reviewsCount} />
                 <Stat label="Uploads" value={data.stats.uploadsCount} />
-                <Stat label="Earnings" value={`${((data.user.totalEarningsCents||0)/100).toFixed(2)} SLE`} />
+                <Stat label="Earnings" value={`${((data.user.totalEarningsCents || 0) / 100).toFixed(2)} SLE`} />
               </div>
 
               <div>
                 <div className="text-xs font-medium mb-1">Submission states</div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
-                  {Object.entries(data.stats.statusCounts || {}).map(([k,v]) => (
+                  {Object.entries(data.stats.statusCounts || {}).map(([k, v]) => (
                     <div key={k} className="border rounded p-2 flex items-center justify-between"><span>{k}</span><span className="font-medium">{v}</span></div>
                   ))}
                 </div>
@@ -275,19 +287,21 @@ function ViewUserModalTrigger({ userId, label = 'View' }: { userId: string; labe
                 <div>
                   <div className="text-xs font-medium mb-1">Recent Reviews</div>
                   <div className="border rounded divide-y">
-                    {(data.recent.reviews||[]).slice(0,5).map((r:any) => (
-                      <div key={r.id} className="p-2 flex items-center justify-between"><span className="text-xs">{r.decision}</span><span className="text-[10px] text-muted-foreground">{new Date(r.createdAt).toLocaleString()}</span></div>
-                    ))}
-                    {(!data.recent.reviews || data.recent.reviews.length===0) && <div className="p-2 text-xs text-muted-foreground">No reviews</div>}
+                    {(data.recent.reviews || []).slice(0, 5).map((r) => {
+                      const review = r as Record<string, unknown>
+                      return <div key={review.id as string} className="p-2 flex items-center justify-between"><span className="text-xs">{review.decision as string}</span><span className="text-[10px] text-muted-foreground">{new Date(review.createdAt as string).toLocaleString()}</span></div>
+                    })}
+                    {(!data.recent.reviews || data.recent.reviews.length === 0) && <div className="p-2 text-xs text-muted-foreground">No reviews</div>}
                   </div>
                 </div>
                 <div>
                   <div className="text-xs font-medium mb-1">Recent Payments</div>
                   <div className="border rounded divide-y">
-                    {(data.recent.payments||[]).slice(0,5).map((p:any) => (
-                      <div key={p.id} className="p-2 flex items-center justify-between"><span className="text-xs">{(p.amountCents/100).toFixed(2)} {p.currency}</span><span className="text-[10px] text-muted-foreground">{p.status}</span></div>
-                    ))}
-                    {(!data.recent.payments || data.recent.payments.length===0) && <div className="p-2 text-xs text-muted-foreground">No payments</div>}
+                    {(data.recent.payments || []).slice(0, 5).map((p) => {
+                      const payment = p as Record<string, unknown>
+                      return <div key={payment.id as string} className="p-2 flex items-center justify-between"><span className="text-xs">{((payment.amountCents as number) / 100).toFixed(2)} {payment.currency as string}</span><span className="text-[10px] text-muted-foreground">{payment.status as string}</span></div>
+                    })}
+                    {(!data.recent.payments || data.recent.payments.length === 0) && <div className="p-2 text-xs text-muted-foreground">No payments</div>}
                   </div>
                 </div>
               </div>
@@ -302,7 +316,7 @@ function ViewUserModalTrigger({ userId, label = 'View' }: { userId: string; labe
   )
 }
 
-function Stat({ label, value }: { label: string; value: any }) {
+function Stat({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="border rounded p-2">
       <div className="text-[10px] text-muted-foreground">{label}</div>

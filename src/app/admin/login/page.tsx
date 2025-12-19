@@ -30,7 +30,7 @@ export default function AdminLoginPage() {
         return
       }
       setToken(res.token)
-      router.replace('/admin')
+      router.replace('/admin/v2')
     } catch (err: any) {
       setError(err.message || 'Login failed')
     } finally {
