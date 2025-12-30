@@ -11,16 +11,24 @@ export async function GET(req: NextRequest) {
     const category = searchParams.get("category") as PromptCategory | null;
     const emotion = searchParams.get("emotion") as PromptEmotion | null;
     const activeOnly = searchParams.get("activeOnly") !== "false";
+    const search = searchParams.get("search");
     const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "50");
+    // Limit -1 means fetch all (or max safe)
+    let limit = parseInt(searchParams.get("limit") || "50");
+    if (limit <= 0) limit = 10000; // Cap at 10k for safety if requesting all
+
     const skip = (page - 1) * limit;
 
-    const where = {
+    const where: any = {
       ...(languageId && { languageId }),
       ...(category && { category }),
       ...(emotion && { emotion }),
       ...(activeOnly && { isActive: true }),
     };
+
+    if (search) {
+      where.englishText = { contains: search, mode: "insensitive" };
+    }
 
     const [prompts, total] = await Promise.all([
       prisma.prompt.findMany({

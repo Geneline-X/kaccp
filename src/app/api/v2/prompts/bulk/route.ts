@@ -214,6 +214,92 @@ export async function DELETE(req: NextRequest) {
   }
 }
 
+// PATCH /api/v2/prompts/bulk - Bulk update prompts (Admin only)
+export async function PATCH(req: NextRequest) {
+  try {
+    const user = await getAuthUser(req);
+    if (!user || user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { updates } = await req.json();
+
+    if (!updates || !Array.isArray(updates) || updates.length === 0) {
+      return NextResponse.json(
+        { error: "No updates provided" },
+        { status: 400 }
+      );
+    }
+
+    // Validate updates (basic check)
+    const validCategories = Object.values(PromptCategory);
+    const validEmotions = Object.values(PromptEmotion);
+    const errors: { id: string; error: string }[] = [];
+    const validUpdates: any[] = [];
+
+    updates.forEach((update) => {
+      if (!update.id) {
+        return;
+      }
+
+      const data: any = {};
+
+      if (update.englishText) data.englishText = update.englishText.trim();
+      if (update.instruction !== undefined) data.instruction = update.instruction;
+      if (update.targetDurationSec) data.targetDurationSec = update.targetDurationSec;
+
+      if (update.category) {
+        if (!validCategories.includes(update.category)) {
+          errors.push({ id: update.id, error: "Invalid category" });
+          return;
+        }
+        data.category = update.category;
+      }
+
+      if (update.emotion) {
+        if (!validEmotions.includes(update.emotion)) {
+          errors.push({ id: update.id, error: "Invalid emotion" });
+          return;
+        }
+        data.emotion = update.emotion;
+      }
+
+      if (Object.keys(data).length > 0) {
+        validUpdates.push({ id: update.id, data });
+      }
+    });
+
+    if (validUpdates.length === 0) {
+      return NextResponse.json(
+        { error: "No valid updates found", errors },
+        { status: 400 }
+      );
+    }
+
+    // Execute updates in transaction
+    const results = await prisma.$transaction(
+      validUpdates.map((update) =>
+        prisma.prompt.update({
+          where: { id: update.id },
+          data: update.data,
+        })
+      )
+    );
+
+    return NextResponse.json({
+      success: true,
+      updated: results.length,
+      errors: errors.length > 0 ? errors.slice(0, 10) : undefined,
+    });
+  } catch (error) {
+    console.error("Error bulk updating prompts:", error);
+    return NextResponse.json(
+      { error: "Failed to bulk update prompts" },
+      { status: 500 }
+    );
+  }
+}
+
 // GET /api/v2/prompts/bulk - Get CSV template
 export async function GET() {
   const template = `english_text,category,emotion,instruction,target_duration_sec
