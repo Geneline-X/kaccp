@@ -99,10 +99,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Validate duration (max 10 seconds)
-    if (durationSec > 10) {
+    // Validate duration (max 15 seconds + small buffer)
+    if (durationSec > 16) {
       return NextResponse.json(
-        { error: "Recording must be 10 seconds or less" },
+        { error: "Recording must be 15 seconds or less" },
         { status: 400 }
       );
     }

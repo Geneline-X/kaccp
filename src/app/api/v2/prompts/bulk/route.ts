@@ -70,6 +70,7 @@ export async function POST(req: NextRequest) {
       // Map category (handle both formats: "GREETINGS" or "greetings")
       const categoryUpper = prompt.category.toUpperCase().replace(/\s+/g, "_");
       if (!validCategories.includes(categoryUpper as PromptCategory)) {
+        console.log(`Row ${row} error: Invalid category '${categoryUpper}' (Original: '${prompt.category}')`);
         errors.push({
           row,
           error: `Invalid category: ${prompt.category}. Valid: ${validCategories.join(", ")}`,
@@ -103,10 +104,35 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Bulk insert
+    // Check for existing prompts to avoid duplicates (since schema doesn't strictly enforce unique text)
+    const existingPrompts = await prisma.prompt.findMany({
+      where: {
+        languageId,
+        englishText: {
+          in: validPrompts.map((p) => p.englishText),
+        },
+      },
+      select: { englishText: true },
+    });
+
+    const existingTexts = new Set(existingPrompts.map((p) => p.englishText));
+    const newPrompts = validPrompts.filter((p) => !existingTexts.has(p.englishText));
+
+    if (newPrompts.length === 0) {
+      return NextResponse.json({
+        success: true,
+        imported: 0,
+        total: csvPrompts.length,
+        message: "All prompts already exist for this language",
+        errors: errors.length > 0 ? errors.slice(0, 10) : undefined,
+        errorCount: errors.length,
+      });
+    }
+
+    // Bulk insert new prompts only
     const result = await prisma.prompt.createMany({
-      data: validPrompts,
-      skipDuplicates: true,
+      data: newPrompts,
+      skipDuplicates: true, // Specific DB-level skip
     });
 
     return NextResponse.json({
@@ -120,6 +146,69 @@ export async function POST(req: NextRequest) {
     console.error("Error bulk importing prompts:", error);
     return NextResponse.json(
       { error: "Failed to import prompts" },
+      { status: 500 }
+    );
+  }
+}
+
+// DELETE /api/v2/prompts/bulk - Bulk delete prompts (Admin only)
+export async function DELETE(req: NextRequest) {
+  try {
+    const user = await getAuthUser(req);
+    if (!user || user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { promptIds } = await req.json();
+
+    if (!promptIds || !Array.isArray(promptIds) || promptIds.length === 0) {
+      return NextResponse.json(
+        { error: "No promptIds provided" },
+        { status: 400 }
+      );
+    }
+
+    // 1. Identify prompts with recordings (cannot delete)
+    const promptsWithRecordings = await prisma.prompt.findMany({
+      where: {
+        id: { in: promptIds },
+        recordings: { some: {} },
+      },
+      select: { id: true, englishText: true },
+    });
+
+    const notAllowedIds = new Set(promptsWithRecordings.map((p) => p.id));
+    const allowedIds = promptIds.filter((id) => !notAllowedIds.has(id));
+
+    if (allowedIds.length === 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          deleted: 0,
+          failed: promptsWithRecordings.length,
+          message: "All selected prompts have recordings and cannot be deleted.",
+        },
+        { status: 400 }
+      );
+    }
+
+    // 2. Delete allowed prompts
+    const result = await prisma.prompt.deleteMany({
+      where: {
+        id: { in: allowedIds },
+      },
+    });
+
+    return NextResponse.json({
+      success: true,
+      deleted: result.count,
+      failed: promptsWithRecordings.length,
+      message: `Deleted ${result.count} prompts. ${promptsWithRecordings.length} skipped due to existing recordings.`,
+    });
+  } catch (error) {
+    console.error("Error bulk deleting prompts:", error);
+    return NextResponse.json(
+      { error: "Failed to bulk delete prompts" },
       { status: 500 }
     );
   }
