@@ -124,7 +124,7 @@ export default function SpeakerDashboard() {
             <div>
               <h3 className="text-sm font-medium text-green-100">Estimated Earnings</h3>
               <p className="text-4xl font-bold mt-1">
-                ${((user?.totalEarningsCents || 0) / 100).toFixed(2)}
+                Le{((user?.totalEarningsCents || 0) / 100).toFixed(2)}
               </p>
               <p className="text-sm text-green-100 mt-2">
                 Based on {Math.round((stats?.approvedDurationSec || 0) / 60)} approved minutes
@@ -188,7 +188,7 @@ export default function SpeakerDashboard() {
                   const progress = lang.targetMinutes > 0
                     ? Math.round((lang.approvedMinutes / lang.targetMinutes) * 100)
                     : 0;
-                  
+
                   return (
                     <Link
                       key={lang.id}
@@ -222,7 +222,7 @@ export default function SpeakerDashboard() {
                             {Math.round(lang.approvedMinutes / 60)}h / {Math.round(lang.targetMinutes / 60)}h
                           </p>
                           <span className="text-xs font-medium text-green-600">
-                            ${lang.speakerRatePerMinute?.toFixed(2) || "0.00"}/min
+                            Le{lang.speakerRatePerMinute?.toFixed(2) || "0.00"}/min
                           </span>
                         </div>
                       </div>

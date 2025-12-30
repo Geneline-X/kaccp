@@ -105,9 +105,9 @@ model Language {
   collectedMinutes Float @default(0)
   approvedMinutes  Float @default(0)
 
-  // Incentive rates (USD)
-  speakerRatePerMinute  Float @default(0.05)
-  transcriberRatePerMin Float @default(0.03)
+  // Incentive rates (SLE - Leones)
+  speakerRatePerMinute  Float @default(2.5)
+  transcriberRatePerMin Float @default(1.5)
 
   prompts    Prompt[]
   recordings Recording[]

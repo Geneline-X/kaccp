@@ -153,6 +153,28 @@ export default function TranscriberV2Dashboard() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        {/* Earnings Card */}
+        <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl shadow-lg p-6 mb-8 text-white">
+          <div className="flex justify-between items-start">
+            <div>
+              <h3 className="text-sm font-medium text-blue-100">Total Earnings</h3>
+              <p className="text-4xl font-bold mt-1">
+                Le{((user?.totalEarningsCents || 0) / 100).toFixed(2)}
+              </p>
+              <p className="text-sm text-blue-100 mt-2">
+                From {stats?.byStatus.find((s) => s.status === "APPROVED")?._count || 0} approved transcriptions
+              </p>
+            </div>
+            <div className="text-right">
+              <div className="bg-white/20 rounded-lg px-4 py-2">
+                <p className="text-xs text-blue-100">Pending Review</p>
+                <p className="text-lg font-semibold">
+                  {stats?.byStatus.find((s) => s.status === "PENDING_REVIEW")?._count || 0}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow p-6">
@@ -255,7 +277,7 @@ export default function TranscriberV2Dashboard() {
                     </p>
                     <p className="text-sm text-gray-500">
                       {recording.durationSec.toFixed(1)}s •{" "}
-                      ${(recording.language.transcriberRatePerMin * (recording.durationSec / 60)).toFixed(3)} est.
+                      Le{(recording.language.transcriberRatePerMin * (recording.durationSec / 60)).toFixed(2)} est.
                     </p>
                   </div>
                   <button
