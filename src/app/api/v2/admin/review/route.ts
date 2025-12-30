@@ -166,6 +166,29 @@ export async function POST(req: NextRequest) {
           },
         },
       });
+
+      // CREDIT TRANSCRIBER
+      const ratePerMin = transcription.recording.language.transcriberRatePerMin || 0.03;
+      const durationMin = Math.max(0.1, transcription.recording.durationSec / 60);
+      const amountCents = Math.round(durationMin * ratePerMin * 100);
+
+      if (amountCents > 0) {
+        await prisma.walletTransaction.create({
+          data: {
+            userId: transcription.transcriberId,
+            deltaCents: amountCents,
+            description: `Approved transcription for recording ${transcription.recordingId}`,
+          },
+        });
+
+        await prisma.user.update({
+          where: { id: transcription.transcriberId },
+          data: {
+            totalEarningsCents: { increment: amountCents },
+            totalTranscriptions: { increment: 1 },
+          },
+        });
+      }
     }
 
     return NextResponse.json({

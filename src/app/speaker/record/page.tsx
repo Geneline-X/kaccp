@@ -145,8 +145,8 @@ function RecordContent() {
         const elapsed = (Date.now() - startTimeRef.current) / 1000;
         setDuration(elapsed);
 
-        // Auto-stop at 10 seconds
-        if (elapsed >= 10) {
+        // Auto-stop at 15 seconds
+        if (elapsed >= 15) {
           stopRecording();
         }
       }, 100);
@@ -386,18 +386,18 @@ function RecordContent() {
               {duration.toFixed(1)}s
             </div>
             <div className="text-gray-400 mt-2">
-              {duration >= 10 ? (
+              {duration >= 15 ? (
                 <span className="text-red-400">Maximum reached</span>
               ) : (
-                <span>Max 10 seconds</span>
+                <span>Max 15 seconds</span>
               )}
             </div>
             {/* Progress bar */}
             <div className="w-full bg-gray-700 rounded-full h-2 mt-4">
               <div
-                className={`h-2 rounded-full transition-all ${duration >= 10 ? "bg-red-500" : "bg-blue-500"
+                className={`h-2 rounded-full transition-all ${duration >= 15 ? "bg-red-500" : "bg-blue-500"
                   }`}
-                style={{ width: `${Math.min((duration / 10) * 100, 100)}%` }}
+                style={{ width: `${Math.min((duration / 15) * 100, 100)}%` }}
               ></div>
             </div>
           </div>
@@ -463,7 +463,7 @@ function RecordContent() {
           <ul className="text-sm text-gray-400 space-y-1">
             <li>• Find a quiet place with minimal background noise</li>
             <li>• Speak clearly and naturally</li>
-            <li>• Keep recordings between 3-10 seconds</li>
+            <li>• Keep recordings between 3-15 seconds</li>
             <li>• Avoid long pauses between words</li>
           </ul>
         </div>

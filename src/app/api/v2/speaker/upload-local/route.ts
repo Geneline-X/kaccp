@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthUser } from "@/lib/auth";
 import { writeFile, mkdir } from "fs/promises";
-import { join } from "path";
+import { join, dirname } from "path";
 
 // POST /api/v2/speaker/upload-local - Local file upload for development
 export async function POST(req: NextRequest) {
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     // Create the uploads directory structure
     const uploadDir = join(process.cwd(), "public", "uploads");
     const fullPath = join(uploadDir, filePath);
-    const dir = fullPath.substring(0, fullPath.lastIndexOf("/"));
+    const dir = dirname(fullPath);
 
     await mkdir(dir, { recursive: true });
     await writeFile(fullPath, Buffer.from(audioData));

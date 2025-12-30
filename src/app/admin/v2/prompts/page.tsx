@@ -62,6 +62,7 @@ export default function AdminPromptsPage() {
   const [selectedLanguage, setSelectedLanguage] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [pagination, setPagination] = useState({ page: 1, total: 0, totalPages: 0 });
+  const [selectedPromptIds, setSelectedPromptIds] = useState<Set<string>>(new Set());
 
   // New prompt form
   const [showNewForm, setShowNewForm] = useState(false);
@@ -122,6 +123,7 @@ export default function AdminPromptsPage() {
         setPrompts(data.prompts || []);
         setPagination(data.pagination || { page: 1, total: 0, totalPages: 0 });
         setLoading(false);
+        setSelectedPromptIds(new Set()); // Reset selection on page/filter change
       });
   }, [selectedLanguage, selectedCategory, pagination.page, token]);
 
@@ -190,13 +192,33 @@ export default function AdminPromptsPage() {
 
     const reader = new FileReader();
     reader.onload = (event) => {
-      const text = event.target?.result as string;
+      let text = event.target?.result as string;
+      // Remove BOM if present
+      if (text.charCodeAt(0) === 0xFEFF) {
+        text = text.slice(1);
+      }
+
       const lines = text.split(/\r?\n/).filter((line) => line.trim());
+      if (lines.length === 0) {
+        alert("File is empty");
+        return;
+      }
 
       // Parse header row
-      const headers = parseCSVLine(lines[0]).map((h) =>
+      const originalHeaders = parseCSVLine(lines[0]).map((h) =>
         h.replace(/^"|"$/g, "").trim()
       );
+
+      // Normalize headers to match expected keys
+      const headers = originalHeaders.map(h => h.toLowerCase().replace(/\s+/g, '_'));
+
+      console.log("Parsed headers:", headers); // Debug log
+
+      const requiredField = "english_text";
+      if (!headers.includes(requiredField)) {
+        alert(`Missing required column: ${requiredField}. Found: ${headers.join(", ")}`);
+        return;
+      }
 
       // Parse data rows
       const data = lines.slice(1).map((line) => {
@@ -209,6 +231,10 @@ export default function AdminPromptsPage() {
         });
         return obj;
       }).filter((row) => row.english_text); // Filter out empty rows
+
+      if (data.length === 0) {
+        alert("No valid rows found. Check that the 'english_text' column is not empty.");
+      }
 
       setCsvData(data);
     };
@@ -241,12 +267,105 @@ export default function AdminPromptsPage() {
       if (data.success) {
         // Refresh prompts list
         setPagination({ ...pagination, page: 1 });
+        // Clear data on success to prevent re-import
+        setTimeout(() => {
+          alert(`Successfully imported ${data.imported} prompts!`);
+          setShowBulkImport(false);
+          setCsvData([]);
+          setImportResult(null);
+        }, 500);
       }
     } catch {
       setImportResult({ error: "Failed to import prompts" });
     } finally {
       setImporting(false);
     }
+  };
+
+  // Delete prompt
+  const handleDeletePrompt = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this prompt? This action cannot be undone.")) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/v2/prompts/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.ok) {
+        setPrompts(prompts.filter((p) => p.id !== id));
+        setPagination((prev) => ({ ...prev, total: prev.total - 1 }));
+      } else {
+        const data = await res.json();
+        alert(data.error || "Failed to delete prompt");
+      }
+    } catch {
+      alert("Failed to delete prompt");
+    }
+  };
+
+  // Bulk Delete
+  const handleBulkDelete = async () => {
+    if (selectedPromptIds.size === 0) return;
+
+    if (!confirm(`Are you sure you want to delete ${selectedPromptIds.size} prompts?`)) {
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/v2/prompts/bulk", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ promptIds: Array.from(selectedPromptIds) }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        alert(data.message);
+        // Remove deleted from UI
+        setPrompts(prompts.filter(p => !selectedPromptIds.has(p.id)));
+        setPagination(prev => ({ ...prev, total: prev.total - data.deleted }));
+        setSelectedPromptIds(new Set());
+
+        // If we deleted everything on this page, reload to fetch next page
+        if (data.deleted === prompts.length) {
+          setPagination(prev => ({ ...prev, page: Math.max(1, prev.page - 1) }));
+        }
+
+        // Re-fetch to be safe if failed > 0
+        if (data.failed > 0) {
+          // Optional: trigger a re-fetch logic if you extracted it to a function
+        }
+      } else {
+        alert(data.error || data.message || "Failed to bulk delete");
+      }
+    } catch {
+      alert("Failed to execute bulk delete");
+    }
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedPromptIds.size === prompts.length && prompts.length > 0) {
+      setSelectedPromptIds(new Set());
+    } else {
+      setSelectedPromptIds(new Set(prompts.map(p => p.id)));
+    }
+  };
+
+  const toggleSelectOne = (id: string) => {
+    const newSet = new Set(selectedPromptIds);
+    if (newSet.has(id)) {
+      newSet.delete(id);
+    } else {
+      newSet.add(id);
+    }
+    setSelectedPromptIds(newSet);
   };
 
   // Download CSV template
@@ -269,6 +388,14 @@ export default function AdminPromptsPage() {
               </h1>
             </div>
             <div className="flex gap-2">
+              {selectedPromptIds.size > 0 && (
+                <button
+                  onClick={handleBulkDelete}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                >
+                  Delete Selected ({selectedPromptIds.size})
+                </button>
+              )}
               <button
                 onClick={() => setShowBulkImport(true)}
                 className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
@@ -336,6 +463,14 @@ export default function AdminPromptsPage() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
+                <th className="px-6 py-3 w-10">
+                  <input
+                    type="checkbox"
+                    className="rounded border-gray-300"
+                    checked={prompts.length > 0 && selectedPromptIds.size === prompts.length}
+                    onChange={toggleSelectAll}
+                  />
+                </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   English Text
                 </th>
@@ -351,24 +486,35 @@ export default function AdminPromptsPage() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Status
                 </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
+                  <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
                     Loading...
                   </td>
                 </tr>
               ) : prompts.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
+                  <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
                     No prompts found. Create one or import from CSV.
                   </td>
                 </tr>
               ) : (
                 prompts.map((prompt) => (
                   <tr key={prompt.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4">
+                      <input
+                        type="checkbox"
+                        className="rounded border-gray-300"
+                        checked={selectedPromptIds.has(prompt.id)}
+                        onChange={() => toggleSelectOne(prompt.id)}
+                      />
+                    </td>
                     <td className="px-6 py-4">
                       <div className="text-sm text-gray-900 max-w-md truncate">
                         {prompt.englishText}
@@ -395,12 +541,20 @@ export default function AdminPromptsPage() {
                     <td className="px-6 py-4">
                       <span
                         className={`px-2 py-1 text-xs rounded ${prompt.isActive
-                            ? "bg-green-100 text-green-800"
-                            : "bg-gray-100 text-gray-800"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-gray-100 text-gray-800"
                           }`}
                       >
                         {prompt.isActive ? "Active" : "Inactive"}
                       </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <button
+                        onClick={() => handleDeletePrompt(prompt.id)}
+                        className="text-red-600 hover:text-red-900 text-sm font-medium"
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 ))
@@ -615,8 +769,8 @@ export default function AdminPromptsPage() {
             {importResult && (
               <div
                 className={`mb-4 p-3 rounded-lg ${importResult.success
-                    ? "bg-green-100 text-green-800"
-                    : "bg-red-100 text-red-800"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-red-100 text-red-800"
                   }`}
               >
                 {importResult.success ? (
@@ -648,8 +802,8 @@ export default function AdminPromptsPage() {
               </button>
               <button
                 onClick={handleBulkImport}
-                disabled={csvData.length === 0 || importing}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+                disabled={!selectedLanguage || csvData.length === 0 || importing}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {importing ? "Importing..." : `Import ${csvData.length} Prompts`}
               </button>
