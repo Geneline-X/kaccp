@@ -13,6 +13,7 @@ export async function GET(req: NextRequest) {
         const { searchParams } = new URL(req.url);
         const languageId = searchParams.get("languageId");
         const status = searchParams.get("status") as RecordingStatus | null;
+        const search = searchParams.get("search");
         const page = parseInt(searchParams.get("page") || "1");
         const limit = parseInt(searchParams.get("limit") || "50");
         const skip = (page - 1) * limit;
@@ -21,6 +22,16 @@ export async function GET(req: NextRequest) {
             ...(languageId && { languageId }),
             ...(status && { status }),
         };
+
+        // Search in prompt text
+        if (search) {
+            where.prompt = {
+                englishText: {
+                    contains: search,
+                    mode: "insensitive"
+                }
+            };
+        }
 
         const [recordings, total] = await Promise.all([
             prisma.recording.findMany({

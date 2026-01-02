@@ -41,6 +41,9 @@ export default function AdminRecordingsPage() {
     // Filters
     const [selectedLanguage, setSelectedLanguage] = useState<string>("");
     const [selectedStatus, setSelectedStatus] = useState<string>("");
+    const [searchQuery, setSearchQuery] = useState<string>("");
+    const [limit, setLimit] = useState(50);
+    const [playedRecordings, setPlayedRecordings] = useState<Set<string>>(new Set());
 
     const token = typeof window !== "undefined" ? getToken() : null;
 
@@ -67,11 +70,12 @@ export default function AdminRecordingsPage() {
         setLoading(true);
         const params = new URLSearchParams({
             page: pagination.page.toString(),
-            limit: "20",
+            limit: limit.toString(),
         });
 
         if (selectedLanguage) params.set("languageId", selectedLanguage);
         if (selectedStatus) params.set("status", selectedStatus);
+        if (searchQuery) params.set("search", searchQuery);
 
         fetch(`/api/v2/admin/recordings?${params}`, {
             headers: { Authorization: `Bearer ${token}` },
@@ -83,7 +87,85 @@ export default function AdminRecordingsPage() {
                 setLoading(false);
             })
             .catch(() => setLoading(false));
-    }, [pagination.page, selectedLanguage, selectedStatus, token]);
+    }, [pagination.page, selectedLanguage, selectedStatus, searchQuery, limit, token]);
+
+    const handleAudioPlayed = (recordingId: string) => {
+        setPlayedRecordings(prev => new Set(prev).add(recordingId));
+    };
+
+    const handleFlagRecording = async (recordingId: string) => {
+        const reason = prompt("Enter flag reason (e.g., NOISE, UNCLEAR, TOO_QUIET, WRONG_LANGUAGE):");
+        if (!reason) return;
+
+        try {
+            const res = await fetch(`/api/v2/admin/recordings/${recordingId}/flag`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ reason }),
+            });
+
+            if (res.ok) {
+                alert("Recording flagged successfully");
+                // Refresh recordings
+                setPagination(p => ({ ...p, page: p.page }));
+            } else {
+                alert("Failed to flag recording");
+            }
+        } catch (err) {
+            alert("Error flagging recording");
+        }
+    };
+
+    const handleApproveRecording = async (recordingId: string) => {
+        if (!confirm("Approve this recording?")) return;
+
+        try {
+            const res = await fetch(`/api/v2/admin/recordings/${recordingId}/approve`, {
+                method: "POST",
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            if (res.ok) {
+                alert("Recording approved");
+                setPagination(p => ({ ...p, page: p.page }));
+            } else {
+                alert("Failed to approve recording");
+            }
+        } catch (err) {
+            alert("Error approving recording");
+        }
+    };
+
+    const handleRejectRecording = async (recordingId: string) => {
+        if (!confirm("Reject this recording? This action cannot be undone.")) return;
+
+        try {
+            const res = await fetch(`/api/v2/admin/recordings/${recordingId}/reject`, {
+                method: "POST",
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            if (res.ok) {
+                alert("Recording rejected");
+                setPagination(p => ({ ...p, page: p.page }));
+            } else {
+                alert("Failed to reject recording");
+            }
+        } catch (err) {
+            alert("Error rejecting recording");
+        }
+    };
+
+    // Sort recordings: unplayed first, then played
+    const sortedRecordings = [...recordings].sort((a, b) => {
+        const aPlayed = playedRecordings.has(a.id);
+        const bPlayed = playedRecordings.has(b.id);
+        if (aPlayed === bPlayed) return 0;
+        return aPlayed ? 1 : -1;
+    });
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -105,7 +187,22 @@ export default function AdminRecordingsPage() {
             <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
                 {/* Filters */}
                 <div className="bg-white rounded-lg shadow p-4 mb-6">
-                    <div className="flex flex-wrap gap-4">
+                    <div className="flex flex-wrap gap-4 mb-4">
+                        <div className="flex-1 min-w-[250px]">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Search Prompts
+                            </label>
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => {
+                                    setSearchQuery(e.target.value);
+                                    setPagination(p => ({ ...p, page: 1 }));
+                                }}
+                                placeholder="Search by prompt text..."
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                            />
+                        </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Language
@@ -116,7 +213,7 @@ export default function AdminRecordingsPage() {
                                     setSelectedLanguage(e.target.value);
                                     setPagination(p => ({ ...p, page: 1 }));
                                 }}
-                                className="px-4 py-2 border border-gray-300 rounded-lg min-w-[200px]"
+                                className="px-4 py-2 border border-gray-300 rounded-lg min-w-[180px]"
                             >
                                 <option value="">All Languages</option>
                                 {languages.map((lang) => (
@@ -136,7 +233,7 @@ export default function AdminRecordingsPage() {
                                     setSelectedStatus(e.target.value);
                                     setPagination(p => ({ ...p, page: 1 }));
                                 }}
-                                className="px-4 py-2 border border-gray-300 rounded-lg min-w-[200px]"
+                                className="px-4 py-2 border border-gray-300 rounded-lg min-w-[180px]"
                             >
                                 <option value="">All Statuses</option>
                                 {RECORDING_STATUSES.map((status) => (
@@ -144,6 +241,23 @@ export default function AdminRecordingsPage() {
                                         {status.replace("_", " ")}
                                     </option>
                                 ))}
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Per Page
+                            </label>
+                            <select
+                                value={limit}
+                                onChange={(e) => {
+                                    setLimit(Number(e.target.value));
+                                    setPagination(p => ({ ...p, page: 1 }));
+                                }}
+                                className="px-4 py-2 border border-gray-300 rounded-lg"
+                            >
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
                             </select>
                         </div>
                     </div>
@@ -161,29 +275,30 @@ export default function AdminRecordingsPage() {
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Transcription</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
                                 {loading ? (
                                     <tr>
-                                        <td colSpan={6} className="px-6 py-4 text-center text-gray-500">Loading...</td>
+                                        <td colSpan={7} className="px-6 py-4 text-center text-gray-500">Loading...</td>
                                     </tr>
                                 ) : recordings.length === 0 ? (
                                     <tr>
-                                        <td colSpan={6} className="px-6 py-4 text-center text-gray-500">No recordings found matching filters.</td>
+                                        <td colSpan={7} className="px-6 py-4 text-center text-gray-500">No recordings found matching filters.</td>
                                     </tr>
                                 ) : (
-                                    recordings.map((rec) => (
-                                        <tr key={rec.id} className="hover:bg-gray-50">
+                                    sortedRecordings.map((rec) => (
+                                        <tr key={rec.id} className={`hover:bg-gray-50 ${playedRecordings.has(rec.id) ? 'opacity-60' : ''}`}>
                                             <td className="px-6 py-4">
-                                                <AudioPlayer recordingId={rec.id} />
+                                                <AudioPlayer recordingId={rec.id} onPlayed={() => handleAudioPlayed(rec.id)} />
                                                 <div className="text-xs text-gray-500 mt-1">{rec.durationSec.toFixed(1)}s • {rec.language.code}</div>
                                             </td>
-                                            <td className="px-6 py-4 max-w-xs">
-                                                <div className="text-sm text-gray-900 font-medium truncate" title={rec.prompt.englishText}>
+                                            <td className="px-6 py-4">
+                                                <div className="text-sm text-gray-900 font-medium">
                                                     {rec.prompt.englishText}
                                                 </div>
-                                                <div className="text-xs text-gray-500">{rec.prompt.category}</div>
+                                                <div className="text-xs text-gray-500 mt-1">{rec.prompt.category}</div>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="text-sm text-gray-900">{rec.speaker.displayName || "Unknown"}</div>
@@ -192,10 +307,10 @@ export default function AdminRecordingsPage() {
                                             <td className="px-6 py-4">
                                                 <StatusBadge status={rec.status} />
                                             </td>
-                                            <td className="px-6 py-4 max-w-xs">
+                                            <td className="px-6 py-4">
                                                 {rec.transcription ? (
                                                     <div>
-                                                        <div className="text-sm text-gray-900 truncate" title={rec.transcription.text}>
+                                                        <div className="text-sm text-gray-900">
                                                             {rec.transcription.text}
                                                         </div>
                                                         <div className="text-xs text-gray-500 mt-1">
@@ -209,6 +324,37 @@ export default function AdminRecordingsPage() {
                                             <td className="px-6 py-4 text-sm text-gray-500">
                                                 {new Date(rec.createdAt).toLocaleDateString()}
                                                 <div className="text-xs">{new Date(rec.createdAt).toLocaleTimeString()}</div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex gap-2">
+                                                    {rec.status !== 'FLAGGED' && rec.status !== 'REJECTED' && (
+                                                        <button
+                                                            onClick={() => handleFlagRecording(rec.id)}
+                                                            className="text-xs px-2 py-1 bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200"
+                                                            title="Flag for issues"
+                                                        >
+                                                            Flag
+                                                        </button>
+                                                    )}
+                                                    {rec.status !== 'APPROVED' && rec.status !== 'REJECTED' && (
+                                                        <button
+                                                            onClick={() => handleApproveRecording(rec.id)}
+                                                            className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200"
+                                                            title="Approve recording"
+                                                        >
+                                                            Approve
+                                                        </button>
+                                                    )}
+                                                    {rec.status !== 'REJECTED' && (
+                                                        <button
+                                                            onClick={() => handleRejectRecording(rec.id)}
+                                                            className="text-xs px-2 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200"
+                                                            title="Reject recording"
+                                                        >
+                                                            Reject
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </td>
                                         </tr>
                                     ))
@@ -245,34 +391,33 @@ export default function AdminRecordingsPage() {
     );
 }
 
-function AudioPlayer({ recordingId }: { recordingId: string }) {
+function AudioPlayer({ recordingId, onPlayed }: { recordingId: string; onPlayed?: () => void }) {
     const [audioUrl, setAudioUrl] = useState<string | null>(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
 
-    const fetchAudioUrl = async () => {
-        if (audioUrl) return; // Already fetched
+    useEffect(() => {
+        const fetchAudioUrl = async () => {
+            try {
+                const token = getToken();
+                const res = await fetch(`/api/v2/audio/${recordingId}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
 
-        setLoading(true);
-        setError(false);
+                if (!res.ok) throw new Error("Failed to fetch audio");
 
-        try {
-            const token = getToken();
-            const res = await fetch(`/api/v2/audio/${recordingId}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+                const data = await res.json();
+                setAudioUrl(data.signedUrl || data.url);
+            } catch (err) {
+                console.error("Error fetching audio:", err);
+                setError(true);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-            if (!res.ok) throw new Error("Failed to fetch audio");
-
-            const data = await res.json();
-            setAudioUrl(data.signedUrl || data.url);
-        } catch (err) {
-            console.error("Error fetching audio:", err);
-            setError(true);
-        } finally {
-            setLoading(false);
-        }
-    };
+        fetchAudioUrl();
+    }, [recordingId]);
 
     if (error) {
         return <div className="text-xs text-red-500">Failed to load audio</div>;
@@ -287,7 +432,7 @@ function AudioPlayer({ recordingId }: { recordingId: string }) {
             controls
             src={audioUrl || undefined}
             className="h-8 w-40"
-            onPlay={fetchAudioUrl}
+            onEnded={onPlayed}
         />
     );
 }
