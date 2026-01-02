@@ -176,7 +176,7 @@ export default function AdminRecordingsPage() {
                                     recordings.map((rec) => (
                                         <tr key={rec.id} className="hover:bg-gray-50">
                                             <td className="px-6 py-4">
-                                                <audio controls src={rec.audioUrl} className="h-8 w-40" />
+                                                <AudioPlayer recordingId={rec.id} />
                                                 <div className="text-xs text-gray-500 mt-1">{rec.durationSec.toFixed(1)}s • {rec.language.code}</div>
                                             </td>
                                             <td className="px-6 py-4 max-w-xs">
@@ -242,6 +242,53 @@ export default function AdminRecordingsPage() {
                 </div>
             </main>
         </div>
+    );
+}
+
+function AudioPlayer({ recordingId }: { recordingId: string }) {
+    const [audioUrl, setAudioUrl] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
+
+    const fetchAudioUrl = async () => {
+        if (audioUrl) return; // Already fetched
+
+        setLoading(true);
+        setError(false);
+
+        try {
+            const token = getToken();
+            const res = await fetch(`/api/v2/audio/${recordingId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            if (!res.ok) throw new Error("Failed to fetch audio");
+
+            const data = await res.json();
+            setAudioUrl(data.signedUrl || data.url);
+        } catch (err) {
+            console.error("Error fetching audio:", err);
+            setError(true);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (error) {
+        return <div className="text-xs text-red-500">Failed to load audio</div>;
+    }
+
+    if (loading) {
+        return <div className="text-xs text-gray-500">Loading...</div>;
+    }
+
+    return (
+        <audio
+            controls
+            src={audioUrl || undefined}
+            className="h-8 w-40"
+            onPlay={fetchAudioUrl}
+        />
     );
 }
 
