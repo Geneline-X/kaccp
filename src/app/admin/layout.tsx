@@ -16,6 +16,7 @@ const NAV = [
   { href: '/admin/v2/languages', label: 'Languages' },
   { href: '/admin/v2/prompts', label: 'Prompts' },
   { href: '/admin/v2/review', label: 'Review' },
+  { href: '/admin/v2/recordings', label: 'Recordings' },
   { href: '/admin/v2/export', label: 'Export' },
   { href: '/admin/users', label: 'Users' },
   { href: '/admin/payments', label: 'Payments' },
