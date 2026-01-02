@@ -48,7 +48,7 @@ function RecordContent() {
     try {
       // Create AudioContext if not exists
       if (!audioContextRef.current) {
-        audioContextRef.current = new AudioContext({ sampleRate: 48000 });
+        audioContextRef.current = new AudioContext({ sampleRate: 16000 });
       }
       const audioContext = audioContextRef.current;
 
@@ -107,7 +107,7 @@ function RecordContent() {
 
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
-          sampleRate: 48000,
+          sampleRate: 16000,
           channelCount: 1,
           echoCancellation: true,
           noiseSuppression: true,

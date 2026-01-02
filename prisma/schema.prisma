@@ -154,7 +154,7 @@ model Recording {
   audioUrl    String
   durationSec Float // Max 10 seconds enforced by UI
   fileSize    Int?
-  sampleRate  Int? // Target: 48000 Hz
+  sampleRate  Int? // Target: 16000 Hz
 
   status RecordingStatus @default(PENDING_TRANSCRIPTION)
 
