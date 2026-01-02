@@ -45,33 +45,55 @@ export async function GET(
       );
     }
 
-    // Extract file path from gs:// URL
-    const audioUrl = recording.audioUrl;
-    let filePath = audioUrl;
-    
-    if (audioUrl.startsWith("gs://")) {
-      // Format: gs://bucket-name/path/to/file
-      const parts = audioUrl.replace("gs://", "").split("/");
-      parts.shift(); // Remove bucket name
-      filePath = parts.join("/");
+    const { audioUrl } = recording;
+
+    // Handle local files (localhost)
+    if (audioUrl.startsWith("/uploads/")) {
+      return NextResponse.json({
+        signedUrl: audioUrl,
+        url: audioUrl,
+        expiresIn: 3600,
+        mode: "local"
+      });
     }
 
-    // Generate signed URL for reading (valid for 1 hour)
-    const [signedUrl] = await bucket.file(filePath).getSignedUrl({
-      version: "v4",
-      action: "read",
-      expires: Date.now() + 60 * 60 * 1000, // 1 hour
-    });
+    // Handle GCS files
+    if (audioUrl.startsWith("gs://")) {
+      // Check if GCS is configured
+      if (!process.env.GCS_BUCKET || !process.env.GCS_SERVICE_ACCOUNT_JSON) {
+        return NextResponse.json(
+          { error: "GCS not configured on server" },
+          { status: 500 }
+        );
+      }
 
-    return NextResponse.json({
-      signedUrl,
-      url: signedUrl, // Keep for backwards compatibility
-      expiresIn: 3600, // seconds
-    });
-  } catch (error) {
+      // Extract file path from gs:// URL
+      const filePath = audioUrl.replace(`gs://${process.env.GCS_BUCKET}/`, "");
+
+      // Generate signed URL for reading (valid for 1 hour)
+      const [signedUrl] = await bucket.file(filePath).getSignedUrl({
+        version: "v4",
+        action: "read",
+        expires: Date.now() + 60 * 60 * 1000, // 1 hour
+      });
+
+      return NextResponse.json({
+        signedUrl,
+        url: signedUrl,
+        expiresIn: 3600,
+        mode: "gcs"
+      });
+    }
+
+    // Unknown audio URL format
+    return NextResponse.json(
+      { error: `Unsupported audio URL format: ${audioUrl}` },
+      { status: 400 }
+    );
+  } catch (error: any) {
     console.error("Error generating audio URL:", error);
     return NextResponse.json(
-      { error: "Failed to generate audio URL" },
+      { error: `Failed to generate audio URL: ${error.message}` },
       { status: 500 }
     );
   }
