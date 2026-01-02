@@ -187,6 +187,13 @@ export default function AdminV2Dashboard() {
               <div className="text-2xl mb-2">📦</div>
               <div className="font-medium text-gray-900">Export for TTS</div>
             </Link>
+            <Link
+              href="/admin/v2/recordings"
+              className="p-4 bg-red-50 rounded-lg text-center hover:bg-red-100 transition-colors"
+            >
+              <div className="text-2xl mb-2">🎤</div>
+              <div className="font-medium text-gray-900">All Recordings</div>
+            </Link>
           </div>
         </div>
 
