@@ -3,11 +3,15 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { getToken } from "@/lib/client";
+import { TranscriberAIAssist } from "@/components/transcriber-ai-assist";
 
 interface Recording {
   id: string;
   audioUrl: string;
   durationSec: number;
+  transcript?: string | null;
+  transcriptConfidence?: number | null;
+  autoTranscriptionStatus: "PENDING" | "COMPLETED" | "FAILED" | "SKIPPED";
   prompt: {
     englishText: string;
     category: string;
@@ -281,19 +285,21 @@ export default function TranscriptionTaskPage() {
           </p>
         </div>
 
-        {/* Transcription Input */}
+        {/* Kay X AI-Assisted Transcription */}
         <div className="bg-gray-800 rounded-2xl p-8 mb-8">
-          <h3 className="text-lg font-semibold mb-4">Your Transcription</h3>
-          <textarea
-            value={transcription}
-            onChange={(e) => setTranscription(e.target.value)}
-            rows={4}
-            className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder={`Write exactly what was said in ${recording.language.name}...`}
+          <TranscriberAIAssist
+            recording={{
+              id: recording.id,
+              transcript: recording.transcript,
+              transcriptConfidence: recording.transcriptConfidence,
+              autoTranscriptionStatus: recording.autoTranscriptionStatus || "PENDING",
+            }}
+            promptText={recording.prompt.englishText}
+            onSaveTranscription={async (text) => {
+              setTranscription(text);
+            }}
+            initialValue={transcription}
           />
-          <p className="text-sm text-gray-400 mt-2">
-            Write the transcription in the original language, not English
-          </p>
         </div>
 
         {/* Actions */}

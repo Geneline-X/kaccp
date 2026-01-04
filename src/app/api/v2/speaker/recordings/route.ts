@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAuthUser } from "@/lib/auth";
+import { kayXClient } from "@/lib/kay-client";
 
 // GET /api/v2/speaker/recordings - Get speaker's recording history
 export async function GET(req: NextRequest) {
@@ -90,7 +91,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { promptId, audioUrl, durationSec, fileSize, sampleRate, deviceInfo } = body;
+    const { promptId, audioUrl, durationSec, fileSize, sampleRate, deviceInfo, verifyWithKayX } = body;
 
     if (!promptId || !audioUrl || !durationSec) {
       return NextResponse.json(
@@ -179,6 +180,49 @@ export async function POST(req: NextRequest) {
         totalRecordingsSec: { increment: durationSec },
       },
     });
+
+    // Automatic Kay X transcription (enabled by default for Krio)
+    const shouldAutoTranscribe = kayXClient.isEnabled();
+    
+    if (shouldAutoTranscribe) {
+      const isKrio = prompt.language.code.toLowerCase() === "kri";
+      
+      if (isKrio && !audioUrl.startsWith("gs://")) {
+        // Trigger auto-transcription asynchronously (don't block response)
+        kayXClient.transcribeUrl(audioUrl).then(async (result) => {
+          try {
+            if (result.success) {
+              await prisma.recording.update({
+                where: { id: recording.id },
+                data: {
+                  transcript: result.transcript,
+                  transcriptConfidence: result.confidence,
+                  autoTranscriptionStatus: "COMPLETED",
+                  autoTranscribedAt: new Date(),
+                  transcriptMetadata: result.metadata,
+                },
+              });
+            } else {
+              await prisma.recording.update({
+                where: { id: recording.id },
+                data: {
+                  autoTranscriptionStatus: "FAILED",
+                  autoTranscribedAt: new Date(),
+                  transcriptMetadata: {
+                    error: result.error,
+                    timestamp: new Date().toISOString(),
+                  },
+                },
+              });
+            }
+          } catch (error) {
+            console.error("Error updating auto-transcription status:", error);
+          }
+        }).catch((error) => {
+          console.error("Error during automatic transcription:", error);
+        });
+      }
+    }
 
     return NextResponse.json({ recording }, { status: 201 });
   } catch (error) {
