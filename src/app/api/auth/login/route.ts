@@ -24,11 +24,19 @@ export async function POST(req: NextRequest) {
 
     await prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } })
 
-    const payloadRole = user.role as 'ADMIN' | 'TRANSCRIBER'
-    const token = signJwt({ sub: user.id, role: payloadRole })
+    // V2: Support all roles (ADMIN, SPEAKER, TRANSCRIBER)
+    const token = signJwt({ sub: user.id, role: user.role })
 
     return NextResponse.json({
-      user: { id: user.id, email: user.email, displayName: user.displayName, role: user.role },
+      user: { 
+        id: user.id, 
+        email: user.email, 
+        phone: user.phone,
+        displayName: user.displayName, 
+        role: user.role,
+        speaksLanguages: user.speaksLanguages,
+        writesLanguages: user.writesLanguages,
+      },
       token,
     })
   } catch (e) {

@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+/* eslint-disable @typescript-eslint/no-require-imports */
 /* Seed a default PaymentRatePlan if none is active */
 const { PrismaClient } = require('@prisma/client')
 

@@ -3,9 +3,11 @@ import jwt, { SignOptions, Secret } from 'jsonwebtoken'
 import { NextRequest } from 'next/server'
 import prisma from './prisma'
 
+import { UserRole } from '@prisma/client'
+
 export type JwtPayload = {
   sub: string // user id
-  role: 'ADMIN' | 'TRANSCRIBER'
+  role: UserRole  // ADMIN | SPEAKER | TRANSCRIBER
 }
 
 const getJwtSecret = (): string => {
@@ -25,8 +27,9 @@ export async function verifyPassword(password: string, hash: string) {
 
 export function signJwt(payload: JwtPayload, expiresIn: string | number = '7d') {
   const secret = getJwtSecret() as unknown as Secret
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const options: SignOptions = { algorithm: 'HS256', expiresIn: expiresIn as any }
-  return jwt.sign(payload as any, secret, options)
+  return jwt.sign(payload, secret, options)
 }
 
 export function verifyJwt(token: string): JwtPayload | null {
