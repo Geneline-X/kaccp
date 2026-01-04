@@ -7,6 +7,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ============================================================================
+// KACCP V2: Speech Synthesis Data Collection Platform
+// ============================================================================
+
 model Session {
   id           String   @id @default(cuid())
   createdAt    DateTime @default(now())
@@ -20,144 +24,203 @@ model Session {
 }
 
 model Notification {
-  id              String         @id @default(cuid())
-  createdAt       DateTime       @default(now())
-  readAt          DateTime?
-  userId          String
-  type            String
-  title           String
-  body            String?
-  transcriptionId String?
-  transcription   Transcription? @relation(fields: [transcriptionId], references: [id])
-  user            User           @relation(fields: [userId], references: [id])
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  readAt    DateTime?
+  userId    String
+  type      String
+  title     String
+  body      String?
+  user      User      @relation(fields: [userId], references: [id])
 
   @@index([userId, createdAt])
 }
 
+// ============================================================================
+// USER MODEL - Updated for V2
+// ============================================================================
+
 model User {
-  id                 String              @id @default(cuid())
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  email              String              @unique
-  passwordHash       String
-  isActive           Boolean             @default(true)
-  lastLoginAt        DateTime?
-  displayName        String?
-  role               UserRole            @default(TRANSCRIBER)
-  qualityScore       Float               @default(0)
-  totalEarningsCents Int                 @default(0)
-  phone              String?             @unique
-  avatarUrl          String?
-  bio                String?
-  country            String?
-  showOnLeaderboard  Boolean             @default(true)
-  uploads            AudioSource[]       @relation("UserUploads")
-  assignments        ChunkAssignment[]
-  notifications      Notification[]
-  payments           Payment[]
-  reviews            Review[]
-  sessions           Session[]
-  transcriptions     Transcription[]
-  walletTxns         WalletTransaction[]
+  id           String    @id @default(cuid())
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  email        String    @unique
+  passwordHash String
+  isActive     Boolean   @default(true)
+  lastLoginAt  DateTime?
+  displayName  String?
+  role         UserRole  @default(SPEAKER)
+  phone        String?   @unique
+  avatarUrl    String?
+  bio          String?
+
+  // Language capabilities
+  speaksLanguages String[] // Language codes they can speak (e.g., ["kri", "men"])
+  writesLanguages String[] // Language codes they can write/transcribe
+
+  // Stats
+  qualityScore        Float @default(0)
+  totalEarningsCents  Int   @default(0)
+  totalRecordingsSec  Float @default(0)
+  totalTranscriptions Int   @default(0)
+
+  // Relations
+  notifications Notification[]
+  payments      Payment[]
+  sessions      Session[]
+  walletTxns    WalletTransaction[]
+
+  // V2 Relations
+  speakerRecordings        Recording[]               @relation("SpeakerRecordings")
+  transcriberWork          Transcription[]           @relation("TranscriberWork")
+  reviewerWork             Transcription[]           @relation("ReviewerWork")
+  transcriptionAssignments TranscriptionAssignment[]
 }
 
-model AudioSource {
-  id                   String       @id @default(cuid())
-  createdAt            DateTime     @default(now())
-  updatedAt            DateTime     @updatedAt
-  title                String
-  description          String?
-  sourceRef            String?
-  originalUri          String
-  totalDurationSeconds Int          @default(0)
-  status               AudioStatus  @default(UPLOADED)
-  statusMessage        String?
-  uploadedById         String?
-  chunks               AudioChunk[]
-  uploadedBy           User?        @relation("UserUploads", fields: [uploadedById], references: [id])
+// ============================================================================
+// V2 CORE MODELS: Country, Language, Prompt, Recording, Transcription
+// ============================================================================
+
+model Country {
+  id        String     @id @default(cuid())
+  code      String     @unique // ISO 3166-1 alpha-2: SL, GN, LR, etc.
+  name      String // Sierra Leone, Guinea, Liberia
+  isActive  Boolean    @default(true)
+  languages Language[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }
 
-model AudioChunk {
-  id                      String            @id @default(cuid())
-  createdAt               DateTime          @default(now())
-  updatedAt               DateTime          @updatedAt
-  sourceId                String
-  index                   Int
-  startSec                Int
-  endSec                  Int
-  durationSec             Int
-  storageUri              String
-  status                  ChunkStatus       @default(AVAILABLE)
-  approvedTranscriptionId String?           @unique
-  approvedTranscription   Transcription?    @relation("ApprovedTranscription", fields: [approvedTranscriptionId], references: [id])
-  source                  AudioSource       @relation(fields: [sourceId], references: [id])
-  assignments             ChunkAssignment[]
-  transcriptions          Transcription[]
+model Language {
+  id         String  @id @default(cuid())
+  code       String  @unique // ISO 639-3: kri, men, tem, sus, etc.
+  name       String // Krio, Mende, Temne, Susu
+  nativeName String? // How it's called in the language
+  countryId  String
+  country    Country @relation(fields: [countryId], references: [id])
+  isActive   Boolean @default(true)
 
-  reportedBroken Boolean   @default(false)
-  reportedBy     String?
-  reportedAt     DateTime?
-  
-  @@unique([sourceId, index])
-  @@index([status, createdAt])
+  // Targets and progress (in minutes)
+  targetMinutes    Int   @default(12000) // 200 hours = 12000 min
+  collectedMinutes Float @default(0)
+  approvedMinutes  Float @default(0)
 
+  // Incentive rates (SLE - Leones)
+  speakerRatePerMinute  Float @default(2.5)
+  transcriberRatePerMin Float @default(1.5)
+
+  prompts    Prompt[]
+  recordings Recording[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([countryId])
+  @@index([isActive])
 }
 
-model ChunkAssignment {
-  id          String          @id @default(cuid())
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
-  chunkId     String
-  userId      String
-  expiresAt   DateTime?
-  releasedAt  DateTime?
-  chunk       AudioChunk      @relation(fields: [chunkId], references: [id])
-  user        User            @relation(fields: [userId], references: [id])
-  submissions Transcription[]
+model Prompt {
+  id                String         @id @default(cuid())
+  languageId        String
+  language          Language       @relation(fields: [languageId], references: [id])
 
-  @@index([userId, chunkId])
-  @@index([userId, releasedAt])
-  @@index([expiresAt])
+  // English text that speaker translates and speaks
+  englishText       String
+  category          PromptCategory          // Scenario category
+  emotion           PromptEmotion  @default(NEUTRAL)
+  instruction       String?                 // Extra guidance: "Say with excitement"
+
+  targetDurationSec Int            @default(5)   // Expected: 3-10 seconds
+  isActive          Boolean        @default(true)
+  timesRecorded     Int            @default(0)
+
+  recordings        Recording[]
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@index([languageId, category])
+  @@index([languageId, isActive])
+}
+
+model Recording {
+  id         String   @id @default(cuid())
+  promptId   String
+  prompt     Prompt   @relation(fields: [promptId], references: [id])
+  speakerId  String
+  speaker    User     @relation("SpeakerRecordings", fields: [speakerId], references: [id])
+  languageId String
+  language   Language @relation(fields: [languageId], references: [id])
+
+  // Audio file (GCS: /{country}/{language}/recordings/{speakerId}/{id}.wav)
+  audioUrl    String
+  durationSec Float // Max 10 seconds enforced by UI
+  fileSize    Int?
+  sampleRate  Int? // Target: 16000 Hz
+
+  status RecordingStatus @default(PENDING_TRANSCRIPTION)
+
+  // Quality flags (set by transcriber)
+  isFlagged  Boolean @default(false)
+  flagReason String? // NOISE, UNCLEAR, TOO_QUIET, WRONG_LANGUAGE
+
+  // Consent
+  consentGiven Boolean @default(true)
+
+  // Metadata
+  deviceInfo String?
+
+  transcription Transcription?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([languageId, status])
+  @@index([speakerId])
+  @@index([status])
 }
 
 model Transcription {
-  id               String          @id @default(cuid())
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
-  assignmentId     String
-  chunkId          String
-  userId           String
-  text             String
-  language         String          @default("en")
-  guidanceScore    Float?
-  notes            String?
-  submittedAt      DateTime?
-  aiModel          String?
-  aiScore          Float?
-  aiSuggestedText  String?
-  approvedForChunk AudioChunk?     @relation("ApprovedTranscription")
-  notifications    Notification[]
-  review           Review?
-  assignment       ChunkAssignment @relation(fields: [assignmentId], references: [id])
-  chunk            AudioChunk      @relation(fields: [chunkId], references: [id])
-  user             User            @relation(fields: [userId], references: [id])
+  id            String    @id @default(cuid())
+  recordingId   String    @unique
+  recording     Recording @relation(fields: [recordingId], references: [id])
+  transcriberId String
+  transcriber   User      @relation("TranscriberWork", fields: [transcriberId], references: [id])
 
-  @@index([submittedAt])
+  // The written transcription (exactly what was said)
+  text String
+
+  status TranscriptionStatus @default(PENDING_REVIEW)
+
+  // Review
+  reviewerId  String?
+  reviewer    User?     @relation("ReviewerWork", fields: [reviewerId], references: [id])
+  reviewedAt  DateTime?
+  reviewNotes String?
+
+  submittedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([transcriberId])
+  @@index([status])
 }
 
-model Review {
-  id                  String         @id @default(cuid())
-  createdAt           DateTime       @default(now())
-  updatedAt           DateTime       @updatedAt
-  transcriptionId     String         @unique
-  reviewerId          String
-  decision            ReviewDecision
-  comments            String?
-  approvedDurationSec Int?
-  useAiSuggestion     Boolean        @default(false)
-  reviewer            User           @relation(fields: [reviewerId], references: [id])
-  transcription       Transcription  @relation(fields: [transcriptionId], references: [id])
+// Assignment system for transcribers (claim recordings)
+model TranscriptionAssignment {
+  id          String    @id @default(cuid())
+  recordingId String
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  expiresAt   DateTime
+  releasedAt  DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([userId, releasedAt])
+  @@index([expiresAt])
+  @@index([recordingId])
 }
+
+// ============================================================================
+// PAYMENT MODELS (kept from V1)
+// ============================================================================
 
 model PaymentRatePlan {
   id                 String   @id @default(cuid())
@@ -194,45 +257,44 @@ model WalletTransaction {
   user             User     @relation(fields: [userId], references: [id])
 }
 
+// V2 Export tracking
 model ExportRecord {
-  id          String   @id @default(cuid())
-  createdAt   DateTime @default(now())
-  chunkId     String   @unique
-  audioPath   String
-  englishText String
-  durationSec Int
-  sourceId    String
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  languageId    String
+  languageCode  String
+  recordingId   String   @unique
+  audioPath     String
+  transcription String
+  durationSec   Float
+  speakerId     String
+
+  @@index([languageId])
 }
+
+// ============================================================================
+// ENUMS
+// ============================================================================
 
 enum UserRole {
   ADMIN
+  SPEAKER
   TRANSCRIBER
+  REVIEWER
 }
 
-enum AudioStatus {
-  UPLOADED
-  PROCESSING
-  READY
-  TRANSCRIBING
-  COMPLETED
-  FAILED
+enum RecordingStatus {
+  PENDING_TRANSCRIPTION // Waiting for transcriber to claim
+  TRANSCRIBED // Has transcription, pending review
+  APPROVED // Ready for TTS export
+  REJECTED // Quality issues, won't be used
+  FLAGGED // Transcriber flagged, needs admin review
 }
 
-enum ChunkStatus {
-  AVAILABLE
-  ASSIGNED
-  SUBMITTED
-  UNDER_REVIEW
+enum TranscriptionStatus {
+  PENDING_REVIEW
   APPROVED
   REJECTED
-  PROCESSING
-  FAILED
-}
-
-enum ReviewDecision {
-  APPROVED
-  REJECTED
-  EDIT_REQUESTED
 }
 
 enum PaymentStatus {
@@ -245,4 +307,37 @@ enum PaymentStatus {
 enum Currency {
   USD
   SLE
+  GNF   // Guinean Franc
+  LRD   // Liberian Dollar
+}
+
+// Prompt categories (scenarios for speakers)
+enum PromptCategory {
+  GREETINGS           // "Good morning", "How are you?"
+  NUMBERS_MONEY       // "One hundred", "The price is fifty thousand"
+  QUESTIONS           // "What is your name?", "Where is the market?"
+  COMMANDS_REQUESTS   // "Come here", "Please help me"
+  EMOTIONS_HAPPY      // "I am so happy!", "This is wonderful!"
+  EMOTIONS_SAD        // "I am very sad", "This makes me angry"
+  DAILY_LIFE          // "I'm going to work", "The food is ready"
+  MARKET_SHOPPING     // "How much?", "Too expensive"
+  DIRECTIONS_PLACES   // "Turn left", "Near the school"
+  FAMILY_PEOPLE       // "My mother is home", "The children are playing"
+  HEALTH              // "I feel sick", "Where is the hospital?"
+  WEATHER_TIME        // "It's raining", "Tomorrow morning"
+  LOCAL_SCENARIOS     // Sierra Leone specific situations
+  PHONETIC_COVERAGE   // Words covering all sounds
+  CONVERSATIONS       // Short dialogue lines
+}
+
+enum PromptEmotion {
+  NEUTRAL
+  HAPPY
+  SAD
+  ANGRY
+  QUESTION
+  EXCITED
+  SURPRISED
+  WHISPER
+  URGENT
 }

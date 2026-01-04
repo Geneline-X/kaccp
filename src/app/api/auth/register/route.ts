@@ -1,12 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { hashPassword, signJwt } from '@/lib/auth'
+import { UserRole } from '@prisma/client'
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, phone, password, displayName } = await req.json()
+    const { 
+      email, 
+      phone, 
+      password, 
+      displayName,
+      role = 'SPEAKER',  // Default to SPEAKER for V2
+      speaksLanguages = [],  // Language codes user can speak
+      writesLanguages = [],  // Language codes user can write/transcribe
+    } = await req.json()
+    
     if (!email || !phone || !password) {
       return NextResponse.json({ error: 'Email, phone and password are required' }, { status: 400 })
+    }
+
+    // Validate role
+    const validRoles: UserRole[] = ['SPEAKER', 'TRANSCRIBER']
+    if (!validRoles.includes(role)) {
+      return NextResponse.json({ error: 'Invalid role. Must be SPEAKER or TRANSCRIBER' }, { status: 400 })
     }
 
     const existing = await prisma.user.findUnique({ where: { email } })
@@ -25,12 +41,22 @@ export async function POST(req: NextRequest) {
         phone,
         passwordHash,
         displayName: displayName || null,
-        role: 'TRANSCRIBER',
+        role,
+        speaksLanguages,
+        writesLanguages,
       },
-      select: { id: true, email: true, phone: true, displayName: true, role: true }
+      select: { 
+        id: true, 
+        email: true, 
+        phone: true, 
+        displayName: true, 
+        role: true,
+        speaksLanguages: true,
+        writesLanguages: true,
+      }
     })
 
-    const token = signJwt({ sub: user.id, role: user.role as 'ADMIN' | 'TRANSCRIBER' })
+    const token = signJwt({ sub: user.id, role: user.role })
 
     return NextResponse.json({ user, token }, { status: 201 })
   } catch (e) {

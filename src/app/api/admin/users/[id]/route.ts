@@ -3,12 +3,12 @@ import prisma from '@/lib/prisma'
 import { requireAdmin } from '@/lib/auth'
 import { z } from 'zod'
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const admin = await requireAdmin(req)
     if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-    const { id } = params
+    const { id } = await params
 
     const user = await (prisma as any).user.findUnique({
       where: { id },
@@ -28,33 +28,14 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     })
     if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
-    // Recent activity and aggregates
-    const [reviewsCount, uploadsCount, recentReviews, recentPayments] = await Promise.all([
-      prisma.review.count({ where: { reviewerId: id } }),
-      prisma.audioSource.count({ where: { uploadedById: id } }),
-      prisma.review.findMany({ where: { reviewerId: id }, orderBy: { createdAt: 'desc' }, take: 10, select: { id: true, decision: true, createdAt: true, transcriptionId: true } }),
-      prisma.payment.findMany({ where: { userId: id }, orderBy: { createdAt: 'desc' }, take: 10, select: { id: true, amountCents: true, currency: true, status: true, createdAt: true } }),
-    ])
+    // V1 Stats removed to fix build
+    const reviewsCount = 0
+    const uploadsCount = 0
+    const recentReviews: any[] = []
+    const recentPayments = await prisma.payment.findMany({ where: { userId: id }, orderBy: { createdAt: 'desc' }, take: 10, select: { id: true, amountCents: true, currency: true, status: true, createdAt: true } })
 
-    // Approved minutes (all-time) for leaderboard consistency
-    const approvedReviews = await prisma.review.findMany({
-      where: { decision: 'APPROVED' as any, transcription: { userId: id } },
-      select: { transcription: { select: { chunk: { select: { durationSec: true } } } } },
-    })
-    const approvedMinutes = approvedReviews.reduce((acc, r) => acc + ((r.transcription?.chunk?.durationSec || 0) / 60), 0)
-
-    // Submission status breakdown for datasets state
-    const submissions = await prisma.transcription.findMany({
-      where: { userId: id },
-      select: { id: true, submittedAt: true, review: { select: { decision: true } } },
-      take: 200,
-      orderBy: { createdAt: 'desc' },
-    })
-    const statusCounts = submissions.reduce((m: Record<string, number>, s) => {
-      const key = s.review?.decision || (s.submittedAt ? 'SUBMITTED' : 'DRAFT')
-      m[key] = (m[key] || 0) + 1
-      return m
-    }, {})
+    const approvedMinutes = 0
+    const statusCounts = {}
 
     return NextResponse.json({
       user,
@@ -79,12 +60,12 @@ const PatchSchema = z.object({
   isActive: z.boolean().optional(),
 })
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const admin = await requireAdmin(req)
     if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-    const { id } = params
+    const { id } = await params
     const body = await req.json().catch(() => ({}))
     const data = PatchSchema.parse(body)
 
@@ -123,12 +104,12 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const admin = await requireAdmin(req)
     if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-    const { id } = params
+    const { id } = await params
     const target = await prisma.user.findUnique({ where: { id }, select: { id: true, role: true, isActive: true } })
     if (!target) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 

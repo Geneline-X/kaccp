@@ -12,10 +12,16 @@ export async function GET(req: NextRequest) {
       select: {
         id: true,
         email: true,
+        phone: true,
         displayName: true,
         role: true,
         qualityScore: true,
         totalEarningsCents: true,
+        // V2 fields
+        speaksLanguages: true,
+        writesLanguages: true,
+        totalRecordingsSec: true,
+        totalTranscriptions: true,
         createdAt: true,
         lastLoginAt: true,
       },
