@@ -14,6 +14,9 @@ interface Transcription {
     id: string;
     audioUrl: string;
     durationSec: number;
+    transcript?: string | null;
+    transcriptConfidence?: number | null;
+    autoTranscriptionStatus: "PENDING" | "COMPLETED" | "FAILED" | "SKIPPED";
     prompt: {
       englishText: string;
       category: string;
@@ -285,8 +288,25 @@ export default function AdminReviewPage() {
 
                   {/* Transcription */}
                   <div className="p-6 border-b border-gray-200">
+                    {/* Kay X Auto-Transcript (Krio) */}
+                    {selectedTranscription.recording.autoTranscriptionStatus === "COMPLETED" && selectedTranscription.recording.transcript && (
+                      <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-xs font-medium text-blue-900">🤖 Kay X Krio Transcript</span>
+                          {selectedTranscription.recording.transcriptConfidence && (
+                            <span className="px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded">
+                              {(selectedTranscription.recording.transcriptConfidence * 100).toFixed(0)}% confidence
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-sm text-gray-900">
+                          {selectedTranscription.recording.transcript}
+                        </div>
+                      </div>
+                    )}
+                    
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Transcription (edit if needed)
+                      Human Transcription (edit if needed)
                     </label>
                     <textarea
                       value={editedText}

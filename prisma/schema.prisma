@@ -162,6 +162,13 @@ model Recording {
   isFlagged  Boolean @default(false)
   flagReason String? // NOISE, UNCLEAR, TOO_QUIET, WRONG_LANGUAGE
 
+  // Kay X Auto-Transcription (AI-generated Krio transcript)
+  transcript              String? // Auto-generated Krio transcript from Kay X
+  transcriptConfidence    Float? // Confidence score (0-1)
+  autoTranscriptionStatus AutoTranscriptionStatus @default(PENDING)
+  autoTranscribedAt       DateTime?
+  transcriptMetadata      Json? // Additional Kay X response data
+
   // Consent
   consentGiven Boolean @default(true)
 
@@ -175,6 +182,7 @@ model Recording {
   @@index([languageId, status])
   @@index([speakerId])
   @@index([status])
+  @@index([autoTranscriptionStatus])
 }
 
 model Transcription {
@@ -340,4 +348,11 @@ enum PromptEmotion {
   SURPRISED
   WHISPER
   URGENT
+}
+
+enum AutoTranscriptionStatus {
+  PENDING // Not yet auto-transcribed
+  COMPLETED // Kay X successfully transcribed
+  FAILED // Transcription failed (error or service unavailable)
+  SKIPPED // Skipped (non-Krio, Kay X disabled, or unsupported format)
 }
