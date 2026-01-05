@@ -36,7 +36,16 @@ export async function GET(req: NextRequest) {
         const [recordings, total] = await Promise.all([
             prisma.recording.findMany({
                 where,
-                include: {
+                select: {
+                    id: true,
+                    audioUrl: true,
+                    durationSec: true,
+                    status: true,
+                    createdAt: true,
+                    transcript: true,
+                    transcriptConfidence: true,
+                    autoTranscriptionStatus: true,
+                    autoTranscribedAt: true,
                     language: {
                         select: { id: true, name: true, code: true },
                     },

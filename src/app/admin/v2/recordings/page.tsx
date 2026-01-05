@@ -11,6 +11,9 @@ interface Recording {
     durationSec: number;
     status: string;
     createdAt: string;
+    transcript?: string | null;
+    transcriptConfidence?: number | null;
+    autoTranscriptionStatus: "PENDING" | "COMPLETED" | "FAILED" | "SKIPPED";
     language: { id: string; name: string; code: string };
     prompt: { id: string; englishText: string; category: string };
     speaker: { id: string; email: string; displayName: string | null };
@@ -44,6 +47,7 @@ export default function AdminRecordingsPage() {
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [limit, setLimit] = useState(50);
     const [playedRecordings, setPlayedRecordings] = useState<Set<string>>(new Set());
+    const [transcribingRecordings, setTranscribingRecordings] = useState<Set<string>>(new Set());
 
     const token = typeof window !== "undefined" ? getToken() : null;
 
@@ -159,6 +163,38 @@ export default function AdminRecordingsPage() {
         }
     };
 
+    const handleTranscribeWithKayX = async (recordingId: string) => {
+        if (!confirm("Trigger Kay X transcription for this recording?")) return;
+
+        setTranscribingRecordings(prev => new Set(prev).add(recordingId));
+        try {
+            const res = await fetch(`/api/v2/admin/recordings/${recordingId}/transcribe`, {
+                method: "POST",
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                const confidenceText = data.confidence 
+                    ? `\nConfidence: ${(data.confidence * 100).toFixed(0)}%`
+                    : '';
+                alert(`Transcription successful!\nKrio: ${data.transcript}${confidenceText}`);
+                // Refresh to show new transcript
+                setPagination(p => ({ ...p, page: p.page }));
+            } else {
+                alert(`Transcription failed: ${data.message || data.error}`);
+            }
+        } catch (err) {
+            alert("Error triggering transcription");
+        } finally {
+            setTranscribingRecordings(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(recordingId);
+                return newSet;
+            });
+        }
+    };
+
     // Sort recordings: unplayed first, then played
     const sortedRecordings = [...recordings].sort((a, b) => {
         const aPlayed = playedRecordings.has(a.id);
@@ -270,7 +306,8 @@ export default function AdminRecordingsPage() {
                             <thead className="bg-gray-50">
                                 <tr>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Audio</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Prompt</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Prompt (English)</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kay X (Krio)</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Speaker</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Transcription</th>
@@ -281,11 +318,11 @@ export default function AdminRecordingsPage() {
                             <tbody className="bg-white divide-y divide-gray-200">
                                 {loading ? (
                                     <tr>
-                                        <td colSpan={7} className="px-6 py-4 text-center text-gray-500">Loading...</td>
+                                        <td colSpan={9} className="px-6 py-4 text-center text-gray-500">Loading...</td>
                                     </tr>
                                 ) : recordings.length === 0 ? (
                                     <tr>
-                                        <td colSpan={7} className="px-6 py-4 text-center text-gray-500">No recordings found matching filters.</td>
+                                        <td colSpan={9} className="px-6 py-4 text-center text-gray-500">No recordings found matching filters.</td>
                                     </tr>
                                 ) : (
                                     sortedRecordings.map((rec) => (
@@ -299,6 +336,40 @@ export default function AdminRecordingsPage() {
                                                     {rec.prompt.englishText}
                                                 </div>
                                                 <div className="text-xs text-gray-500 mt-1">{rec.prompt.category}</div>
+                                           </td>
+                                            <td className="px-6 py-4">
+                                                {rec.autoTranscriptionStatus === "COMPLETED" && rec.transcript ? (
+                                                    <div>
+                                                        <div className="text-sm text-gray-900">
+                                                            {rec.transcript}
+                                                        </div>
+                                                        {rec.transcriptConfidence && (
+                                                            <div className="flex items-center gap-1 mt-1">
+                                                                <div className="flex-1 max-w-[100px] h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                                                                    <div
+                                                                        className={`h-full ${
+                                                                            rec.transcriptConfidence >= 0.8
+                                                                                ? "bg-green-500"
+                                                                                : rec.transcriptConfidence >= 0.6
+                                                                                ? "bg-yellow-500"
+                                                                                : "bg-red-500"
+                                                                        }`}
+                                                                        style={{ width: `${rec.transcriptConfidence * 100}%` }}
+                                                                    />
+                                                                </div>
+                                                                <span className="text-xs text-gray-500">
+                                                                    {(rec.transcriptConfidence * 100).toFixed(0)}%
+                                                                </span>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                ) : rec.autoTranscriptionStatus === "PENDING" ? (
+                                                    <span className="text-xs text-gray-400 italic">Processing...</span>
+                                                ) : rec.autoTranscriptionStatus === "FAILED" ? (
+                                                    <span className="text-xs text-red-400 italic">Failed</span>
+                                                ) : (
+                                                    <span className="text-xs text-gray-400 italic">N/A</span>
+                                                )}
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="text-sm text-gray-900">{rec.speaker.displayName || "Unknown"}</div>
@@ -326,7 +397,18 @@ export default function AdminRecordingsPage() {
                                                 <div className="text-xs">{new Date(rec.createdAt).toLocaleTimeString()}</div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <div className="flex gap-2">
+                                                <div className="flex gap-2 flex-wrap">
+                                                    {/* Kay X Transcribe Button */}
+                                                    {rec.language.code.toLowerCase() === 'kri' && rec.autoTranscriptionStatus !== 'COMPLETED' && (
+                                                        <button
+                                                            onClick={() => handleTranscribeWithKayX(rec.id)}
+                                                            disabled={transcribingRecordings.has(rec.id)}
+                                                            className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 disabled:opacity-50"
+                                                            title="Transcribe with Kay X"
+                                                        >
+                                                            {transcribingRecordings.has(rec.id) ? '⏳ Kay X...' : '🤖 Kay X'}
+                                                        </button>
+                                                    )}
                                                     {rec.status !== 'FLAGGED' && rec.status !== 'REJECTED' && (
                                                         <button
                                                             onClick={() => handleFlagRecording(rec.id)}
