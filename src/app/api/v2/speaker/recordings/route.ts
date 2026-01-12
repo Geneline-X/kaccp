@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAuthUser } from "@/lib/auth";
 import { kayXClient } from "@/lib/kay-client";
+import { getSignedUrl } from "@/lib/gcs";
 
 // GET /api/v2/speaker/recordings - Get speaker's recording history
 export async function GET(req: NextRequest) {
@@ -83,6 +84,7 @@ export async function GET(req: NextRequest) {
 }
 
 // POST /api/v2/speaker/recordings - Submit a new recording
+// POST /api/v2/speaker/recordings - Submit a new recording
 export async function POST(req: NextRequest) {
   try {
     const user = await getAuthUser(req);
@@ -91,7 +93,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { promptId, audioUrl, durationSec, fileSize, sampleRate, deviceInfo, verifyWithKayX } = body;
+    const { promptId, audioUrl, durationSec, fileSize, sampleRate, deviceInfo, verifyWithKayX, languageId } = body;
 
     if (!promptId || !audioUrl || !durationSec) {
       return NextResponse.json(
@@ -123,7 +125,30 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Determine target language for this recording
+    let recordingLanguageId = prompt.languageId;
+
+    // If prompt is universal (null languageId), we need language from request
+    if (!recordingLanguageId) {
+      if (!languageId) {
+        return NextResponse.json(
+          { error: "languageId is required for universal prompts" },
+          { status: 400 }
+        );
+      }
+      recordingLanguageId = languageId;
+    }
+
+    // Verify user can speak this language
+    // Note: This check assumes 'user.speaksLanguages' contains codes (e.g. 'kri') or IDs.
+    // The previous implementation checked codes. Let's resolve the ID to Code to be safe.
+
     // Check if user already recorded this prompt
+    // For universal prompts, we check if they recorded THIS prompt in ANY language? 
+    // Or this specific language? Usually a prompt is unique per meaning.
+    // If I record "Hello" in Krio, should I also record it in Mende?
+    // User requested "Universal" prompts -> implying one prompt object served to all.
+    // So if I record it once, I'm done with that prompt.
     const existingRecording = await prisma.recording.findFirst({
       where: {
         promptId,
@@ -143,7 +168,7 @@ export async function POST(req: NextRequest) {
       data: {
         promptId,
         speakerId: user.id,
-        languageId: prompt.languageId,
+        languageId: recordingLanguageId, // Use resolved language
         audioUrl,
         durationSec,
         fileSize,
@@ -167,7 +192,7 @@ export async function POST(req: NextRequest) {
 
     // Update language collectedMinutes
     await prisma.language.update({
-      where: { id: prompt.languageId },
+      where: { id: recordingLanguageId },
       data: {
         collectedMinutes: { increment: durationSec / 60 },
       },
@@ -183,14 +208,29 @@ export async function POST(req: NextRequest) {
 
     // Automatic Kay X transcription (enabled by default for Krio)
     const shouldAutoTranscribe = kayXClient.isEnabled();
-    
+
     if (shouldAutoTranscribe) {
-      const isKrio = prompt.language.code.toLowerCase() === "kri";
-      
-      if (isKrio && !audioUrl.startsWith("gs://")) {
+      // Resolve language code
+      let langCode = prompt.language?.code;
+      if (!langCode && recording.language) {
+        langCode = recording.language.code;
+      }
+
+      const isKrio = langCode?.toLowerCase() === "kri";
+
+      if (isKrio) {
         // Trigger auto-transcription asynchronously (don't block response)
-        kayXClient.transcribeUrl(audioUrl).then(async (result) => {
+        (async () => {
           try {
+            let targetUrl = audioUrl;
+
+            // If audio is in GCS, generate a signed URL for Kay X to access
+            if (audioUrl.startsWith("gs://")) {
+              targetUrl = await getSignedUrl(audioUrl);
+            }
+
+            const result = await kayXClient.transcribeUrl(targetUrl);
+
             if (result.success) {
               await prisma.recording.update({
                 where: { id: recording.id },
@@ -211,16 +251,28 @@ export async function POST(req: NextRequest) {
                   transcriptMetadata: {
                     error: result.error,
                     timestamp: new Date().toISOString(),
+                    details: result as any, // Cast to any for JSON compatibility
                   },
                 },
               });
             }
           } catch (error) {
-            console.error("Error updating auto-transcription status:", error);
+            console.error("Error during automatic transcription:", error);
+            // Optionally mark as FAILED in DB if the error happened before kayXClient returned
+            try {
+              await prisma.recording.update({
+                where: { id: recording.id },
+                data: {
+                  autoTranscriptionStatus: "FAILED",
+                  transcriptMetadata: {
+                    error: String(error),
+                    timestamp: new Date().toISOString(),
+                  },
+                },
+              });
+            } catch (ignore) { /* ignore update error */ }
           }
-        }).catch((error) => {
-          console.error("Error during automatic transcription:", error);
-        });
+        })();
       }
     }
 

@@ -46,10 +46,14 @@ export default function TranscriberV2Dashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
   const [claimingId, setClaimingId] = useState<string | null>(null);
+  const [releasingId, setReleasingId] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [totalAvailable, setTotalAvailable] = useState(0);
+  const limit = 10;
 
   const token = typeof window !== "undefined" ? getToken() : null;
 
-  useEffect(() => {
+  const loadData = () => {
     if (!token) {
       router.push("/transcriber/login");
       return;
@@ -78,16 +82,50 @@ export default function TranscriberV2Dashboard() {
         setStats(data.stats || null);
       });
 
-    // Fetch available recordings
-    fetch("/api/v2/transcriber/available?limit=10", {
+    // Fetch available recordings with pagination
+    fetch(`/api/v2/transcriber/available?limit=${limit}&offset=${(page - 1) * limit}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
       .then((data) => {
         setAvailableRecordings(data.recordings || []);
+        setTotalAvailable(data.totalAvailable || 0);
         setLoading(false);
       });
-  }, [token, router]);
+  };
+
+  useEffect(() => {
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, page]);
+
+  // Release an assignment
+  const releaseAssignment = async (recordingId: string) => {
+    setReleasingId(recordingId);
+    try {
+      const res = await fetch("/api/v2/transcriber/release", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ recordingId }),
+      });
+
+      const data = await res.json();
+      if (data.error) {
+        alert(data.error);
+        return;
+      }
+
+      // Reload data
+      loadData();
+    } catch {
+      alert("Failed to release assignment");
+    } finally {
+      setReleasingId(null);
+    }
+  };
 
   // Claim a recording
   const claimRecording = async (recordingId: string) => {
@@ -139,15 +177,26 @@ export default function TranscriberV2Dashboard() {
                 Welcome back, {user?.displayName || user?.email}
               </p>
             </div>
-            <button
-              onClick={() => {
-                clearToken();
-                router.push("/transcriber/v2");
-              }}
-              className="text-sm text-gray-500 hover:text-gray-700"
-            >
-              Logout
-            </button>
+            <div className="flex items-center gap-3">
+              {/* Role Switcher - Show if user has SPEAKER role */}
+              {user?.roles?.includes("SPEAKER") && (
+                <Link
+                  href="/speaker"
+                  className="px-4 py-2 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+                >
+                  Switch to Speaker →
+                </Link>
+              )}
+              <button
+                onClick={() => {
+                  clearToken();
+                  router.push("/transcriber/v2");
+                }}
+                className="text-sm text-gray-500 hover:text-gray-700"
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -229,6 +278,13 @@ export default function TranscriberV2Dashboard() {
                     <span className="text-sm text-orange-600">
                       {item.minutesRemaining} min remaining
                     </span>
+                    <button
+                      onClick={() => releaseAssignment(item.recording?.id)}
+                      disabled={releasingId !== null}
+                      className="px-4 py-2 text-sm border border-red-300 text-red-700 rounded-lg hover:bg-red-50 disabled:opacity-50"
+                    >
+                      {releasingId === item.recording?.id ? "Releasing..." : "Release"}
+                    </button>
                     <Link
                       href={`/transcriber/v2/task/${item.recording?.id}`}
                       className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
@@ -298,6 +354,34 @@ export default function TranscriberV2Dashboard() {
               ))
             )}
           </div>
+
+          {/* Pagination */}
+          {totalAvailable > limit && (
+            <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+              <div className="text-sm text-gray-500">
+                Showing {((page - 1) * limit) + 1} - {Math.min(page * limit, totalAvailable)} of {totalAvailable} recordings
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Previous
+                </button>
+                <span className="px-4 py-2 text-sm">
+                  Page {page} of {Math.ceil(totalAvailable / limit)}
+                </span>
+                <button
+                  onClick={() => setPage(p => p + 1)}
+                  disabled={page >= Math.ceil(totalAvailable / limit)}
+                  className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>

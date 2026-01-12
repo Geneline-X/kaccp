@@ -75,20 +75,28 @@ export async function POST(req: NextRequest) {
     const recordingCount = await prisma.recording.count({
       where: {
         speakerId: user.id,
-        languageId: prompt.languageId,
+        ...(prompt.languageId ? { languageId: prompt.languageId } : {}),
       },
     });
     const recordingNumber = String(recordingCount + 1).padStart(5, "0");
 
+    // For universal prompts (no language), use a default structure
+    // For language-specific prompts, use the language/country structure
+    let countryCode = "universal";
+    let languageCode = "universal";
+
+    if (prompt.language) {
+      countryCode = prompt.language.country.code.toLowerCase();
+      languageCode = prompt.language.code.toLowerCase();
+    }
+
     // Generate filename: {language}_{speaker}_{recordingNumber}.wav
     // Path: {country}/{language}/wavs/{speakerLabel}/{language}_{speaker}_{number}.wav
-    const countryCode = prompt.language.country.code.toLowerCase();
-    const languageCode = prompt.language.code.toLowerCase();
-    
+
     // Always use .wav extension - we'll convert on upload if needed
     const fileName = `${languageCode}_${speakerLabel}_${recordingNumber}.wav`;
     const filePath = `${countryCode}/${languageCode}/wavs/${speakerLabel}/${fileName}`;
-    
+
     // For now, accept the browser's format (webm/mp4) and store as-is
     // The extension in the actual upload will match contentType
     const actualExtension = contentType === "audio/wav" ? "wav" : contentType === "audio/webm" ? "webm" : "mp4";

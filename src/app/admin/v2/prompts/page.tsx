@@ -802,6 +802,7 @@ export default function AdminPromptsPage() {
                   onChange={(e) => setSelectedLanguage(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                 >
+                  <option value="ALL">Universal (All Languages)</option>
                   {languages.map((lang) => (
                     <option key={lang.id} value={lang.id}>
                       {lang.name} ({lang.code})

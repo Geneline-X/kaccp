@@ -32,21 +32,26 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Check if language exists
-    const language = await prisma.language.findUnique({
-      where: { id: languageId },
-    });
+    // Check if language exists (unless Universal)
+    let targetLanguageId: string | null = languageId;
+    if (languageId === "ALL") {
+      targetLanguageId = null;
+    } else {
+      const language = await prisma.language.findUnique({
+        where: { id: languageId },
+      });
 
-    if (!language) {
-      return NextResponse.json(
-        { error: "Language not found" },
-        { status: 404 }
-      );
+      if (!language) {
+        return NextResponse.json(
+          { error: "Language not found" },
+          { status: 404 }
+        );
+      }
     }
 
     // Validate and transform prompts
     const validPrompts: {
-      languageId: string;
+      languageId: string | null;
       englishText: string;
       category: PromptCategory;
       emotion: PromptEmotion;
@@ -88,7 +93,7 @@ export async function POST(req: NextRequest) {
       }
 
       validPrompts.push({
-        languageId,
+        languageId: targetLanguageId,
         englishText: prompt.english_text.trim(),
         category: categoryUpper as PromptCategory,
         emotion,
@@ -107,7 +112,7 @@ export async function POST(req: NextRequest) {
     // Check for existing prompts to avoid duplicates (since schema doesn't strictly enforce unique text)
     const existingPrompts = await prisma.prompt.findMany({
       where: {
-        languageId,
+        languageId: targetLanguageId,
         englishText: {
           in: validPrompts.map((p) => p.englishText),
         },

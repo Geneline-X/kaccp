@@ -20,11 +20,24 @@ export async function GET(req: NextRequest) {
     const skip = (page - 1) * limit;
 
     const where: any = {
-      ...(languageId && { languageId }),
       ...(category && { category }),
       ...(emotion && { emotion }),
       ...(activeOnly && { isActive: true }),
     };
+
+    // Handle language filtering
+    if (languageId) {
+      if (languageId === "ALL") {
+        // Show only universal prompts
+        where.languageId = null;
+      } else {
+        // Show prompts for this language OR universal prompts
+        where.OR = [
+          { languageId: languageId },
+          { languageId: null }
+        ];
+      }
+    }
 
     if (search) {
       where.englishText = { contains: search, mode: "insensitive" };
@@ -114,20 +127,26 @@ export async function POST(req: NextRequest) {
     }
 
     // Check if language exists
-    const language = await prisma.language.findUnique({
-      where: { id: languageId },
-    });
+    // Check if language exists (unless Universal)
+    let targetLanguageId: string | null = languageId;
+    if (languageId === "ALL") {
+      targetLanguageId = null;
+    } else {
+      const language = await prisma.language.findUnique({
+        where: { id: languageId },
+      });
 
-    if (!language) {
-      return NextResponse.json(
-        { error: "Language not found" },
-        { status: 404 }
-      );
+      if (!language) {
+        return NextResponse.json(
+          { error: "Language not found" },
+          { status: 404 }
+        );
+      }
     }
 
     const prompt = await prisma.prompt.create({
       data: {
-        languageId,
+        languageId: targetLanguageId,
         englishText,
         category,
         emotion,
