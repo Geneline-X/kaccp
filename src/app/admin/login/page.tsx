@@ -1,12 +1,10 @@
 "use client"
+
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { apiFetch, setToken } from '@/lib/client'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
+import Link from 'next/link'
 import Image from 'next/image'
+import { apiFetch, setToken } from '@/lib/client'
 
 export default function AdminLoginPage() {
   const router = useRouter()
@@ -39,42 +37,89 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <div className="flex items-center gap-3 mb-1">
-            <Image src="/kaccp-logo.jpg" alt="KACCP" width={32} height={32} className="rounded-sm" />
-            <CardTitle>KACCP Admin Login</CardTitle>
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 to-purple-900 flex items-center justify-center px-4">
+      <div className="max-w-md w-full">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-white mb-2">KACCP</h1>
+          <p className="text-blue-200">Admin Control Center</p>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <Image src="/kaccp-logo.jpg" alt="KACCP" width={40} height={40} className="rounded-md" />
+            <h2 className="text-2xl font-bold text-gray-900">Admin Login</h2>
           </div>
-          <CardDescription>Sign in to access the KACCP Admin</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={onSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+
+          <p className="text-sm text-gray-500 text-center mb-6">Sign in to access the management dashboard</p>
+
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
+              {error}
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+          )}
+
+          <form onSubmit={onSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="email">
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                placeholder="admin@example.com"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="password">
+                Password
+              </label>
               <div className="relative">
-                <Input id="password" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} required />
-                <button type="button" aria-label="Toggle password visibility" className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground hover:text-foreground" onClick={() => setShowPassword(v => !v)}>
+                <input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  aria-label="Toggle password visibility"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600"
+                  onClick={() => setShowPassword(v => !v)}
+                >
                   {showPassword ? 'Hide' : 'Show'}
                 </button>
               </div>
-              <div className="text-right">
-                <a href="/speaker/login/forgot" className="text-xs text-blue-600 hover:underline">
+              <div className="mt-1 text-right">
+                <Link href="/speaker/login/forgot" className="text-xs text-blue-600 hover:underline">
                   Forgot password?
-                </a>
+                </Link>
               </div>
             </div>
-            {error && <div className="text-sm text-red-600">{error}</div>}
-            <Button type="submit" disabled={loading} className="w-full">
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50 transition-colors mt-2"
+            >
               {loading ? 'Signing in...' : 'Sign In'}
-            </Button>
+            </button>
           </form>
-        </CardContent>
-      </Card>
+
+          <div className="mt-8 pt-6 border-t border-gray-100 text-center">
+            <Link href="/speaker/login" className="text-sm text-gray-500 hover:text-gray-700">
+              Go back to platform login
+            </Link>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
