@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { promptId, contentType = "audio/wav" } = body;
+    const { promptId, languageId, contentType = "audio/wav" } = body;
 
     if (!promptId) {
       return NextResponse.json(
@@ -72,10 +72,11 @@ export async function POST(req: NextRequest) {
     const speakerLabel = `speaker_${String(speakerCount).padStart(4, "0")}`;
 
     // Count recordings by this speaker for this language to generate sequential recording number
+    const targetLanguageId = prompt.languageId || languageId;
     const recordingCount = await prisma.recording.count({
       where: {
         speakerId: user.id,
-        ...(prompt.languageId ? { languageId: prompt.languageId } : {}),
+        ...(targetLanguageId ? { languageId: targetLanguageId } : {}),
       },
     });
     const recordingNumber = String(recordingCount + 1).padStart(5, "0");

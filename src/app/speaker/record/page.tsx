@@ -190,6 +190,7 @@ function RecordContent() {
         },
         body: JSON.stringify({
           promptId: currentPrompt.id,
+          languageId: languageId,
           contentType: "audio/wav",
         }),
       });
@@ -224,6 +225,7 @@ function RecordContent() {
         },
         body: JSON.stringify({
           promptId: currentPrompt.id,
+          languageId: languageId, // Include selected language for universal prompts
           audioUrl: uploadUrlData.audioUrl,
           durationSec: duration,
           fileSize: wavBlob.size,
