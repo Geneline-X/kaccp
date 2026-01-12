@@ -89,6 +89,17 @@ export async function POST(req: NextRequest) {
     if (prompt.language) {
       countryCode = prompt.language.country.code.toLowerCase();
       languageCode = prompt.language.code.toLowerCase();
+    } else if (languageId) {
+      // Universal prompt - fetch the target language
+      const language = await prisma.language.findUnique({
+        where: { id: languageId },
+        include: { country: true },
+      });
+
+      if (language) {
+        countryCode = language.country.code.toLowerCase();
+        languageCode = language.code.toLowerCase();
+      }
     }
 
     // Generate filename: {language}_{speaker}_{recordingNumber}.wav
