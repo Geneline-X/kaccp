@@ -48,6 +48,8 @@ model User {
   passwordHash String
   isActive     Boolean   @default(true)
   lastLoginAt  DateTime?
+  resetToken       String?   @unique
+  resetTokenExpiry DateTime?
   displayName  String?
   role         UserRole  @default(SPEAKER) // Primary role (for backward compatibility)
   roles        UserRole[] // Multiple roles a user can have (e.g., [SPEAKER, TRANSCRIBER])
