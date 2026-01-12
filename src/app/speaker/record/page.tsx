@@ -33,6 +33,7 @@ function RecordContent() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
   const [recordingCount, setRecordingCount] = useState(0);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -177,9 +178,10 @@ function RecordContent() {
       const token = getToken();
 
       // 1. Convert audio to WAV format
-      setError("Converting to WAV...");
+      // 1. Convert audio to WAV format
+      setStatus("Converting to WAV...");
       const wavBlob = await convertToWav(audioBlob);
-      setError(null);
+      setStatus(null);
 
       // 2. Get upload URL (always request WAV)
       const uploadUrlRes = await fetch("/api/v2/speaker/upload-url", {
@@ -366,9 +368,16 @@ function RecordContent() {
 
       <main className="max-w-4xl mx-auto px-4 py-8">
         {/* Error/Success Messages */}
+
         {error && (
           <div className="mb-6 p-4 bg-red-900/50 border border-red-500 rounded-lg text-red-200">
             {error}
+          </div>
+        )}
+        {status && (
+          <div className="mb-6 p-4 bg-blue-900/50 border border-blue-500 rounded-lg text-blue-200 flex items-center gap-2">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-200"></div>
+            {status}
           </div>
         )}
         {success && (

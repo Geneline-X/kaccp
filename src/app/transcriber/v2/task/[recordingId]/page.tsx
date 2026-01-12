@@ -295,6 +295,7 @@ export default function TranscriptionTaskPage() {
               autoTranscriptionStatus: recording.autoTranscriptionStatus || "PENDING",
             }}
             promptText={recording.prompt.englishText}
+            languageName={recording.language.name}
             onSaveTranscription={async (text) => {
               setTranscription(text);
             }}
@@ -323,10 +324,21 @@ export default function TranscriptionTaskPage() {
         <div className="mt-8 p-4 bg-gray-800/50 rounded-lg">
           <h3 className="font-semibold mb-2">Transcription Tips:</h3>
           <ul className="text-sm text-gray-400 space-y-1">
-            <li>• Review the auto-generated transcript against the audio</li>
-            <li>• Only correct the parts that are wrong or misspelled</li>
-            <li>• If the transcript is perfect, just click Submit</li>
-            <li>• Flag recordings with poor audio quality</li>
+            {recording.language.code.toLowerCase() === "kri" ? (
+              <>
+                <li>• Review the auto-generated transcript against the audio</li>
+                <li>• Only correct the parts that are wrong or misspelled</li>
+                <li>• If the transcript is perfect, just click Submit</li>
+                <li>• Flag recordings with poor audio quality</li>
+              </>
+            ) : (
+              <>
+                <li>• Listen carefully and transcribe exactly what you hear</li>
+                <li>• Do not translate or summarize, write word-for-word</li>
+                <li>• Ensure proper spelling in {recording.language.name}</li>
+                <li>• Flag recordings with poor audio quality or wrong language</li>
+              </>
+            )}
           </ul>
         </div>
       </main>

@@ -9,6 +9,7 @@ interface TranscriberAIAssistProps {
     autoTranscriptionStatus: "PENDING" | "COMPLETED" | "FAILED" | "SKIPPED";
   };
   promptText: string; // English prompt shown to speaker
+  languageName?: string;
   onSaveTranscription: (text: string) => Promise<void> | void;
   value?: string; // Controlled value (was initialValue)
 }
@@ -16,6 +17,7 @@ interface TranscriberAIAssistProps {
 export function TranscriberAIAssist({
   recording,
   promptText,
+  languageName = "Krio",
   onSaveTranscription,
   value = "",
 }: TranscriberAIAssistProps) {
@@ -44,7 +46,7 @@ export function TranscriberAIAssist({
         </div>
       )}
 
-      {/* Krio Transcription Editor */}
+      {/* Transcription Editor */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <label htmlFor="transcription" className="text-sm font-medium flex items-center gap-2">
@@ -63,7 +65,7 @@ export function TranscriberAIAssist({
             onSaveTranscription(e.target.value);
           }}
           className="w-full min-h-[120px] rounded-md border border-gray-300 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Type the Krio transcription here..."
+          placeholder={`Type the ${languageName} transcription here...`}
         />
       </div>
     </div>
