@@ -35,10 +35,10 @@ export async function GET(
     }
 
     // Check access - speaker can access their own, transcriber/admin can access any
-    if (
-      user.role === "SPEAKER" &&
-      recording.speakerId !== user.id
-    ) {
+    const roles = ((user as any).roles || []) as string[];
+    const hasBroadAccess = roles.includes("ADMIN") || roles.includes("TRANSCRIBER") || user.role === "ADMIN" || user.role === "TRANSCRIBER";
+
+    if (!hasBroadAccess && recording.speakerId !== user.id) {
       return NextResponse.json(
         { error: "Access denied" },
         { status: 403 }
