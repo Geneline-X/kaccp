@@ -47,12 +47,14 @@ export async function GET(req: NextRequest) {
           { languageId: null }
         ],
         ...(category && { category: category as any }),
-        // Exclude prompts already recorded by this user
+        // Exclude prompts already successfully recorded in this language (by anyone)
         NOT: {
           recordings: {
             some: {
-              speakerId: user.id,
-              languageId, // Check if they recorded THIS language for this prompt (important for universal)
+              languageId,
+              status: {
+                in: ["APPROVED", "PENDING_TRANSCRIPTION", "TRANSCRIBED", "FLAGGED"]
+              }
             },
           },
         },

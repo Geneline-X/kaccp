@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
       ...(languageId && { languageId }),
     };
 
-    const [recordings, total] = await Promise.all([
+    const [recordings, total, stats] = await Promise.all([
       prisma.recording.findMany({
         where,
         include: {
@@ -52,17 +52,15 @@ export async function GET(req: NextRequest) {
         take: limit,
       }),
       prisma.recording.count({ where }),
+      prisma.recording.groupBy({
+        by: ["status"],
+        where: { speakerId: user.id },
+        _count: true,
+        _sum: {
+          durationSec: true,
+        },
+      }),
     ]);
-
-    // Get stats
-    const stats = await prisma.recording.groupBy({
-      by: ["status"],
-      where: { speakerId: user.id },
-      _count: true,
-      _sum: {
-        durationSec: true,
-      },
-    });
 
     return NextResponse.json({
       recordings,
@@ -102,10 +100,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Validate duration (max 15 seconds + small buffer)
-    if (durationSec > 16) {
+    // Validate duration (max 20 seconds + small buffer)
+    if (durationSec > 21) {
       return NextResponse.json(
-        { error: "Recording must be 15 seconds or less" },
+        { error: "Recording must be 20 seconds or less" },
         { status: 400 }
       );
     }
