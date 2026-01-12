@@ -298,7 +298,7 @@ export default function TranscriptionTaskPage() {
             onSaveTranscription={async (text) => {
               setTranscription(text);
             }}
-            initialValue={transcription}
+            value={transcription}
           />
         </div>
 
@@ -323,10 +323,10 @@ export default function TranscriptionTaskPage() {
         <div className="mt-8 p-4 bg-gray-800/50 rounded-lg">
           <h3 className="font-semibold mb-2">Transcription Tips:</h3>
           <ul className="text-sm text-gray-400 space-y-1">
-            <li>• Write exactly what you hear, including filler words</li>
-            <li>• Use the language&apos;s standard spelling if available</li>
+            <li>• Review the auto-generated transcript against the audio</li>
+            <li>• Only correct the parts that are wrong or misspelled</li>
+            <li>• If the transcript is perfect, just click Submit</li>
             <li>• Flag recordings with poor audio quality</li>
-            <li>• Listen multiple times if needed</li>
           </ul>
         </div>
       </main>

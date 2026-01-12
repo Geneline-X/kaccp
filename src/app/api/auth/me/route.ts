@@ -15,6 +15,7 @@ export async function GET(req: NextRequest) {
         phone: true,
         displayName: true,
         role: true,
+        roles: true,
         qualityScore: true,
         totalEarningsCents: true,
         // V2 fields

@@ -6,8 +6,15 @@ import { getAuthUser } from "@/lib/auth";
 export async function GET(req: NextRequest) {
   try {
     const user = await getAuthUser(req);
-    if (!user || (user.role !== "TRANSCRIBER" && user.role !== "ADMIN")) {
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const userRoles = user.roles && user.roles.length > 0 ? user.roles : [user.role];
+    const hasAccess = userRoles.includes("TRANSCRIBER") || userRoles.includes("ADMIN");
+
+    if (!hasAccess) {
+      return NextResponse.json({ error: "Unauthorized - TRANSCRIBER role required" }, { status: 403 });
     }
 
     const now = new Date();

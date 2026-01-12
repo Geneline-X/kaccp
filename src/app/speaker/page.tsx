@@ -104,15 +104,26 @@ export default function SpeakerDashboard() {
                 Welcome back, {user?.displayName || user?.email}
               </p>
             </div>
-            <button
-              onClick={() => {
-                clearToken();
-                router.push("/speaker/login");
-              }}
-              className="text-sm text-gray-500 hover:text-gray-700"
-            >
-              Logout
-            </button>
+            <div className="flex items-center gap-3">
+              {/* Role Switcher - Show if user has TRANSCRIBER role */}
+              {user?.roles?.includes("TRANSCRIBER") && (
+                <Link
+                  href="/transcriber/v2"
+                  className="px-4 py-2 text-sm bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors"
+                >
+                  Switch to Transcriber →
+                </Link>
+              )}
+              <button
+                onClick={() => {
+                  clearToken();
+                  router.push("/speaker/login");
+                }}
+                className="text-sm text-gray-500 hover:text-gray-700"
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </header>

@@ -49,7 +49,8 @@ model User {
   isActive     Boolean   @default(true)
   lastLoginAt  DateTime?
   displayName  String?
-  role         UserRole  @default(SPEAKER)
+  role         UserRole  @default(SPEAKER) // Primary role (for backward compatibility)
+  roles        UserRole[] // Multiple roles a user can have (e.g., [SPEAKER, TRANSCRIBER])
   phone        String?   @unique
   avatarUrl    String?
   bio          String?
@@ -120,8 +121,8 @@ model Language {
 
 model Prompt {
   id                String         @id @default(cuid())
-  languageId        String
-  language          Language       @relation(fields: [languageId], references: [id])
+  languageId        String?
+  language          Language?      @relation(fields: [languageId], references: [id])
 
   // English text that speaker translates and speaks
   englishText       String

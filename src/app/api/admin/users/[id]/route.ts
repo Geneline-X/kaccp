@@ -18,12 +18,14 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         phone: true,
         displayName: true,
         role: true,
+        roles: true,
         createdAt: true,
         lastLoginAt: true,
         qualityScore: true,
         totalEarningsCents: true,
         avatarUrl: true,
-        country: true,
+        speaksLanguages: true,
+        writesLanguages: true,
       } as any,
     })
     if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
@@ -56,8 +58,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 }
 
 const PatchSchema = z.object({
-  role: z.enum(['ADMIN', 'TRANSCRIBER']).optional(),
+  role: z.enum(['ADMIN', 'SPEAKER', 'TRANSCRIBER', 'REVIEWER']).optional(),
+  roles: z.array(z.enum(['ADMIN', 'SPEAKER', 'TRANSCRIBER', 'REVIEWER'])).optional(),
   isActive: z.boolean().optional(),
+  speaksLanguages: z.array(z.string()).optional(),
+  writesLanguages: z.array(z.string()).optional(),
 })
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -93,9 +98,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       where: { id },
       data: {
         ...(data.role ? { role: data.role as any } : {}),
+        ...(data.roles ? { roles: data.roles as any } : {}),
         ...(typeof data.isActive === 'boolean' ? { isActive: data.isActive } : {}),
+        ...(data.speaksLanguages ? { speaksLanguages: data.speaksLanguages } : {}),
+        ...(data.writesLanguages ? { writesLanguages: data.writesLanguages } : {}),
       },
-      select: { id: true, email: true, role: true, isActive: true },
+      select: { id: true, email: true, role: true, roles: true, isActive: true, speaksLanguages: true, writesLanguages: true },
     })
 
     return NextResponse.json({ user: updated })

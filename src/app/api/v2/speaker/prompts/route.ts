@@ -41,14 +41,18 @@ export async function GET(req: NextRequest) {
     // Get prompts that this user hasn't recorded yet
     const prompts = await prisma.prompt.findMany({
       where: {
-        languageId,
         isActive: true,
+        OR: [
+          { languageId },
+          { languageId: null }
+        ],
         ...(category && { category: category as any }),
         // Exclude prompts already recorded by this user
         NOT: {
           recordings: {
             some: {
               speakerId: user.id,
+              languageId, // Check if they recorded THIS language for this prompt (important for universal)
             },
           },
         },

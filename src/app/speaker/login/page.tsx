@@ -21,7 +21,7 @@ export default function SpeakerLogin() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, requestedRole: "SPEAKER" }),
       });
 
       const data = await res.json();
@@ -32,15 +32,7 @@ export default function SpeakerLogin() {
       }
 
       setToken(data.token);
-
-      // V2: Redirect based on role
-      if (data.user.role === "ADMIN") {
-        router.push("/admin/v2");
-      } else if (data.user.role === "TRANSCRIBER") {
-        router.push("/transcriber/v2");
-      } else {
-        router.push("/speaker");
-      }
+      router.push("/speaker");
     } catch {
       setError("An error occurred. Please try again.");
     } finally {

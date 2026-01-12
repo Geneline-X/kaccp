@@ -21,8 +21,7 @@ export default function TranscriberLoginPage() {
     e.preventDefault()
     setLoading(true)
     try {
-      // backend accepts emailOrPhone; we pass a unified body
-      const body = { email: emailOrPhone, emailOrPhone, password }
+      const body = { email: emailOrPhone, emailOrPhone, password, requestedRole: 'TRANSCRIBER' }
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -31,18 +30,10 @@ export default function TranscriberLoginPage() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || `Login failed: ${res.status}`)
       if (!data.token) throw new Error('No token returned')
-      const role = String(data?.user?.role || '').toUpperCase()
+
       setToken(data.token)
       toast.success('Welcome back!')
-      
-      // V2: Route based on role
-      if (role === 'ADMIN') {
-        router.replace('/admin/v2')
-      } else if (role === 'SPEAKER') {
-        router.replace('/speaker')
-      } else {
-        router.replace('/transcriber/v2')
-      }
+      router.replace('/transcriber/v2')
     } catch (e: any) {
       toast.error(e.message || 'Login failed')
     } finally {

@@ -12,7 +12,7 @@ function getStorage(): Storage {
   if (_storage) return _storage;
   try {
     const b64 = process.env.GCS_CREDENTIALS_B64;
-    const raw = process.env.GCS_CREDENTIALS_JSON;
+    const raw = process.env.GCS_CREDENTIALS_JSON || process.env.GCS_SERVICE_ACCOUNT_JSON;
     let creds: any | null = null;
     if (b64) {
       const json = Buffer.from(b64, 'base64').toString('utf-8');
