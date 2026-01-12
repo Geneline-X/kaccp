@@ -68,6 +68,11 @@ export default function TranscriberLoginPage() {
                   {showPassword ? 'Hide' : 'Show'}
                 </button>
               </div>
+              <div className="text-right">
+                <Link href="/speaker/login/forgot" className="text-xs text-blue-600 hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
             </div>
             <div className="flex items-center gap-2">
               <Button type="submit" disabled={loading}>{loading ? 'Signing in…' : 'Sign In'}</Button>
