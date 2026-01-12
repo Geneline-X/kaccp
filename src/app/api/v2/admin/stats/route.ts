@@ -11,21 +11,13 @@ export async function GET(req: NextRequest) {
     }
 
     // Get overall stats
-    const [
-      totalCountries,
-      totalLanguages,
-      totalPrompts,
-      totalRecordings,
-      totalTranscriptions,
-      totalUsers,
-    ] = await Promise.all([
-      prisma.country.count({ where: { isActive: true } }),
-      prisma.language.count({ where: { isActive: true } }),
-      prisma.prompt.count({ where: { isActive: true } }),
-      prisma.recording.count(),
-      prisma.transcription.count(),
-      prisma.user.count({ where: { isActive: true } }),
-    ]);
+    // Execute counts sequentially to avoid exhausting DB connection pool
+    const totalCountries = await prisma.country.count({ where: { isActive: true } });
+    const totalLanguages = await prisma.language.count({ where: { isActive: true } });
+    const totalPrompts = await prisma.prompt.count({ where: { isActive: true } });
+    const totalRecordings = await prisma.recording.count();
+    const totalTranscriptions = await prisma.transcription.count();
+    const totalUsers = await prisma.user.count({ where: { isActive: true } });
 
     // Get recording stats by status
     const recordingsByStatus = await prisma.recording.groupBy({
