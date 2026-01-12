@@ -62,6 +62,11 @@ export default function AdminLoginPage() {
                   {showPassword ? 'Hide' : 'Show'}
                 </button>
               </div>
+              <div className="text-right">
+                <a href="/speaker/login/forgot" className="text-xs text-blue-600 hover:underline">
+                  Forgot password?
+                </a>
+              </div>
             </div>
             {error && <div className="text-sm text-red-600">{error}</div>}
             <Button type="submit" disabled={loading} className="w-full">
