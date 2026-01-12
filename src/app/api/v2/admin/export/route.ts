@@ -6,7 +6,7 @@ import { getAuthUser } from "@/lib/auth";
 export async function GET(req: NextRequest) {
   try {
     const user = await getAuthUser(req);
-    if (!user || user.role !== "ADMIN") {
+    if (!user || (!((user as any).roles || []).includes("ADMIN") && user.role !== "ADMIN")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -141,7 +141,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const user = await getAuthUser(req);
-    if (!user || user.role !== "ADMIN") {
+    if (!user || (!((user as any).roles || []).includes("ADMIN") && user.role !== "ADMIN")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

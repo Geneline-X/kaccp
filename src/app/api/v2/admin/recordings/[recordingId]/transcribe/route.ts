@@ -20,7 +20,7 @@ export async function POST(
 ) {
   try {
     const user = await getAuthUser(req);
-    if (!user || user.role !== "ADMIN") {
+    if (!user || (!((user as any).roles || []).includes("ADMIN") && user.role !== "ADMIN")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
