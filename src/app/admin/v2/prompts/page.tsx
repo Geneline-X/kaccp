@@ -84,6 +84,7 @@ export default function AdminPromptsPage() {
   const [csvData, setCsvData] = useState<any[]>([]);
   const [importResult, setImportResult] = useState<any>(null);
   const [importing, setImporting] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   const token = typeof window !== "undefined" ? getToken() : null;
 
@@ -100,9 +101,8 @@ export default function AdminPromptsPage() {
       .then((res) => res.json())
       .then((data) => {
         setLanguages(data.languages || []);
-        if (data.languages?.length > 0) {
-          setSelectedLanguage(data.languages[0].id);
-        }
+        // Default to ALL (Universal)
+        setSelectedLanguage("ALL");
       });
   }, [token, router]);
 
@@ -398,6 +398,80 @@ export default function AdminPromptsPage() {
     window.open("/api/v2/prompts/bulk", "_blank");
   };
 
+  // Export current prompts to CSV
+  const handleExportCSV = async () => {
+    if (!selectedLanguage || !token) return;
+
+    setExporting(true);
+    try {
+      // Use current search and category filters
+      const params = new URLSearchParams({
+        languageId: selectedLanguage,
+        limit: "-1", // Fetch all matching current filters
+        activeOnly: "false",
+      });
+      if (selectedCategory) params.set("category", selectedCategory);
+      if (searchQuery) params.set("search", searchQuery);
+
+      const res = await fetch(`/api/v2/prompts?${params}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      const exportPrompts = data.prompts || [];
+
+      if (exportPrompts.length === 0) {
+        alert("No prompts to export matching current filters");
+        return;
+      }
+
+      // CSV Header
+      const csvHeaders = ["english_text", "category", "emotion", "instruction", "target_duration_sec", "isActive", "timesRecorded"];
+
+      // Helper to escape CSV values
+      const escapeCSV = (val: any) => {
+        if (val === null || val === undefined) return "";
+        let str = String(val);
+        if (str.includes(",") || str.includes('"') || str.includes("\n") || str.includes("\r")) {
+          str = '"' + str.replace(/"/g, '""') + '"';
+        }
+        return str;
+      };
+
+      // Map to rows
+      const csvRows = exportPrompts.map((p: any) => [
+        p.englishText,
+        p.category,
+        p.emotion,
+        p.instruction || "",
+        p.targetDurationSec || 5,
+        p.isActive,
+        p.timesRecorded
+      ]);
+
+      const csvContent = [
+        csvHeaders.join(","),
+        ...csvRows.map((row: any[]) => row.map(escapeCSV).join(","))
+      ].join("\n");
+
+      // Download
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      const langName = languages.find(l => l.id === selectedLanguage)?.name || "prompts";
+      link.setAttribute("href", url);
+      link.setAttribute("download", `${langName.toLowerCase().replace(/\s+/g, "_")}_prompts_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (e) {
+      console.error(e);
+      alert("Failed to export prompts");
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
@@ -428,6 +502,20 @@ export default function AdminPromptsPage() {
                 Bulk Import CSV
               </button>
               <button
+                onClick={handleExportCSV}
+                disabled={exporting || prompts.length === 0}
+                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 disabled:opacity-50 flex items-center gap-2"
+              >
+                {exporting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Exporting...
+                  </>
+                ) : (
+                  "Export CSV"
+                )}
+              </button>
+              <button
                 onClick={() => setShowNewForm(true)}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
@@ -452,6 +540,7 @@ export default function AdminPromptsPage() {
                   onChange={(e) => setSelectedLanguage(e.target.value)}
                   className="px-4 py-2 border border-gray-300 rounded-lg"
                 >
+                  <option value="ALL">All Languages (Universal)</option>
                   {languages.map((lang) => (
                     <option key={lang.id} value={lang.id}>
                       {lang.name} ({lang.code})
