@@ -17,6 +17,7 @@ interface Language {
   name: string;
   nativeName?: string;
   isActive: boolean;
+  includeUniversalPrompts: boolean;
   targetMinutes: number;
   collectedMinutes: number;
   approvedMinutes: number;
@@ -47,6 +48,7 @@ export default function AdminLanguagesPage() {
     targetMinutes: 12000,
     speakerRatePerMinute: 0.05,
     transcriberRatePerMin: 0.03,
+    includeUniversalPrompts: true,
   });
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
@@ -313,8 +315,8 @@ export default function AdminLanguagesPage() {
                       <td className="px-6 py-4">
                         <span
                           className={`px-2 py-1 text-xs rounded ${lang.isActive
-                              ? "bg-green-100 text-green-800"
-                              : "bg-gray-100 text-gray-800"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-gray-100 text-gray-800"
                             }`}
                         >
                           {lang.isActive ? "Active" : "Inactive"}
@@ -483,6 +485,21 @@ export default function AdminLanguagesPage() {
                 </div>
               </div>
 
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="includeUniversalPrompts"
+                  checked={newLanguage.includeUniversalPrompts}
+                  onChange={(e) =>
+                    setNewLanguage({ ...newLanguage, includeUniversalPrompts: e.target.checked })
+                  }
+                  className="rounded"
+                />
+                <label htmlFor="includeUniversalPrompts" className="text-sm text-gray-700">
+                  Include Universal Prompts (Generic English)
+                </label>
+              </div>
+
               <div className="flex justify-end gap-2">
                 <button
                   type="button"
@@ -507,151 +524,170 @@ export default function AdminLanguagesPage() {
       )}
 
       {/* Edit Language Modal */}
-      {editingLanguage && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-lg mx-4">
-            <h2 className="text-xl font-bold mb-4">
-              Edit {editingLanguage.name} Rates
-            </h2>
+      {
+        editingLanguage && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-lg mx-4">
+              <h2 className="text-xl font-bold mb-4">
+                Edit {editingLanguage.name} Rates
+              </h2>
 
-            {error && (
-              <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
-                {error}
-              </div>
-            )}
-
-            <form onSubmit={handleUpdateLanguage} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Language Name
-                  </label>
-                  <input
-                    type="text"
-                    value={editingLanguage.name}
-                    onChange={(e) =>
-                      setEditingLanguage({ ...editingLanguage, name: e.target.value })
-                    }
-                    required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                  />
+              {error && (
+                <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
+                  {error}
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Native Name
-                  </label>
-                  <input
-                    type="text"
-                    value={editingLanguage.nativeName || ""}
-                    onChange={(e) =>
-                      setEditingLanguage({ ...editingLanguage, nativeName: e.target.value })
-                    }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                  />
+              )}
+
+              <form onSubmit={handleUpdateLanguage} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Language Name
+                    </label>
+                    <input
+                      type="text"
+                      value={editingLanguage.name}
+                      onChange={(e) =>
+                        setEditingLanguage({ ...editingLanguage, name: e.target.value })
+                      }
+                      required
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Native Name
+                    </label>
+                    <input
+                      type="text"
+                      value={editingLanguage.nativeName || ""}
+                      onChange={(e) =>
+                        setEditingLanguage({ ...editingLanguage, nativeName: e.target.value })
+                      }
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Target Hours
-                </label>
-                <input
-                  type="number"
-                  value={Math.round(editingLanguage.targetMinutes / 60)}
-                  onChange={(e) =>
-                    setEditingLanguage({
-                      ...editingLanguage,
-                      targetMinutes: parseInt(e.target.value) * 60,
-                    })
-                  }
-                  min={1}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Speaker Rate ($/min)
+                    Target Hours
                   </label>
                   <input
                     type="number"
-                    step="0.01"
-                    min="0"
-                    value={editingLanguage.speakerRatePerMinute}
+                    value={Math.round(editingLanguage.targetMinutes / 60)}
                     onChange={(e) =>
                       setEditingLanguage({
                         ...editingLanguage,
-                        speakerRatePerMinute: parseFloat(e.target.value) || 0,
+                        targetMinutes: parseInt(e.target.value) * 60,
                       })
                     }
+                    min={1}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Current: ${editingLanguage.speakerRatePerMinute?.toFixed(2)}/min
-                  </p>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Transcriber Rate ($/min)
-                  </label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={editingLanguage.transcriberRatePerMin}
-                    onChange={(e) =>
-                      setEditingLanguage({
-                        ...editingLanguage,
-                        transcriberRatePerMin: parseFloat(e.target.value) || 0,
-                      })
-                    }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Current: ${editingLanguage.transcriberRatePerMin?.toFixed(2)}/min
-                  </p>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Speaker Rate ($/min)
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={editingLanguage.speakerRatePerMinute}
+                      onChange={(e) =>
+                        setEditingLanguage({
+                          ...editingLanguage,
+                          speakerRatePerMinute: parseFloat(e.target.value) || 0,
+                        })
+                      }
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Current: ${editingLanguage.speakerRatePerMinute?.toFixed(2)}/min
+                    </p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Transcriber Rate ($/min)
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={editingLanguage.transcriberRatePerMin}
+                      onChange={(e) =>
+                        setEditingLanguage({
+                          ...editingLanguage,
+                          transcriberRatePerMin: parseFloat(e.target.value) || 0,
+                        })
+                      }
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Current: ${editingLanguage.transcriberRatePerMin?.toFixed(2)}/min
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="isActive"
-                  checked={editingLanguage.isActive}
-                  onChange={(e) =>
-                    setEditingLanguage({ ...editingLanguage, isActive: e.target.checked })
-                  }
-                  className="rounded"
-                />
-                <label htmlFor="isActive" className="text-sm text-gray-700">
-                  Language is active (visible to speakers/transcribers)
-                </label>
-              </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="isActive"
+                      checked={editingLanguage.isActive}
+                      onChange={(e) =>
+                        setEditingLanguage({ ...editingLanguage, isActive: e.target.checked })
+                      }
+                      className="rounded"
+                    />
+                    <label htmlFor="isActive" className="text-sm text-gray-700">
+                      Language is active (visible to speakers/transcribers)
+                    </label>
+                  </div>
 
-              <div className="flex justify-end gap-2 pt-4 border-t">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setEditingLanguage(null);
-                    setError("");
-                  }}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-900"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
-                >
-                  {saving ? "Saving..." : "Save Changes"}
-                </button>
-              </div>
-            </form>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="editIncludeUniversal"
+                      checked={editingLanguage.includeUniversalPrompts}
+                      onChange={(e) =>
+                        setEditingLanguage({ ...editingLanguage, includeUniversalPrompts: e.target.checked })
+                      }
+                      className="rounded"
+                    />
+                    <label htmlFor="editIncludeUniversal" className="text-sm text-gray-700">
+                      Include Universal Prompts (Generic English)
+                    </label>
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-2 pt-4 border-t">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingLanguage(null);
+                      setError("");
+                    }}
+                    className="px-4 py-2 text-gray-600 hover:text-gray-900"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                  >
+                    {saving ? "Saving..." : "Save Changes"}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )
+      }
+    </div >
   );
 }

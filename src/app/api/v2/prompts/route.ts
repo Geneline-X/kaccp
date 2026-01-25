@@ -31,11 +31,22 @@ export async function GET(req: NextRequest) {
         // Show only universal prompts
         where.languageId = null;
       } else {
-        // Show prompts for this language OR universal prompts
-        where.OR = [
-          { languageId: languageId },
-          { languageId: null }
-        ];
+        // Look up language settings
+        const language = await prisma.language.findUnique({
+          where: { id: languageId },
+          select: { includeUniversalPrompts: true }
+        });
+
+        if (language && !language.includeUniversalPrompts) {
+          // Show ONLY specific prompts for this language
+          where.languageId = languageId;
+        } else {
+          // Show prompts for this language OR universal prompts
+          where.OR = [
+            { languageId: languageId },
+            { languageId: null }
+          ];
+        }
       }
     }
 

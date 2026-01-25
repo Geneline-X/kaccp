@@ -71,6 +71,7 @@ export async function PATCH(
       targetMinutes,
       speakerRatePerMinute,
       transcriberRatePerMin,
+      includeUniversalPrompts,
     } = body;
 
     const language = await prisma.language.update({
@@ -82,6 +83,7 @@ export async function PATCH(
         ...(typeof targetMinutes === "number" && { targetMinutes }),
         ...(typeof speakerRatePerMinute === "number" && { speakerRatePerMinute }),
         ...(typeof transcriberRatePerMin === "number" && { transcriberRatePerMin }),
+        ...(typeof includeUniversalPrompts === "boolean" && { includeUniversalPrompts }),
       },
       include: {
         country: true,
