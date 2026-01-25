@@ -59,6 +59,7 @@ export async function POST(req: NextRequest) {
       targetMinutes = 12000, // 200 hours default
       speakerRatePerMinute = 0.05,
       transcriberRatePerMin = 0.03,
+      includeUniversalPrompts = true,
     } = body;
 
     if (!code || !name || !countryId) {
@@ -101,6 +102,7 @@ export async function POST(req: NextRequest) {
         targetMinutes,
         speakerRatePerMinute,
         transcriberRatePerMin,
+        includeUniversalPrompts,
       },
       include: {
         country: true,

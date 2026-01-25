@@ -22,30 +22,39 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Check if user speaks this language
-    if (!user.speaksLanguages.includes(languageId)) {
-      // Get language code to check
-      const language = await prisma.language.findUnique({
-        where: { id: languageId },
-        select: { code: true },
-      });
 
-      if (language && !user.speaksLanguages.includes(language.code)) {
-        return NextResponse.json(
-          { error: "You are not registered to speak this language" },
-          { status: 403 }
-        );
-      }
+    // Get language details to check logic
+    const language = await prisma.language.findUnique({
+      where: { id: languageId },
+      select: { code: true, includeUniversalPrompts: true },
+    });
+
+    if (!language) {
+      return NextResponse.json({ error: "Language not found" }, { status: 404 });
+    }
+
+    // Check if user speaks this language
+    if (!user.speaksLanguages.includes(languageId) && !user.speaksLanguages.includes(language.code)) {
+      return NextResponse.json(
+        { error: "You are not registered to speak this language" },
+        { status: 403 }
+      );
     }
 
     // Get prompts that this user hasn't recorded yet
     const prompts = await prisma.prompt.findMany({
       where: {
         isActive: true,
-        OR: [
-          { languageId },
-          { languageId: null }
-        ],
+        // Check if language wants universal prompts included
+        ...(!language.includeUniversalPrompts
+          ? { languageId }
+          : {
+            OR: [
+              { languageId },
+              { languageId: null }
+            ]
+          }
+        ),
         ...(category && { category: category as any }),
         // Exclude prompts already successfully recorded in this language (by anyone)
         NOT: {

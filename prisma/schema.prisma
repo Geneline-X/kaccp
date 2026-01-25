@@ -112,6 +112,8 @@ model Language {
   speakerRatePerMinute  Float @default(2.5)
   transcriberRatePerMin Float @default(1.5)
 
+  includeUniversalPrompts Boolean @default(true) // Whether to mix in generic prompts (languageId=null)
+
   prompts    Prompt[]
   recordings Recording[]
   createdAt  DateTime    @default(now())
