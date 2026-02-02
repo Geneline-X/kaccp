@@ -7,8 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { apiFetch } from '@/lib/client'
+import { useTranslations } from 'next-intl'
 
 export default function AdminUserDetailPage() {
+  const t = useTranslations()
   const params = useParams<{ id: string }>()
   const userId = params?.id as string
   const [loading, setLoading] = useState(true)
@@ -116,7 +118,7 @@ export default function AdminUserDetailPage() {
   return (
     <div className="space-y-6">
       <AdminHeader
-        title={data?.user?.displayName || data?.user?.email || 'User Details'}
+        title={data?.user?.displayName || data?.user?.email || t('admin.userDetailPage.userDetails')}
         description={data?.user?.email}
       />
 
@@ -130,36 +132,36 @@ export default function AdminUserDetailPage() {
         <>
           <Card>
             <CardHeader>
-              <CardTitle>Profile</CardTitle>
-              <CardDescription>Primary details for payments and communication</CardDescription>
+              <CardTitle>{t('admin.userDetailPage.profile')}</CardTitle>
+              <CardDescription>{t('admin.userDetailPage.profileDescription')}</CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
               <div>
-                <div className="text-muted-foreground">Email</div>
+                <div className="text-muted-foreground">{t('admin.userDetailPage.email')}</div>
                 <div>{data.user.email}</div>
               </div>
               <div>
-                <div className="text-muted-foreground">Phone</div>
+                <div className="text-muted-foreground">{t('admin.userDetailPage.phone')}</div>
                 <div>{data.user.phone || '—'}</div>
               </div>
               <div>
-                <div className="text-muted-foreground">Role</div>
+                <div className="text-muted-foreground">{t('admin.userDetailPage.role')}</div>
                 <div>{data.user.role}</div>
               </div>
               <div>
-                <div className="text-muted-foreground">Joined</div>
+                <div className="text-muted-foreground">{t('admin.userDetailPage.joined')}</div>
                 <div>{new Date(data.user.createdAt).toLocaleDateString()}</div>
               </div>
               <div>
-                <div className="text-muted-foreground">Last login</div>
+                <div className="text-muted-foreground">{t('admin.userDetailPage.lastLogin')}</div>
                 <div>{data.user.lastLoginAt ? new Date(data.user.lastLoginAt).toLocaleString() : '—'}</div>
               </div>
               <div>
-                <div className="text-muted-foreground">Quality score</div>
+                <div className="text-muted-foreground">{t('admin.userDetailPage.qualityScore')}</div>
                 <div>{(data.user.qualityScore ?? 0).toFixed(2)}</div>
               </div>
               <div>
-                <div className="text-muted-foreground">Earnings</div>
+                <div className="text-muted-foreground">{t('admin.userDetailPage.earnings')}</div>
                 <div>{((data.user.totalEarningsCents ?? 0) / 100).toFixed(2)} SLE</div>
               </div>
             </CardContent>
@@ -167,12 +169,12 @@ export default function AdminUserDetailPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Languages</CardTitle>
-              <CardDescription>Languages this user can speak and write</CardDescription>
+              <CardTitle>{t('admin.userDetailPage.languages')}</CardTitle>
+              <CardDescription>{t('admin.userDetailPage.languagesDescription')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <div className="text-sm font-medium mb-2">Speaks Languages</div>
+                <div className="text-sm font-medium mb-2">{t('admin.userDetailPage.speaksLanguages')}</div>
                 <div className="flex flex-wrap gap-2">
                   {data.user.speaksLanguages && data.user.speaksLanguages.length > 0 ? (
                     data.user.speaksLanguages.map((lang: string) => (
@@ -181,12 +183,12 @@ export default function AdminUserDetailPage() {
                       </span>
                     ))
                   ) : (
-                    <span className="text-sm text-muted-foreground">No languages set</span>
+                    <span className="text-sm text-muted-foreground">{t('admin.userDetailPage.noLanguagesSet')}</span>
                   )}
                 </div>
               </div>
               <div>
-                <div className="text-sm font-medium mb-2">Writes Languages</div>
+                <div className="text-sm font-medium mb-2">{t('admin.userDetailPage.writesLanguages')}</div>
                 <div className="flex flex-wrap gap-2">
                   {data.user.writesLanguages && data.user.writesLanguages.length > 0 ? (
                     data.user.writesLanguages.map((lang: string) => (
@@ -195,7 +197,7 @@ export default function AdminUserDetailPage() {
                       </span>
                     ))
                   ) : (
-                    <span className="text-sm text-muted-foreground">No languages set</span>
+                    <span className="text-sm text-muted-foreground">{t('admin.userDetailPage.noLanguagesSet')}</span>
                   )}
                 </div>
               </div>
@@ -204,19 +206,19 @@ export default function AdminUserDetailPage() {
                 size="sm"
                 onClick={() => setShowEditLanguages(true)}
               >
-                Edit Languages
+                {t('admin.userDetailPage.editLanguages')}
               </Button>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Roles</CardTitle>
-              <CardDescription>Access roles for this user</CardDescription>
+              <CardTitle>{t('admin.userDetailPage.roles')}</CardTitle>
+              <CardDescription>{t('admin.userDetailPage.rolesDescription')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <div className="text-sm font-medium mb-2">Current Roles</div>
+                <div className="text-sm font-medium mb-2">{t('admin.userDetailPage.currentRoles')}</div>
                 <div className="flex flex-wrap gap-2">
                   {data.user.roles && data.user.roles.length > 0 ? (
                     data.user.roles.map((role: string) => (
@@ -225,19 +227,19 @@ export default function AdminUserDetailPage() {
                       </span>
                     ))
                   ) : (
-                    <span className="text-sm text-muted-foreground">No roles assigned</span>
+                    <span className="text-sm text-muted-foreground">{t('admin.userDetailPage.noRolesAssigned')}</span>
                   )}
                 </div>
               </div>
               <div className="text-xs text-muted-foreground">
-                Primary Role: <span className="font-medium">{data.user.role}</span>
+                {t('admin.userDetailPage.primaryRole')} <span className="font-medium">{data.user.role}</span>
               </div>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setShowEditRoles(true)}
               >
-                Edit Roles
+                {t('admin.userDetailPage.editRoles')}
               </Button>
             </CardContent>
           </Card>
@@ -245,17 +247,17 @@ export default function AdminUserDetailPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
-                <CardTitle>Recent Payments</CardTitle>
-                <CardDescription>Last 10 payout records</CardDescription>
+                <CardTitle>{t('admin.userDetailPage.recentPayments')}</CardTitle>
+                <CardDescription>{t('admin.userDetailPage.last10Payouts')}</CardDescription>
               </CardHeader>
               <CardContent>
                 {data.recent?.payments?.length ? (
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Amount</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Date</TableHead>
+                        <TableHead>{t('admin.paymentsPage.amount')}</TableHead>
+                        <TableHead>{t('admin.userDetailPage.status')}</TableHead>
+                        <TableHead>{t('admin.userDetailPage.date')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -269,24 +271,24 @@ export default function AdminUserDetailPage() {
                     </TableBody>
                   </Table>
                 ) : (
-                  <div className="text-sm text-muted-foreground">No recent payments.</div>
+                  <div className="text-sm text-muted-foreground">{t('admin.userDetailPage.noRecentPayments')}</div>
                 )}
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle>Recent Reviews</CardTitle>
-                <CardDescription>Last 10 reviewing actions</CardDescription>
+                <CardTitle>{t('admin.userDetailPage.recentReviews')}</CardTitle>
+                <CardDescription>{t('admin.userDetailPage.last10Reviews')}</CardDescription>
               </CardHeader>
               <CardContent>
                 {data.recent?.reviews?.length ? (
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Decision</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Transcription</TableHead>
+                        <TableHead>{t('admin.userDetailPage.decision')}</TableHead>
+                        <TableHead>{t('admin.userDetailPage.date')}</TableHead>
+                        <TableHead>{t('admin.userDetailPage.transcription')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -300,7 +302,7 @@ export default function AdminUserDetailPage() {
                     </TableBody>
                   </Table>
                 ) : (
-                  <div className="text-sm text-muted-foreground">No recent reviews.</div>
+                  <div className="text-sm text-muted-foreground">{t('admin.userDetailPage.noRecentReviews')}</div>
                 )}
               </CardContent>
             </Card>
@@ -312,11 +314,11 @@ export default function AdminUserDetailPage() {
       {showEditLanguages && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-bold mb-4">Edit Languages</h2>
+            <h2 className="text-xl font-bold mb-4">{t('admin.userDetailPage.editLanguages')}</h2>
 
             <div className="space-y-6">
               <div>
-                <h3 className="font-semibold mb-3">Speaks Languages</h3>
+                <h3 className="font-semibold mb-3">{t('admin.userDetailPage.speaksLanguages')}</h3>
                 <div className="grid grid-cols-2 gap-2">
                   {availableLanguages.map((lang) => (
                     <label key={lang.code} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
@@ -333,7 +335,7 @@ export default function AdminUserDetailPage() {
               </div>
 
               <div>
-                <h3 className="font-semibold mb-3">Writes Languages</h3>
+                <h3 className="font-semibold mb-3">{t('admin.userDetailPage.writesLanguages')}</h3>
                 <div className="grid grid-cols-2 gap-2">
                   {availableLanguages.map((lang) => (
                     <label key={lang.code} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
@@ -360,13 +362,13 @@ export default function AdminUserDetailPage() {
                 }}
                 disabled={saving}
               >
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button
                 onClick={saveLanguages}
                 disabled={saving}
               >
-                {saving ? 'Saving...' : 'Save Changes'}
+                {saving ? t('admin.userDetailPage.saving') : t('admin.userDetailPage.saveChanges')}
               </Button>
             </div>
           </div>
@@ -377,11 +379,11 @@ export default function AdminUserDetailPage() {
       {showEditRoles && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
-            <h2 className="text-xl font-bold mb-4">Edit User Roles</h2>
+            <h2 className="text-xl font-bold mb-4">{t('admin.userDetailPage.editRoles')}</h2>
 
             <div className="space-y-3">
               <p className="text-sm text-muted-foreground mb-4">
-                Select all roles this user should have access to. They can login using any of these roles.
+                {t('admin.userDetailPage.selectRolesDescription')}
               </p>
 
               {['SPEAKER', 'TRANSCRIBER', 'REVIEWER', 'ADMIN'].map((role) => (
@@ -395,10 +397,10 @@ export default function AdminUserDetailPage() {
                   <div className="flex-1">
                     <span className="font-medium">{role}</span>
                     <p className="text-xs text-muted-foreground">
-                      {role === 'SPEAKER' && 'Can record audio prompts'}
-                      {role === 'TRANSCRIBER' && 'Can transcribe recordings'}
-                      {role === 'REVIEWER' && 'Can review transcriptions'}
-                      {role === 'ADMIN' && 'Full system access'}
+                      {role === 'SPEAKER' && t('admin.userDetailPage.speakerRole')}
+                      {role === 'TRANSCRIBER' && t('admin.userDetailPage.transcriberRole')}
+                      {role === 'REVIEWER' && t('admin.userDetailPage.reviewerRole')}
+                      {role === 'ADMIN' && t('admin.userDetailPage.adminRole')}
                     </p>
                   </div>
                 </label>
@@ -414,13 +416,13 @@ export default function AdminUserDetailPage() {
                 }}
                 disabled={saving}
               >
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button
                 onClick={saveRoles}
                 disabled={saving || editingRoles.length === 0}
               >
-                {saving ? 'Saving...' : 'Save Changes'}
+                {saving ? t('admin.userDetailPage.saving') : t('admin.userDetailPage.saveChanges')}
               </Button>
             </div>
           </div>

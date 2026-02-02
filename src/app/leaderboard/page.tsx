@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 interface LeaderboardEntry {
   rank: number;
@@ -28,6 +29,7 @@ interface LeaderboardData {
 }
 
 export default function LeaderboardPage() {
+  const t = useTranslations();
   const [data, setData] = useState<LeaderboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"speakers" | "transcribers">("speakers");
@@ -74,13 +76,13 @@ export default function LeaderboardPage() {
               href="/speaker/login"
               className="px-4 py-2 text-blue-200 hover:text-white transition"
             >
-              Speaker Login
+              {t('home.speaker.loginBtn')}
             </Link>
             <Link
               href="/transcriber/login"
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition"
             >
-              Transcriber Login
+              {t('home.transcriber.loginBtn')}
             </Link>
           </div>
         </div>
@@ -89,10 +91,10 @@ export default function LeaderboardPage() {
       {/* Hero */}
       <div className="max-w-6xl mx-auto px-4 py-12 text-center">
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-          🏆 Leaderboard
+          {t('leaderboard.title')}
         </h1>
         <p className="text-xl text-blue-200 mb-8">
-          Top contributors preserving African languages
+          {t('leaderboard.subtitle')}
         </p>
 
         {/* Stats */}
@@ -100,23 +102,23 @@ export default function LeaderboardPage() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-12">
             <div className="bg-blue-800/30 rounded-xl p-4 border border-blue-700/30">
               <p className="text-3xl font-bold text-white">{data.stats.totalSpeakers}</p>
-              <p className="text-sm text-blue-300">Speakers</p>
+              <p className="text-sm text-blue-300">{t('leaderboard.speakers')}</p>
             </div>
             <div className="bg-blue-800/30 rounded-xl p-4 border border-blue-700/30">
               <p className="text-3xl font-bold text-white">{data.stats.totalTranscribers}</p>
-              <p className="text-sm text-blue-300">Transcribers</p>
+              <p className="text-sm text-blue-300">{t('leaderboard.transcribers')}</p>
             </div>
             <div className="bg-blue-800/30 rounded-xl p-4 border border-blue-700/30">
               <p className="text-3xl font-bold text-white">{data.stats.totalRecordings}</p>
-              <p className="text-sm text-blue-300">Recordings</p>
+              <p className="text-sm text-blue-300">{t('common.recordings')}</p>
             </div>
             <div className="bg-blue-800/30 rounded-xl p-4 border border-blue-700/30">
               <p className="text-3xl font-bold text-white">{data.stats.totalTranscriptions}</p>
-              <p className="text-sm text-blue-300">Transcriptions</p>
+              <p className="text-sm text-blue-300">{t('common.transcriptions')}</p>
             </div>
             <div className="bg-blue-800/30 rounded-xl p-4 border border-blue-700/30">
               <p className="text-3xl font-bold text-white">{data.stats.totalHours}h</p>
-              <p className="text-sm text-blue-300">Audio Collected</p>
+              <p className="text-sm text-blue-300">{t('leaderboard.audioCollected')}</p>
             </div>
           </div>
         )}
@@ -125,23 +127,21 @@ export default function LeaderboardPage() {
         <div className="flex justify-center gap-2 mb-8">
           <button
             onClick={() => setActiveTab("speakers")}
-            className={`px-6 py-3 rounded-xl font-semibold transition ${
-              activeTab === "speakers"
+            className={`px-6 py-3 rounded-xl font-semibold transition ${activeTab === "speakers"
                 ? "bg-blue-600 text-white"
                 : "bg-blue-800/30 text-blue-300 hover:bg-blue-800/50"
-            }`}
+              }`}
           >
-            🎙️ Top Speakers
+            {t('leaderboard.topSpeakers')}
           </button>
           <button
             onClick={() => setActiveTab("transcribers")}
-            className={`px-6 py-3 rounded-xl font-semibold transition ${
-              activeTab === "transcribers"
+            className={`px-6 py-3 rounded-xl font-semibold transition ${activeTab === "transcribers"
                 ? "bg-green-600 text-white"
                 : "bg-blue-800/30 text-blue-300 hover:bg-blue-800/50"
-            }`}
+              }`}
           >
-            ✍️ Top Transcribers
+            {t('leaderboard.topTranscribers')}
           </button>
         </div>
       </div>
@@ -175,8 +175,8 @@ export default function LeaderboardPage() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-2xl font-bold text-white">{entry.totalMinutes} min</p>
-                    <p className="text-sm text-blue-300">{entry.recordingsCount} recordings</p>
+                    <p className="text-2xl font-bold text-white">{entry.totalMinutes} {t('common.min')}</p>
+                    <p className="text-sm text-blue-300">{entry.recordingsCount} {t('common.recordings')}</p>
                   </div>
                 </div>
               </div>
@@ -203,7 +203,7 @@ export default function LeaderboardPage() {
                   </div>
                   <div className="text-right">
                     <p className="text-2xl font-bold text-white">{entry.transcriptionsCount}</p>
-                    <p className="text-sm text-blue-300">transcriptions</p>
+                    <p className="text-sm text-blue-300">{t('common.transcriptions')}</p>
                   </div>
                 </div>
               </div>
@@ -214,11 +214,11 @@ export default function LeaderboardPage() {
               <table className="w-full">
                 <thead className="bg-blue-900/50">
                   <tr>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-blue-300">Rank</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-blue-300">Name</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-blue-300">Languages</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-blue-300">{t('leaderboard.rank')}</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-blue-300">{t('leaderboard.name')}</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-blue-300">{t('admin.languages')}</th>
                     <th className="px-4 py-3 text-right text-sm font-medium text-blue-300">
-                      {activeTab === "speakers" ? "Minutes" : "Transcriptions"}
+                      {activeTab === "speakers" ? t('leaderboard.minutes') : t('common.transcriptions')}
                     </th>
                   </tr>
                 </thead>
@@ -236,7 +236,7 @@ export default function LeaderboardPage() {
                           ))}
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-right text-white">{entry.totalMinutes} min</td>
+                      <td className="px-4 py-3 text-right text-white">{entry.totalMinutes} {t('common.min')}</td>
                     </tr>
                   ))}
                   {activeTab === "transcribers" && data?.transcribers?.slice(3).map((entry) => (
@@ -261,29 +261,29 @@ export default function LeaderboardPage() {
               {/* Empty state */}
               {((activeTab === "speakers" && (!data?.speakers || data.speakers.length === 0)) ||
                 (activeTab === "transcribers" && (!data?.transcribers || data.transcribers.length === 0))) && (
-                <div className="p-8 text-center text-blue-300">
-                  No data yet. Be the first to contribute!
-                </div>
-              )}
+                  <div className="p-8 text-center text-blue-300">
+                    {t('common.noDataYet')}
+                  </div>
+                )}
             </div>
           </div>
         )}
 
         {/* CTA */}
         <div className="mt-12 text-center">
-          <p className="text-blue-200 mb-4">Want to see your name on the leaderboard?</p>
+          <p className="text-blue-200 mb-4">{t('leaderboard.wantToSee')}</p>
           <div className="flex justify-center gap-4">
             <Link
               href="/speaker/register"
               className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-500 transition"
             >
-              🎙️ Become a Speaker
+              {t('leaderboard.becomeSpeaker')}
             </Link>
             <Link
               href="/transcriber/v2/register"
               className="px-6 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-500 transition"
             >
-              ✍️ Become a Transcriber
+              {t('leaderboard.becomeTranscriber')}
             </Link>
           </div>
         </div>
@@ -292,11 +292,11 @@ export default function LeaderboardPage() {
       {/* Footer */}
       <footer className="border-t border-blue-800/50 py-6">
         <div className="max-w-6xl mx-auto px-4 text-center text-blue-400 text-sm">
-          Built by{" "}
+          {t('leaderboard.builtBy')}{" "}
           <Link href="https://geneline-x.net" className="text-blue-300 hover:text-white underline" target="_blank">
             Geneline-X
           </Link>{" "}
-          • Preserving African Languages
+          • {t('leaderboard.preserving')}
         </div>
       </footer>
     </div>

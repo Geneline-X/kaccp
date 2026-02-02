@@ -22,10 +22,10 @@ export function amountToString(cents: number, currency: string) {
   return `${(cents / 100).toFixed(2)} ${currency}`
 }
 
-export const paymentColumns = (onDone?: () => void): ColumnDef<PaymentRow>[] => [
+export const paymentColumns = (t: any, format: any, onDone?: () => void): ColumnDef<PaymentRow>[] => [
   {
     accessorKey: 'amountCents',
-    header: 'Amount',
+    header: t('amount'),
     cell: ({ row }) => {
       const p = row.original
       return <span className="font-medium">{amountToString(p.amountCents, p.currency)}</span>
@@ -33,7 +33,7 @@ export const paymentColumns = (onDone?: () => void): ColumnDef<PaymentRow>[] => 
   },
   {
     accessorKey: 'status',
-    header: 'Status',
+    header: t('status'),
     cell: ({ row }) => {
       const s = row.original.status
       const variant = s === 'PAID' ? 'default' : s === 'FAILED' ? 'destructive' : 'secondary'
@@ -42,21 +42,21 @@ export const paymentColumns = (onDone?: () => void): ColumnDef<PaymentRow>[] => 
   },
   {
     accessorKey: 'reference',
-    header: 'Reference',
+    header: t('reference'),
     cell: ({ row }) => row.original.reference || '-'
   },
   {
     accessorKey: 'createdAt',
-    header: 'Created',
+    header: t('created'),
     cell: ({ row }) => {
       const v = row.original.createdAt
       const d = typeof v === 'string' ? new Date(v) : v
-      return <span className="text-sm">{format(d, 'MMM d, yyyy h:mm a')}</span>
+      return <span className="text-sm">{format.dateTime(d, { dateStyle: 'long', timeStyle: 'short' })}</span>
     }
   },
   {
     id: 'actions',
-    header: 'Actions',
+    header: t('actions'),
     cell: ({ row }) => {
       const p = row.original
       const disabled = p.status !== 'PENDING'
@@ -67,17 +67,17 @@ export const paymentColumns = (onDone?: () => void): ColumnDef<PaymentRow>[] => 
             method: 'POST',
             body: JSON.stringify({ action })
           })
-          toastSuccess(action === 'MARK_PAID' ? 'Payment marked as paid' : 'Payment marked as failed')
+          toastSuccess(action === 'MARK_PAID' ? t('successPaid') : t('successFailed'))
           onDone?.()
         } catch (e: any) {
-          toastError('Payment action failed', e.message)
+          toastError(t('errorAction'), e.message)
         }
       }
 
       return (
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" disabled={disabled} onClick={() => act('MARK_FAILED')}>Mark Failed</Button>
-          <Button size="sm" disabled={disabled} onClick={() => act('MARK_PAID')}>Mark Paid</Button>
+          <Button variant="outline" size="sm" disabled={disabled} onClick={() => act('MARK_FAILED')}>{t('markFailed')}</Button>
+          <Button size="sm" disabled={disabled} onClick={() => act('MARK_PAID')}>{t('markPaid')}</Button>
         </div>
       )
     }

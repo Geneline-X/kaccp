@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { setToken } from "@/lib/client";
+import { useTranslations } from "next-intl";
 
 interface Language {
   id: string;
@@ -16,6 +17,7 @@ interface Language {
 
 export default function TranscriberRegister() {
   const router = useRouter();
+  const t = useTranslations();
   const [formData, setFormData] = useState({
     displayName: "",
     email: "",
@@ -56,17 +58,17 @@ export default function TranscriberRegister() {
     setError("");
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
+      setError(t('auth.passwordsNoMatch'));
       return;
     }
 
     if (selectedLanguages.length === 0) {
-      setError("Please select at least one language you can transcribe");
+      setError(t('auth.selectOneLanguageTranscribe'));
       return;
     }
 
     if (!agreedToTerms) {
-      setError("Please agree to the terms");
+      setError(t('auth.agreeToTerms'));
       return;
     }
 
@@ -89,14 +91,14 @@ export default function TranscriberRegister() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Registration failed");
+        setError(data.error || t('auth.registrationFailed'));
         return;
       }
 
       setToken(data.token);
       router.push("/transcriber/v2");
     } catch {
-      setError("An error occurred. Please try again.");
+      setError(t('auth.errorOccurred'));
     } finally {
       setLoading(false);
     }
@@ -106,16 +108,16 @@ export default function TranscriberRegister() {
     <div className="min-h-screen bg-gradient-to-br from-green-900 to-teal-900 py-12 px-4">
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">KACCP</h1>
-          <p className="text-green-200">Voice Data Collection Platform</p>
+          <h1 className="text-4xl font-bold text-white mb-2">{t('home.title')}</h1>
+          <p className="text-green-200">{t('home.subtitle')}</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Register as Transcriber
+            {t('auth.registerAsTranscriber')}
           </h2>
           <p className="text-gray-600 mb-6">
-            Help create accurate transcriptions for African language voice data
+            {t('auth.helpTranscribe')}
           </p>
 
           {error && (
@@ -129,7 +131,7 @@ export default function TranscriberRegister() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Display Name
+                  {t('auth.displayName')}
                 </label>
                 <input
                   type="text"
@@ -138,12 +140,12 @@ export default function TranscriberRegister() {
                   onChange={handleChange}
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
-                  placeholder="Your name"
+                  placeholder={t('auth.yourName')}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Phone Number
+                  {t('auth.phoneNumber')}
                 </label>
                 <input
                   type="tel"
@@ -159,7 +161,7 @@ export default function TranscriberRegister() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email
+                {t('common.email')}
               </label>
               <input
                 type="email"
@@ -175,7 +177,7 @@ export default function TranscriberRegister() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Password
+                  {t('common.password')}
                 </label>
                 <input
                   type="password"
@@ -190,7 +192,7 @@ export default function TranscriberRegister() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Confirm Password
+                  {t('common.confirmPassword')}
                 </label>
                 <input
                   type="password"
@@ -207,10 +209,10 @@ export default function TranscriberRegister() {
             {/* Language Selection */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Languages You Can Transcribe
+                {t('auth.languagesYouTranscribe')}
               </label>
               <p className="text-sm text-gray-500 mb-3">
-                Select all languages you can write/transcribe accurately
+                {t('auth.selectLanguagesWrite')}
               </p>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                 {languages.map((lang) => (
@@ -219,8 +221,8 @@ export default function TranscriberRegister() {
                     type="button"
                     onClick={() => toggleLanguage(lang.code)}
                     className={`p-3 rounded-lg border text-left transition-all ${selectedLanguages.includes(lang.code)
-                        ? "border-green-500 bg-green-50 text-green-700"
-                        : "border-gray-200 hover:border-gray-300"
+                      ? "border-green-500 bg-green-50 text-green-700"
+                      : "border-gray-200 hover:border-gray-300"
                       }`}
                   >
                     <div className="font-medium">{lang.name}</div>
@@ -229,7 +231,7 @@ export default function TranscriberRegister() {
                 ))}
               </div>
               {languages.length === 0 && (
-                <p className="text-gray-500 text-sm">Loading languages...</p>
+                <p className="text-gray-500 text-sm">{t('auth.loadingLanguages')}</p>
               )}
             </div>
 
@@ -243,9 +245,7 @@ export default function TranscriberRegister() {
                   className="mt-1"
                 />
                 <span className="text-sm text-gray-700">
-                  I agree to provide accurate transcriptions and understand that my
-                  work will be reviewed for quality. I will maintain confidentiality
-                  of the voice recordings I transcribe.
+                  {t('auth.transcriberConsentText')}
                 </span>
               </label>
             </div>
@@ -255,22 +255,22 @@ export default function TranscriberRegister() {
               disabled={loading}
               className="w-full py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50 transition-colors"
             >
-              {loading ? "Creating Account..." : "Create Account"}
+              {loading ? t('auth.creatingAccount') : t('auth.createAccount')}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-gray-600">
-              Already have an account?{" "}
+              {t('auth.alreadyHaveAccount')}{" "}
               <Link href="/transcriber/login" className="text-green-600 hover:underline">
-                Sign in here
+                {t('auth.signInHere')}
               </Link>
             </p>
           </div>
 
           <div className="mt-4 text-center">
             <Link href="/speaker/register" className="text-sm text-gray-500 hover:text-gray-700">
-              Want to be a speaker instead? Register here →
+              {t('auth.wantToBeSpeaker')}
             </Link>
           </div>
         </div>

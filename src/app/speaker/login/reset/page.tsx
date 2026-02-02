@@ -3,9 +3,11 @@
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 function ResetPasswordForm() {
     const router = useRouter();
+    const t = useTranslations();
     const searchParams = useSearchParams();
     const token = searchParams.get("token");
 
@@ -20,17 +22,17 @@ function ResetPasswordForm() {
         setError("");
 
         if (!token) {
-            setError("Invalid or missing reset token.");
+            setError(t('auth.invalidResetToken'));
             return;
         }
 
         if (password !== confirmPassword) {
-            setError("Passwords do not match.");
+            setError(t('auth.passwordsNoMatch'));
             return;
         }
 
         if (password.length < 6) {
-            setError("Password must be at least 6 characters long.");
+            setError(t('auth.passwordMinLength'));
             return;
         }
 
@@ -46,7 +48,7 @@ function ResetPasswordForm() {
             const data = await res.json();
 
             if (!res.ok) {
-                setError(data.error || "Failed to reset password. The link may be expired.");
+                setError(data.error || t('auth.resetFailed'));
                 return;
             }
 
@@ -55,7 +57,7 @@ function ResetPasswordForm() {
                 router.push("/speaker/login");
             }, 3000);
         } catch {
-            setError("An error occurred. Please try again.");
+            setError(t('auth.errorOccurred'));
         } finally {
             setLoading(false);
         }
@@ -64,9 +66,9 @@ function ResetPasswordForm() {
     if (!token) {
         return (
             <div className="text-center">
-                <p className="text-red-600 font-medium mb-4">Invalid Reset Link</p>
+                <p className="text-red-600 font-medium mb-4">{t('auth.invalidResetLink')}</p>
                 <Link href="/speaker/login/forgot" className="text-blue-600 hover:underline">
-                    Request a new link
+                    {t('auth.requestNewLink')}
                 </Link>
             </div>
         );
@@ -80,8 +82,8 @@ function ResetPasswordForm() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                     </svg>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Password Reset!</h3>
-                <p className="text-gray-600">Your password has been updated. Redirecting to login...</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">{t('auth.passwordReset')}</h3>
+                <p className="text-gray-600">{t('auth.redirectingToLogin')}</p>
             </div>
         );
     }
@@ -90,7 +92,7 @@ function ResetPasswordForm() {
         <form onSubmit={handleSubmit} className="space-y-4">
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                    New Password
+                    {t('auth.newPassword')}
                 </label>
                 <input
                     type="password"
@@ -104,7 +106,7 @@ function ResetPasswordForm() {
 
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Confirm New Password
+                    {t('auth.confirmNewPassword')}
                 </label>
                 <input
                     type="password"
@@ -127,31 +129,33 @@ function ResetPasswordForm() {
                 disabled={loading}
                 className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50 transition-colors"
             >
-                {loading ? "Updating..." : "Reset Password"}
+                {loading ? t('auth.updating') : t('auth.resetPassword')}
             </button>
         </form>
     );
 }
 
 export default function ResetPasswordPage() {
+    const t = useTranslations();
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-900 to-purple-900 flex items-center justify-center px-4">
             <div className="max-w-md w-full">
                 <div className="text-center mb-8">
-                    <h1 className="text-4xl font-bold text-white mb-2">KACCP</h1>
-                    <p className="text-blue-200">Voice Data Collection Platform</p>
+                    <h1 className="text-4xl font-bold text-white mb-2">{t('home.title')}</h1>
+                    <p className="text-blue-200">{t('home.subtitle')}</p>
                 </div>
 
                 <div className="bg-white rounded-2xl shadow-xl p-8">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-6">Create New Password</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('auth.createNewPassword')}</h2>
 
-                    <Suspense fallback={<div className="text-center p-4">Loading...</div>}>
+                    <Suspense fallback={<div className="text-center p-4">{t('common.loading')}...</div>}>
                         <ResetPasswordForm />
                     </Suspense>
 
                     <div className="mt-6 text-center">
                         <Link href="/speaker/login" className="text-sm text-gray-500 hover:text-gray-700">
-                            Cancel and go back
+                            {t('auth.cancelAndGoBack')}
                         </Link>
                     </div>
                 </div>

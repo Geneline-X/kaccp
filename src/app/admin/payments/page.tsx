@@ -11,8 +11,12 @@ import { AdminHeader } from '@/components/admin/AdminHeader'
 import { DataTable } from '@/components/ui/data-table'
 import { paymentColumns, type PaymentRow } from '@/components/admin/payments/payments-table'
 import { toastError, toastSuccess } from '@/lib/toast'
+import { useTranslations, useFormatter } from 'next-intl'
 
 export default function AdminPaymentsPage() {
+  const t = useTranslations()
+  const tTable = useTranslations('admin.tables.payments')
+  const format = useFormatter()
   const [usersBasic, setUsersBasic] = useState<any[]>([])
   const [usersStats, setUsersStats] = useState<any[]>([])
   const [payments, setPayments] = useState<PaymentRow[]>([])
@@ -31,9 +35,9 @@ export default function AdminPaymentsPage() {
       setPayments(payRes.payments)
       setUsersStats(statsRes.items || [])
     } catch (e: any) {
-      const msg = e.message || 'Failed to load payments'
+      const msg = e.message || t('common.error')
       setError(msg)
-      toastError('Error', msg)
+      toastError(t('common.error'), msg)
     } finally {
       setLoading(false)
     }
@@ -43,17 +47,17 @@ export default function AdminPaymentsPage() {
 
   return (
     <div className="space-y-6">
-      <AdminHeader 
-        title="Payments" 
-        description="Create payout records and manage their status"
+      <AdminHeader
+        title={t('admin.paymentsPage.title')}
+        description={t('admin.paymentsPage.description')}
       />
 
       <CreatePayment usersBasic={usersBasic} usersStats={usersStats} onDone={load} />
 
       <Card>
         <CardHeader>
-          <CardTitle>Recent Payouts</CardTitle>
-          <CardDescription>{payments.length} payment{payments.length !== 1 ? 's' : ''}</CardDescription>
+          <CardTitle>{t('admin.paymentsPage.recentPayouts')}</CardTitle>
+          <CardDescription>{payments.length} {payments.length !== 1 ? t('admin.payments') : t('admin.payments')}</CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -63,8 +67,8 @@ export default function AdminPaymentsPage() {
           ) : error ? (
             <div className="text-destructive p-4 rounded-md bg-destructive/10">{error}</div>
           ) : (
-            <DataTable 
-              columns={paymentColumns(load)}
+            <DataTable
+              columns={paymentColumns(tTable, format, load)}
               data={payments}
               searchKey="reference"
               loading={loading}
@@ -77,10 +81,11 @@ export default function AdminPaymentsPage() {
 }
 
 function CreatePayment({ usersBasic, usersStats, onDone }: { usersBasic: any[]; usersStats: any[]; onDone: () => void }) {
+  const t = useTranslations()
   const params = useSearchParams()
   const [userId, setUserId] = useState<string>('')
   const [amount, setAmount] = useState('')
-  const [currency, setCurrency] = useState<'USD'|'SLE'>('SLE')
+  const [currency, setCurrency] = useState<'USD' | 'SLE'>('SLE')
   const [reference, setReference] = useState('')
   const [notes, setNotes] = useState('')
   const [creating, setCreating] = useState(false)
@@ -131,11 +136,11 @@ function CreatePayment({ usersBasic, usersStats, onDone }: { usersBasic: any[]; 
         method: 'POST',
         body: JSON.stringify({ userId, amountCents, currency, reference: reference || undefined, notes: notes || undefined })
       })
-      toastSuccess('Payment created')
+      toastSuccess(t('admin.paymentsPage.createPayment'))
       setUserId(''); setAmount(''); setReference(''); setNotes('')
       onDone()
     } catch (e: any) {
-      toastError('Failed to create payment', e.message)
+      toastError(t('common.error'), e.message)
     } finally {
       setCreating(false)
     }
@@ -143,28 +148,28 @@ function CreatePayment({ usersBasic, usersStats, onDone }: { usersBasic: any[]; 
 
   return (
     <Card>
-      <CardHeader><CardTitle>Create Payment</CardTitle></CardHeader>
+      <CardHeader><CardTitle>{t('admin.paymentsPage.createPayment')}</CardTitle></CardHeader>
       <CardContent>
         <form onSubmit={submit} className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <Label>User</Label>
+            <Label>{t('admin.paymentsPage.user')}</Label>
             <Select value={userId} onValueChange={setUserId}>
-              <SelectTrigger className="w-full"><SelectValue placeholder="Select user" /></SelectTrigger>
+              <SelectTrigger className="w-full"><SelectValue placeholder={t('admin.paymentsPage.selectUser')} /></SelectTrigger>
               <SelectContent>
                 {topCandidates.map(u => (
                   <SelectItem key={u.id} value={u.id}>
-                    {(u.displayName || u.email)} · {(typeof u.balanceSLE === 'number' ? u.balanceSLE.toFixed(2) : ((u.totalEarningsCents||0)/100).toFixed(2))} SLE
+                    {(u.displayName || u.email)} · {(typeof u.balanceSLE === 'number' ? u.balanceSLE.toFixed(2) : ((u.totalEarningsCents || 0) / 100).toFixed(2))} SLE
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
           <div>
-            <Label>Amount</Label>
+            <Label>{t('admin.paymentsPage.amount')}</Label>
             <Input type="number" step="0.01" placeholder="0.00" value={amount} onChange={(e) => setAmount(e.target.value)} />
-            </div>
+          </div>
           <div>
-            <Label>Currency</Label>
+            <Label>{t('admin.paymentsPage.currency')}</Label>
             <Select value={currency} onValueChange={(v) => setCurrency(v as any)}>
               <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -175,11 +180,11 @@ function CreatePayment({ usersBasic, usersStats, onDone }: { usersBasic: any[]; 
           </div>
           <div className="md:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label>Reference (optional)</Label>
+              <Label>{t('admin.paymentsPage.reference')}</Label>
               <Input value={reference} onChange={(e) => setReference(e.target.value)} />
             </div>
             <div>
-              <Label>Notes (optional)</Label>
+              <Label>{t('admin.paymentsPage.notes')}</Label>
               <Input value={notes} onChange={(e) => setNotes(e.target.value)} />
             </div>
           </div>
@@ -187,23 +192,23 @@ function CreatePayment({ usersBasic, usersStats, onDone }: { usersBasic: any[]; 
             <div className="md:col-span-3 border rounded p-3 text-sm">
               <div className="font-medium mb-1">{selectedUser.displayName || selectedUser.email}</div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div><div className="text-[10px] text-muted-foreground">Estimated</div><div className="font-medium">{est !== null ? est.toFixed(2) : '—'} SLE</div></div>
-                <div><div className="text-[10px] text-muted-foreground">Paid</div><div className="font-medium">{paid !== null ? paid.toFixed(2) : '—'} SLE</div></div>
-                <div><div className="text-[10px] text-muted-foreground">Balance</div><div className="font-medium">{balance !== null ? balance.toFixed(2) : '—'} SLE</div></div>
-                <div><div className="text-[10px] text-muted-foreground">Threshold</div><div className="font-medium">30.00 SLE</div></div>
+                <div><div className="text-[10px] text-muted-foreground">{t('admin.paymentsPage.estimated')}</div><div className="font-medium">{est !== null ? est.toFixed(2) : '—'} SLE</div></div>
+                <div><div className="text-[10px] text-muted-foreground">{t('admin.paymentsPage.paid')}</div><div className="font-medium">{paid !== null ? paid.toFixed(2) : '—'} SLE</div></div>
+                <div><div className="text-[10px] text-muted-foreground">{t('admin.paymentsPage.balance')}</div><div className="font-medium">{balance !== null ? balance.toFixed(2) : '—'} SLE</div></div>
+                <div><div className="text-[10px] text-muted-foreground">{t('admin.paymentsPage.threshold')}</div><div className="font-medium">30.00 SLE</div></div>
               </div>
               {currency === 'SLE' && (balance ?? 0) < 30 && (
-                <div className="mt-2 text-xs text-amber-600">Balance is below payout threshold. Consider waiting until it reaches 30 SLE.</div>
+                <div className="mt-2 text-xs text-amber-600">{t('admin.paymentsPage.belowThreshold')}</div>
               )}
               {belowThreshold && (
-                <div className="mt-1 text-xs text-amber-600">Entered amount is below the 30 SLE threshold.</div>
+                <div className="mt-1 text-xs text-amber-600">{t('admin.paymentsPage.amountBelowThreshold')}</div>
               )}
             </div>
           )}
           <div className="md:col-span-3">
-            <Button type="submit" disabled={creating || !userId || !amount || (currency==='SLE' && (amountNumber<=0 || amountNumber < payoutThresholdSLE))}>{creating ? 'Creating…' : 'Create Payment'}</Button>
-            {currency==='SLE' && amount && amountNumber < payoutThresholdSLE && (
-              <span className="ml-2 text-xs text-amber-600">Minimum payout is 30 SLE.</span>
+            <Button type="submit" disabled={creating || !userId || !amount || (currency === 'SLE' && (amountNumber <= 0 || amountNumber < payoutThresholdSLE))}>{creating ? t('admin.paymentsPage.creating') : t('admin.paymentsPage.createPayment')}</Button>
+            {currency === 'SLE' && amount && amountNumber < payoutThresholdSLE && (
+              <span className="ml-2 text-xs text-amber-600">{t('admin.paymentsPage.minimumPayout')}</span>
             )}
           </div>
         </form>
@@ -213,6 +218,7 @@ function CreatePayment({ usersBasic, usersStats, onDone }: { usersBasic: any[]; 
 }
 
 function PaymentRow({ p, onDone }: { p: any; onDone: () => void }) {
+  const t = useTranslations()
   const [acting, setActing] = useState<'MARK_PAID' | 'MARK_FAILED' | null>(null)
 
   const act = async (action: 'MARK_PAID' | 'MARK_FAILED') => {
@@ -224,7 +230,7 @@ function PaymentRow({ p, onDone }: { p: any; onDone: () => void }) {
       })
       onDone()
     } catch (e: any) {
-      alert(e.message || 'Action failed')
+      alert(e.message || t('common.error'))
     } finally {
       setActing(null)
     }
@@ -233,12 +239,12 @@ function PaymentRow({ p, onDone }: { p: any; onDone: () => void }) {
   return (
     <div className="border rounded p-3 flex items-center justify-between gap-3">
       <div>
-        <div className="font-medium">{(p.amountCents/100).toFixed(2)} {p.currency}</div>
+        <div className="font-medium">{(p.amountCents / 100).toFixed(2)} {p.currency}</div>
         <div className="text-xs text-muted-foreground">{p.status} · {new Date(p.createdAt).toLocaleString()}</div>
       </div>
       <div className="flex items-center gap-2">
-        <Button variant="secondary" disabled={acting !== null || p.status !== 'PENDING'} onClick={() => act('MARK_FAILED')}>Mark Failed</Button>
-        <Button disabled={acting !== null || p.status !== 'PENDING'} onClick={() => act('MARK_PAID')}>{acting === 'MARK_PAID' ? 'Processing…' : 'Mark Paid'}</Button>
+        <Button variant="secondary" disabled={acting !== null || p.status !== 'PENDING'} onClick={() => act('MARK_FAILED')}>{t('admin.paymentsPage.markFailed')}</Button>
+        <Button disabled={acting !== null || p.status !== 'PENDING'} onClick={() => act('MARK_PAID')}>{acting === 'MARK_PAID' ? t('admin.paymentsPage.processing') : t('admin.paymentsPage.markPaid')}</Button>
       </div>
     </div>
   )

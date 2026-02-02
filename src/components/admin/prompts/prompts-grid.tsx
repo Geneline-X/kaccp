@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect, useCallback } from "react";
 import { DataGrid, RenderEditCellProps } from "react-data-grid";
 import "react-data-grid/lib/styles.css";
 import { getToken } from "@/lib/client";
+import { useTranslations } from "next-intl";
 
 interface Prompt {
     id: string; // "new-..." for new rows
@@ -54,6 +55,7 @@ const EMOTIONS = [
 ];
 
 export default function PromptsGrid({ initialPrompts, languageId, onSave }: PromptsGridProps) {
+    const t = useTranslations();
     const [rows, setRows] = useState<Prompt[]>(initialPrompts);
     const [similarityWarnings, setSimilarityWarnings] = useState<{ id: string; matches: any[] }[]>([]);
     const [saving, setSaving] = useState(false);
@@ -68,7 +70,7 @@ export default function PromptsGrid({ initialPrompts, languageId, onSave }: Prom
     const columns = useMemo(() => [
         {
             key: "englishText",
-            name: "English Text",
+            name: t('admin.promptsPage.englishText'),
             editable: true,
             resizable: true,
             width: "max-content",
@@ -85,7 +87,7 @@ export default function PromptsGrid({ initialPrompts, languageId, onSave }: Prom
         },
         {
             key: "category",
-            name: "Category",
+            name: t('admin.category'),
             editor: (p: RenderEditCellProps<Prompt>) => (
                 <select
                     autoFocus
@@ -104,7 +106,7 @@ export default function PromptsGrid({ initialPrompts, languageId, onSave }: Prom
         },
         {
             key: "emotion",
-            name: "Emotion",
+            name: t('admin.promptsPage.emotion'),
             editor: (p: RenderEditCellProps<Prompt>) => (
                 <select
                     autoFocus
@@ -123,7 +125,7 @@ export default function PromptsGrid({ initialPrompts, languageId, onSave }: Prom
         },
         {
             key: "instruction",
-            name: "Instruction",
+            name: t('admin.promptsPage.instruction'),
             editable: true,
             resizable: true,
             width: 200,
@@ -138,7 +140,7 @@ export default function PromptsGrid({ initialPrompts, languageId, onSave }: Prom
         },
         {
             key: "targetDurationSec",
-            name: "Secs",
+            name: t('admin.promptsPage.secs'),
             editable: true,
             width: 60,
             renderEditCell: (props: RenderEditCellProps<Prompt>) => (
@@ -151,7 +153,7 @@ export default function PromptsGrid({ initialPrompts, languageId, onSave }: Prom
                 />
             ),
         },
-    ], []);
+    ], [t]);
 
     // Handle row updates
     const handleRowsChange = async (newRows: Prompt[], { indexes }: { indexes: number[] }) => {
@@ -230,7 +232,7 @@ export default function PromptsGrid({ initialPrompts, languageId, onSave }: Prom
             const modifiedRows = rows.filter((r) => r.isModified && !r.isNew);
 
             if (newRows.length === 0 && modifiedRows.length === 0) {
-                alert("No changes to save");
+                alert(t('admin.promptsPage.noChangesToSave'));
                 setSaving(false);
                 return;
             }
@@ -286,14 +288,14 @@ export default function PromptsGrid({ initialPrompts, languageId, onSave }: Prom
             }
 
             if (errors.length > 0) {
-                alert(`Errors:\n${errors.join("\n")}`);
+                alert(`${t('admin.promptsPage.errors')}:\n${errors.join("\n")}`);
             } else {
-                alert("Saved successfully!");
+                alert(t('admin.promptsPage.savaSuccess'));
                 onSave(); // Refresh parent
             }
 
         } catch (e) {
-            alert("Save failed");
+            alert(t('admin.promptsPage.saveFailed'));
         } finally {
             setSaving(false);
         }
@@ -314,11 +316,11 @@ export default function PromptsGrid({ initialPrompts, languageId, onSave }: Prom
                         onClick={handleAddRow}
                         className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium text-sm flex items-center gap-2"
                     >
-                        + Add Row
+                        {t('admin.promptsPage.addRow')}
                     </button>
 
                     <div className="text-sm text-gray-500">
-                        {rows.filter(r => r.isNew).length} new • {rows.filter(r => r.isModified).length} modified
+                        {rows.filter(r => r.isNew).length} {t('admin.promptsPage.new')} • {rows.filter(r => r.isModified).length} {t('admin.promptsPage.modified')}
                     </div>
                 </div>
 
@@ -327,19 +329,19 @@ export default function PromptsGrid({ initialPrompts, languageId, onSave }: Prom
                     disabled={saving}
                     className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 font-medium disabled:opacity-50"
                 >
-                    {saving ? "Saving..." : "Save Changes"}
+                    {saving ? t('admin.userDetailPage.saving') : t('admin.userDetailPage.saveChanges')}
                 </button>
             </div>
 
             {similarityWarnings.length > 0 && (
                 <div className="bg-yellow-50 border border-yellow-200 p-3 rounded text-sm text-yellow-800">
-                    <strong>Possible Duplicates Found:</strong>
+                    <strong>{t('admin.promptsPage.possibleDuplicates')}</strong>
                     <ul className="list-disc pl-5 mt-1">
                         {similarityWarnings.map(w => {
                             const row = rows.find(r => r.id === w.id);
                             return (
                                 <li key={w.id}>
-                                    "{row?.englishText}" is similar to:
+                                    "{row?.englishText}" {t('admin.promptsPage.isSimilarTo')}:
                                     {w.matches.map((m: any) => ` "${m.text}"`).join(", ")}
                                 </li>
                             );

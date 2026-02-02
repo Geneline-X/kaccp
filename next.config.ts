@@ -1,4 +1,7 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from 'next-intl/plugin';
+
+const withNextIntl = createNextIntlPlugin('./src/i18n.ts');
 
 const nextConfig: NextConfig = {
   // TypeScript type checking disabled during builds
@@ -9,4 +12,5 @@ const nextConfig: NextConfig = {
   // Linting is skipped during builds by default when using custom ESLint config
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);
+

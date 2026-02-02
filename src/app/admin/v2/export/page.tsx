@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getToken } from "@/lib/client";
+import { useTranslations } from "next-intl";
 
 interface Language {
   id: string;
@@ -41,6 +42,7 @@ interface ExportData {
 }
 
 export default function AdminExportPage() {
+  const t = useTranslations();
   const router = useRouter();
   const [languages, setLanguages] = useState<Language[]>([]);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("");
@@ -136,10 +138,10 @@ export default function AdminExportPage() {
           <div className="flex justify-between items-center">
             <div>
               <Link href="/admin/v2" className="text-blue-600 hover:underline text-sm">
-                ← Back to Dashboard
+                {t('admin.backToDashboard')}
               </Link>
               <h1 className="text-2xl font-bold text-gray-900 mt-1">
-                Export Data for TTS
+                {t('admin.exportPage.title')}
               </h1>
             </div>
           </div>
@@ -150,13 +152,13 @@ export default function AdminExportPage() {
         {/* Export Controls */}
         <div className="bg-white rounded-lg shadow p-6 mb-8">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Select Language to Export
+            {t('admin.exportPage.selectLanguageToExport')}
           </h2>
 
           <div className="flex flex-wrap gap-4 items-end">
             <div className="flex-1 min-w-[200px]">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Language
+                {t('admin.exportPage.language')}
               </label>
               <select
                 value={selectedLanguage}
@@ -179,7 +181,7 @@ export default function AdminExportPage() {
               disabled={exporting || !selectedLanguage}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
             >
-              {exporting ? "Loading..." : "Preview Export"}
+              {exporting ? t('admin.exportPage.loading') : t('admin.exportPage.previewExport')}
             </button>
           </div>
 
@@ -197,7 +199,7 @@ export default function AdminExportPage() {
               <div className="flex justify-between items-center">
                 <div>
                   <h2 className="text-lg font-semibold text-gray-900">
-                    Export Preview: {exportData.language.name}
+                    {t('admin.exportPage.exportPreview')} {exportData.language.name}
                   </h2>
                   <p className="text-sm text-gray-500">
                     {exportData.language.country}
@@ -208,13 +210,13 @@ export default function AdminExportPage() {
                     onClick={handleDownloadCSV}
                     className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
                   >
-                    Download CSV (LJSpeech)
+                    {t('admin.exportPage.downloadCSV')}
                   </button>
                   <button
                     onClick={handleDownloadJSON}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                   >
-                    Download JSON
+                    {t('admin.exportPage.downloadJSON')}
                   </button>
                 </div>
               </div>
@@ -224,25 +226,25 @@ export default function AdminExportPage() {
             <div className="p-6 border-b border-gray-200 bg-gray-50">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
-                  <p className="text-sm text-gray-500">Total Recordings</p>
+                  <p className="text-sm text-gray-500">{t('admin.exportPage.totalRecordings')}</p>
                   <p className="text-2xl font-bold text-gray-900">
                     {exportData.stats.totalRecordings}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Total Duration</p>
+                  <p className="text-sm text-gray-500">{t('admin.exportPage.totalDuration')}</p>
                   <p className="text-2xl font-bold text-gray-900">
                     {exportData.stats.totalDurationHours}h
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Unique Speakers</p>
+                  <p className="text-sm text-gray-500">{t('admin.exportPage.uniqueSpeakers')}</p>
                   <p className="text-2xl font-bold text-gray-900">
                     {exportData.stats.uniqueSpeakers}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Exported At</p>
+                  <p className="text-sm text-gray-500">{t('admin.exportPage.exportedAt')}</p>
                   <p className="text-sm font-medium text-gray-900">
                     {new Date(exportData.exportedAt).toLocaleString()}
                   </p>
@@ -253,26 +255,26 @@ export default function AdminExportPage() {
             {/* Sample Data */}
             <div className="p-6">
               <h3 className="font-semibold text-gray-900 mb-4">
-                Sample Data (first 10 records)
+                {t('admin.exportPage.sampleData')}
               </h3>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                        ID
+                        {t('admin.exportPage.id')}
                       </th>
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                        Audio Path
+                        {t('admin.exportPage.audioPath')}
                       </th>
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                        Transcription
+                        {t('admin.recordingsPage.transcription')}
                       </th>
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                        Duration
+                        {t('admin.exportPage.duration')}
                       </th>
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                        Category
+                        {t('admin.promptsPage.category')}
                       </th>
                     </tr>
                   </thead>
@@ -304,16 +306,16 @@ export default function AdminExportPage() {
             {/* CSV Format Info */}
             <div className="p-6 bg-blue-50 border-t border-blue-100">
               <h3 className="font-semibold text-blue-900 mb-2">
-                CSV Export Format
+                {t('admin.exportPage.csvExportFormat')}
               </h3>
               <p className="text-sm text-blue-800 mb-2">
-                The CSV export uses pipe-separated values with the following columns:
+                {t('admin.exportPage.csvDescription')}
               </p>
               <code className="block bg-blue-100 p-3 rounded text-sm text-blue-900 overflow-x-auto">
                 id|audio_path|transcription|english_prompt|duration_sec|speaker_id|category
               </code>
               <div className="mt-4 text-sm text-blue-700">
-                <p className="font-medium mb-1">Audio Path Format:</p>
+                <p className="font-medium mb-1">{t('admin.exportPage.audioPathFormat')}</p>
                 <code className="bg-blue-100 px-2 py-1 rounded text-xs">
                   gs://bucket/{'{country}'}/{'{language}'}/recordings/{'{speaker_id}'}/{'{timestamp}'}_{'{random}'}.wav
                 </code>
@@ -329,23 +331,21 @@ export default function AdminExportPage() {
         {!exportData && (
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Export Instructions
+              {t('admin.exportPage.exportInstructions')}
             </h2>
             <ol className="list-decimal list-inside space-y-2 text-gray-600">
-              <li>Select a language from the dropdown above</li>
-              <li>Click &quot;Preview Export&quot; to see the data summary</li>
-              <li>Download in CSV format (LJSpeech-compatible) or JSON format</li>
-              <li>Use the audio file paths to download the corresponding WAV files from GCS</li>
+              <li>{t('admin.exportPage.instruction1')}</li>
+              <li>{t('admin.exportPage.instruction2')}</li>
+              <li>{t('admin.exportPage.instruction3')}</li>
+              <li>{t('admin.exportPage.instruction4')}</li>
             </ol>
 
             <div className="mt-6 p-4 bg-yellow-50 rounded-lg">
               <h3 className="font-semibold text-yellow-800 mb-2">
-                Note on Audio Files
+                {t('admin.exportPage.noteOnAudioFiles')}
               </h3>
               <p className="text-sm text-yellow-700">
-                Audio files are stored in Google Cloud Storage. The export contains
-                the GCS paths. You&apos;ll need to use gsutil or the GCS console to
-                download the actual audio files for TTS training.
+                {t('admin.exportPage.audioFilesNote')}
               </p>
             </div>
           </div>

@@ -4,9 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { setToken } from "@/lib/client";
+import { useTranslations } from "next-intl";
 
 export default function ReviewerLogin() {
   const router = useRouter();
+  const t = useTranslations();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -27,20 +29,20 @@ export default function ReviewerLogin() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Login failed");
+        setError(data.error || t('auth.loginFailed'));
         return;
       }
 
       // Only allow REVIEWER and ADMIN roles
       if (data.user.role !== "REVIEWER" && data.user.role !== "ADMIN") {
-        setError("Access denied. This login is for reviewers only.");
+        setError(t('auth.accessDeniedReviewer'));
         return;
       }
 
       setToken(data.token);
       router.push("/reviewer");
     } catch {
-      setError("An error occurred. Please try again.");
+      setError(t('auth.errorOccurred'));
     } finally {
       setLoading(false);
     }
@@ -50,12 +52,12 @@ export default function ReviewerLogin() {
     <div className="min-h-screen bg-gradient-to-br from-purple-900 to-indigo-900 flex items-center justify-center px-4">
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">KACCP</h1>
-          <p className="text-purple-200">Reviewer Portal</p>
+          <h1 className="text-4xl font-bold text-white mb-2">{t('home.title')}</h1>
+          <p className="text-purple-200">{t('reviewer.portal')}</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Reviewer Login</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('auth.reviewerLogin')}</h2>
 
           {error && (
             <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
@@ -66,7 +68,7 @@ export default function ReviewerLogin() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email
+                {t('common.email')}
               </label>
               <input
                 type="email"
@@ -80,7 +82,7 @@ export default function ReviewerLogin() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Password
+                {t('common.password')}
               </label>
               <input
                 type="password"
@@ -97,13 +99,13 @@ export default function ReviewerLogin() {
               disabled={loading}
               className="w-full py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 disabled:opacity-50 transition-colors"
             >
-              {loading ? "Signing in..." : "Sign In"}
+              {loading ? t('auth.signingIn') : t('auth.signIn')}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <Link href="/" className="text-sm text-gray-500 hover:text-gray-700">
-              ← Back to Home
+              ← {t('common.backToHome')}
             </Link>
           </div>
         </div>

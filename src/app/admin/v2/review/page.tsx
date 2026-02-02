@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getToken } from "@/lib/client";
+import { useTranslations } from "next-intl";
 
 interface Transcription {
   id: string;
@@ -46,6 +47,7 @@ interface User {
 
 export default function AdminReviewPage() {
   const router = useRouter();
+  const t = useTranslations();
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const [transcriptions, setTranscriptions] = useState<Transcription[]>([]);
@@ -190,14 +192,14 @@ export default function AdminReviewPage() {
           <div className="flex justify-between items-center">
             <div>
               <Link href="/admin/v2" className="text-blue-600 hover:underline text-sm">
-                ← Back to Dashboard
+                {t('admin.backToDashboard')}
               </Link>
               <h1 className="text-2xl font-bold text-gray-900 mt-1">
-                Review Transcriptions
+                {t('admin.reviewPage.title')}
               </h1>
             </div>
             <div className="text-sm text-gray-500">
-              {pagination.total} pending review
+              {pagination.total} {t('admin.reviewPage.pendingReview')}
             </div>
           </div>
         </div>
@@ -207,32 +209,32 @@ export default function AdminReviewPage() {
         {transcriptions.length === 0 ? (
           <div className="bg-white rounded-lg shadow p-8 text-center">
             <div className="text-4xl mb-4">🎉</div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">All caught up!</h2>
-            <p className="text-gray-500">No transcriptions pending review.</p>
+            <h2 className="text-xl font-bold text-gray-900 mb-2">{t('admin.reviewPage.allCaughtUp')}</h2>
+            <p className="text-gray-500">{t('admin.reviewPage.noPendingTranscriptions')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* List */}
             <div className="lg:col-span-1 bg-white rounded-lg shadow overflow-hidden">
               <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
-                <h2 className="font-semibold text-gray-900">Pending Review</h2>
+                <h2 className="font-semibold text-gray-900">{t('admin.reviewPage.pendingReviewList')}</h2>
               </div>
               <div className="divide-y divide-gray-200 max-h-[70vh] overflow-y-auto">
-                {transcriptions.map((t) => (
+                {transcriptions.map((tr) => (
                   <button
-                    key={t.id}
-                    onClick={() => selectTranscription(t)}
-                    className={`w-full text-left p-4 hover:bg-gray-50 transition-colors ${selectedTranscription?.id === t.id ? "bg-blue-50" : ""
+                    key={tr.id}
+                    onClick={() => selectTranscription(tr)}
+                    className={`w-full text-left p-4 hover:bg-gray-50 transition-colors ${selectedTranscription?.id === tr.id ? "bg-blue-50" : ""
                       }`}
                   >
                     <div className="text-sm font-medium text-gray-900 truncate">
-                      {t.recording.prompt.englishText}
+                      {tr.recording.prompt.englishText}
                     </div>
                     <div className="text-xs text-gray-500 mt-1">
-                      {t.recording.language.name} • {t.recording.durationSec.toFixed(1)}s
+                      {tr.recording.language.name} • {tr.recording.durationSec.toFixed(1)}s
                     </div>
                     <div className="text-xs text-gray-400 mt-1 truncate">
-                      &quot;{t.text}&quot;
+                      &quot;{tr.text}&quot;
                     </div>
                   </button>
                 ))}
@@ -260,16 +262,16 @@ export default function AdminReviewPage() {
                       {selectedTranscription.recording.prompt.englishText}
                     </h3>
                     <p className="text-sm text-gray-500 mt-2">
-                      Speaker: {selectedTranscription.recording.speaker.displayName || "Anonymous"} •
-                      Transcriber: {selectedTranscription.transcriber.displayName || "Anonymous"}
-                      (Score: {selectedTranscription.transcriber.qualityScore.toFixed(1)})
+                      {t('admin.reviewPage.speaker')}: {selectedTranscription.recording.speaker.displayName || t('admin.reviewPage.anonymous')} •
+                      {t('admin.reviewPage.transcriber')}: {selectedTranscription.transcriber.displayName || t('admin.reviewPage.anonymous')}
+                      ({t('admin.reviewPage.score')}: {selectedTranscription.transcriber.qualityScore.toFixed(1)})
                     </p>
                   </div>
 
                   {/* Audio Player */}
                   <div className="p-6 border-b border-gray-200 bg-gray-50">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Recording ({selectedTranscription.recording.durationSec.toFixed(1)}s)
+                      {t('admin.reviewPage.recording')} ({selectedTranscription.recording.durationSec.toFixed(1)}s)
                     </label>
                     {signedAudioUrl ? (
                       <audio
@@ -281,7 +283,7 @@ export default function AdminReviewPage() {
                       />
                     ) : (
                       <div className="flex items-center justify-center h-12 bg-gray-200 rounded-lg">
-                        <span className="text-sm text-gray-500">Loading audio...</span>
+                        <span className="text-sm text-gray-500">{t('admin.reviewPage.loadingAudio')}</span>
                       </div>
                     )}
                   </div>
@@ -292,10 +294,10 @@ export default function AdminReviewPage() {
                     {selectedTranscription.recording.autoTranscriptionStatus === "COMPLETED" && selectedTranscription.recording.transcript && (
                       <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
                         <div className="flex items-center gap-2 mb-2">
-                          <span className="text-xs font-medium text-blue-900">🤖 Kay X Krio Transcript</span>
+                          <span className="text-xs font-medium text-blue-900">{t('admin.reviewPage.kayXTranscript')}</span>
                           {selectedTranscription.recording.transcriptConfidence && (
                             <span className="px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded">
-                              {(selectedTranscription.recording.transcriptConfidence * 100).toFixed(0)}% confidence
+                              {(selectedTranscription.recording.transcriptConfidence * 100).toFixed(0)}% {t('admin.reviewPage.confidence')}
                             </span>
                           )}
                         </div>
@@ -304,9 +306,9 @@ export default function AdminReviewPage() {
                         </div>
                       </div>
                     )}
-                    
+
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Human Transcription (edit if needed)
+                      {t('admin.reviewPage.humanTranscription')}
                     </label>
                     <textarea
                       value={editedText}
@@ -316,7 +318,7 @@ export default function AdminReviewPage() {
                     />
                     {editedText !== selectedTranscription.text && (
                       <p className="text-xs text-orange-600 mt-1">
-                        ⚠️ Text has been modified
+                        {t('admin.reviewPage.textModified')}
                       </p>
                     )}
                   </div>
@@ -324,14 +326,14 @@ export default function AdminReviewPage() {
                   {/* Review Notes */}
                   <div className="p-6 border-b border-gray-200">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Review Notes (optional)
+                      {t('admin.reviewPage.reviewNotes')}
                     </label>
                     <input
                       type="text"
                       value={reviewNotes}
                       onChange={(e) => setReviewNotes(e.target.value)}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                      placeholder="Any feedback for the transcriber..."
+                      placeholder={t('admin.reviewPage.notesPlaceholder')}
                     />
                   </div>
 
@@ -345,7 +347,7 @@ export default function AdminReviewPage() {
                       {submittingAction === "REJECTED" && (
                         <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
                       )}
-                      {submittingAction === "REJECTED" ? "Rejecting..." : "Reject"}
+                      {submittingAction === "REJECTED" ? t('admin.reviewPage.rejecting') : t('admin.reviewPage.reject')}
                     </button>
                     <button
                       onClick={() => handleReview("APPROVED")}
@@ -355,13 +357,13 @@ export default function AdminReviewPage() {
                       {submittingAction === "APPROVED" && (
                         <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
                       )}
-                      {submittingAction === "APPROVED" ? "Approving..." : "Approve"}
+                      {submittingAction === "APPROVED" ? t('admin.reviewPage.approving') : t('admin.reviewPage.approve')}
                     </button>
                   </div>
                 </div>
               ) : (
                 <div className="bg-white rounded-lg shadow p-8 text-center">
-                  <p className="text-gray-500">Select a transcription to review</p>
+                  <p className="text-gray-500">{t('admin.reviewPage.selectTranscription')}</p>
                 </div>
               )}
             </div>

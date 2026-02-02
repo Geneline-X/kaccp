@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getToken } from "@/lib/client";
 import toWav from "audiobuffer-to-wav";
+import { useTranslations } from "next-intl";
 
 interface Prompt {
   id: string;
@@ -20,6 +21,7 @@ interface Prompt {
 
 function RecordContent() {
   const router = useRouter();
+  const t = useTranslations();
   const searchParams = useSearchParams();
   const languageId = searchParams.get("languageId");
 
@@ -92,11 +94,11 @@ function RecordContent() {
         }
         setLoading(false);
       })
-      .catch((err) => {
-        setError("Failed to load prompts");
+      .catch(() => {
+        setError(t('speaker.failedToLoadPrompts'));
         setLoading(false);
       });
-  }, [languageId, router]);
+  }, [languageId, router, t]);
 
   // Start recording
   const startRecording = useCallback(async () => {
@@ -152,9 +154,9 @@ function RecordContent() {
         }
       }, 100);
     } catch {
-      setError("Could not access microphone. Please allow microphone access.");
+      setError(t('speaker.microphoneAccessDenied'));
     }
-  }, []);
+  }, [t]);
 
   // Stop recording
   const stopRecording = useCallback(() => {
@@ -178,8 +180,7 @@ function RecordContent() {
       const token = getToken();
 
       // 1. Convert audio to WAV format
-      // 1. Convert audio to WAV format
-      setStatus("Converting to WAV...");
+      setStatus(t('speaker.convertingToWav'));
       const wavBlob = await convertToWav(audioBlob);
       setStatus(null);
 
@@ -215,7 +216,7 @@ function RecordContent() {
       if (!uploadRes.ok && uploadUrlData.mode === "gcs") {
         const errorText = await uploadRes.text();
         console.error("GCS upload failed:", errorText);
-        throw new Error("Failed to upload audio to storage");
+        throw new Error(t('speaker.failedToUpload'));
       }
 
       // 4. Create recording record
@@ -241,7 +242,7 @@ function RecordContent() {
         throw new Error(recordingData.error);
       }
 
-      setSuccess("Recording submitted successfully!");
+      setSuccess(t('speaker.recordingSubmitted'));
       setRecordingCount((c) => c + 1);
 
       // Move to next prompt after 1 second
@@ -264,14 +265,14 @@ function RecordContent() {
                 setPrompts(data.prompts);
                 setCurrentPromptIndex(0);
               } else {
-                setError("No more prompts available. Great job!");
+                setError(t('speaker.noMorePrompts'));
               }
               setLoading(false);
             });
         }
       }, 1000);
     } catch (err: any) {
-      setError(err.message || "Failed to submit recording");
+      setError(err.message || t('speaker.failedToSubmitRecording'));
     } finally {
       setSubmitting(false);
     }
@@ -307,15 +308,15 @@ function RecordContent() {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center text-white">
-          <h2 className="text-2xl font-bold mb-4">No Prompts Available</h2>
+          <h2 className="text-2xl font-bold mb-4">{t('speaker.noPromptsAvailable')}</h2>
           <p className="text-gray-400 mb-6">
-            There are no prompts available for this language yet.
+            {t('speaker.noPromptsForLanguage')}
           </p>
           <button
             onClick={() => router.push("/speaker")}
             className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            Back to Dashboard
+            {t('speaker.backToDashboard')}
           </button>
         </div>
       </div>
@@ -327,13 +328,13 @@ function RecordContent() {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center text-white">
-          <h2 className="text-2xl font-bold mb-4 text-red-500">Error Loading Prompts</h2>
+          <h2 className="text-2xl font-bold mb-4 text-red-500">{t('speaker.errorLoadingPrompts')}</h2>
           <p className="text-gray-400 mb-6">{error}</p>
           <button
             onClick={() => router.push("/speaker")}
             className="px-6 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-600"
           >
-            Back to Dashboard
+            {t('speaker.backToDashboard')}
           </button>
         </div>
       </div>
@@ -349,15 +350,15 @@ function RecordContent() {
             onClick={() => router.push("/speaker")}
             className="text-gray-400 hover:text-white"
           >
-            ← Back
+            ← {t('common.back')}
           </button>
           <div className="text-center">
             <span className="text-sm text-gray-400">
-              {currentPrompt?.language?.name || "Universal"}
+              {currentPrompt?.language?.name || t('speaker.universal')}
             </span>
             <span className="mx-2 text-gray-600">|</span>
             <span className="text-sm text-green-400">
-              {recordingCount} recorded this session
+              {recordingCount} {t('speaker.recordedThisSession')}
             </span>
           </div>
           <span className="text-sm text-gray-400">
@@ -397,7 +398,7 @@ function RecordContent() {
             </span>
           </div>
 
-          <p className="text-sm text-gray-400 mb-2">Say this in your language:</p>
+          <p className="text-sm text-gray-400 mb-2">{t('speaker.sayThisInYourLanguage')}:</p>
           <h2 className="text-3xl font-bold mb-4">{currentPrompt?.englishText}</h2>
 
           {currentPrompt?.instruction && (
@@ -416,9 +417,9 @@ function RecordContent() {
             </div>
             <div className="text-gray-400 mt-2">
               {duration >= 20 ? (
-                <span className="text-red-400">Maximum reached</span>
+                <span className="text-red-400">{t('speaker.maximumReached')}</span>
               ) : (
-                <span>Max 20 seconds</span>
+                <span>{t('speaker.maxSeconds', { seconds: 20 })}</span>
               )}
             </div>
             {/* Progress bar */}
@@ -460,14 +461,14 @@ function RecordContent() {
                   onClick={reRecord}
                   className="px-6 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-600"
                 >
-                  re-record
+                  {t('speaker.reRecord')}
                 </button>
                 <button
                   onClick={submitRecording}
                   disabled={submitting}
                   className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
                 >
-                  {submitting ? "Submitting..." : "Submit"}
+                  {submitting ? t('speaker.submitting') : t('common.submit')}
                 </button>
               </div>
             </div>
@@ -480,7 +481,7 @@ function RecordContent() {
                 onClick={skipPrompt}
                 className="text-gray-400 hover:text-white text-sm"
               >
-                Skip this prompt →
+                {t('speaker.skipPrompt')} →
               </button>
             </div>
           )}
@@ -488,12 +489,12 @@ function RecordContent() {
 
         {/* Tips */}
         <div className="mt-8 p-4 bg-gray-800/50 rounded-lg">
-          <h3 className="font-semibold mb-2">Recording Tips:</h3>
+          <h3 className="font-semibold mb-2">{t('speaker.recordingTips')}:</h3>
           <ul className="text-sm text-gray-400 space-y-1">
-            <li>• Find a quiet place with minimal background noise</li>
-            <li>• Speak clearly and naturally</li>
-            <li>• Keep recordings between 3-20 seconds</li>
-            <li>• Avoid long pauses between words</li>
+            <li>• {t('speaker.tip1')}</li>
+            <li>• {t('speaker.tip2')}</li>
+            <li>• {t('speaker.tip3')}</li>
+            <li>• {t('speaker.tip4')}</li>
           </ul>
         </div>
       </main>

@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { getToken } from "@/lib/client";
 
+import { useTranslations } from "next-intl";
+
 interface Country {
   id: string;
   code: string;
@@ -32,6 +34,7 @@ interface Language {
 
 export default function AdminLanguagesPage() {
   const router = useRouter();
+  const t = useTranslations();
   const searchParams = useSearchParams();
   const filterCountryId = searchParams.get("countryId");
 
@@ -126,9 +129,10 @@ export default function AdminLanguagesPage() {
         targetMinutes: 12000,
         speakerRatePerMinute: 0.05,
         transcriberRatePerMin: 0.03,
+        includeUniversalPrompts: true,
       });
     } catch {
-      setError("Failed to create language");
+      setError(t('common.error'));
     }
   };
 
@@ -167,7 +171,7 @@ export default function AdminLanguagesPage() {
       setLanguages(languages.map(l => l.id === editingLanguage.id ? { ...l, ...data.language } : l));
       setEditingLanguage(null);
     } catch {
-      setError("Failed to update language");
+      setError(t('common.error'));
     } finally {
       setSaving(false);
     }
@@ -188,17 +192,17 @@ export default function AdminLanguagesPage() {
           <div className="flex justify-between items-center">
             <div>
               <Link href="/admin/v2" className="text-blue-600 hover:underline text-sm">
-                ← Back to Dashboard
+                {t('admin.backToDashboard')}
               </Link>
               <h1 className="text-2xl font-bold text-gray-900 mt-1">
-                Language Management
+                {t('admin.languagesPage.title')}
               </h1>
             </div>
             <button
               onClick={() => setShowNewForm(true)}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
-              + Add Language
+              {t('admin.languagesPage.addLanguage')}
             </button>
           </div>
         </div>
@@ -220,7 +224,7 @@ export default function AdminLanguagesPage() {
               }}
               className="px-4 py-2 border border-gray-300 rounded-lg"
             >
-              <option value="">All Countries</option>
+              <option value="">{t('admin.languagesPage.allCountries')}</option>
               {countries.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
@@ -232,12 +236,12 @@ export default function AdminLanguagesPage() {
 
         {languages.length === 0 ? (
           <div className="bg-white rounded-lg shadow p-8 text-center">
-            <p className="text-gray-500 mb-4">No languages configured yet.</p>
+            <p className="text-gray-500 mb-4">{t('admin.languagesPage.noLanguagesYet')}</p>
             <button
               onClick={() => setShowNewForm(true)}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
-              Add Your First Language
+              {t('admin.languagesPage.addFirstLanguage')}
             </button>
           </div>
         ) : (
@@ -246,28 +250,28 @@ export default function AdminLanguagesPage() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Language
+                    {t('admin.languagesPage.language')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Country
+                    {t('admin.languagesPage.country')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Progress
+                    {t('admin.languagesPage.progress')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Rates ($/min)
+                    {t('admin.languagesPage.rates')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Prompts
+                    {t('admin.prompts')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Recordings
+                    {t('common.recordings')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Status
+                    {t('admin.userDetailPage.status')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Actions
+                    {t('admin.languagesPage.actions')}
                   </th>
                 </tr>
               </thead>
@@ -303,8 +307,8 @@ export default function AdminLanguagesPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4 text-sm">
-                        <div className="text-blue-600">Speaker: ${lang.speakerRatePerMinute?.toFixed(2)}</div>
-                        <div className="text-green-600">Transcriber: ${lang.transcriberRatePerMin?.toFixed(2)}</div>
+                        <div className="text-blue-600">{t('admin.usersPage.speaker')}: ${lang.speakerRatePerMinute?.toFixed(2)}</div>
+                        <div className="text-green-600">{t('admin.usersPage.transcriber')}: ${lang.transcriberRatePerMin?.toFixed(2)}</div>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-500">
                         {lang._count.prompts}
@@ -319,7 +323,7 @@ export default function AdminLanguagesPage() {
                             : "bg-gray-100 text-gray-800"
                             }`}
                         >
-                          {lang.isActive ? "Active" : "Inactive"}
+                          {lang.isActive ? t('admin.active') : t('admin.inactive')}
                         </span>
                       </td>
                       <td className="px-6 py-4">
@@ -328,13 +332,13 @@ export default function AdminLanguagesPage() {
                             onClick={() => setEditingLanguage(lang)}
                             className="text-sm text-blue-600 hover:underline text-left"
                           >
-                            Edit Rates
+                            {t('admin.languagesPage.editRates')}
                           </button>
                           <Link
                             href={`/admin/v2/prompts?languageId=${lang.id}`}
                             className="text-sm text-gray-600 hover:underline"
                           >
-                            Manage Prompts
+                            {t('admin.languagesPage.managePrompts')}
                           </Link>
                         </div>
                       </td>
@@ -351,7 +355,7 @@ export default function AdminLanguagesPage() {
       {showNewForm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-lg mx-4">
-            <h2 className="text-xl font-bold mb-4">Add New Language</h2>
+            <h2 className="text-xl font-bold mb-4">{t('admin.languagesPage.addNewLanguage')}</h2>
 
             {error && (
               <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
@@ -362,7 +366,7 @@ export default function AdminLanguagesPage() {
             <form onSubmit={handleCreateLanguage} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Country
+                  {t('admin.languagesPage.country')}
                 </label>
                 <select
                   value={newLanguage.countryId}
@@ -372,7 +376,7 @@ export default function AdminLanguagesPage() {
                   required
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                 >
-                  <option value="">Select Country</option>
+                  <option value="">{t('admin.languagesPage.selectCountry')}</option>
                   {countries.map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.name}
@@ -384,7 +388,7 @@ export default function AdminLanguagesPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Language Code (ISO 639-3)
+                    {t('admin.languagesPage.languageCode')}
                   </label>
                   <input
                     type="text"
@@ -400,7 +404,7 @@ export default function AdminLanguagesPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Language Name
+                    {t('admin.languagesPage.languageName')}
                   </label>
                   <input
                     type="text"
@@ -417,7 +421,7 @@ export default function AdminLanguagesPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Native Name (optional)
+                  {t('admin.languagesPage.nativeName')}
                 </label>
                 <input
                   type="text"
@@ -432,7 +436,7 @@ export default function AdminLanguagesPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Target Hours
+                  {t('admin.languagesPage.targetHours')}
                 </label>
                 <input
                   type="number"
@@ -451,7 +455,7 @@ export default function AdminLanguagesPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Speaker Rate ($/min)
+                    {t('admin.languagesPage.speakerRate')}
                   </label>
                   <input
                     type="number"
@@ -468,7 +472,7 @@ export default function AdminLanguagesPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Transcriber Rate ($/min)
+                    {t('admin.languagesPage.transcriberRate')}
                   </label>
                   <input
                     type="number"
@@ -496,7 +500,7 @@ export default function AdminLanguagesPage() {
                   className="rounded"
                 />
                 <label htmlFor="includeUniversalPrompts" className="text-sm text-gray-700">
-                  Include Universal Prompts (Generic English)
+                  {t('admin.languagesPage.includeUniversalPrompts')}
                 </label>
               </div>
 
@@ -509,13 +513,13 @@ export default function AdminLanguagesPage() {
                   }}
                   className="px-4 py-2 text-gray-600 hover:text-gray-900"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
-                  Add Language
+                  {t('admin.languagesPage.addLanguage')}
                 </button>
               </div>
             </form>
@@ -529,7 +533,7 @@ export default function AdminLanguagesPage() {
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-lg mx-4">
               <h2 className="text-xl font-bold mb-4">
-                Edit {editingLanguage.name} Rates
+                {t('admin.languagesPage.editLanguageRates', { name: editingLanguage.name })}
               </h2>
 
               {error && (
@@ -542,7 +546,7 @@ export default function AdminLanguagesPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Language Name
+                      {t('admin.languagesPage.languageName')}
                     </label>
                     <input
                       type="text"
@@ -556,7 +560,7 @@ export default function AdminLanguagesPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Native Name
+                      {t('admin.languagesPage.nativeName')}
                     </label>
                     <input
                       type="text"
@@ -571,7 +575,7 @@ export default function AdminLanguagesPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Target Hours
+                    {t('admin.languagesPage.targetHours')}
                   </label>
                   <input
                     type="number"
@@ -590,7 +594,7 @@ export default function AdminLanguagesPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Speaker Rate ($/min)
+                      {t('admin.languagesPage.speakerRate')}
                     </label>
                     <input
                       type="number"
@@ -606,12 +610,12 @@ export default function AdminLanguagesPage() {
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                     />
                     <p className="text-xs text-gray-500 mt-1">
-                      Current: ${editingLanguage.speakerRatePerMinute?.toFixed(2)}/min
+                      {t('admin.languagesPage.current')} ${editingLanguage.speakerRatePerMinute?.toFixed(2)}/min
                     </p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Transcriber Rate ($/min)
+                      {t('admin.languagesPage.transcriberRate')}
                     </label>
                     <input
                       type="number"
@@ -627,7 +631,7 @@ export default function AdminLanguagesPage() {
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                     />
                     <p className="text-xs text-gray-500 mt-1">
-                      Current: ${editingLanguage.transcriberRatePerMin?.toFixed(2)}/min
+                      {t('admin.languagesPage.current')} ${editingLanguage.transcriberRatePerMin?.toFixed(2)}/min
                     </p>
                   </div>
                 </div>
@@ -644,7 +648,7 @@ export default function AdminLanguagesPage() {
                       className="rounded"
                     />
                     <label htmlFor="isActive" className="text-sm text-gray-700">
-                      Language is active (visible to speakers/transcribers)
+                      {t('admin.languagesPage.languageIsActive')}
                     </label>
                   </div>
 
@@ -659,7 +663,7 @@ export default function AdminLanguagesPage() {
                       className="rounded"
                     />
                     <label htmlFor="editIncludeUniversal" className="text-sm text-gray-700">
-                      Include Universal Prompts (Generic English)
+                      {t('admin.languagesPage.includeUniversalPrompts')}
                     </label>
                   </div>
                 </div>
@@ -673,14 +677,14 @@ export default function AdminLanguagesPage() {
                     }}
                     className="px-4 py-2 text-gray-600 hover:text-gray-900"
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </button>
                   <button
                     type="submit"
                     disabled={saving}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
                   >
-                    {saving ? "Saving..." : "Save Changes"}
+                    {saving ? t('admin.userDetailPage.saving') : t('admin.userDetailPage.saveChanges')}
                   </button>
                 </div>
               </form>

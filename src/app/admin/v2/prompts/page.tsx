@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getToken } from "@/lib/client";
 
+import { useTranslations } from "next-intl";
+
 import PromptsGrid from "@/components/admin/prompts/prompts-grid";
 
 interface Language {
@@ -58,6 +60,7 @@ const EMOTIONS = [
 
 export default function AdminPromptsPage() {
   const router = useRouter();
+  const t = useTranslations();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [languages, setLanguages] = useState<Language[]>([]);
@@ -480,10 +483,10 @@ export default function AdminPromptsPage() {
           <div className="flex justify-between items-center">
             <div>
               <Link href="/admin/v2" className="text-blue-600 hover:underline text-sm">
-                ← Back to Dashboard
+                {t('admin.backToDashboard')}
               </Link>
               <h1 className="text-2xl font-bold text-gray-900 mt-1">
-                Prompt Management
+                {t('admin.promptsPage.title')}
               </h1>
             </div>
             <div className="flex gap-2">
@@ -492,14 +495,14 @@ export default function AdminPromptsPage() {
                   onClick={handleBulkDelete}
                   className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
                 >
-                  Delete Selected ({selectedPromptIds.size})
+                  {t('admin.promptsPage.deleteSelected', { count: selectedPromptIds.size })}
                 </button>
               )}
               <button
                 onClick={() => setShowBulkImport(true)}
                 className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
               >
-                Bulk Import CSV
+                {t('admin.promptsPage.bulkImportCSV')}
               </button>
               <button
                 onClick={handleExportCSV}
@@ -509,17 +512,17 @@ export default function AdminPromptsPage() {
                 {exporting ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Exporting...
+                    {t('admin.exporting')}
                   </>
                 ) : (
-                  "Export CSV"
+                  t('admin.export') + " CSV"
                 )}
               </button>
               <button
                 onClick={() => setShowNewForm(true)}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
-                + New Prompt
+                {t('admin.promptsPage.newPrompt')}
               </button>
             </div>
           </div>
@@ -533,14 +536,14 @@ export default function AdminPromptsPage() {
             <div className="flex flex-wrap gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Language
+                  {t('admin.languages')}
                 </label>
                 <select
                   value={selectedLanguage}
                   onChange={(e) => setSelectedLanguage(e.target.value)}
                   className="px-4 py-2 border border-gray-300 rounded-lg"
                 >
-                  <option value="ALL">All Languages (Universal)</option>
+                  <option value="ALL">{t('admin.promptsPage.allLanguages')}</option>
                   {languages.map((lang) => (
                     <option key={lang.id} value={lang.id}>
                       {lang.name} ({lang.code})
@@ -551,11 +554,11 @@ export default function AdminPromptsPage() {
 
               <div className="flex-1 min-w-[200px]">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Search
+                  {t('admin.promptsPage.search')}
                 </label>
                 <input
                   type="text"
-                  placeholder="Search prompts..."
+                  placeholder={t('admin.promptsPage.searchPlaceholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg"
@@ -564,14 +567,14 @@ export default function AdminPromptsPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Category
+                  {t('admin.category')}
                 </label>
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
                   className="px-4 py-2 border border-gray-300 rounded-lg"
                 >
-                  <option value="">All Categories</option>
+                  <option value="">{t('admin.promptsPage.allCategories')}</option>
                   {CATEGORIES.map((cat) => (
                     <option key={cat} value={cat}>
                       {cat.replace(/_/g, " ")}
@@ -582,27 +585,27 @@ export default function AdminPromptsPage() {
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-gray-700">View:</span>
+              <span className="text-sm font-medium text-gray-700">{t('admin.promptsPage.view')}:</span>
               <div className="flex bg-gray-100 p-1 rounded-lg">
                 <button
                   onClick={() => setIsGridView(false)}
                   className={`px-3 py-1 text-sm rounded-md transition-all ${!isGridView ? "bg-white shadow text-blue-600" : "text-gray-500 hover:text-gray-700"}`}
                 >
-                  List
+                  {t('admin.promptsPage.list')}
                 </button>
                 <button
                   onClick={() => setIsGridView(true)}
                   className={`px-3 py-1 text-sm rounded-md transition-all ${isGridView ? "bg-white shadow text-blue-600" : "text-gray-500 hover:text-gray-700"}`}
                 >
-                  Grid (Excel-like)
+                  {t('admin.promptsPage.grid')}
                 </button>
               </div>
             </div>
           </div>
 
           <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center text-sm text-gray-500">
-            <span>{pagination.total} prompts found</span>
-            {isGridView && <span>All edits are local until saved</span>}
+            <span>{pagination.total} {t('admin.promptsPage.promptsFound')}</span>
+            {isGridView && <span>{t('admin.promptsPage.localEditsWarning')}</span>}
           </div>
         </div>
 
@@ -633,22 +636,22 @@ export default function AdminPromptsPage() {
                       />
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      English Text
+                      {t('admin.promptsPage.englishText')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Category
+                      {t('admin.category')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Emotion
+                      {t('admin.promptsPage.emotion')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Recorded
+                      {t('admin.languagesPage.recordings')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Status
+                      {t('admin.userDetailPage.status')}
                     </th>
                     <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
-                      Actions
+                      {t('admin.languagesPage.actions')}
                     </th>
                   </tr>
                 </thead>
@@ -656,13 +659,13 @@ export default function AdminPromptsPage() {
                   {loading ? (
                     <tr>
                       <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
-                        Loading...
+                        {t('admin.loading')}
                       </td>
                     </tr>
                   ) : prompts.length === 0 ? (
                     <tr>
                       <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
-                        No prompts found. Create one or import from CSV.
+                        {t('admin.promptsPage.noPromptsFound')}
                       </td>
                     </tr>
                   ) : (
@@ -706,7 +709,7 @@ export default function AdminPromptsPage() {
                               : "bg-gray-100 text-gray-800"
                               }`}
                           >
-                            {prompt.isActive ? "Active" : "Inactive"}
+                            {prompt.isActive ? t('admin.active') : t('admin.inactive')}
                           </span>
                         </td>
                         <td className="px-6 py-4 text-right">
@@ -714,7 +717,7 @@ export default function AdminPromptsPage() {
                             onClick={() => handleDeletePrompt(prompt.id)}
                             className="text-red-600 hover:text-red-900 text-sm font-medium"
                           >
-                            Delete
+                            {t('admin.usersPage.delete')}
                           </button>
                         </td>
                       </tr>
@@ -731,17 +734,17 @@ export default function AdminPromptsPage() {
                     disabled={pagination.page === 1}
                     className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 disabled:opacity-50"
                   >
-                    Previous
+                    {t('admin.promptsPage.previous')}
                   </button>
                   <span className="text-sm text-gray-500">
-                    Page {pagination.page} of {pagination.totalPages}
+                    {t('admin.recordingsPage.page')} {pagination.page} {t('admin.recordingsPage.of')} {pagination.totalPages}
                   </span>
                   <button
                     onClick={() => setPagination({ ...pagination, page: pagination.page + 1 })}
                     disabled={pagination.page === pagination.totalPages}
                     className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 disabled:opacity-50"
                   >
-                    Next
+                    {t('admin.promptsPage.next')}
                   </button>
                 </div>
               )}
@@ -755,11 +758,11 @@ export default function AdminPromptsPage() {
         showNewForm && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-lg mx-4">
-              <h2 className="text-xl font-bold mb-4">Create New Prompt</h2>
+              <h2 className="text-xl font-bold mb-4">{t('admin.promptsPage.createHeader')}</h2>
               <form onSubmit={handleCreatePrompt} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    English Text
+                    {t('admin.promptsPage.englishText')}
                   </label>
                   <textarea
                     value={newPrompt.englishText}
@@ -769,13 +772,13 @@ export default function AdminPromptsPage() {
                     required
                     rows={3}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                    placeholder="Enter the English text speakers will translate..."
+                    placeholder={t('admin.promptsPage.englishTextPlaceholder')}
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Category
+                      {t('admin.category')}
                     </label>
                     <select
                       value={newPrompt.category}
@@ -793,7 +796,7 @@ export default function AdminPromptsPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Emotion
+                      {t('admin.promptsPage.emotion')}
                     </label>
                     <select
                       value={newPrompt.emotion}
@@ -812,7 +815,7 @@ export default function AdminPromptsPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Instruction (optional)
+                    {t('admin.promptsPage.instruction')}
                   </label>
                   <input
                     type="text"
@@ -821,7 +824,7 @@ export default function AdminPromptsPage() {
                       setNewPrompt({ ...newPrompt, instruction: e.target.value })
                     }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                    placeholder="e.g., Say with excitement"
+                    placeholder={t('admin.promptsPage.instructionPlaceholder')}
                   />
                 </div>
                 <div className="flex justify-end gap-2">
@@ -830,13 +833,13 @@ export default function AdminPromptsPage() {
                     onClick={() => setShowNewForm(false)}
                     className="px-4 py-2 text-gray-600 hover:text-gray-900"
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </button>
                   <button
                     type="submit"
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                   >
-                    Create Prompt
+                    {t('admin.promptsPage.createButton')}
                   </button>
                 </div>
               </form>
@@ -850,26 +853,26 @@ export default function AdminPromptsPage() {
         showBulkImport && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
-              <h2 className="text-xl font-bold mb-4">Bulk Import Prompts</h2>
+              <h2 className="text-xl font-bold mb-4">{t('admin.promptsPage.bulkImportHeader')}</h2>
 
               <div className="mb-4 p-4 bg-blue-50 rounded-lg">
-                <h3 className="font-semibold text-blue-900 mb-2">CSV Format Requirements</h3>
+                <h3 className="font-semibold text-blue-900 mb-2">{t('admin.promptsPage.csvRequirementsHeader')}</h3>
                 <p className="text-sm text-blue-800 mb-2">
-                  Your CSV must have these columns (in the header row):
+                  {t('admin.promptsPage.csvRequirementsDesc')}
                 </p>
                 <ul className="text-sm text-blue-700 list-disc pl-5 space-y-1 mb-3">
-                  <li><strong>english_text</strong> (required) - The English prompt text</li>
-                  <li><strong>category</strong> (required) - One of: GREETINGS, NUMBERS_MONEY, QUESTIONS, COMMANDS_REQUESTS, EMOTIONS_HAPPY, EMOTIONS_SAD, DAILY_LIFE, MARKET_SHOPPING, DIRECTIONS_PLACES, FAMILY_PEOPLE, HEALTH, WEATHER_TIME, LOCAL_SCENARIOS, PHONETIC_COVERAGE, CONVERSATIONS</li>
-                  <li><strong>emotion</strong> (optional) - One of: NEUTRAL, HAPPY, SAD, ANGRY, QUESTION, EXCITED, SURPRISED, WHISPER, URGENT</li>
-                  <li><strong>instruction</strong> (optional) - Extra guidance for speakers</li>
-                  <li><strong>target_duration_sec</strong> (optional) - Expected duration (default: 5)</li>
+                  <li><strong>english_text</strong> ({t('admin.required')}) - {t('admin.promptsPage.englishTextDesc')}</li>
+                  <li><strong>category</strong> ({t('admin.required')}) - {t('admin.promptsPage.categoryDesc')}</li>
+                  <li><strong>emotion</strong> ({t('admin.optional')}) - NEUTRAL, HAPPY, SAD, ANGRY...</li>
+                  <li><strong>instruction</strong> ({t('admin.optional')}) - {t('admin.promptsPage.instructionDesc')}</li>
+                  <li><strong>target_duration_sec</strong> ({t('admin.optional')}) - {t('admin.promptsPage.durationDesc')}</li>
                 </ul>
                 <div className="flex gap-2">
                   <button
                     onClick={downloadTemplate}
                     className="text-sm text-blue-600 hover:underline"
                   >
-                    Download CSV Template
+                    {t('admin.promptsPage.downloadTemplate')}
                   </button>
                   <span className="text-blue-400">|</span>
                   <a
@@ -877,21 +880,21 @@ export default function AdminPromptsPage() {
                     download
                     className="text-sm text-blue-600 hover:underline"
                   >
-                    Download Sample (50 prompts)
+                    {t('admin.promptsPage.downloadSample')}
                   </a>
                 </div>
               </div>
 
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Target Language
+                  {t('admin.promptsPage.targetLanguage')}
                 </label>
                 <select
                   value={selectedLanguage}
                   onChange={(e) => setSelectedLanguage(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                 >
-                  <option value="ALL">Universal (All Languages)</option>
+                  <option value="ALL">{t('admin.promptsPage.universal')}</option>
                   {languages.map((lang) => (
                     <option key={lang.id} value={lang.id}>
                       {lang.name} ({lang.code})
@@ -902,7 +905,7 @@ export default function AdminPromptsPage() {
 
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  CSV File
+                  {t('admin.promptsPage.csvFile')}
                 </label>
                 <input
                   ref={fileInputRef}
@@ -916,7 +919,7 @@ export default function AdminPromptsPage() {
               {csvData.length > 0 && (
                 <div className="mb-4">
                   <p className="text-sm text-green-600 mb-2">
-                    ✓ {csvData.length} prompts parsed from CSV
+                    ✓ {t('admin.promptsPage.promptsParsed', { count: csvData.length })}
                   </p>
                   <div className="max-h-40 overflow-y-auto border border-gray-200 rounded p-2">
                     {csvData.slice(0, 5).map((row, i) => (
@@ -926,7 +929,7 @@ export default function AdminPromptsPage() {
                     ))}
                     {csvData.length > 5 && (
                       <div className="text-xs text-gray-400">
-                        ...and {csvData.length - 5} more
+                        {t('admin.promptsPage.andMore', { count: csvData.length - 5 })}
                       </div>
                     )}
                   </div>
@@ -945,7 +948,7 @@ export default function AdminPromptsPage() {
                       <p>✓ Imported {importResult.imported} prompts</p>
                       {importResult.errorCount > 0 && (
                         <p className="text-sm">
-                          {importResult.errorCount} rows had errors
+                          {t('admin.promptsPage.rowsWithErrors', { count: importResult.errorCount })}
                         </p>
                       )}
                     </>
@@ -965,14 +968,14 @@ export default function AdminPromptsPage() {
                   }}
                   className="px-4 py-2 text-gray-600 hover:text-gray-900"
                 >
-                  Close
+                  {t('common.close')}
                 </button>
                 <button
                   onClick={handleBulkImport}
                   disabled={!selectedLanguage || csvData.length === 0 || importing}
                   className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {importing ? "Importing..." : `Import ${csvData.length} Prompts`}
+                  {importing ? t('admin.importing') : t('admin.promptsPage.importButton', { count: csvData.length })}
                 </button>
               </div>
             </div>

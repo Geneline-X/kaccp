@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getToken, clearToken } from "@/lib/client";
+import { useTranslations } from "next-intl";
 
 interface Recording {
   id: string;
@@ -40,6 +41,7 @@ interface Stats {
 
 export default function TranscriberV2Dashboard() {
   const router = useRouter();
+  const t = useTranslations();
   const [user, setUser] = useState<any>(null);
   const [activeAssignments, setActiveAssignments] = useState<Assignment[]>([]);
   const [availableRecordings, setAvailableRecordings] = useState<Recording[]>([]);
@@ -121,7 +123,7 @@ export default function TranscriberV2Dashboard() {
       // Reload data
       loadData();
     } catch {
-      alert("Failed to release assignment");
+      alert(t('transcriber.failedToRelease'));
     } finally {
       setReleasingId(null);
     }
@@ -149,7 +151,7 @@ export default function TranscriberV2Dashboard() {
       // Navigate to transcription page
       router.push(`/transcriber/v2/task/${recordingId}`);
     } catch {
-      alert("Failed to claim recording");
+      alert(t('transcriber.failedToClaim'));
     } finally {
       setClaimingId(null);
     }
@@ -171,10 +173,10 @@ export default function TranscriberV2Dashboard() {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                Transcriber Dashboard
+                {t('transcriber.dashboard')}
               </h1>
               <p className="text-sm text-gray-500">
-                Welcome back, {user?.displayName || user?.email}
+                {t('transcriber.welcomeBack')} {user?.displayName || user?.email}
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -184,7 +186,7 @@ export default function TranscriberV2Dashboard() {
                   href="/speaker"
                   className="px-4 py-2 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
                 >
-                  Switch to Speaker →
+                  {t('transcriber.switchToSpeaker')}
                 </Link>
               )}
               <button
@@ -194,7 +196,7 @@ export default function TranscriberV2Dashboard() {
                 }}
                 className="text-sm text-gray-500 hover:text-gray-700"
               >
-                Logout
+                {t('common.logout')}
               </button>
             </div>
           </div>
@@ -206,17 +208,17 @@ export default function TranscriberV2Dashboard() {
         <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl shadow-lg p-6 mb-8 text-white">
           <div className="flex justify-between items-start">
             <div>
-              <h3 className="text-sm font-medium text-blue-100">Total Earnings</h3>
+              <h3 className="text-sm font-medium text-blue-100">{t('transcriber.totalEarnings')}</h3>
               <p className="text-4xl font-bold mt-1">
                 Le{((user?.totalEarningsCents || 0) / 100).toFixed(2)}
               </p>
               <p className="text-sm text-blue-100 mt-2">
-                From {stats?.byStatus.find((s) => s.status === "APPROVED")?._count || 0} approved transcriptions
+                {t('transcriber.fromApproved', { count: stats?.byStatus.find((s) => s.status === "APPROVED")?._count || 0 })}
               </p>
             </div>
             <div className="text-right">
               <div className="bg-white/20 rounded-lg px-4 py-2">
-                <p className="text-xs text-blue-100">Pending Review</p>
+                <p className="text-xs text-blue-100">{t('transcriber.pendingReview')}</p>
                 <p className="text-lg font-semibold">
                   {stats?.byStatus.find((s) => s.status === "PENDING_REVIEW")?._count || 0}
                 </p>
@@ -228,20 +230,20 @@ export default function TranscriberV2Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-sm font-medium text-gray-500">
-              Total Transcriptions
+              {t('transcriber.totalTranscriptions')}
             </h3>
             <p className="text-3xl font-bold text-gray-900">
               {stats?.total || 0}
             </p>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-sm font-medium text-gray-500">Approved</h3>
+            <h3 className="text-sm font-medium text-gray-500">{t('transcriber.approved')}</h3>
             <p className="text-3xl font-bold text-green-600">
               {stats?.byStatus.find((s) => s.status === "APPROVED")?._count || 0}
             </p>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-sm font-medium text-gray-500">Pending Review</h3>
+            <h3 className="text-sm font-medium text-gray-500">{t('transcriber.pendingReview')}</h3>
             <p className="text-3xl font-bold text-yellow-600">
               {stats?.byStatus.find((s) => s.status === "PENDING_REVIEW")?._count || 0}
             </p>
@@ -253,10 +255,10 @@ export default function TranscriberV2Dashboard() {
           <div className="bg-white rounded-lg shadow mb-8">
             <div className="px-6 py-4 border-b border-gray-200 bg-yellow-50">
               <h2 className="text-lg font-semibold text-gray-900">
-                ⏰ Active Assignment
+                {t('transcriber.activeAssignment')}
               </h2>
               <p className="text-sm text-gray-500">
-                Complete this before claiming a new one
+                {t('transcriber.completeBefore')}
               </p>
             </div>
             <div className="p-6">
@@ -276,20 +278,20 @@ export default function TranscriberV2Dashboard() {
                   </div>
                   <div className="flex items-center gap-4">
                     <span className="text-sm text-orange-600">
-                      {item.minutesRemaining} min remaining
+                      {t('transcriber.minRemaining', { minutes: item.minutesRemaining })}
                     </span>
                     <button
                       onClick={() => releaseAssignment(item.recording?.id)}
                       disabled={releasingId !== null}
                       className="px-4 py-2 text-sm border border-red-300 text-red-700 rounded-lg hover:bg-red-50 disabled:opacity-50"
                     >
-                      {releasingId === item.recording?.id ? "Releasing..." : "Release"}
+                      {releasingId === item.recording?.id ? t('transcriber.releasing') : t('transcriber.release')}
                     </button>
                     <Link
                       href={`/transcriber/v2/task/${item.recording?.id}`}
                       className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                     >
-                      Continue
+                      {t('transcriber.continue')}
                     </Link>
                   </div>
                 </div>
@@ -302,16 +304,16 @@ export default function TranscriberV2Dashboard() {
         <div className="bg-white rounded-lg shadow">
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">
-              Available Recordings
+              {t('transcriber.availableRecordings')}
             </h2>
             <p className="text-sm text-gray-500">
-              Claim a recording to start transcribing
+              {t('transcriber.claimToStart')}
             </p>
           </div>
           <div className="divide-y divide-gray-200">
             {availableRecordings.length === 0 ? (
               <div className="p-6 text-center text-gray-500">
-                No recordings available right now. Check back later!
+                {t('transcriber.noRecordingsAvailable')}
               </div>
             ) : (
               availableRecordings.map((recording) => (
@@ -333,7 +335,7 @@ export default function TranscriberV2Dashboard() {
                     </p>
                     <p className="text-sm text-gray-500">
                       {recording.durationSec.toFixed(1)}s •{" "}
-                      Le{(recording.language.transcriberRatePerMin * (recording.durationSec / 60)).toFixed(2)} est.
+                      Le{(recording.language.transcriberRatePerMin * (recording.durationSec / 60)).toFixed(2)} {t('transcriber.est')}
                     </p>
                   </div>
                   <button
@@ -344,10 +346,10 @@ export default function TranscriberV2Dashboard() {
                     {claimingId === recording.id ? (
                       <>
                         <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
-                        Claiming...
+                        {t('transcriber.claiming')}
                       </>
                     ) : (
-                      "Claim"
+                      t('transcriber.claim')
                     )}
                   </button>
                 </div>
@@ -359,7 +361,7 @@ export default function TranscriberV2Dashboard() {
           {totalAvailable > limit && (
             <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
               <div className="text-sm text-gray-500">
-                Showing {((page - 1) * limit) + 1} - {Math.min(page * limit, totalAvailable)} of {totalAvailable} recordings
+                {t('common.showing')} {((page - 1) * limit) + 1} - {Math.min(page * limit, totalAvailable)} {t('common.of')} {totalAvailable} {t('common.recordings')}
               </div>
               <div className="flex gap-2">
                 <button
@@ -367,17 +369,17 @@ export default function TranscriberV2Dashboard() {
                   disabled={page === 1}
                   className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Previous
+                  {t('common.previous')}
                 </button>
                 <span className="px-4 py-2 text-sm">
-                  Page {page} of {Math.ceil(totalAvailable / limit)}
+                  {t('common.page')} {page} {t('common.of')} {Math.ceil(totalAvailable / limit)}
                 </span>
                 <button
                   onClick={() => setPage(p => p + 1)}
                   disabled={page >= Math.ceil(totalAvailable / limit)}
                   className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Next
+                  {t('common.next')}
                 </button>
               </div>
             </div>
