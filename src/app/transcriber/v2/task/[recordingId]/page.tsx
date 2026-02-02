@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { getToken } from "@/lib/client";
 import { TranscriberAIAssist } from "@/components/transcriber-ai-assist";
+import { useTranslations } from "next-intl";
 
 interface Recording {
   id: string;
@@ -24,17 +25,9 @@ interface Recording {
   };
 }
 
-const FLAG_REASONS = [
-  { value: "NOISE", label: "Too much background noise" },
-  { value: "UNCLEAR", label: "Speech is unclear/mumbled" },
-  { value: "TOO_QUIET", label: "Audio is too quiet" },
-  { value: "WRONG_LANGUAGE", label: "Wrong language spoken" },
-  { value: "INCOMPLETE", label: "Recording is incomplete" },
-  { value: "OTHER", label: "Other issue" },
-];
-
 export default function TranscriptionTaskPage() {
   const router = useRouter();
+  const t = useTranslations();
   const params = useParams();
   const recordingId = params.recordingId as string;
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -48,6 +41,15 @@ export default function TranscriptionTaskPage() {
   const [error, setError] = useState("");
   const [playCount, setPlayCount] = useState(0);
   const [audioPlayUrl, setAudioPlayUrl] = useState<string | null>(null);
+
+  const FLAG_REASONS = [
+    { value: "NOISE", label: t('transcriber.flagNoise') },
+    { value: "UNCLEAR", label: t('transcriber.flagUnclear') },
+    { value: "TOO_QUIET", label: t('transcriber.flagTooQuiet') },
+    { value: "WRONG_LANGUAGE", label: t('transcriber.flagWrongLanguage') },
+    { value: "INCOMPLETE", label: t('transcriber.flagIncomplete') },
+    { value: "OTHER", label: t('transcriber.flagOther') },
+  ];
 
   const token = typeof window !== "undefined" ? getToken() : null;
 
@@ -97,15 +99,15 @@ export default function TranscriptionTaskPage() {
             setAudioPlayUrl(audioData.url);
           }
         } else {
-          setError(data.error || "Recording not found or not assigned to you");
+          setError(data.error || t('transcriber.recordingNotFound'));
         }
         setLoading(false);
       })
       .catch(() => {
-        setError("Failed to load recording");
+        setError(t('transcriber.failedToLoadRecording'));
         setLoading(false);
       });
-  }, [token, recordingId, router]);
+  }, [token, recordingId, router, t]);
 
   // Handle audio play
   const handlePlay = () => {
@@ -115,7 +117,7 @@ export default function TranscriptionTaskPage() {
   // Submit transcription
   const handleSubmit = async () => {
     if (!transcription.trim()) {
-      setError("Please enter the transcription");
+      setError(t('transcriber.pleaseEnterTranscription'));
       return;
     }
 
@@ -144,7 +146,7 @@ export default function TranscriptionTaskPage() {
       // Success - go back to dashboard
       router.push("/transcriber/v2");
     } catch {
-      setError("Failed to submit transcription");
+      setError(t('transcriber.failedToSubmitTranscription'));
     } finally {
       setSubmitting(false);
     }
@@ -153,7 +155,7 @@ export default function TranscriptionTaskPage() {
   // Flag recording
   const handleFlag = async () => {
     if (!flagReason) {
-      setError("Please select a reason for flagging");
+      setError(t('transcriber.selectFlagReason'));
       return;
     }
 
@@ -183,7 +185,7 @@ export default function TranscriptionTaskPage() {
       // Success - go back to dashboard
       router.push("/transcriber/v2");
     } catch {
-      setError("Failed to flag recording");
+      setError(t('transcriber.failedToFlagRecording'));
     } finally {
       setSubmitting(false);
     }
@@ -201,13 +203,13 @@ export default function TranscriptionTaskPage() {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center text-white">
-          <h2 className="text-2xl font-bold mb-4">Recording Not Found</h2>
-          <p className="text-gray-400 mb-6">{error || "This recording is not available."}</p>
+          <h2 className="text-2xl font-bold mb-4">{t('transcriber.recordingNotFound')}</h2>
+          <p className="text-gray-400 mb-6">{error || t('transcriber.recordingNotAvailable')}</p>
           <button
             onClick={() => router.push("/transcriber/v2")}
             className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            Back to Dashboard
+            {t('transcriber.backToDashboard')}
           </button>
         </div>
       </div>
@@ -223,7 +225,7 @@ export default function TranscriptionTaskPage() {
             onClick={() => router.push("/transcriber/v2")}
             className="text-gray-400 hover:text-white"
           >
-            ← Back
+            ← {t('common.back')}
           </button>
           <span className="text-sm text-gray-400">
             {recording.language.name} • {recording.durationSec.toFixed(1)}s
@@ -249,7 +251,7 @@ export default function TranscriptionTaskPage() {
             </span>
           </div>
 
-          <p className="text-sm text-gray-400 mb-2">Original English prompt:</p>
+          <p className="text-sm text-gray-400 mb-2">{t('transcriber.originalEnglishPrompt')}:</p>
           <h2 className="text-2xl font-bold mb-4">{recording.prompt.englishText}</h2>
 
           {recording.prompt.instruction && (
@@ -262,9 +264,9 @@ export default function TranscriptionTaskPage() {
         {/* Audio Player */}
         <div className="bg-gray-800 rounded-2xl p-8 mb-8">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold">Listen to Recording</h3>
+            <h3 className="text-lg font-semibold">{t('transcriber.listenToRecording')}</h3>
             <span className="text-sm text-gray-400">
-              Played {playCount} time{playCount !== 1 ? "s" : ""}
+              {t('transcriber.playedTimes', { count: playCount })}
             </span>
           </div>
           {audioPlayUrl ? (
@@ -277,11 +279,11 @@ export default function TranscriptionTaskPage() {
             />
           ) : (
             <div className="text-center py-4 text-gray-400">
-              Loading audio...
+              {t('transcriber.loadingAudio')}...
             </div>
           )}
           <p className="text-sm text-gray-400 mt-2">
-            Listen carefully and write exactly what was said in {recording.language.name}
+            {t('transcriber.listenAndWrite', { language: recording.language.name })}
           </p>
         </div>
 
@@ -309,34 +311,34 @@ export default function TranscriptionTaskPage() {
             onClick={() => setShowFlagModal(true)}
             className="px-6 py-3 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600"
           >
-            🚩 Flag Issue
+            🚩 {t('transcriber.flagIssue')}
           </button>
           <button
             onClick={handleSubmit}
             disabled={submitting || !transcription.trim()}
             className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
           >
-            {submitting ? "Submitting..." : "Submit Transcription"}
+            {submitting ? t('transcriber.submitting') : t('transcriber.submitTranscription')}
           </button>
         </div>
 
         {/* Tips */}
         <div className="mt-8 p-4 bg-gray-800/50 rounded-lg">
-          <h3 className="font-semibold mb-2">Transcription Tips:</h3>
+          <h3 className="font-semibold mb-2">{t('transcriber.transcriptionTips')}:</h3>
           <ul className="text-sm text-gray-400 space-y-1">
             {recording.language.code.toLowerCase() === "kri" ? (
               <>
-                <li>• Review the auto-generated transcript against the audio</li>
-                <li>• Only correct the parts that are wrong or misspelled</li>
-                <li>• If the transcript is perfect, just click Submit</li>
-                <li>• Flag recordings with poor audio quality</li>
+                <li>• {t('transcriber.tipReviewAuto')}</li>
+                <li>• {t('transcriber.tipCorrectWrong')}</li>
+                <li>• {t('transcriber.tipPerfect')}</li>
+                <li>• {t('transcriber.tipFlagPoor')}</li>
               </>
             ) : (
               <>
-                <li>• Listen carefully and transcribe exactly what you hear</li>
-                <li>• Do not translate or summarize, write word-for-word</li>
-                <li>• Ensure proper spelling in {recording.language.name}</li>
-                <li>• Flag recordings with poor audio quality or wrong language</li>
+                <li>• {t('transcriber.tipListenCarefully')}</li>
+                <li>• {t('transcriber.tipNoTranslate')}</li>
+                <li>• {t('transcriber.tipProperSpelling', { language: recording.language.name })}</li>
+                <li>• {t('transcriber.tipFlagPoorOrWrong')}</li>
               </>
             )}
           </ul>
@@ -347,9 +349,9 @@ export default function TranscriptionTaskPage() {
       {showFlagModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
-            <h2 className="text-xl font-bold mb-4">Flag Recording</h2>
+            <h2 className="text-xl font-bold mb-4">{t('transcriber.flagRecording')}</h2>
             <p className="text-gray-400 mb-4">
-              Select the reason for flagging this recording:
+              {t('transcriber.selectReasonForFlagging')}:
             </p>
 
             <div className="space-y-2 mb-6">
@@ -382,14 +384,14 @@ export default function TranscriptionTaskPage() {
                 }}
                 className="px-4 py-2 text-gray-400 hover:text-white"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={handleFlag}
                 disabled={submitting || !flagReason}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
               >
-                {submitting ? "Flagging..." : "Flag Recording"}
+                {submitting ? t('transcriber.flagging') : t('transcriber.flagRecording')}
               </button>
             </div>
           </div>

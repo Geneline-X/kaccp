@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 type Breadcrumb = {
   label: string
@@ -17,11 +18,12 @@ type AdminHeaderProps = {
 
 export function AdminHeader({ title, description, breadcrumbs = [], actions }: AdminHeaderProps) {
   const pathname = usePathname()
-  
+  const t = useTranslations()
+
   // Auto-generate breadcrumbs if not provided
   if (breadcrumbs.length === 0) {
     const paths = pathname.split('/').filter(Boolean).slice(1) // Remove empty strings and 'admin'
-    
+
     breadcrumbs = paths.map((path, i) => {
       const href = `/${paths.slice(0, i + 1).join('/')}`
       return {
@@ -38,7 +40,7 @@ export function AdminHeader({ title, description, breadcrumbs = [], actions }: A
         <ol className="inline-flex items-center space-x-1 md:space-x-3">
           <li className="inline-flex items-center">
             <Link href="/admin" className="text-sm font-medium text-muted-foreground hover:text-foreground">
-              Home
+              {t('admin.dashboard')}
             </Link>
           </li>
           {breadcrumbs.map((item, i) => (
@@ -49,8 +51,8 @@ export function AdminHeader({ title, description, breadcrumbs = [], actions }: A
                   href={item.href}
                   className={cn(
                     'text-sm font-medium',
-                    item.active 
-                      ? 'text-foreground' 
+                    item.active
+                      ? 'text-foreground'
                       : 'text-muted-foreground hover:text-foreground'
                   )}
                 >
@@ -61,7 +63,7 @@ export function AdminHeader({ title, description, breadcrumbs = [], actions }: A
           ))}
         </ol>
       </nav>
-      
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">{title}</h1>

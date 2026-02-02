@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getToken, clearToken } from "@/lib/client";
+import { useTranslations } from "next-intl";
 
 interface Language {
   id: string;
@@ -25,6 +26,7 @@ interface Stats {
 
 export default function SpeakerDashboard() {
   const router = useRouter();
+  const t = useTranslations();
   const [user, setUser] = useState<any>(null);
   const [languages, setLanguages] = useState<Language[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
@@ -99,9 +101,9 @@ export default function SpeakerDashboard() {
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Speaker Dashboard</h1>
+              <h1 className="text-2xl font-bold text-gray-900">{t('speaker.dashboard')}</h1>
               <p className="text-sm text-gray-500">
-                Welcome back, {user?.displayName || user?.email}
+                {t('speaker.welcomeBack')} {user?.displayName || user?.email}
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -111,7 +113,7 @@ export default function SpeakerDashboard() {
                   href="/transcriber/v2"
                   className="px-4 py-2 text-sm bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors"
                 >
-                  Switch to Transcriber →
+                  {t('speaker.switchToTranscriber')}
                 </Link>
               )}
               <button
@@ -121,7 +123,7 @@ export default function SpeakerDashboard() {
                 }}
                 className="text-sm text-gray-500 hover:text-gray-700"
               >
-                Logout
+                {t('common.logout')}
               </button>
             </div>
           </div>
@@ -133,19 +135,19 @@ export default function SpeakerDashboard() {
         <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl shadow-lg p-6 mb-8 text-white">
           <div className="flex justify-between items-start">
             <div>
-              <h3 className="text-sm font-medium text-green-100">Estimated Earnings</h3>
+              <h3 className="text-sm font-medium text-green-100">{t('speaker.estimatedEarnings')}</h3>
               <p className="text-4xl font-bold mt-1">
                 Le{((user?.totalEarningsCents || 0) / 100).toFixed(2)}
               </p>
               <p className="text-sm text-green-100 mt-2">
-                Based on {Math.round((stats?.approvedDurationSec || 0) / 60)} approved minutes
+                {t('speaker.basedOnApproved', { minutes: Math.round((stats?.approvedDurationSec || 0) / 60) })}
               </p>
             </div>
             <div className="text-right">
               <div className="bg-white/20 rounded-lg px-4 py-2">
-                <p className="text-xs text-green-100">Pending</p>
+                <p className="text-xs text-green-100">{t('speaker.pending')}</p>
                 <p className="text-lg font-semibold">
-                  {Math.round(((stats?.totalDurationSec || 0) - (stats?.approvedDurationSec || 0)) / 60)} min
+                  {Math.round(((stats?.totalDurationSec || 0) - (stats?.approvedDurationSec || 0)) / 60)} {t('common.min')}
                 </p>
               </div>
             </div>
@@ -155,25 +157,25 @@ export default function SpeakerDashboard() {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-sm font-medium text-gray-500">Total Recordings</h3>
+            <h3 className="text-sm font-medium text-gray-500">{t('speaker.totalRecordings')}</h3>
             <p className="text-3xl font-bold text-gray-900">
               {stats?.totalRecordings || 0}
             </p>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-sm font-medium text-gray-500">Total Duration</h3>
+            <h3 className="text-sm font-medium text-gray-500">{t('speaker.totalDuration')}</h3>
             <p className="text-3xl font-bold text-gray-900">
-              {Math.round((stats?.totalDurationSec || 0) / 60)} min
+              {Math.round((stats?.totalDurationSec || 0) / 60)} {t('common.min')}
             </p>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-sm font-medium text-gray-500">Approved</h3>
+            <h3 className="text-sm font-medium text-gray-500">{t('speaker.approved')}</h3>
             <p className="text-3xl font-bold text-green-600">
-              {Math.round((stats?.approvedDurationSec || 0) / 60)} min
+              {Math.round((stats?.approvedDurationSec || 0) / 60)} {t('common.min')}
             </p>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-sm font-medium text-gray-500">Languages</h3>
+            <h3 className="text-sm font-medium text-gray-500">{t('speaker.languages')}</h3>
             <p className="text-3xl font-bold text-gray-900">
               {user?.speaksLanguages?.length || 0}
             </p>
@@ -184,15 +186,15 @@ export default function SpeakerDashboard() {
         <div className="bg-white rounded-lg shadow mb-8">
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">
-              Select Language to Record
+              {t('speaker.selectLanguageToRecord')}
             </h2>
             <p className="text-sm text-gray-500">
-              Choose a language to start recording voice samples
+              {t('speaker.chooseLanguage')}
             </p>
           </div>
           <div className="p-6">
             {languages.length === 0 ? (
-              <p className="text-gray-500">No languages available yet.</p>
+              <p className="text-gray-500">{t('speaker.noLanguagesAvailable')}</p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {languages.map((lang) => {
@@ -219,7 +221,7 @@ export default function SpeakerDashboard() {
                       </div>
                       <div className="mt-3">
                         <div className="flex justify-between text-xs text-gray-500 mb-1">
-                          <span>Progress</span>
+                          <span>{t('speaker.progress')}</span>
                           <span>{progress}%</span>
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-2">
@@ -233,7 +235,7 @@ export default function SpeakerDashboard() {
                             {Math.round(lang.approvedMinutes / 60)}h / {Math.round(lang.targetMinutes / 60)}h
                           </p>
                           <span className="text-xs font-medium text-green-600">
-                            Le{lang.speakerRatePerMinute?.toFixed(2) || "0.00"}/min
+                            Le{lang.speakerRatePerMinute?.toFixed(2) || "0.00"}/{t('common.min')}
                           </span>
                         </div>
                       </div>
@@ -248,20 +250,20 @@ export default function SpeakerDashboard() {
         {/* Quick Actions */}
         <div className="bg-white rounded-lg shadow">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Quick Actions</h2>
+            <h2 className="text-lg font-semibold text-gray-900">{t('speaker.quickActions')}</h2>
           </div>
           <div className="p-6 flex flex-wrap gap-4">
             <Link
               href="/speaker/history"
               className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
             >
-              View Recording History
+              {t('speaker.viewRecordingHistory')}
             </Link>
             <Link
               href="/speaker/profile"
               className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
             >
-              Edit Profile
+              {t('speaker.editProfile')}
             </Link>
           </div>
         </div>

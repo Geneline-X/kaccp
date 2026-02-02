@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getToken, clearToken } from "@/lib/client";
+import { useTranslations } from "next-intl";
 
 interface Stats {
   overview: {
@@ -35,6 +36,7 @@ interface Stats {
 
 export default function AdminV2Dashboard() {
   const router = useRouter();
+  const t = useTranslations();
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -80,10 +82,10 @@ export default function AdminV2Dashboard() {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                KACCP V2 Admin Dashboard
+                {t('admin.v2Dashboard')}
               </h1>
               <p className="text-sm text-gray-500">
-                Speech Synthesis Data Collection Platform
+                {t('admin.speechSynthesisPlatform')}
               </p>
             </div>
             <button
@@ -93,7 +95,7 @@ export default function AdminV2Dashboard() {
               }}
               className="text-sm text-red-500 hover:text-red-700"
             >
-              Logout
+              {t('common.logout')}
             </button>
           </div>
         </div>
@@ -103,22 +105,22 @@ export default function AdminV2Dashboard() {
         {/* Overview Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <StatCard
-            title="Countries"
+            title={t('admin.countries')}
             value={stats?.overview.countries || 0}
             color="blue"
           />
           <StatCard
-            title="Languages"
+            title={t('admin.languages')}
             value={stats?.overview.languages || 0}
             color="green"
           />
           <StatCard
-            title="Prompts"
+            title={t('admin.prompts')}
             value={stats?.overview.prompts || 0}
             color="purple"
           />
           <StatCard
-            title="Users"
+            title={t('admin.users')}
             value={stats?.overview.users || 0}
             color="orange"
           />
@@ -128,28 +130,28 @@ export default function AdminV2Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Total Collected
+              {t('admin.totalCollected')}
             </h3>
             <p className="text-4xl font-bold text-blue-600">
               {stats?.overview.totalCollectedHours || 0}h
             </p>
-            <p className="text-sm text-gray-500">Hours of audio recorded</p>
+            <p className="text-sm text-gray-500">{t('admin.hoursRecorded')}</p>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Total Approved
+              {t('admin.totalApproved')}
             </h3>
             <p className="text-4xl font-bold text-green-600">
               {stats?.overview.totalApprovedHours || 0}h
             </p>
-            <p className="text-sm text-gray-500">Hours ready for TTS training</p>
+            <p className="text-sm text-gray-500">{t('admin.hoursForTTS')}</p>
           </div>
         </div>
 
         {/* Quick Actions */}
         <div className="bg-white rounded-lg shadow mb-8">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Quick Actions</h2>
+            <h2 className="text-lg font-semibold text-gray-900">{t('admin.quickActions')}</h2>
           </div>
           <div className="p-6 grid grid-cols-2 md:grid-cols-4 gap-4">
             <Link
@@ -157,42 +159,42 @@ export default function AdminV2Dashboard() {
               className="p-4 bg-blue-50 rounded-lg text-center hover:bg-blue-100 transition-colors"
             >
               <div className="text-2xl mb-2">🌍</div>
-              <div className="font-medium text-gray-900">Manage Countries</div>
+              <div className="font-medium text-gray-900">{t('admin.manageCountries')}</div>
             </Link>
             <Link
               href="/admin/v2/languages"
               className="p-4 bg-green-50 rounded-lg text-center hover:bg-green-100 transition-colors"
             >
               <div className="text-2xl mb-2">🗣️</div>
-              <div className="font-medium text-gray-900">Manage Languages</div>
+              <div className="font-medium text-gray-900">{t('admin.manageLanguages')}</div>
             </Link>
             <Link
               href="/admin/v2/prompts"
               className="p-4 bg-purple-50 rounded-lg text-center hover:bg-purple-100 transition-colors"
             >
               <div className="text-2xl mb-2">📝</div>
-              <div className="font-medium text-gray-900">Manage Prompts</div>
+              <div className="font-medium text-gray-900">{t('admin.managePrompts')}</div>
             </Link>
             <Link
               href="/admin/v2/review"
               className="p-4 bg-orange-50 rounded-lg text-center hover:bg-orange-100 transition-colors"
             >
               <div className="text-2xl mb-2">✅</div>
-              <div className="font-medium text-gray-900">Review Transcriptions</div>
+              <div className="font-medium text-gray-900">{t('admin.reviewTranscriptions')}</div>
             </Link>
             <Link
               href="/admin/v2/export"
               className="p-4 bg-yellow-50 rounded-lg text-center hover:bg-yellow-100 transition-colors"
             >
               <div className="text-2xl mb-2">📦</div>
-              <div className="font-medium text-gray-900">Export for TTS</div>
+              <div className="font-medium text-gray-900">{t('admin.exportForTTS')}</div>
             </Link>
             <Link
               href="/admin/v2/recordings"
               className="p-4 bg-red-50 rounded-lg text-center hover:bg-red-100 transition-colors"
             >
               <div className="text-2xl mb-2">🎤</div>
-              <div className="font-medium text-gray-900">All Recordings</div>
+              <div className="font-medium text-gray-900">{t('admin.allRecordings')}</div>
             </Link>
           </div>
         </div>
@@ -201,12 +203,12 @@ export default function AdminV2Dashboard() {
         <div className="bg-white rounded-lg shadow">
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">
-              Language Progress
+              {t('admin.languageProgress')}
             </h2>
           </div>
           <div className="p-6">
             {stats?.languageProgress.length === 0 ? (
-              <p className="text-gray-500">No languages configured yet.</p>
+              <p className="text-gray-500">{t('admin.noLanguagesConfigured')}</p>
             ) : (
               <div className="space-y-4">
                 {stats?.languageProgress.map((lang) => (
@@ -215,7 +217,7 @@ export default function AdminV2Dashboard() {
                       <div>
                         <h3 className="font-semibold text-gray-900">{lang.name}</h3>
                         <p className="text-sm text-gray-500">
-                          {lang._count.prompts} prompts • {lang._count.recordings} recordings
+                          {lang._count.prompts} {t('admin.prompts').toLowerCase()} • {lang._count.recordings} {t('common.recordings')}
                         </p>
                       </div>
                       <span className="text-sm font-medium text-blue-600">
@@ -229,9 +231,9 @@ export default function AdminV2Dashboard() {
                       ></div>
                     </div>
                     <div className="flex justify-between text-xs text-gray-500 mt-1">
-                      <span>{lang.approvedHours}h approved</span>
-                      <span>{lang.collectedHours}h collected</span>
-                      <span>{lang.targetHours}h target</span>
+                      <span>{lang.approvedHours}h {t('admin.approved')}</span>
+                      <span>{lang.collectedHours}h {t('admin.collected')}</span>
+                      <span>{lang.targetHours}h {t('admin.target')}</span>
                     </div>
                   </div>
                 ))}
@@ -245,7 +247,7 @@ export default function AdminV2Dashboard() {
           <div className="bg-white rounded-lg shadow">
             <div className="px-6 py-4 border-b border-gray-200">
               <h2 className="text-lg font-semibold text-gray-900">
-                Recordings by Status
+                {t('admin.recordingsByStatus')}
               </h2>
             </div>
             <div className="p-6">
@@ -266,12 +268,12 @@ export default function AdminV2Dashboard() {
           <div className="bg-white rounded-lg shadow">
             <div className="px-6 py-4 border-b border-gray-200">
               <h2 className="text-lg font-semibold text-gray-900">
-                Transcriptions by Status
+                {t('admin.transcriptionsByStatus')}
               </h2>
             </div>
             <div className="p-6">
               {stats?.transcriptionsByStatus.length === 0 ? (
-                <p className="text-gray-500">No transcriptions yet.</p>
+                <p className="text-gray-500">{t('admin.noTranscriptionsYet')}</p>
               ) : (
                 stats?.transcriptionsByStatus.map((item) => (
                   <div

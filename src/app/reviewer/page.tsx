@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { getToken, clearToken } from "@/lib/client";
+import { useTranslations } from "next-intl";
 
 interface Transcription {
   id: string;
@@ -49,6 +50,7 @@ interface Stats {
 
 export default function ReviewerDashboard() {
   const router = useRouter();
+  const t = useTranslations();
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const [user, setUser] = useState<User | null>(null);
@@ -175,7 +177,7 @@ export default function ReviewerDashboard() {
       setReviewNotes("");
       setSignedAudioUrl(null);
     } catch {
-      alert("Failed to submit review");
+      alert(t('reviewer.failedToSubmitReview'));
     } finally {
       setSubmittingAction(null);
     }
@@ -204,14 +206,14 @@ export default function ReviewerDashboard() {
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Reviewer Dashboard</h1>
+              <h1 className="text-2xl font-bold text-gray-900">{t('reviewer.dashboard')}</h1>
               <p className="text-sm text-gray-500">
-                Welcome, {user?.displayName || user?.email}
+                {t('reviewer.welcome')} {user?.displayName || user?.email}
               </p>
             </div>
             <div className="flex items-center gap-4">
               <div className="text-sm text-gray-500">
-                {stats.pendingReview} pending
+                {stats.pendingReview} {t('reviewer.pending')}
               </div>
               <button
                 onClick={() => {
@@ -220,7 +222,7 @@ export default function ReviewerDashboard() {
                 }}
                 className="text-sm text-gray-500 hover:text-gray-700"
               >
-                Logout
+                {t('common.logout')}
               </button>
             </div>
           </div>
@@ -231,15 +233,15 @@ export default function ReviewerDashboard() {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-sm font-medium text-gray-500">Pending Review</h3>
+            <h3 className="text-sm font-medium text-gray-500">{t('reviewer.pendingReview')}</h3>
             <p className="text-3xl font-bold text-purple-600">{stats.pendingReview}</p>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-sm font-medium text-gray-500">Reviewed Today</h3>
+            <h3 className="text-sm font-medium text-gray-500">{t('reviewer.reviewedToday')}</h3>
             <p className="text-3xl font-bold text-green-600">{stats.reviewedToday}</p>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-sm font-medium text-gray-500">Total Reviewed</h3>
+            <h3 className="text-sm font-medium text-gray-500">{t('reviewer.totalReviewed')}</h3>
             <p className="text-3xl font-bold text-gray-900">{stats.totalReviewed}</p>
           </div>
         </div>
@@ -247,32 +249,32 @@ export default function ReviewerDashboard() {
         {transcriptions.length === 0 ? (
           <div className="bg-white rounded-lg shadow p-8 text-center">
             <div className="text-4xl mb-4">🎉</div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">All caught up!</h2>
-            <p className="text-gray-500">No transcriptions pending review.</p>
+            <h2 className="text-xl font-bold text-gray-900 mb-2">{t('reviewer.allCaughtUp')}</h2>
+            <p className="text-gray-500">{t('reviewer.noPending')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* List */}
             <div className="lg:col-span-1 bg-white rounded-lg shadow overflow-hidden">
               <div className="px-4 py-3 bg-purple-50 border-b border-gray-200">
-                <h2 className="font-semibold text-gray-900">Pending Review</h2>
+                <h2 className="font-semibold text-gray-900">{t('reviewer.pendingReview')}</h2>
               </div>
               <div className="divide-y divide-gray-200 max-h-[70vh] overflow-y-auto">
-                {transcriptions.map((t) => (
+                {transcriptions.map((transcription) => (
                   <button
-                    key={t.id}
-                    onClick={() => selectTranscription(t)}
-                    className={`w-full text-left p-4 hover:bg-gray-50 transition-colors ${selectedTranscription?.id === t.id ? "bg-purple-50" : ""
+                    key={transcription.id}
+                    onClick={() => selectTranscription(transcription)}
+                    className={`w-full text-left p-4 hover:bg-gray-50 transition-colors ${selectedTranscription?.id === transcription.id ? "bg-purple-50" : ""
                       }`}
                   >
                     <div className="text-sm font-medium text-gray-900 truncate">
-                      {t.recording.prompt.englishText}
+                      {transcription.recording.prompt.englishText}
                     </div>
                     <div className="text-xs text-gray-500 mt-1">
-                      {t.recording.language.name} • {t.recording.durationSec.toFixed(1)}s
+                      {transcription.recording.language.name} • {transcription.recording.durationSec.toFixed(1)}s
                     </div>
                     <div className="text-xs text-gray-400 mt-1 truncate">
-                      &quot;{t.text}&quot;
+                      &quot;{transcription.text}&quot;
                     </div>
                   </button>
                 ))}
@@ -300,16 +302,16 @@ export default function ReviewerDashboard() {
                       {selectedTranscription.recording.prompt.englishText}
                     </h3>
                     <p className="text-sm text-gray-500 mt-2">
-                      Speaker: {selectedTranscription.recording.speaker.displayName || "Anonymous"} •
-                      Transcriber: {selectedTranscription.transcriber.displayName || "Anonymous"}
-                      (Score: {selectedTranscription.transcriber.qualityScore.toFixed(1)})
+                      {t('reviewer.speaker')}: {selectedTranscription.recording.speaker.displayName || t('reviewer.anonymous')} •
+                      {t('reviewer.transcriber')}: {selectedTranscription.transcriber.displayName || t('reviewer.anonymous')}
+                      ({t('reviewer.score')}: {selectedTranscription.transcriber.qualityScore.toFixed(1)})
                     </p>
                   </div>
 
                   {/* Audio Player */}
                   <div className="p-6 border-b border-gray-200 bg-gray-50">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Recording ({selectedTranscription.recording.durationSec.toFixed(1)}s)
+                      {t('reviewer.recording')} ({selectedTranscription.recording.durationSec.toFixed(1)}s)
                     </label>
                     {signedAudioUrl ? (
                       <audio
@@ -321,7 +323,7 @@ export default function ReviewerDashboard() {
                       />
                     ) : (
                       <div className="flex items-center justify-center h-12 bg-gray-200 rounded-lg">
-                        <span className="text-sm text-gray-500">Loading audio...</span>
+                        <span className="text-sm text-gray-500">{t('reviewer.loadingAudio')}</span>
                       </div>
                     )}
                   </div>
@@ -329,7 +331,7 @@ export default function ReviewerDashboard() {
                   {/* Transcription */}
                   <div className="p-6 border-b border-gray-200">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Transcription (edit if needed)
+                      {t('reviewer.transcriptionEdit')}
                     </label>
                     <textarea
                       value={editedText}
@@ -339,7 +341,7 @@ export default function ReviewerDashboard() {
                     />
                     {editedText !== selectedTranscription.text && (
                       <p className="text-xs text-orange-600 mt-1">
-                        ⚠️ Text has been modified
+                        ⚠️ {t('reviewer.textModified')}
                       </p>
                     )}
                   </div>
@@ -347,14 +349,14 @@ export default function ReviewerDashboard() {
                   {/* Review Notes */}
                   <div className="p-6 border-b border-gray-200">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Review Notes (optional)
+                      {t('reviewer.reviewNotes')}
                     </label>
                     <input
                       type="text"
                       value={reviewNotes}
                       onChange={(e) => setReviewNotes(e.target.value)}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                      placeholder="Any feedback for the transcriber..."
+                      placeholder={t('reviewer.feedbackPlaceholder')}
                     />
                   </div>
 
@@ -368,7 +370,7 @@ export default function ReviewerDashboard() {
                       {submittingAction === "REJECTED" && (
                         <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
                       )}
-                      {submittingAction === "REJECTED" ? "Rejecting..." : "Reject"}
+                      {submittingAction === "REJECTED" ? t('reviewer.rejecting') : t('reviewer.reject')}
                     </button>
                     <button
                       onClick={() => handleReview("APPROVED")}
@@ -378,13 +380,13 @@ export default function ReviewerDashboard() {
                       {submittingAction === "APPROVED" && (
                         <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
                       )}
-                      {submittingAction === "APPROVED" ? "Approving..." : "Approve"}
+                      {submittingAction === "APPROVED" ? t('reviewer.approving') : t('reviewer.approve')}
                     </button>
                   </div>
                 </div>
               ) : (
                 <div className="bg-white rounded-lg shadow p-8 text-center">
-                  <p className="text-gray-500">Select a transcription to review</p>
+                  <p className="text-gray-500">{t('reviewer.selectToReview')}</p>
                 </div>
               )}
             </div>

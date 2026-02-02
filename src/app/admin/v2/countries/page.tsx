@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getToken } from "@/lib/client";
+import { useTranslations } from "next-intl";
 
 interface Language {
   id: string;
@@ -24,6 +25,7 @@ interface Country {
 
 export default function AdminCountriesPage() {
   const router = useRouter();
+  const t = useTranslations();
   const [countries, setCountries] = useState<Country[]>([]);
   const [loading, setLoading] = useState(true);
   const [showNewForm, setShowNewForm] = useState(false);
@@ -75,7 +77,7 @@ export default function AdminCountriesPage() {
       setShowNewForm(false);
       setNewCountry({ code: "", name: "" });
     } catch {
-      setError("Failed to create country");
+      setError(t('common.error'));
     }
   };
 
@@ -94,17 +96,17 @@ export default function AdminCountriesPage() {
           <div className="flex justify-between items-center">
             <div>
               <Link href="/admin/v2" className="text-blue-600 hover:underline text-sm">
-                ← Back to Dashboard
+                {t('admin.backToDashboard')}
               </Link>
               <h1 className="text-2xl font-bold text-gray-900 mt-1">
-                Country Management
+                {t('admin.countriesPage.title')}
               </h1>
             </div>
             <button
               onClick={() => setShowNewForm(true)}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
-              + Add Country
+              {t('admin.countriesPage.addCountry')}
             </button>
           </div>
         </div>
@@ -113,12 +115,12 @@ export default function AdminCountriesPage() {
       <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         {countries.length === 0 ? (
           <div className="bg-white rounded-lg shadow p-8 text-center">
-            <p className="text-gray-500 mb-4">No countries configured yet.</p>
+            <p className="text-gray-500 mb-4">{t('admin.countriesPage.noCountriesYet')}</p>
             <button
               onClick={() => setShowNewForm(true)}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
-              Add Your First Country
+              {t('admin.countriesPage.addFirstCountry')}
             </button>
           </div>
         ) : (
@@ -133,20 +135,20 @@ export default function AdminCountriesPage() {
                     </div>
                     <span
                       className={`px-2 py-1 text-xs rounded ${country.isActive
-                          ? "bg-green-100 text-green-800"
-                          : "bg-gray-100 text-gray-800"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-gray-100 text-gray-800"
                         }`}
                     >
-                      {country.isActive ? "Active" : "Inactive"}
+                      {country.isActive ? t('admin.active') : t('admin.inactive')}
                     </span>
                   </div>
 
                   <div className="border-t border-gray-200 pt-4">
                     <h4 className="text-sm font-medium text-gray-700 mb-2">
-                      Languages ({country.languages.length})
+                      {t('admin.countriesPage.languagesCount')} ({country.languages.length})
                     </h4>
                     {country.languages.length === 0 ? (
-                      <p className="text-sm text-gray-500">No languages yet</p>
+                      <p className="text-sm text-gray-500">{t('admin.countriesPage.noLanguagesYet')}</p>
                     ) : (
                       <div className="space-y-2">
                         {country.languages.map((lang) => {
@@ -178,7 +180,7 @@ export default function AdminCountriesPage() {
                     href={`/admin/v2/languages?countryId=${country.id}`}
                     className="text-sm text-blue-600 hover:underline"
                   >
-                    Manage Languages
+                    {t('admin.countriesPage.manageLanguages')}
                   </Link>
                 </div>
               </div>
@@ -191,7 +193,7 @@ export default function AdminCountriesPage() {
       {showNewForm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
-            <h2 className="text-xl font-bold mb-4">Add New Country</h2>
+            <h2 className="text-xl font-bold mb-4">{t('admin.countriesPage.addNewCountry')}</h2>
 
             {error && (
               <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
@@ -202,7 +204,7 @@ export default function AdminCountriesPage() {
             <form onSubmit={handleCreateCountry} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Country Code (ISO 3166-1 alpha-2)
+                  {t('admin.countriesPage.countryCode')}
                 </label>
                 <input
                   type="text"
@@ -218,7 +220,7 @@ export default function AdminCountriesPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Country Name
+                  {t('admin.countriesPage.countryName')}
                 </label>
                 <input
                   type="text"
@@ -240,13 +242,13 @@ export default function AdminCountriesPage() {
                   }}
                   className="px-4 py-2 text-gray-600 hover:text-gray-900"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
-                  Add Country
+                  {t('admin.countriesPage.addCountry')}
                 </button>
               </div>
             </form>
