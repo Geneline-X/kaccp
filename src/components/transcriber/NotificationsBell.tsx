@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
-import { apiFetch } from '@/lib/client'
+import { apiFetch } from '@/lib/infra/client/client'
 
 type NotificationItem = {
   id: string

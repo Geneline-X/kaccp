@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
-import { getAuthUser } from "@/lib/auth";
-import { kayXClient } from "@/lib/kay-client";
+import prisma from "@/lib/infra/db/prisma";
+import { getAuthUser } from "@/lib/infra/auth/auth";
+import { kayXClient } from "@/lib/infra/ai/kay-client";
 import { Storage } from "@google-cloud/storage";
 
 const storage = new Storage({

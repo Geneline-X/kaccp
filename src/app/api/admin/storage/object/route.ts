@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { deleteObject } from '@/lib/gcs';
+import { deleteObject } from '@/lib/infra/storage/gcs';
 
 export async function DELETE(req: Request) {
   try {

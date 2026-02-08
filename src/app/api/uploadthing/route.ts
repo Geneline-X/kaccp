@@ -1,6 +1,6 @@
 import { createRouteHandler } from 'uploadthing/next'
 import { ourFileRouter } from './core'
-import { assertUploadThingEnv } from '@/lib/uploadthing-env'
+import { assertUploadThingEnv } from '@/lib/infra/storage/uploadthing-env'
 
 // Force Node.js runtime for UploadThing handlers (recommended)
 export const runtime = 'nodejs'

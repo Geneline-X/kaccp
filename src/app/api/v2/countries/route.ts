@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { getAuthUser } from "@/lib/auth";
+import { prisma } from "@/lib/infra/db/prisma";
+import { getAuthUser } from "@/lib/infra/auth/auth";
 
 // GET /api/v2/countries - List all countries
 export async function GET() {

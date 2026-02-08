@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { DataGrid, RenderEditCellProps } from "react-data-grid";
 import "react-data-grid/lib/styles.css";
-import { getToken } from "@/lib/client";
+import { getToken } from "@/lib/infra/client/client";
 import { useTranslations } from "next-intl";
 
 interface Prompt {

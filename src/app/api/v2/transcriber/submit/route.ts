@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { getAuthUser } from "@/lib/auth";
+import { prisma } from "@/lib/infra/db/prisma";
+import { getAuthUser } from "@/lib/infra/auth/auth";
 
 // POST /api/v2/transcriber/submit - Submit transcription for a recording
 export async function POST(req: NextRequest) {

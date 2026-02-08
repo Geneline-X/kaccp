@@ -361,3 +361,25 @@ enum AutoTranscriptionStatus {
   FAILED // Transcription failed (error or service unavailable)
   SKIPPED // Skipped (non-Krio, Kay X disabled, or unsupported format)
 }
+
+// ============================================================================
+// TRANSLATION CACHE
+// ============================================================================
+
+model Translation {
+  id             String   @id @default(cuid())
+  entityType     String   // e.g., "country", "language", "prompt"
+  entityId       String   // The ID of the entity being translated
+  fieldName      String   // The field being translated (e.g., "name", "description")
+  sourceLanguage String   // ISO language code (e.g., "en")
+  targetLanguage String   // ISO language code (e.g., "fr", "es")
+  sourceText     String   @db.Text
+  translatedText String   @db.Text
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([entityType, entityId, fieldName, targetLanguage])
+  @@index([entityType, entityId])
+  @@index([targetLanguage])
+}
+

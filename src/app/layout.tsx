@@ -1,9 +1,7 @@
+import '@/app/globals.css';
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Toaster } from 'sonner';
-import { NextIntlClientProvider } from 'next-intl';
-import { getLocale, getMessages } from 'next-intl/server';
-import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,25 +25,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const locale = await getLocale();
-  const messages = await getMessages();
-
   return (
-    <html lang={locale}>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <NextIntlClientProvider messages={messages}>
-          {children}
-        </NextIntlClientProvider>
-        <Toaster position="top-right" richColors closeButton />
-      </body>
+    <html className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }
-

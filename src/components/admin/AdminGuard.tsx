@@ -1,6 +1,6 @@
 "use client"
 import { PropsWithChildren } from 'react'
-import { useRequireAdminAuth } from '@/lib/useAdminAuth'
+import { useRequireAdminAuth } from '@/lib/infra/auth/useAdminAuth'
 import { Loader2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 

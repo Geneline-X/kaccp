@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { getAuthUser } from "@/lib/auth";
+import { prisma } from "@/lib/infra/db/prisma";
+import { getAuthUser } from "@/lib/infra/auth/auth";
 
 const ASSIGNMENT_MINUTES = parseInt(process.env.ASSIGNMENT_MINUTES || "15");
 const MAX_ACTIVE_ASSIGNMENTS = parseInt(process.env.MAX_ACTIVE_ASSIGNMENTS || "1");
