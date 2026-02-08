@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { getAuthUser } from "@/lib/auth";
+import { prisma } from "@/lib/infra/db/prisma";
+import { getAuthUser } from "@/lib/infra/auth/auth";
 import { PromptCategory, PromptEmotion } from "@prisma/client";
+import { triggerBatchAdminTranslation } from "@/lib/translations/triggers";
 
 interface CSVPrompt {
   english_text: string;
@@ -139,6 +140,31 @@ export async function POST(req: NextRequest) {
       data: newPrompts,
       skipDuplicates: true, // Specific DB-level skip
     });
+
+    if (result.count > 0) {
+      const created = await prisma.prompt.findMany({
+        where: {
+          languageId: targetLanguageId,
+          englishText: {
+            in: newPrompts.map((p) => p.englishText),
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      triggerBatchAdminTranslation(
+        created.map((p) => ({
+          entityType: "prompt",
+          entityId: p.id,
+          fields: ["englishText", "instruction"],
+          sourceLanguage: "en",
+        }))
+      ).catch((error) => {
+        console.error("[Translation Trigger] Failed to batch translate imported prompts:", error);
+      });
+    }
 
     return NextResponse.json({
       success: true,

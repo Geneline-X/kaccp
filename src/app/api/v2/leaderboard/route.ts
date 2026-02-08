@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/infra/db/prisma";
 
 // GET /api/v2/leaderboard - Get leaderboard for speakers and transcribers
 export async function GET(req: NextRequest) {

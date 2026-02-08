@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import prisma from '@/lib/prisma'
-import { requireAdmin } from '@/lib/auth'
+import prisma from '@/lib/infra/db/prisma'
+import { requireAdmin } from '@/lib/infra/auth/auth'
 import { z } from 'zod'
 
 const ActionSchema = z.object({

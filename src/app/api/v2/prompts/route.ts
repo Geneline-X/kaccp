@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { getAuthUser } from "@/lib/auth";
+import { prisma } from "@/lib/infra/db/prisma";
+import { getAuthUser } from "@/lib/infra/auth/auth";
 import { PromptCategory, PromptEmotion } from "@prisma/client";
+import { triggerAdminTranslation } from "@/lib/translations/triggers";
 
 // GET /api/v2/prompts - List prompts (with filters)
 export async function GET(req: NextRequest) {
@@ -167,6 +168,15 @@ export async function POST(req: NextRequest) {
       include: {
         language: true,
       },
+    });
+
+    triggerAdminTranslation({
+      entityType: "prompt",
+      entityId: prompt.id,
+      fields: ["englishText", "instruction"],
+      sourceLanguage: "en",
+    }).catch((error) => {
+      console.error("[Translation Trigger] Failed to translate prompt:", error);
     });
 
     return NextResponse.json({ prompt }, { status: 201 });

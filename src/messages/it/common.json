@@ -1,0 +1,266 @@
+{
+    "leaderboard": {
+        "title": "[Trophy] Classifica",
+        "subtitle": "I principali contributori che preservano le lingue africane",
+        "speakers": "Parlanti",
+        "transcribers": "Trascrittori",
+        "audioCollected": "Audio Raccolto",
+        "topSpeakers": "[Microphone] Migliori Parlanti",
+        "topTranscribers": "[Checkmark] Migliori Trascrittori",
+        "rank": "Posizione",
+        "name": "Nome",
+        "minutes": "Minuti",
+        "wantToSee": "Vuoi vedere il tuo nome nella classifica?",
+        "becomeSpeaker": "[Microphone] Diventa Parlante",
+        "becomeTranscriber": "[Checkmark] Diventa Trascrittore",
+        "builtBy": "Sviluppato da",
+        "preserving": "Preservare le Lingue Africane"
+    },
+    "legal": {
+        "title": "Termini di Servizio e Politica sui Dati",
+        "tos": "Termini di Servizio",
+        "sections": {
+            "acceptance": {
+                "title": "Accettazione dei Termini",
+                "content": "Creando un account, accedendo o utilizzando la Piattaforma KACCP (\"la Piattaforma\"), accetti di essere vincolato da questi Termini di Servizio. Se non accetti, non puoi utilizzare la Piattaforma. Devi avere almeno 18 anni per utilizzare questo servizio."
+            },
+            "userAccounts": {
+                "title": "Account Utente",
+                "content": "Accetti di fornire informazioni accurate e complete durante la registrazione e di mantenere queste informazioni aggiornate. Sei responsabile del mantenimento della riservatezza della password del tuo account e di tutte le attività che si verificano sotto il tuo account. Accetti di notificarci immediatamente qualsiasi uso non autorizzato del tuo account."
+            },
+            "userConduct": {
+                "title": "Condotta dell'Utente",
+                "content": "Accetti di utilizzare la Piattaforma solo per il suo scopo previsto di trascrizione di contenuti audio Krio. Non devi caricare, inviare o trasmettere alcun contenuto che sia illegale, diffamatorio, osceno o che violi i diritti di proprietà intellettuale o di privacy di terzi. Il tuo utilizzo della Piattaforma deve essere conforme a tutte le leggi locali, nazionali e internazionali applicabili."
+            },
+            "ip": {
+                "title": "Proprietà Intellettuale e Proprietà dei Dati",
+                "item1": "Riconosci che tutti i file audio, incluso il materiale sorgente (ad es., la Bibbia Krio), sono di proprietà della piattaforma e dei suoi licenziatari.",
+                "item2": "Inviando una trascrizione, concedi alla Piattaforma KACCP una licenza perpetua, irrevocabile, mondiale, esente da royalty e non esclusiva per utilizzare, riprodurre, modificare e distribuire la trascrizione allo scopo di creare un dataset pubblicamente disponibile per la ricerca e lo sviluppo del machine learning.",
+                "item3": "Dichiari e garantisci che le tue trascrizioni sono il tuo lavoro originale e non violano i diritti di proprietà intellettuale di terzi. Accetti che la Piattaforma KACCP possieda tutti i diritti, titoli e interessi nel e sul dataset aggregato finale."
+            },
+            "payment": {
+                "title": "Pagamento e Compenso",
+                "content": "Il pagamento per il tuo lavoro di trascrizione si basa esclusivamente sulla quantità di lavoro che viene revisionato e approvato dalla Piattaforma KACCP. La tariffa attuale è specificata sulla Piattaforma ed è soggetta a modifiche a nostra discrezione. Il pagamento verrà effettuato tramite un metodo concordato come specificato nella politica di pagamento della Piattaforma."
+            },
+            "disclaimer": {
+                "title": "Esclusioni di Responsabilità e Limitazione di Responsabilità",
+                "content": "La Piattaforma è fornita \"così com'è\" e \"come disponibile\". Non forniamo alcuna garanzia, espressa o implicita, riguardo alla Piattaforma o al suo utilizzo. Non saremo responsabili per eventuali danni, inclusi ma non limitati a danni diretti, indiretti, incidentali o consequenziali, derivanti dal tuo utilizzo della Piattaforma o dalla tua impossibilità di utilizzarla."
+            },
+            "termination": {
+                "title": "Risoluzione",
+                "content": "Ci riserviamo il diritto di sospendere o terminare il tuo account e l'accesso alla Piattaforma in qualsiasi momento, con o senza causa, incluso per qualsiasi violazione di questi Termini."
+            }
+        },
+        "privacy": {
+            "title": "Protezione dei Dati e Politica sulla Privacy",
+            "intro": "Sebbene la Sierra Leone possa non avere ancora una legge completa sulla protezione dei dati, è una buona pratica e un obbligo etico proteggere i dati degli utenti in linea con gli standard internazionali.",
+            "sections": {
+                "collection": {
+                    "title": "Raccolta Dati",
+                    "intro": "Raccogliamo le seguenti informazioni dai trascrittori:",
+                    "item1": {
+                        "title": "Dati Personali",
+                        "content": "Il tuo nome, indirizzo email e qualsiasi informazione di pagamento richiesta per il compenso."
+                    },
+                    "item2": {
+                        "title": "Dati di Utilizzo",
+                        "content": "Informazioni sulla tua attività sulla Piattaforma, come il numero di chunk che hai trascritto e le tue metriche di prestazione."
+                    },
+                    "item3": {
+                        "title": "Contenuti Generati dall'Utente",
+                        "content": "I chunk audio e le tue trascrizioni corrispondenti."
+                    }
+                },
+                "usage": {
+                    "title": "Utilizzo dei Dati",
+                    "item1": {
+                        "title": "Dati Personali",
+                        "content": "Questi dati vengono utilizzati esclusivamente per gestire il tuo account, comunicare con te e elaborare i tuoi pagamenti."
+                    },
+                    "item2": {
+                        "title": "Dati di Utilizzo",
+                        "content": "Questi vengono utilizzati per monitorare le prestazioni della piattaforma, migliorare l'esperienza utente e gestire il processo di crowdsourcing."
+                    },
+                    "item3": {
+                        "title": "Contenuti Generati dall'Utente",
+                        "content": "I file audio grezzi e le tue trascrizioni approvate vengono utilizzati per creare il dataset finale, anonimizzato e pubblicamente disponibile per la ricerca sul machine learning."
+                    }
+                },
+                "security": {
+                    "title": "Sicurezza dei Dati",
+                    "content": "Tutti i dati degli utenti verranno archiviati in modo sicuro su servizi cloud con accesso limitato solo al personale autorizzato. Implementeremo misure di sicurezza standard del settore per proteggere i tuoi dati da accesso, divulgazione o distruzione non autorizzati."
+                },
+                "anonymization": {
+                    "title": "Anonimizzazione",
+                    "content": "Il dataset pubblico finale non conterrà alcun dato personale (ad es., nomi o indirizzi email) che potrebbe essere utilizzato per identificare singoli trascrittori. I dati verranno privati di qualsiasi informazione identificabile prima di essere resi pubblicamente disponibili per la ricerca."
+                },
+                "rights": {
+                    "title": "Diritti dell'Utente",
+                    "content": "Hai il diritto di richiedere l'accesso, la correzione o la cancellazione dei tuoi dati personali. Per esercitare questi diritti, contattaci all'email di supporto designata. Riconosci che una volta che una trascrizione è stata approvata e diventa parte del dataset finale, non può essere rimossa individualmente."
+                }
+            }
+        },
+        "footer": "Domande? Visita \u003clink\u003egeneline-x.net\u003c/link\u003e."
+    },
+    "notifications": {
+        "title": "Notifiche",
+        "markAllRead": "Segna tutte come lette",
+        "empty": "Nessuna notifica non letta",
+        "new": "Hai nuove notifiche",
+        "cleared": "Notifiche cancellate",
+        "failed": "Impossibile segnare come letto"
+    },
+    "home": {
+        "title": "KACCP",
+        "subtitle": "Piattaforma di Raccolta Dati Vocali",
+        "description": "Aiuta a preservare e digitalizzare le lingue africane contribuendo con la tua voce o le tue capacitÃ  di trascrizione. Sviluppato da Geneline-X per la raccolta di dati TTS di alta qualitÃ .",
+        "viewLeaderboard": "Visualizza Classifica",
+        "howContribute": "Come vorresti contribuire?",
+        "chooseRole": "Scegli il tuo ruolo in base alle tue competenze. I parlanti registrano la voce, i trascrittori scrivono ciÃ² che sentono.",
+        "speaker": {
+            "title": "Parlante",
+            "description": "Registra la tua voce nella tua lingua madre. Leggi le istruzioni in inglese e parla la traduzione naturalmente.",
+            "benefit1": "Registra clip audio brevi (max 10 secondi)",
+            "benefit2": "Traduci le istruzioni dall\u0027inglese alla tua lingua",
+            "benefit3": "Guadagna per minuto di audio approvato",
+            "benefit4": "Lavora da qualsiasi luogo con un telefono",
+            "registerBtn": "Registrati come Parlante",
+            "loginBtn": "Accesso Parlante"
+        },
+        "transcriber": {
+            "title": "Trascrittore",
+            "description": "Ascolta le registrazioni e scrivi esattamente ciÃ² che senti. Aiuta a creare testo accurato per l\u0027addestramento dell\u0027IA.",
+            "benefit1": "Ascolta brevi registrazioni audio",
+            "benefit2": "Scrivi le trascrizioni nella lingua originale",
+            "benefit3": "Segnala registrazioni di scarsa qualitÃ ",
+            "benefit4": "Guadagna per trascrizione approvata",
+            "registerBtn": "Registrati come Trascrittore",
+            "loginBtn": "Accesso Trascrittore"
+        },
+        "howItWorks": {
+            "title": "Come Funziona",
+            "step1Title": "Registrati e Seleziona le Lingue",
+            "step1Desc": "Crea un account e scegli quali lingue parli o puoi trascrivere.",
+            "step2Title": "Registra o Trascrivi",
+            "step2Desc": "I parlanti registrano clip vocali. I trascrittori ascoltano e scrivono ciÃ² che sentono.",
+            "step3Title": "Ricevi il Pagamento",
+            "step3Desc": "Guadagna denaro per ogni registrazione o trascrizione approvata tramite Orange Money."
+        },
+        "stats": {
+            "title": "Costruire l\u0027IA per le Lingue Africane",
+            "languages": "Lingue",
+            "targetPerLanguage": "Obiettivo per Lingua",
+            "countries": "Paesi",
+            "forSpeechSynthesis": "Per la Sintesi Vocale"
+        },
+        "payout": {
+            "title": "Guadagna con Orange Money",
+            "speakerRate": "Parlanti: Guadagna per minuto di registrazioni approvate",
+            "transcriberRate": "Trascrittori: Guadagna per minuto di trascrizioni approvate",
+            "noBank": "Pagamenti tramite Orange Money - nessun conto bancario necessario",
+            "weekly": "Cicli di pagamento settimanali"
+        }
+    },
+    "footer": {
+        "platform": "Piattaforma di Raccolta Dati Vocali",
+        "speakerPortal": "Portale Parlante",
+        "transcriberPortal": "Portale Trascrittore",
+        "reviewerPortal": "Portale Revisore",
+        "leaderboard": "Classifica",
+        "admin": "Amministrazione",
+        "builtBy": "Sviluppato da",
+        "forLanguages": "per la preservazione delle lingue africane",
+        "language": "Lingua",
+        "selectLanguage": "Seleziona lingua"
+    },
+    "auth": {
+        "speakerLogin": "Accesso Parlante",
+        "transcriberLogin": "Accesso Trascrittore",
+        "reviewerLogin": "Accesso Revisore",
+        "adminLogin": "Accesso Amministratore",
+        "signingIn": "Accesso in corso...",
+        "signIn": "Accedi",
+        "dontHaveAccount": "Non hai un account?",
+        "registerHere": "Registrati qui",
+        "alreadyHaveAccount": "Hai giÃ  un account?",
+        "signInHere": "Accedi qui",
+        "areYouTranscriber": "Sei un trascrittore? Accedi qui â†’",
+        "areYouSpeaker": "Sei un parlante? Accedi qui â†’",
+        "loginFailed": "Accesso non riuscito",
+        "errorOccurred": "Si Ã¨ verificato un errore. Riprova.",
+        "registerAsSpeaker": "Registrati come Parlante",
+        "registerAsTranscriber": "Registrati come Trascrittore",
+        "helpPreserve": "Aiuta a preservare le lingue africane contribuendo con la tua voce",
+        "displayName": "Nome Visualizzato",
+        "phoneNumber": "Numero di Telefono",
+        "yourName": "Il tuo nome",
+        "languagesYouSpeak": "Lingue che Parli Nativamente",
+        "selectLanguagesFlluent": "Seleziona tutte le lingue che puoi parlare fluentemente",
+        "loadingLanguages": "Caricamento lingue...",
+        "passwordsNoMatch": "Le password non corrispondono",
+        "selectOneLanguage": "Seleziona almeno una lingua che parli",
+        "agreeToTerms": "Accetta i termini e il consenso",
+        "consentText": "Accetto di contribuire con le mie registrazioni vocali sotto la licenza CC0 Pubblico Dominio. Comprendo che le mie registrazioni saranno utilizzate per addestrare modelli di IA per le lingue africane e saranno liberamente disponibili per la ricerca e lo sviluppo.",
+        "creatingAccount": "Creazione Account...",
+        "createAccount": "Crea Account",
+        "registrationFailed": "Registrazione non riuscita",
+        "helpTranscribe": "Aiuta a creare testo accurato per l'addestramento dell'IA trascrivendo audio",
+        "selectOneLanguageTranscribe": "Seleziona almeno una lingua che puoi scrivere",
+        "languagesYouTranscribe": "Lingue che Trascrivi",
+        "selectLanguagesWrite": "Seleziona tutte le lingue che puoi scrivere fluentemente",
+        "transcriberConsentText": "Accetto di contribuire con le mie trascrizioni sotto la licenza CC0 Pubblico Dominio. Comprendo che le mie trascrizioni saranno utilizzate per addestrare modelli di IA per le lingue africane e saranno liberamente disponibili per la ricerca e lo sviluppo.",
+        "wantToBeSpeaker": "Vuoi essere un parlante invece? Registrati qui"
+    },
+    "common": {
+        "loading": "Caricamento...",
+        "error": "Si Ã¨ verificato un errore",
+        "retry": "Riprova",
+        "back": "Indietro",
+        "next": "Avanti",
+        "previous": "Precedente",
+        "submit": "Invia",
+        "cancel": "Annulla",
+        "save": "Salva",
+        "delete": "Elimina",
+        "edit": "Modifica",
+        "close": "Chiudi",
+        "login": "Accedi",
+        "logout": "Esci",
+        "register": "Registrati",
+        "email": "E-mail",
+        "password": "Password",
+        "confirmPassword": "Conferma password",
+        "forgotPassword": "Password dimenticata?",
+        "noDataYet": "Nessun dato ancora. Sii il primo a contribuire!",
+        "showing": "Visualizzazione",
+        "of": "di",
+        "page": "Pagina",
+        "min": "min",
+        "recordings": "registrazioni",
+        "transcriptions": "trascrizioni",
+        "saving": "Salvataggio in corso...",
+        "remove": "Rimuovi",
+        "seconds": "secondi",
+        "secondsShort": "s",
+        "emailOrPhonePlaceholder": "email@esempio.com o +232...",
+        "phoneFormatExample": "+232 XX XXX XXXX",
+        "confirmNewPassword": "Conferma nuova password",
+        "updating": "Aggiornamento in corso...",
+        "resetPassword": "Reimposta password",
+        "createNewPassword": "Crea nuova password",
+        "cancelAndGoBack": "Annulla e torna indietro",
+        "forgotPasswordDesc": "Inserisci il tuo indirizzo email e ti invieremo un collegamento per reimpostare la tua password",
+        "sendResetLink": "Invia collegamento di reimpostazione",
+        "sendingLink": "Invio del collegamento in corso...",
+        "invalidResetToken": "Token di reimpostazione non valido",
+        "invalidResetLink": "Collegamento di reimpostazione non valido",
+        "requestNewLink": "Richiedi un nuovo collegamento",
+        "backToSignIn": "Torna all'accesso",
+        "passwordMinLength": "La password deve contenere almeno 6 caratteri",
+        "resetFailed": "Reimpostazione della password non riuscita",
+        "passwordReset": "Password reimpostata con successo",
+        "redirectingToLogin": "Reindirizzamento all'accesso in corso...",
+        "somethingWentWrong": "Qualcosa è andato storto",
+        "newPassword": "Nuova password"
+    }
+}

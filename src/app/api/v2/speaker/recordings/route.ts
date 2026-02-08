@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { getAuthUser } from "@/lib/auth";
-import { kayXClient } from "@/lib/kay-client";
-import { getSignedUrl } from "@/lib/gcs";
+import { prisma } from "@/lib/infra/db/prisma";
+import { getAuthUser } from "@/lib/infra/auth/auth";
+import { kayXClient } from "@/lib/infra/ai/kay-client";
+import { getSignedUrl } from "@/lib/infra/gcs";
 
 // GET /api/v2/speaker/recordings - Get speaker's recording history
 export async function GET(req: NextRequest) {
@@ -124,7 +124,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Determine target language for this recording
-    let recordingLanguageId = prompt.languageId;
+    let recordingLanguageId: string | null = prompt.languageId;
 
     // If prompt is universal (null languageId), we need language from request
     if (!recordingLanguageId) {
@@ -134,8 +134,10 @@ export async function POST(req: NextRequest) {
           { status: 400 }
         );
       }
-      recordingLanguageId = languageId;
+      recordingLanguageId = String(languageId);
     }
+
+    const recordingLanguageIdResolved: string = recordingLanguageId as string;
 
     // Verify user can speak this language
     // Note: This check assumes 'user.speaksLanguages' contains codes (e.g. 'kri') or IDs.
@@ -166,7 +168,7 @@ export async function POST(req: NextRequest) {
       data: {
         promptId,
         speakerId: user.id,
-        languageId: recordingLanguageId, // Use resolved language
+        languageId: recordingLanguageIdResolved, // Use resolved language
         audioUrl,
         durationSec,
         fileSize,
@@ -190,7 +192,7 @@ export async function POST(req: NextRequest) {
 
     // Update language collectedMinutes
     await prisma.language.update({
-      where: { id: recordingLanguageId },
+      where: { id: recordingLanguageIdResolved },
       data: {
         collectedMinutes: { increment: durationSec / 60 },
       },
@@ -210,9 +212,6 @@ export async function POST(req: NextRequest) {
     if (shouldAutoTranscribe) {
       // Resolve language code
       let langCode = prompt.language?.code;
-      if (!langCode && recording.language) {
-        langCode = recording.language.code;
-      }
 
       const isKrio = langCode?.toLowerCase() === "kri";
 

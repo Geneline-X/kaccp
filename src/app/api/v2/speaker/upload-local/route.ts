@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAuthUser } from "@/lib/auth";
+import { getAuthUser } from "@/lib/infra/auth/auth";
 import { writeFile, mkdir } from "fs/promises";
 import { join, dirname } from "path";
 

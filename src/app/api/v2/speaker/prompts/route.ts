@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { getAuthUser } from "@/lib/auth";
+import { prisma } from "@/lib/infra/db/prisma";
+import { getAuthUser } from "@/lib/infra/auth/auth";
+import { locales, defaultLocale } from "@/i18n";
+import { resolveTranslatedText } from "@/lib/translations/resolver";
 
 // GET /api/v2/speaker/prompts - Get available prompts for speaker to record
 export async function GET(req: NextRequest) {
@@ -14,6 +16,8 @@ export async function GET(req: NextRequest) {
     const languageId = searchParams.get("languageId");
     const category = searchParams.get("category");
     const limit = parseInt(searchParams.get("limit") || "10");
+    const uiLocaleParam = searchParams.get("uiLocale") || defaultLocale;
+    const uiLocale = locales.includes(uiLocaleParam as any) ? uiLocaleParam : defaultLocale;
 
     if (!languageId) {
       return NextResponse.json(
@@ -83,7 +87,35 @@ export async function GET(req: NextRequest) {
       take: limit,
     });
 
-    return NextResponse.json({ prompts });
+    const promptsWithDisplayText = await Promise.all(
+      prompts.map(async (prompt) => {
+        const displayText = await resolveTranslatedText({
+          entityType: "prompt",
+          entityId: prompt.id,
+          field: "englishText",
+          originalText: prompt.englishText,
+          requestedLanguage: uiLocale,
+          defaultLanguage: defaultLocale,
+        });
+
+        const displayInstruction = await resolveTranslatedText({
+          entityType: "prompt",
+          entityId: prompt.id,
+          field: "instruction",
+          originalText: prompt.instruction || "",
+          requestedLanguage: uiLocale,
+          defaultLanguage: defaultLocale,
+        });
+
+        return {
+          ...prompt,
+          displayText: displayText.text,
+          displayInstruction: displayInstruction.text || null,
+        };
+      })
+    );
+
+    return NextResponse.json({ prompts: promptsWithDisplayText, uiLocale });
   } catch (error) {
     console.error("Error fetching speaker prompts:", error);
     return NextResponse.json(

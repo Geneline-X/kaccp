@@ -4,8 +4,8 @@ import { ColumnDef } from "@tanstack/react-table"
 import { format } from 'date-fns'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { apiFetch } from '@/lib/client'
-import { toastError, toastSuccess } from '@/lib/toast'
+import { apiFetch } from '@/lib/infra/client/client'
+import { toastError, toastSuccess } from '@/lib/infra/utils/toast'
 
 export type PaymentRow = {
   id: string

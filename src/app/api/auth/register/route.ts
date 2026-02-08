@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import prisma from '@/lib/prisma'
-import { hashPassword, signJwt } from '@/lib/auth'
+import prisma from '@/lib/infra/db/prisma'
+import { hashPassword, signJwt } from '@/lib/infra/auth/auth'
 import { UserRole } from '@prisma/client'
 
 export async function POST(req: NextRequest) {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import prisma from '@/lib/prisma'
-import { getAuthUser, hashPassword, verifyPassword } from '@/lib/auth'
+import prisma from '@/lib/infra/db/prisma'
+import { getAuthUser, hashPassword, verifyPassword } from '@/lib/infra/auth/auth'
 import { z } from 'zod'
 
 const UpdateSchema = z.object({
