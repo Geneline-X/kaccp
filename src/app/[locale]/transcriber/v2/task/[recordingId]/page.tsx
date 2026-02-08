@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { getToken } from "@/lib/client";
+import { getToken } from "@/lib/infra/client/client";
 import { TranscriberAIAssist } from "@/components/transcriber-ai-assist";
 import { useTranslations } from "next-intl";
 
