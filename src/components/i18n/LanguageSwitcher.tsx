@@ -28,8 +28,25 @@ export function LanguageSwitcher({ currentLocale }: LanguageSwitcherProps) {
         // Set the cookie
         document.cookie = `NEXT_LOCALE=${locale}; path=/; max-age=31536000; SameSite=Lax`;
 
-        // Refresh the page to apply the new locale
+        // Redirect to the new locale URL
+        const pathname = window.location.pathname;
+        const search = window.location.search;
+        const segments = pathname.split('/');
+
+        // Remove empty first segment
+        if (segments[0] === '') segments.shift();
+
+        // If current path has a locale, replace it. Otherwise, prepend it.
+        if (languages.some(l => l.code === segments[0])) {
+            segments[0] = locale;
+        } else {
+            segments.unshift(locale);
+        }
+
+        const newPathname = `/${segments.join('/')}`;
+
         startTransition(() => {
+            router.push(`${newPathname}${search}`);
             router.refresh();
         });
     };

@@ -1,5 +1,5 @@
 // DB access abstraction
-import { prisma } from '@/lib/infra/prisma';
+import { prisma } from '@/lib/infra/db/prisma';
 import type { TranslationQuery, CreateTranslationInput, TranslationRecord } from './types';
 
 export class TranslationRepository {
