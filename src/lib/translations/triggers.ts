@@ -119,7 +119,7 @@ async function getEntityFieldValue(
 ): Promise<string> {
     // This is a placeholder implementation
     // In real usage, you would fetch from Prisma based on entityType
-    const { prisma } = await import('@/lib/infra/prisma');
+    const { prisma } = await import('@/lib/infra/db/prisma');
 
     switch (entityType) {
         case 'prompt':

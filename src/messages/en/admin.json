@@ -33,7 +33,7 @@
         "recordingsByStatus": "Recordings by Status",
         "transcriptionsByStatus": "Transcriptions by Status",
         "noTranscriptionsYet": "No transcriptions yet.",
-        "backToDashboard": "â† Back to Dashboard",
+        "backToDashboard": "← Back to Dashboard",
         "active": "Active",
         "inactive": "Inactive",
         "nav": {
@@ -65,10 +65,10 @@
             "belowThreshold": "Balance is below payout threshold. Consider waiting until it reaches 30 SLE.",
             "amountBelowThreshold": "Entered amount is below the 30 SLE threshold.",
             "minimumPayout": "Minimum payout is 30 SLE.",
-            "creating": "Creatingâ€¦",
+            "creating": "Creating…",
             "markFailed": "Mark Failed",
             "markPaid": "Mark Paid",
-            "processing": "Processingâ€¦"
+            "processing": "Processing…"
         },
         "usersPage": {
             "title": "User Management",

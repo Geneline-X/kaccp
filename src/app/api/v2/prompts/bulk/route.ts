@@ -317,6 +317,29 @@ export async function PATCH(req: NextRequest) {
       )
     );
 
+    // Trigger translations for updated text/instructions
+    const translationConfigs: any[] = [];
+    validUpdates.forEach((update) => {
+      const fieldsToTranslate = [];
+      if (update.data.englishText !== undefined) fieldsToTranslate.push("englishText");
+      if (update.data.instruction !== undefined) fieldsToTranslate.push("instruction");
+
+      if (fieldsToTranslate.length > 0) {
+        translationConfigs.push({
+          entityType: "prompt",
+          entityId: update.id,
+          fields: fieldsToTranslate,
+          sourceLanguage: "en",
+        });
+      }
+    });
+
+    if (translationConfigs.length > 0) {
+      triggerBatchAdminTranslation(translationConfigs).catch((error) => {
+        console.error("[Translation Trigger] Failed to batch translate updated prompts:", error);
+      });
+    }
+
     return NextResponse.json({
       success: true,
       updated: results.length,

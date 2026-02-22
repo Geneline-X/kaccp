@@ -358,7 +358,7 @@ function RecordContent({ locale }: { locale: string }) {
             </span>
             <span className="mx-2 text-gray-600">|</span>
             <span className="text-sm text-green-400">
-              {recordingCount} {t('speaker.recordedThisSession')}
+              {t('speaker.recordedThisSession', { count: recordingCount })}
             </span>
           </div>
           <span className="text-sm text-gray-400">
@@ -481,7 +481,7 @@ function RecordContent({ locale }: { locale: string }) {
                 onClick={skipPrompt}
                 className="text-gray-400 hover:text-white text-sm"
               >
-                {t('speaker.skipPrompt')} →
+                {t('speaker.skipPrompt')}
               </button>
             </div>
           )}

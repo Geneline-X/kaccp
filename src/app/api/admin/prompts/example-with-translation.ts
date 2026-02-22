@@ -1,6 +1,6 @@
 // Example: Prompt API with translation triggers
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/infra/prisma';
+import { prisma } from '@/lib/infra/db/prisma';
 import { triggerAdminTranslation } from '@/lib/translations/triggers';
 
 /**
