@@ -5,11 +5,7 @@ import { useRouter } from 'next/navigation';
 
 const languages = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'es', name: 'Español', flag: '🇪🇸' },
     { code: 'fr', name: 'Français', flag: '🇫🇷' },
-    { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-    { code: 'it', name: 'Italiano', flag: '🇮🇹' },
-    { code: 'zh', name: '中文', flag: '🇨🇳' },
 ] as const;
 
 export type LocaleCode = (typeof languages)[number]['code'];
