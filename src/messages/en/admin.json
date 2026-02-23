@@ -3,6 +3,7 @@
         "guard": {
             "checkingAuth": "Checking auth..."
         },
+        "loading": "Loading...",
         "title": "KACCP Admin",
         "dashboard": "Dashboard",
         "v2Dashboard": "KACCP V2 Admin Dashboard",
@@ -289,10 +290,12 @@
             "flagSuccess": "Recording flagged successfully",
             "flagFailed": "Failed to flag recording",
             "flagError": "Error flagging recording",
+            "approve": "Approve",
             "approveConfirm": "Approve this recording?",
             "approveSuccess": "Recording approved",
             "approveFailed": "Failed to approve recording",
             "approveError": "Error approving recording",
+            "reject": "Reject",
             "rejectConfirm": "Reject this recording? This action cannot be undone.",
             "rejectSuccess": "Recording rejected",
             "rejectFailed": "Failed to reject recording",

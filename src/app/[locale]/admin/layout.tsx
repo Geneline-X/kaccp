@@ -16,6 +16,13 @@ export default function AdminLayout({ children }: PropsWithChildren) {
   const t = useTranslations()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
+  // Strip locale prefix (e.g. /en, /fr-CM) for route matching
+  const segments = pathname.split('/').filter(Boolean)
+  if (segments[0] && /^[a-z]{2}(-[a-z]{2})?$/i.test(segments[0])) {
+    segments.shift()
+  }
+  const matchPath = '/' + segments.join('/')
+
   // V2 Navigation - Voice Data Collection Platform
   const NAV = [
     { href: '/admin/v2', label: t('admin.dashboard') },
@@ -42,7 +49,7 @@ export default function AdminLayout({ children }: PropsWithChildren) {
               key={item.href}
               href={item.href}
               onClick={onNavigate}
-              className={`text-sm px-3 py-2 rounded-md transition-colors ${pathname === item.href
+              className={`text-sm px-3 py-2 rounded-md transition-colors ${matchPath === item.href
                 ? 'bg-primary/10 text-primary font-medium'
                 : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'}`}
             >
@@ -69,7 +76,7 @@ export default function AdminLayout({ children }: PropsWithChildren) {
   }
 
   // Show public login page without guard or sidebar
-  if (pathname === '/admin/login') {
+  if (matchPath === '/admin/login') {
     return <div className="min-h-screen">{children}</div>
   }
 
@@ -102,7 +109,7 @@ export default function AdminLayout({ children }: PropsWithChildren) {
               </Sheet>
 
               <h1 className="text-base md:text-lg font-semibold">
-                {NAV.find(item => item.href === pathname)?.label || t('admin.dashboard')}
+                {NAV.find(item => item.href === matchPath)?.label || t('admin.dashboard')}
               </h1>
             </div>
             <div className="flex items-center space-x-2 md:space-x-4">

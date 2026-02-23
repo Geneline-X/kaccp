@@ -3,6 +3,7 @@
         "guard": {
             "checkingAuth": "Checking auth..."
         },
+        "loading": "Chargement...",
         "title": "Admin KACCP",
         "dashboard": "Tableau de Bord",
         "v2Dashboard": "Tableau de Bord Admin KACCP V2",
@@ -289,10 +290,12 @@
             "flagSuccess": "Enregistrement signalé avec succès",
             "flagFailed": "Échec du signalement de l'enregistrement",
             "flagError": "Erreur lors du signalement de l'enregistrement",
+            "approve": "Approuver",
             "approveConfirm": "Approuver cet enregistrement ?",
             "approveSuccess": "Enregistrement approuvé",
             "approveFailed": "Échec de l'approbation de l'enregistrement",
             "approveError": "Erreur lors de l'approbation de l'enregistrement",
+            "reject": "Rejeter",
             "rejectConfirm": "Rejeter cet enregistrement ? Cette action est irréversible.",
             "rejectSuccess": "Enregistrement rejeté",
             "rejectFailed": "Échec du rejet de l'enregistrement",
