@@ -80,7 +80,6 @@ export async function GET(req: NextRequest) {
 }
 
 // POST /api/v2/speaker/recordings - Submit a new recording
-// POST /api/v2/speaker/recordings - Submit a new recording
 export async function POST(req: NextRequest) {
   try {
     const user = await getAuthUser(req);
@@ -89,7 +88,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { promptId, audioUrl, durationSec, fileSize, sampleRate, deviceInfo, verifyWithKayX, languageId } = body;
+    const { promptId, audioUrl, durationSec, fileSize, sampleRate, deviceInfo, languageId } = body;
 
     if (!promptId || !audioUrl || !durationSec) {
       return NextResponse.json(
