@@ -72,6 +72,7 @@ export default function AdminPromptsPage() {
   const [selectedPromptIds, setSelectedPromptIds] = useState<Set<string>>(new Set());
   const [isGridView, setIsGridView] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
 
   // New prompt form
   const [showNewForm, setShowNewForm] = useState(false);
@@ -80,7 +81,11 @@ export default function AdminPromptsPage() {
     category: "GREETINGS",
     emotion: "NEUTRAL",
     instruction: "",
+    languageId: "",
   });
+
+  // Separate state for bulk import language (so it doesn't mutate the main filter)
+  const [importLanguageId, setImportLanguageId] = useState("ALL");
 
   // Bulk import
   const [showBulkImport, setShowBulkImport] = useState(false);
@@ -104,14 +109,12 @@ export default function AdminPromptsPage() {
       .then((res) => res.json())
       .then((data) => {
         setLanguages(data.languages || []);
-        // Default to ALL (Universal)
-        setSelectedLanguage("ALL");
       });
   }, [token, router]);
 
   // Fetch prompts when filters change
   useEffect(() => {
-    if (!selectedLanguage || !token) return;
+    if (!token) return;
 
     setLoading(true);
 
@@ -120,21 +123,16 @@ export default function AdminPromptsPage() {
     const limit = isGridView ? "-1" : "50";
 
     const params = new URLSearchParams({
-      languageId: selectedLanguage,
       page: pagination.page.toString(),
       limit,
       activeOnly: "false",
     });
 
-    if (selectedCategory) {
-      params.set("category", selectedCategory);
-    }
+    // Only send languageId when a specific filter is chosen
+    if (selectedLanguage) params.set("languageId", selectedLanguage);
+    if (selectedCategory) params.set("category", selectedCategory);
+    if (searchQuery) params.set("search", searchQuery);
 
-    if (searchQuery) {
-      params.set("search", searchQuery);
-    }
-
-    // Debounce search if needed, but for now direct effect is okay (or separate search effect)
     const timer = setTimeout(() => {
       fetch(`/api/v2/prompts?${params}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -144,21 +142,16 @@ export default function AdminPromptsPage() {
           setPrompts(data.prompts || []);
           setPagination(data.pagination || { page: 1, total: 0, totalPages: 0 });
           setLoading(false);
-          // Don't reset selection here to allow actions across pages if sophisticated, 
-          // but for safety/simplicity we usually reset. 
-          // However, in Grid View "All" mode, we might want to keep selection? 
-          // For now, consistent behavior:
           setSelectedPromptIds(new Set());
         });
-    }, 300); // 300ms debounce for search
+    }, 300);
 
     return () => clearTimeout(timer);
-  }, [selectedLanguage, selectedCategory, pagination.page, isGridView, searchQuery, token]);
+  }, [selectedLanguage, selectedCategory, pagination.page, isGridView, searchQuery, token, refreshKey]);
 
   // Create new prompt
   const handleCreatePrompt = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedLanguage) return;
 
     try {
       const res = await fetch("/api/v2/prompts", {
@@ -168,8 +161,11 @@ export default function AdminPromptsPage() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          languageId: selectedLanguage,
-          ...newPrompt,
+          languageId: newPrompt.languageId || "ALL",
+          englishText: newPrompt.englishText,
+          category: newPrompt.category,
+          emotion: newPrompt.emotion,
+          instruction: newPrompt.instruction,
         }),
       });
 
@@ -271,7 +267,7 @@ export default function AdminPromptsPage() {
 
   // Bulk import prompts
   const handleBulkImport = async () => {
-    if (!selectedLanguage || csvData.length === 0) return;
+    if (!importLanguageId || csvData.length === 0) return;
 
     setImporting(true);
     setImportResult(null);
@@ -284,7 +280,7 @@ export default function AdminPromptsPage() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          languageId: selectedLanguage,
+          languageId: importLanguageId,
           prompts: csvData,
         }),
       });
@@ -499,7 +495,13 @@ export default function AdminPromptsPage() {
                 </button>
               )}
               <button
-                onClick={() => setShowBulkImport(true)}
+                onClick={() => {
+                  // Initialize import language from current filter (default to universal)
+                  setImportLanguageId(
+                    (selectedLanguage && selectedLanguage !== "UNIVERSAL") ? selectedLanguage : "ALL"
+                  );
+                  setShowBulkImport(true);
+                }}
                 className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
               >
                 {t('admin.promptsPage.bulkImportCSV')}
@@ -519,7 +521,17 @@ export default function AdminPromptsPage() {
                 )}
               </button>
               <button
-                onClick={() => setShowNewForm(true)}
+                onClick={() => {
+                  setNewPrompt({
+                    englishText: "",
+                    category: "GREETINGS",
+                    emotion: "NEUTRAL",
+                    instruction: "",
+                    // Pre-fill from current filter, but only if it's a real language ID
+                    languageId: (selectedLanguage && selectedLanguage !== "UNIVERSAL") ? selectedLanguage : "",
+                  });
+                  setShowNewForm(true);
+                }}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
                 {t('admin.promptsPage.newPrompt')}
@@ -540,10 +552,11 @@ export default function AdminPromptsPage() {
                 </label>
                 <select
                   value={selectedLanguage}
-                  onChange={(e) => setSelectedLanguage(e.target.value)}
+                  onChange={(e) => { setSelectedLanguage(e.target.value); setPagination(p => ({ ...p, page: 1 })); }}
                   className="px-4 py-2 border border-gray-300 rounded-lg"
                 >
-                  <option value="ALL">{t('admin.promptsPage.allLanguages')}</option>
+                  <option value="">{t('admin.promptsPage.allLanguages')}</option>
+                  <option value="UNIVERSAL">{t('admin.promptsPage.universal')}</option>
                   {languages.map((lang) => (
                     <option key={lang.id} value={lang.id}>
                       {lang.name} ({lang.code})
@@ -615,12 +628,7 @@ export default function AdminPromptsPage() {
             <PromptsGrid
               initialPrompts={prompts}
               languageId={selectedLanguage}
-              onSave={() => {
-                // Trigger re-fetch
-                const currentLang = selectedLanguage;
-                setSelectedLanguage(""); // Force reset to trigger effect
-                setTimeout(() => setSelectedLanguage(currentLang), 0);
-              }}
+              onSave={() => setRefreshKey(k => k + 1)}
             />
           ) : (
             <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -762,6 +770,23 @@ export default function AdminPromptsPage() {
               <form onSubmit={handleCreatePrompt} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('admin.languages')}
+                  </label>
+                  <select
+                    value={newPrompt.languageId}
+                    onChange={(e) => setNewPrompt({ ...newPrompt, languageId: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  >
+                    <option value="">{t('admin.promptsPage.universal')}</option>
+                    {languages.map((lang) => (
+                      <option key={lang.id} value={lang.id}>
+                        {lang.name} ({lang.code})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     {t('admin.promptsPage.englishText')}
                   </label>
                   <textarea
@@ -890,8 +915,8 @@ export default function AdminPromptsPage() {
                   {t('admin.promptsPage.targetLanguage')}
                 </label>
                 <select
-                  value={selectedLanguage}
-                  onChange={(e) => setSelectedLanguage(e.target.value)}
+                  value={importLanguageId}
+                  onChange={(e) => setImportLanguageId(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                 >
                   <option value="ALL">{t('admin.promptsPage.universal')}</option>
@@ -972,7 +997,7 @@ export default function AdminPromptsPage() {
                 </button>
                 <button
                   onClick={handleBulkImport}
-                  disabled={!selectedLanguage || csvData.length === 0 || importing}
+                  disabled={!importLanguageId || csvData.length === 0 || importing}
                   className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {importing ? t('admin.importing') : t('admin.promptsPage.importButton', { count: csvData.length })}

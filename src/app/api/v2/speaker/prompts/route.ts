@@ -60,14 +60,11 @@ export async function GET(req: NextRequest) {
           }
         ),
         ...(category && { category: category as any }),
-        // Exclude prompts already successfully recorded in this language (by anyone)
+        // Exclude prompts this speaker has already recorded (any status)
         NOT: {
           recordings: {
             some: {
-              languageId,
-              status: {
-                in: ["APPROVED", "PENDING_TRANSCRIPTION", "TRANSCRIBED", "FLAGGED"]
-              }
+              speakerId: user.id,
             },
           },
         },
