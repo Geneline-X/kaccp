@@ -1,4 +1,4 @@
-import ReviewerDashboardClient from './ReviewerDashboardClient';
+import ReviewerV2Client from './v2/ReviewerV2Client';
 
 export default async function ReviewerDashboard({
   params,
@@ -7,5 +7,5 @@ export default async function ReviewerDashboard({
 }) {
   const { locale } = await params;
 
-  return <ReviewerDashboardClient locale={locale} />;
+  return <ReviewerV2Client locale={locale} />;
 }
