@@ -3,7 +3,7 @@ import { prisma } from "@/lib/infra/db/prisma";
 import { getAuthUser } from "@/lib/infra/auth/auth";
 
 const ASSIGNMENT_MINUTES = parseInt(process.env.ASSIGNMENT_MINUTES || "15");
-const MAX_ACTIVE_ASSIGNMENTS = parseInt(process.env.MAX_ACTIVE_ASSIGNMENTS || "1");
+const MAX_ACTIVE_ASSIGNMENTS = parseInt(process.env.MAX_ACTIVE_ASSIGNMENTS || "3");
 
 // POST /api/v2/transcriber/claim - Claim a recording for transcription
 export async function POST(req: NextRequest) {
