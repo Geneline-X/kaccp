@@ -180,9 +180,11 @@ model Recording {
   // Metadata
   deviceInfo String?
 
-  transcription Transcription?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  transcription            Transcription?
+  transcriptionAssignments TranscriptionAssignment[]
+  exportRecord             ExportRecord?
+  createdAt                DateTime       @default(now())
+  updatedAt                DateTime       @updatedAt
 
   @@index([languageId, status])
   @@index([speakerId])
@@ -220,6 +222,7 @@ model Transcription {
 model TranscriptionAssignment {
   id          String    @id @default(cuid())
   recordingId String
+  recording   Recording @relation(fields: [recordingId], references: [id], onDelete: Cascade)
   userId      String
   user        User      @relation(fields: [userId], references: [id])
   expiresAt   DateTime
@@ -272,11 +275,12 @@ model WalletTransaction {
 
 // V2 Export tracking
 model ExportRecord {
-  id            String   @id @default(cuid())
-  createdAt     DateTime @default(now())
+  id            String    @id @default(cuid())
+  createdAt     DateTime  @default(now())
   languageId    String
   languageCode  String
-  recordingId   String   @unique
+  recordingId   String    @unique
+  recording     Recording @relation(fields: [recordingId], references: [id], onDelete: Cascade)
   audioPath     String
   transcription String
   durationSec   Float
