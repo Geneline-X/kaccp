@@ -7,8 +7,8 @@ export async function GET(req: NextRequest) {
   try {
     const user = await getAuthUser(req);
     // Allow both ADMIN and REVIEWER roles
-    const role = user?.role as string;
-    if (!user || (role !== "ADMIN" && role !== "REVIEWER")) {
+    const userRoles = (user as any)?.roles?.length > 0 ? (user as any).roles : [user?.role];
+    if (!user || (!userRoles.includes("ADMIN") && !userRoles.includes("REVIEWER"))) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -92,8 +92,8 @@ export async function POST(req: NextRequest) {
   try {
     const user = await getAuthUser(req);
     // Allow both ADMIN and REVIEWER roles
-    const role = user?.role as string;
-    if (!user || (role !== "ADMIN" && role !== "REVIEWER")) {
+    const userRoles = (user as any)?.roles?.length > 0 ? (user as any).roles : [user?.role];
+    if (!user || (!userRoles.includes("ADMIN") && !userRoles.includes("REVIEWER"))) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -147,17 +147,28 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Update recording status based on decision
-    const recordingStatus = decision === "APPROVED" ? "APPROVED" : "REJECTED";
-    await prisma.recording.update({
-      where: { id: transcription.recordingId },
-      data: {
-        status: recordingStatus,
-      },
-    });
-
-    // If approved, update language approvedMinutes
     if (decision === "APPROVED") {
+      await prisma.recording.update({
+        where: { id: transcription.recordingId },
+        data: { status: "APPROVED" },
+      });
+    } else {
+      // Transcription rejected: audio was already approved — send back to transcription queue
+      // Delete the bad transcription so another transcriber can claim it
+      await prisma.transcription.delete({
+        where: { id: transcriptionId },
+      });
+      await prisma.recording.update({
+        where: { id: transcription.recordingId },
+        data: { status: "PENDING_TRANSCRIPTION" },
+      });
+      return NextResponse.json({ success: true, requeued: true });
+    }
+
+    const recordingAlreadyApproved = transcription.recording.status === "APPROVED";
+
+    // Update language approvedMinutes (guard against double-count)
+    if (!recordingAlreadyApproved) {
       await prisma.language.update({
         where: { id: transcription.recording.languageId },
         data: {
@@ -166,27 +177,48 @@ export async function POST(req: NextRequest) {
           },
         },
       });
+    }
 
-      // CREDIT TRANSCRIBER
-      const ratePerMin = transcription.recording.language.transcriberRatePerMin || 0.03;
-      const durationMin = Math.max(0.1, transcription.recording.durationSec / 60);
-      const amountCents = Math.round(durationMin * ratePerMin * 100);
+    // CREDIT TRANSCRIBER
+    const ratePerMin = transcription.recording.language.transcriberRatePerMin || 0.03;
+    const durationMin = Math.max(0.1, transcription.recording.durationSec / 60);
+    const amountCents = Math.round(durationMin * ratePerMin * 100);
 
-      if (amountCents > 0) {
+    if (amountCents > 0) {
+      await prisma.walletTransaction.create({
+        data: {
+          userId: transcription.transcriberId,
+          deltaCents: amountCents,
+          description: `Approved transcription for recording ${transcription.recordingId}`,
+        },
+      });
+
+      await prisma.user.update({
+        where: { id: transcription.transcriberId },
+        data: {
+          totalEarningsCents: { increment: amountCents },
+          totalTranscriptions: { increment: 1 },
+        },
+      });
+    }
+
+    // Pay the speaker (only on first approval)
+    if (!recordingAlreadyApproved) {
+      const speakerRatePerMin = transcription.recording.language.speakerRatePerMinute ?? 2.5;
+      const speakerDurationMin = Math.max(0.1, transcription.recording.durationSec / 60);
+      const speakerAmountCents = Math.round(speakerDurationMin * speakerRatePerMin * 100);
+
+      if (speakerAmountCents > 0) {
         await prisma.walletTransaction.create({
           data: {
-            userId: transcription.transcriberId,
-            deltaCents: amountCents,
-            description: `Approved transcription for recording ${transcription.recordingId}`,
+            userId: transcription.recording.speakerId,
+            deltaCents: speakerAmountCents,
+            description: `Recording approved: ${transcription.recordingId}`,
           },
         });
-
         await prisma.user.update({
-          where: { id: transcription.transcriberId },
-          data: {
-            totalEarningsCents: { increment: amountCents },
-            totalTranscriptions: { increment: 1 },
-          },
+          where: { id: transcription.recording.speakerId },
+          data: { totalEarningsCents: { increment: speakerAmountCents } },
         });
       }
     }
