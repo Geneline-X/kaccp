@@ -100,72 +100,6 @@ export default function AdminRecordingsPage() {
         setPlayedRecordings(prev => new Set(prev).add(recordingId));
     };
 
-    const handleFlagRecording = async (recordingId: string) => {
-        const reason = prompt("Enter flag reason (e.g., NOISE, UNCLEAR, TOO_QUIET, WRONG_LANGUAGE):");
-        if (!reason) return;
-
-        try {
-            const res = await fetch(`/api/v2/admin/recordings/${recordingId}/flag`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({ reason }),
-            });
-
-            if (res.ok) {
-                alert("Recording flagged successfully");
-                // Refresh recordings
-                setRefreshKey(k => k + 1);
-            } else {
-                alert("Failed to flag recording");
-            }
-        } catch (err) {
-            alert("Error flagging recording");
-        }
-    };
-
-    const handleApproveRecording = async (recordingId: string) => {
-        if (!confirm("Approve this recording?")) return;
-
-        try {
-            const res = await fetch(`/api/v2/admin/recordings/${recordingId}/approve`, {
-                method: "POST",
-                headers: { Authorization: `Bearer ${token}` },
-            });
-
-            if (res.ok) {
-                alert("Recording approved");
-                setRefreshKey(k => k + 1);
-            } else {
-                alert("Failed to approve recording");
-            }
-        } catch (err) {
-            alert("Error approving recording");
-        }
-    };
-
-    const handleRejectRecording = async (recordingId: string) => {
-        if (!confirm("Reject this recording? This action cannot be undone.")) return;
-
-        try {
-            const res = await fetch(`/api/v2/admin/recordings/${recordingId}/reject`, {
-                method: "POST",
-                headers: { Authorization: `Bearer ${token}` },
-            });
-
-            if (res.ok) {
-                alert("Recording rejected");
-                setRefreshKey(k => k + 1);
-            } else {
-                alert("Failed to reject recording");
-            }
-        } catch (err) {
-            alert("Error rejecting recording");
-        }
-    };
-
     const handleTranscribeWithKayX = async (recordingId: string) => {
         if (!confirm("Trigger Kay X transcription for this recording?")) return;
 
@@ -302,6 +236,11 @@ export default function AdminRecordingsPage() {
                     </div>
                 </div>
 
+                {/* Read-only notice */}
+                <div className="mb-4 rounded-md border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+                    Audio approval is handled by Reviewers. This view is for monitoring only.
+                </div>
+
                 {/* List */}
                 <div className="bg-white rounded-lg shadow overflow-hidden">
                     <div className="overflow-x-auto">
@@ -409,33 +348,6 @@ export default function AdminRecordingsPage() {
                                                             title="Transcribe with Kay X"
                                                         >
                                                             {transcribingRecordings.has(rec.id) ? '⏳ Kay X...' : '🤖 Kay X'}
-                                                        </button>
-                                                    )}
-                                                    {rec.status !== 'FLAGGED' && rec.status !== 'REJECTED' && (
-                                                        <button
-                                                            onClick={() => handleFlagRecording(rec.id)}
-                                                            className="text-xs px-2 py-1 bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200"
-                                                            title="Flag for issues"
-                                                        >
-                                                            {t('admin.recordingsPage.flag')}
-                                                        </button>
-                                                    )}
-                                                    {rec.status !== 'APPROVED' && rec.status !== 'REJECTED' && (
-                                                        <button
-                                                            onClick={() => handleApproveRecording(rec.id)}
-                                                            className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200"
-                                                            title={t('admin.recordingsPage.approve')}
-                                                        >
-                                                            {t('admin.recordingsPage.approve')}
-                                                        </button>
-                                                    )}
-                                                    {rec.status !== 'REJECTED' && (
-                                                        <button
-                                                            onClick={() => handleRejectRecording(rec.id)}
-                                                            className="text-xs px-2 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200"
-                                                            title={t('admin.recordingsPage.reject')}
-                                                        >
-                                                            {t('admin.recordingsPage.reject')}
                                                         </button>
                                                     )}
                                                 </div>
