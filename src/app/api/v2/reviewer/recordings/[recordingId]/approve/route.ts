@@ -60,25 +60,43 @@ export async function POST(
               });
 
               if (systemUser) {
-                await prisma.transcription.create({
-                  data: {
-                    recordingId,
-                    transcriberId: systemUser.id,
-                    text: result.transcript,
-                  },
-                });
+                try {
+                  await prisma.transcription.create({
+                    data: {
+                      recordingId,
+                      transcriberId: systemUser.id,
+                      text: result.transcript,
+                    },
+                  });
 
-                await prisma.recording.update({
-                  where: { id: recordingId },
-                  data: {
-                    status: "TRANSCRIBED",
-                    transcript: result.transcript,
-                    transcriptConfidence: result.confidence,
-                    autoTranscriptionStatus: "COMPLETED",
-                    autoTranscribedAt: new Date(),
-                    transcriptMetadata: result.metadata as any,
-                  },
-                });
+                  await prisma.recording.update({
+                    where: { id: recordingId },
+                    data: {
+                      status: "TRANSCRIBED",
+                      transcript: result.transcript,
+                      transcriptConfidence: result.confidence,
+                      autoTranscriptionStatus: "COMPLETED",
+                      autoTranscribedAt: new Date(),
+                      transcriptMetadata: result.metadata as any,
+                    },
+                  });
+                } catch (createErr: any) {
+                  if (createErr?.code === "P2002") {
+                    // Human already transcribed this recording — mark as SKIPPED, not FAILED
+                    await prisma.recording.update({
+                      where: { id: recordingId },
+                      data: {
+                        transcript: result.transcript,
+                        transcriptConfidence: result.confidence,
+                        autoTranscriptionStatus: "SKIPPED",
+                        autoTranscribedAt: new Date(),
+                        transcriptMetadata: { reason: "Human transcription already exists" },
+                      },
+                    }).catch(() => {});
+                  } else {
+                    throw createErr; // re-throw non-P2002 errors to the outer catch
+                  }
+                }
               }
             } else {
               await prisma.recording.update({
