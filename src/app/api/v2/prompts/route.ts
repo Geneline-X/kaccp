@@ -27,9 +27,9 @@ export async function GET(req: NextRequest) {
     };
 
     // Handle language filtering
-    if (languageId) {
-      if (languageId === "ALL") {
-        // Show only universal prompts
+    if (languageId && languageId !== "ALL") {
+      if (languageId === "UNIVERSAL") {
+        // Show only universal prompts (no language assigned)
         where.languageId = null;
       } else {
         // Look up language settings
@@ -50,6 +50,7 @@ export async function GET(req: NextRequest) {
         }
       }
     }
+    // languageId === "ALL" or absent → no languageId filter (show everything)
 
     if (search) {
       where.englishText = { contains: search, mode: "insensitive" };
