@@ -477,47 +477,57 @@ export default function AdminRecordingsPage() {
 function AudioPlayer({ recordingId, onPlayed }: { recordingId: string; onPlayed?: () => void }) {
     const t = useTranslations();
     const [audioUrl, setAudioUrl] = useState<string | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
 
-    useEffect(() => {
-        const fetchAudioUrl = async () => {
-            try {
-                const token = getToken();
-                const res = await fetch(`/api/v2/audio/${recordingId}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-
-                if (!res.ok) throw new Error("Failed to fetch audio");
-
-                const data = await res.json();
-                setAudioUrl(data.signedUrl || data.url);
-            } catch (err) {
-                console.error("Error fetching audio:", err);
-                setError(true);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchAudioUrl();
-    }, [recordingId]);
+    const handlePlay = async () => {
+        if (audioUrl || loading) return;
+        setLoading(true);
+        setError(false);
+        try {
+            const token = getToken();
+            const res = await fetch(`/api/v2/audio/${recordingId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!res.ok) throw new Error("Failed to fetch audio");
+            const data = await res.json();
+            setAudioUrl(data.signedUrl || data.url);
+        } catch (err) {
+            console.error("Error fetching audio:", err);
+            setError(true);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     if (error) {
         return <div className="text-xs text-red-500">{t('admin.recordingsPage.failedToLoadAudio')}</div>;
     }
 
-    if (loading) {
-        return <div className="text-xs text-gray-500">{t('admin.loading')}</div>;
+    if (audioUrl) {
+        return (
+            <audio
+                controls
+                src={audioUrl}
+                className="h-8 w-40"
+                onEnded={onPlayed}
+                autoPlay
+            />
+        );
     }
 
     return (
-        <audio
-            controls
-            src={audioUrl || undefined}
-            className="h-8 w-40"
-            onEnded={onPlayed}
-        />
+        <button
+            onClick={handlePlay}
+            disabled={loading}
+            className="h-8 w-40 flex items-center justify-center gap-1 text-xs bg-gray-100 hover:bg-gray-200 rounded disabled:opacity-50"
+        >
+            {loading ? (
+                <span className="text-gray-500">{t('admin.loading')}</span>
+            ) : (
+                <>▶ {t('admin.recordingsPage.audio')}</>
+            )}
+        </button>
     );
 }
 

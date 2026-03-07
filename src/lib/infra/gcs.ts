@@ -31,6 +31,22 @@ function getStorage(): Storage {
   return _storage;
 }
 
+export async function getWriteSignedUrl(gsUri: string, contentType: string, expiresInSeconds = 15 * 60): Promise<string> {
+  if (!gsUri || !gsUri.startsWith('gs://')) throw new Error('invalid gs uri');
+  const { bucket: bucketName, object: objectName } = parseGsUri(gsUri);
+  const storage = getStorage();
+  const [url] = await storage
+    .bucket(bucketName)
+    .file(objectName)
+    .getSignedUrl({
+      version: 'v4',
+      action: 'write',
+      expires: Date.now() + expiresInSeconds * 1000,
+      contentType,
+    });
+  return url;
+}
+
 export async function getSignedUrl(gsUri: string, expiresInSeconds = 3600): Promise<string> {
   if (!gsUri || !gsUri.startsWith('gs://')) throw new Error('invalid gs uri');
   const withoutScheme = gsUri.slice('gs://'.length);
