@@ -14,13 +14,29 @@ export async function POST(
 
         const { recordingId } = await params;
 
-        // Update recording status to APPROVED
+        const recording = await prisma.recording.findUnique({
+            where: { id: recordingId },
+            select: { status: true, languageId: true, durationSec: true },
+        });
+
+        if (!recording) {
+            return NextResponse.json({ error: "Recording not found" }, { status: 404 });
+        }
+
+        const alreadyApproved = recording.status === "APPROVED";
+
         await prisma.recording.update({
             where: { id: recordingId },
-            data: {
-                status: "APPROVED",
-            },
+            data: { status: "APPROVED" },
         });
+
+        // Only increment approvedMinutes the first time a recording is approved
+        if (!alreadyApproved) {
+            await prisma.language.update({
+                where: { id: recording.languageId },
+                data: { approvedMinutes: { increment: recording.durationSec / 60 } },
+            });
+        }
 
         return NextResponse.json({ success: true });
     } catch (error) {

@@ -50,6 +50,7 @@ export default function AdminRecordingsPage() {
     const [limit, setLimit] = useState(50);
     const [playedRecordings, setPlayedRecordings] = useState<Set<string>>(new Set());
     const [transcribingRecordings, setTranscribingRecordings] = useState<Set<string>>(new Set());
+    const [refreshKey, setRefreshKey] = useState(0);
 
     const token = typeof window !== "undefined" ? getToken() : null;
 
@@ -93,7 +94,7 @@ export default function AdminRecordingsPage() {
                 setLoading(false);
             })
             .catch(() => setLoading(false));
-    }, [pagination.page, selectedLanguage, selectedStatus, searchQuery, limit, token]);
+    }, [pagination.page, selectedLanguage, selectedStatus, searchQuery, limit, token, refreshKey]);
 
     const handleAudioPlayed = (recordingId: string) => {
         setPlayedRecordings(prev => new Set(prev).add(recordingId));
@@ -116,7 +117,7 @@ export default function AdminRecordingsPage() {
             if (res.ok) {
                 alert("Recording flagged successfully");
                 // Refresh recordings
-                setPagination(p => ({ ...p, page: p.page }));
+                setRefreshKey(k => k + 1);
             } else {
                 alert("Failed to flag recording");
             }
@@ -136,7 +137,7 @@ export default function AdminRecordingsPage() {
 
             if (res.ok) {
                 alert("Recording approved");
-                setPagination(p => ({ ...p, page: p.page }));
+                setRefreshKey(k => k + 1);
             } else {
                 alert("Failed to approve recording");
             }
@@ -156,7 +157,7 @@ export default function AdminRecordingsPage() {
 
             if (res.ok) {
                 alert("Recording rejected");
-                setPagination(p => ({ ...p, page: p.page }));
+                setRefreshKey(k => k + 1);
             } else {
                 alert("Failed to reject recording");
             }
@@ -182,7 +183,7 @@ export default function AdminRecordingsPage() {
                     : '';
                 alert(`Transcription successful!\nKrio: ${data.transcript}${confidenceText}`);
                 // Refresh to show new transcript
-                setPagination(p => ({ ...p, page: p.page }));
+                setRefreshKey(k => k + 1);
             } else {
                 alert(`Transcription failed: ${data.message || data.error}`);
             }
