@@ -28,6 +28,7 @@ interface Language {
 }
 
 const RECORDING_STATUSES = [
+    "PENDING_REVIEW",
     "PENDING_TRANSCRIPTION",
     "TRANSCRIBED",
     "APPROVED",
@@ -446,6 +447,7 @@ function AudioPlayer({ recordingId, onPlayed }: { recordingId: string; onPlayed?
 
 function StatusBadge({ status }: { status: string }) {
     const colors: any = {
+        PENDING_REVIEW: "bg-amber-100 text-amber-700",
         PENDING_TRANSCRIPTION: "bg-gray-100 text-gray-800",
         TRANSCRIBED: "bg-blue-100 text-blue-800",
         APPROVED: "bg-green-100 text-green-800",
