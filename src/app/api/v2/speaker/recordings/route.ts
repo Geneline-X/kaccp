@@ -150,6 +150,7 @@ export async function POST(req: NextRequest) {
       where: {
         promptId,
         speakerId: user.id,
+        status: { not: "REJECTED" },
       },
     });
 

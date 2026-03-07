@@ -60,11 +60,12 @@ export async function GET(req: NextRequest) {
           }
         ),
         ...(category && { category: category as any }),
-        // Exclude prompts this speaker has already recorded (any status)
+        // Exclude prompts this speaker has already recorded with a non-rejected status
         NOT: {
           recordings: {
             some: {
               speakerId: user.id,
+              status: { not: "REJECTED" },
             },
           },
         },
