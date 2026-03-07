@@ -16,6 +16,7 @@ interface Recording {
   id: string;
   durationSec: number;
   status: string;
+  playbackUrl?: string; // pre-signed URL returned by the recordings list endpoint
   prompt: {
     englishText: string;
     category: string;
@@ -391,7 +392,13 @@ function PaginationBar({
 
 // ─── Recordings Panel ────────────────────────────────────────────────────────
 
-function RecordingsPanel({ languages }: { languages: Language[] }) {
+function RecordingsPanel({
+  languages,
+  onCountChange,
+}: {
+  languages: Language[];
+  onCountChange: (delta: number) => void;
+}) {
   const [recordings, setRecordings] = useState<Recording[]>([]);
   const [loading, setLoading] = useState(false);
   const [languageFilter, setLanguageFilter] = useState("");
@@ -428,19 +435,29 @@ function RecordingsPanel({ languages }: { languages: Language[] }) {
     fetchRecordings();
   }, [fetchRecordings]);
 
-  const fetchAudioUrl = useCallback(async (id: string) => {
-    setAudioUrls((prev) => ({ ...prev, [id]: "" }));
-    try {
-      const data = await apiFetch<{ url?: string; signedUrl?: string }>(`/api/v2/audio/${id}`);
-      setAudioUrls((prev) => ({ ...prev, [id]: data.url ?? data.signedUrl ?? "" }));
-    } catch {
-      setAudioUrls((prev) => {
-        const next = { ...prev };
-        delete next[id];
-        return next;
-      });
-    }
-  }, []);
+  // Use playbackUrl pre-signed by the recordings list endpoint — no extra API call needed
+  const fetchAudioUrl = useCallback(
+    async (id: string) => {
+      const rec = recordings.find((r) => r.id === id);
+      if (rec?.playbackUrl) {
+        setAudioUrls((prev) => ({ ...prev, [id]: rec.playbackUrl! }));
+        return;
+      }
+      // Fallback: fetch signed URL from API (e.g. if playbackUrl expired or missing)
+      setAudioUrls((prev) => ({ ...prev, [id]: "" }));
+      try {
+        const data = await apiFetch<{ url?: string; signedUrl?: string }>(`/api/v2/audio/${id}`);
+        setAudioUrls((prev) => ({ ...prev, [id]: data.url ?? data.signedUrl ?? "" }));
+      } catch {
+        setAudioUrls((prev) => {
+          const next = { ...prev };
+          delete next[id];
+          return next;
+        });
+      }
+    },
+    [recordings]
+  );
 
   const toggleAudio = useCallback((id: string) => {
     setAudioUrls((prev) => {
@@ -456,10 +473,11 @@ function RecordingsPanel({ languages }: { languages: Language[] }) {
       await apiFetch(`/api/v2/reviewer/recordings/${id}/approve`, { method: "POST" });
       setRecordings((prev) => prev.filter((r) => r.id !== id));
       setPagination((prev) => ({ ...prev, total: Math.max(0, prev.total - 1) }));
+      onCountChange(-1);
     } finally {
       setActionPending(null);
     }
-  }, []);
+  }, [onCountChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleRejectConfirm = useCallback(async () => {
     if (!rejectTarget) return;
@@ -468,11 +486,12 @@ function RecordingsPanel({ languages }: { languages: Language[] }) {
       await apiFetch(`/api/v2/reviewer/recordings/${rejectTarget}/reject`, { method: "POST" });
       setRecordings((prev) => prev.filter((r) => r.id !== rejectTarget));
       setPagination((prev) => ({ ...prev, total: Math.max(0, prev.total - 1) }));
+      onCountChange(-1);
       setRejectTarget(null);
     } finally {
       setConfirming(false);
     }
-  }, [rejectTarget]);
+  }, [rejectTarget, onCountChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div>
@@ -546,7 +565,13 @@ function RecordingsPanel({ languages }: { languages: Language[] }) {
 
 // ─── Transcriptions Panel ────────────────────────────────────────────────────
 
-function TranscriptionsPanel({ languages }: { languages: Language[] }) {
+function TranscriptionsPanel({
+  languages,
+  onCountChange,
+}: {
+  languages: Language[];
+  onCountChange: (delta: number) => void;
+}) {
   const [transcriptions, setTranscriptions] = useState<Transcription[]>([]);
   const [loading, setLoading] = useState(false);
   const [languageFilter, setLanguageFilter] = useState("");
@@ -615,12 +640,13 @@ function TranscriptionsPanel({ languages }: { languages: Language[] }) {
         });
         setTranscriptions((prev) => prev.filter((t) => t.id !== transcriptionId));
         setPagination((prev) => ({ ...prev, total: Math.max(0, prev.total - 1) }));
+        onCountChange(-1);
       } finally {
         setActionPending(null);
         if (decision === "REJECTED") setRejectTarget(null);
       }
     },
-    []
+    [onCountChange] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   const handleRejectConfirm = useCallback(async () => {
@@ -806,9 +832,15 @@ export default function ReviewerV2Client({ locale }: { locale: string }) {
         </div>
 
         {activeTab === "recordings" ? (
-          <RecordingsPanel languages={languages} />
+          <RecordingsPanel
+            languages={languages}
+            onCountChange={(delta) => setRecordingCount((n) => Math.max(0, n + delta))}
+          />
         ) : (
-          <TranscriptionsPanel languages={languages} />
+          <TranscriptionsPanel
+            languages={languages}
+            onCountChange={(delta) => setTranscriptionCount((n) => Math.max(0, n + delta))}
+          />
         )}
       </main>
     </div>
