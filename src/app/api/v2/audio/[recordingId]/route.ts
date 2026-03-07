@@ -1,13 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/infra/db/prisma";
 import { getAuthUser } from "@/lib/infra/auth/auth";
-import { Storage } from "@google-cloud/storage";
-
-const storage = new Storage({
-  credentials: JSON.parse(process.env.GCS_SERVICE_ACCOUNT_JSON || "{}"),
-});
-
-const bucket = storage.bucket(process.env.GCS_BUCKET || "");
+import { getSignedUrl } from "@/lib/infra/gcs";
 
 // GET /api/v2/audio/[recordingId] - Get signed URL for audio playback
 export async function GET(
@@ -59,24 +53,7 @@ export async function GET(
 
     // Handle GCS files
     if (audioUrl.startsWith("gs://")) {
-      // Check if GCS is configured
-      if (!process.env.GCS_BUCKET || !process.env.GCS_SERVICE_ACCOUNT_JSON) {
-        return NextResponse.json(
-          { error: "GCS not configured on server" },
-          { status: 500 }
-        );
-      }
-
-      // Extract file path from gs:// URL
-      const filePath = audioUrl.replace(`gs://${process.env.GCS_BUCKET}/`, "");
-
-      // Generate signed URL for reading (valid for 1 hour)
-      const [signedUrl] = await bucket.file(filePath).getSignedUrl({
-        version: "v4",
-        action: "read",
-        expires: Date.now() + 60 * 60 * 1000, // 1 hour
-      });
-
+      const signedUrl = await getSignedUrl(audioUrl, 3600);
       return NextResponse.json({
         signedUrl,
         url: signedUrl,

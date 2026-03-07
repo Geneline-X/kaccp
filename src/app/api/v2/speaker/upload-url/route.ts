@@ -1,25 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/infra/db/prisma";
 import { getAuthUser } from "@/lib/infra/auth/auth";
-
-// Lazy initialize GCS to avoid errors when not configured
-let storage: any = null;
-let bucket: any = null;
-
-function initGCS() {
-  if (!storage && process.env.GCS_SERVICE_ACCOUNT_JSON && process.env.GCS_BUCKET) {
-    try {
-      const { Storage } = require("@google-cloud/storage");
-      storage = new Storage({
-        credentials: JSON.parse(process.env.GCS_SERVICE_ACCOUNT_JSON),
-      });
-      bucket = storage.bucket(process.env.GCS_BUCKET);
-    } catch (e) {
-      console.error("Failed to initialize GCS:", e);
-    }
-  }
-  return { storage, bucket };
-}
+import { getWriteSignedUrl } from "@/lib/infra/gcs";
 
 // POST /api/v2/speaker/upload-url - Get a signed URL for uploading recording
 export async function POST(req: NextRequest) {
@@ -57,9 +39,6 @@ export async function POST(req: NextRequest) {
         { status: 404 }
       );
     }
-
-    // Initialize GCS
-    const { bucket: gcsBucket } = initGCS();
 
     // Get speaker number for labeling (e.g., speaker_0001)
     // Count how many speakers exist before this user to generate sequential ID
@@ -114,31 +93,15 @@ export async function POST(req: NextRequest) {
     const actualExtension = contentType === "audio/wav" ? "wav" : contentType === "audio/webm" ? "webm" : "mp4";
     const actualFilePath = `${countryCode}/${languageCode}/wavs/${speakerLabel}/${languageCode}_${speakerLabel}_${recordingNumber}.${actualExtension}`;
 
-    // If GCS is not configured, use local storage fallback
-    if (!gcsBucket) {
-      console.warn("GCS not configured, using local storage mode");
-      const audioUrl = `/uploads/${actualFilePath}`;
-      return NextResponse.json({
-        uploadUrl: `/api/v2/speaker/upload-local?path=${encodeURIComponent(actualFilePath)}`,
-        audioUrl,
-        filePath: actualFilePath,
-        speakerLabel,
-        fileName: `${languageCode}_${speakerLabel}_${recordingNumber}.${actualExtension}`,
-        expiresIn: 15 * 60,
-        mode: "local",
-      });
+    if (!process.env.GCS_BUCKET) {
+      return NextResponse.json({ error: "GCS_BUCKET is not configured" }, { status: 500 });
     }
 
-    // Generate signed URL for upload (valid for 15 minutes)
-    const [signedUrl] = await gcsBucket.file(actualFilePath).getSignedUrl({
-      version: "v4",
-      action: "write",
-      expires: Date.now() + 15 * 60 * 1000, // 15 minutes
-      contentType,
-    });
-
-    // Full GCS URL for the file
+    // Full GCS URI for the file
     const audioUrl = `gs://${process.env.GCS_BUCKET}/${actualFilePath}`;
+
+    // Generate a write signed URL via the shared GCS client (handles all credential types)
+    const signedUrl = await getWriteSignedUrl(audioUrl, contentType);
 
     return NextResponse.json({
       uploadUrl: signedUrl,
