@@ -161,7 +161,7 @@ model Recording {
   fileSize    Int?
   sampleRate  Int? // Target: 16000 Hz
 
-  status RecordingStatus @default(PENDING_TRANSCRIPTION)
+  status RecordingStatus @default(PENDING_REVIEW)
 
   // Quality flags (set by transcriber)
   isFlagged  Boolean @default(false)
@@ -297,11 +297,12 @@ enum UserRole {
 }
 
 enum RecordingStatus {
-  PENDING_TRANSCRIPTION // Waiting for transcriber to claim
-  TRANSCRIBED // Has transcription, pending review
-  APPROVED // Ready for TTS export
-  REJECTED // Quality issues, won't be used
-  FLAGGED // Transcriber flagged, needs admin review
+  PENDING_REVIEW        // Newly submitted, awaiting reviewer audio check
+  PENDING_TRANSCRIPTION // Audio approved, waiting for transcriber to claim
+  TRANSCRIBED           // Has transcription, pending text review
+  APPROVED              // Audio + transcription approved, export-ready
+  REJECTED              // Audio rejected or permanently unusable
+  FLAGGED               // Transcriber flagged audio issue
 }
 
 enum TranscriptionStatus {
