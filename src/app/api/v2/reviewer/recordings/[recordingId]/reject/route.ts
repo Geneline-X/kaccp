@@ -15,7 +15,6 @@ export async function POST(
 
     const { recordingId } = await params;
     const body = await req.json().catch(() => ({}));
-    const { reason } = body;
 
     const recording = await prisma.recording.findUnique({
       where: { id: recordingId },
@@ -45,7 +44,6 @@ export async function POST(
       data: {
         status: "REJECTED",
         isFlagged: false,
-        flagReason: reason || null,
       },
     });
 

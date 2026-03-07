@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/infra/db/prisma";
 import { getAuthUser } from "@/lib/infra/auth/auth";
 import { getSignedUrl } from "@/lib/infra/gcs";
@@ -17,7 +18,7 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "20");
     const skip = (page - 1) * limit;
 
-    const where: any = { status: "PENDING_REVIEW" };
+    const where: Prisma.RecordingWhereInput = { status: "PENDING_REVIEW" };
     if (languageId) where.languageId = languageId;
 
     const [recordings, total] = await Promise.all([
