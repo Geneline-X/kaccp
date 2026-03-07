@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/infra/db/prisma";
 import { getAuthUser } from "@/lib/infra/auth/auth";
-import { kayXClient } from "@/lib/infra/ai/kay-client";
-import { getSignedUrl } from "@/lib/infra/gcs";
 
 // GET /api/v2/speaker/recordings - Get speaker's recording history
 export async function GET(req: NextRequest) {
@@ -175,6 +173,7 @@ export async function POST(req: NextRequest) {
         sampleRate,
         deviceInfo,
         consentGiven: true,
+        status: "PENDING_REVIEW",
       },
       include: {
         prompt: true,
@@ -205,73 +204,6 @@ export async function POST(req: NextRequest) {
         totalRecordingsSec: { increment: durationSec },
       },
     });
-
-    // Automatic Kay X transcription (enabled by default for Krio)
-    const shouldAutoTranscribe = kayXClient.isEnabled();
-
-    if (shouldAutoTranscribe) {
-      // Resolve language code
-      let langCode = prompt.language?.code;
-
-      const isKrio = langCode?.toLowerCase() === "kri";
-
-      if (isKrio) {
-        // Trigger auto-transcription asynchronously (don't block response)
-        (async () => {
-          try {
-            let targetUrl = audioUrl;
-
-            // If audio is in GCS, generate a signed URL for Kay X to access
-            if (audioUrl.startsWith("gs://")) {
-              targetUrl = await getSignedUrl(audioUrl);
-            }
-
-            const result = await kayXClient.transcribeUrl(targetUrl);
-
-            if (result.success) {
-              await prisma.recording.update({
-                where: { id: recording.id },
-                data: {
-                  transcript: result.transcript,
-                  transcriptConfidence: result.confidence,
-                  autoTranscriptionStatus: "COMPLETED",
-                  autoTranscribedAt: new Date(),
-                  transcriptMetadata: result.metadata,
-                },
-              });
-            } else {
-              await prisma.recording.update({
-                where: { id: recording.id },
-                data: {
-                  autoTranscriptionStatus: "FAILED",
-                  autoTranscribedAt: new Date(),
-                  transcriptMetadata: {
-                    error: result.error,
-                    timestamp: new Date().toISOString(),
-                    details: result as any, // Cast to any for JSON compatibility
-                  },
-                },
-              });
-            }
-          } catch (error) {
-            console.error("Error during automatic transcription:", error);
-            // Optionally mark as FAILED in DB if the error happened before kayXClient returned
-            try {
-              await prisma.recording.update({
-                where: { id: recording.id },
-                data: {
-                  autoTranscriptionStatus: "FAILED",
-                  transcriptMetadata: {
-                    error: String(error),
-                    timestamp: new Date().toISOString(),
-                  },
-                },
-              });
-            } catch (ignore) { /* ignore update error */ }
-          }
-        })();
-      }
-    }
 
     return NextResponse.json({ recording }, { status: 201 });
   } catch (error) {
