@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/infra/db/prisma";
 import { getAuthUser } from "@/lib/infra/auth/auth";
+import { getSignedUrl } from "@/lib/infra/gcs";
 
 // GET /api/v2/admin/export - Export approved data in LJSpeech format
 export async function GET(req: NextRequest) {
@@ -13,6 +14,10 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const languageId = searchParams.get("languageId");
     const format = searchParams.get("format") || "json"; // json or csv
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "500");
+    const skip = (page - 1) * limit;
+    const signUrls = searchParams.get("signUrls") !== "false";
 
     if (!languageId) {
       return NextResponse.json(
@@ -36,34 +41,43 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Get all approved recordings with transcriptions
-    const recordings = await prisma.recording.findMany({
-      where: {
-        languageId,
-        status: "APPROVED",
-        transcription: {
+    // Get approved recordings with transcriptions (paginated)
+    const [recordings, total] = await Promise.all([
+      prisma.recording.findMany({
+        where: {
+          languageId,
           status: "APPROVED",
+          transcription: { status: "APPROVED" },
         },
-      },
-      include: {
-        transcription: true,
-        speaker: {
-          select: {
-            id: true,
-            displayName: true,
+        include: {
+          transcription: true,
+          speaker: {
+            select: {
+              id: true,
+              displayName: true,
+            },
+          },
+          prompt: {
+            select: {
+              englishText: true,
+              category: true,
+            },
           },
         },
-        prompt: {
-          select: {
-            englishText: true,
-            category: true,
-          },
+        orderBy: { createdAt: "asc" },
+        skip,
+        take: limit,
+      }),
+      prisma.recording.count({
+        where: {
+          languageId,
+          status: "APPROVED",
+          transcription: { status: "APPROVED" },
         },
-      },
-      orderBy: { createdAt: "asc" },
-    });
+      }),
+    ]);
 
-    if (recordings.length === 0) {
+    if (recordings.length === 0 && page === 1) {
       return NextResponse.json(
         { error: "No approved recordings found for this language" },
         { status: 404 }
@@ -71,26 +85,33 @@ export async function GET(req: NextRequest) {
     }
 
     // Format data for LJSpeech-style export
-    const exportData = recordings.map((rec, index) => {
-      // Generate LJSpeech-style ID: LANG_SPEAKER_INDEX
-      const speakerShort = rec.speaker.id.slice(-6);
-      const ljId = `${language.code.toUpperCase()}_${speakerShort}_${String(index + 1).padStart(5, "0")}`;
+    const exportData = await Promise.all(
+      recordings.map(async (rec, index) => {
+        // Generate LJSpeech-style ID: LANG_SPEAKER_INDEX
+        const speakerShort = rec.speaker.id.slice(-6);
+        const ljId = `${language.code.toUpperCase()}_${speakerShort}_${String(skip + index + 1).padStart(5, "0")}`;
 
-      return {
-        id: ljId,
-        audio_file: rec.audioUrl,
-        transcription: rec.transcription?.text || "",
-        english_prompt: rec.prompt.englishText,
-        category: rec.prompt.category,
-        duration_sec: rec.durationSec,
-        speaker_id: rec.speakerId,
-        recording_id: rec.id,
-      };
-    });
+        let audioFile = rec.audioUrl;
+        if (signUrls && rec.audioUrl.startsWith("gs://")) {
+          try {
+            audioFile = await getSignedUrl(rec.audioUrl, 7 * 24 * 3600); // 7-day signed URL
+          } catch {
+            // fallback to gs:// if signing fails
+          }
+        }
 
-    // Calculate stats
-    const totalDuration = recordings.reduce((sum, r) => sum + r.durationSec, 0);
-    const uniqueSpeakers = new Set(recordings.map((r) => r.speakerId)).size;
+        return {
+          id: ljId,
+          audio_file: audioFile,
+          transcription: rec.transcription?.text || "",
+          english_prompt: rec.prompt.englishText,
+          category: rec.prompt.category,
+          duration_sec: rec.durationSec,
+          speaker_id: rec.speakerId,
+          recording_id: rec.id,
+        };
+      })
+    );
 
     if (format === "csv") {
       // Generate LJSpeech-style metadata.csv with full audio paths
@@ -114,17 +135,14 @@ export async function GET(req: NextRequest) {
 
     // Return JSON with full data
     return NextResponse.json({
-      language: {
-        code: language.code,
-        name: language.name,
-        country: language.country.name,
-      },
+      language: { code: language.code, name: language.name, country: language.country.name },
       stats: {
-        totalRecordings: recordings.length,
-        totalDurationSec: totalDuration,
-        totalDurationHours: Math.round((totalDuration / 3600) * 100) / 100,
-        uniqueSpeakers,
+        totalRecordings: total,
+        totalDurationSec: recordings.reduce((sum, r) => sum + r.durationSec, 0),
+        totalDurationHours: Math.round((recordings.reduce((sum, r) => sum + r.durationSec, 0) / 3600) * 100) / 100,
+        uniqueSpeakers: new Set(recordings.map((r) => r.speakerId)).size,
       },
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
       data: exportData,
       exportedAt: new Date().toISOString(),
     });
