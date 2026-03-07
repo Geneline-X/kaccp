@@ -2,13 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/infra/db/prisma";
 import { getAuthUser } from "@/lib/infra/auth/auth";
 import { kayXClient } from "@/lib/infra/ai/kay-client";
-import { Storage } from "@google-cloud/storage";
-
-const storage = new Storage({
-  credentials: JSON.parse(process.env.GCS_SERVICE_ACCOUNT_JSON || "{}"),
-});
-
-const bucket = storage.bucket(process.env.GCS_BUCKET || "");
+import { getSignedUrl } from "@/lib/infra/gcs";
 
 /**
  * POST /api/v2/admin/recordings/:recordingId/transcribe
@@ -67,35 +61,7 @@ export async function POST(
 
     // If GCS URL, generate signed URL
     if (recording.audioUrl.startsWith("gs://")) {
-      if (!process.env.GCS_BUCKET || !process.env.GCS_SERVICE_ACCOUNT_JSON) {
-        return NextResponse.json(
-          { error: "GCS not configured on server" },
-          { status: 500 }
-        );
-      }
-
-      try {
-        // Extract file path from gs:// URL
-        const filePath = recording.audioUrl.replace(
-          `gs://${process.env.GCS_BUCKET}/`,
-          ""
-        );
-
-        // Generate signed URL for reading (valid for 2 hours)
-        const [signedUrl] = await bucket.file(filePath).getSignedUrl({
-          version: "v4",
-          action: "read",
-          expires: Date.now() + 2 * 60 * 60 * 1000, // 2 hours
-        });
-
-        audioUrlForKayX = signedUrl;
-      } catch (error) {
-        console.error("Error generating signed URL:", error);
-        return NextResponse.json(
-          { error: "Failed to generate signed URL for audio" },
-          { status: 500 }
-        );
-      }
+      audioUrlForKayX = await getSignedUrl(recording.audioUrl, 2 * 3600);
     }
 
     // Trigger Kay X transcription
