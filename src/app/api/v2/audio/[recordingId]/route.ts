@@ -28,9 +28,11 @@ export async function GET(
       );
     }
 
-    // Check access - speaker can access their own, transcriber/admin can access any
+    // Check access - speaker can access their own, transcriber/admin/reviewer can access any
     const roles = ((user as any).roles || []) as string[];
-    const hasBroadAccess = roles.includes("ADMIN") || roles.includes("TRANSCRIBER") || user.role === "ADMIN" || user.role === "TRANSCRIBER";
+    const hasBroadAccess =
+      roles.includes("ADMIN") || roles.includes("TRANSCRIBER") || roles.includes("REVIEWER") ||
+      user.role === "ADMIN" || user.role === "TRANSCRIBER" || user.role === "REVIEWER";
 
     if (!hasBroadAccess && recording.speakerId !== user.id) {
       return NextResponse.json(
