@@ -43,6 +43,13 @@
         "skipPrompt": "Skip this prompt ->",
         "failedToUpload": "Failed to upload recording",
         "failedToSubmitRecording": "Failed to submit recording",
-        "maximumReached": "Maximum reached"
+        "maximumReached": "Maximum reached",
+        "weeklyProgress": "Weekly Progress",
+        "endsIn": "Ends in",
+        "days": "days",
+        "hours": "hrs",
+        "milestoneReached": "Milestone reached! You earned Le1,000 this week!",
+        "milestoneNudge": "Record {hours} more hours to earn Le{milestone} instead of Le{current}",
+        "milestoneTarget": "Record {hours} hours this week to earn Le1,000"
     }
 }

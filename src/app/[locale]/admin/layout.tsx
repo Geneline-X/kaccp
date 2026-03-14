@@ -33,7 +33,7 @@ export default function AdminLayout({ children }: PropsWithChildren) {
     { href: '/admin/v2/recordings', label: t('common.recordings') },
     { href: '/admin/v2/export', label: t('admin.export') },
     { href: '/admin/users', label: t('admin.users') },
-    { href: '/admin/payments', label: t('admin.payments') },
+    { href: '/admin/v2/payouts', label: t('admin.payouts') },
   ]
 
   function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
