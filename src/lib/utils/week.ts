@@ -1,11 +1,11 @@
 /**
- * Week boundary utilities for Saturday–Friday payout weeks (UTC).
+ * Week boundary utilities for Monday–Sunday payout weeks (UTC).
  */
 
 export const MILESTONE_MINUTES = 240; // 4 hours
 export const MILESTONE_PAYOUT_LE = 1000;
 
-/** Returns the Saturday–Friday UTC week range containing the given date (or now). */
+/** Returns the Monday–Sunday UTC week range containing the given date (or now). */
 export function getWeekRange(dateOrWeekStart?: string): { start: Date; end: Date } {
   let ref: Date;
   if (dateOrWeekStart) {
@@ -13,10 +13,11 @@ export function getWeekRange(dateOrWeekStart?: string): { start: Date; end: Date
   } else {
     ref = new Date();
   }
-  const day = ref.getUTCDay(); // 0=Sun, 6=Sat
-  const diffToSaturday = day >= 6 ? day - 6 : day + 1;
+  const day = ref.getUTCDay(); // 0=Sun, 1=Mon, ..., 6=Sat
+  // Days since Monday: Sunday(0) → 6, Monday(1) → 0, Tuesday(2) → 1, etc.
+  const diffToMonday = day === 0 ? 6 : day - 1;
   const start = new Date(ref);
-  start.setUTCDate(ref.getUTCDate() - diffToSaturday);
+  start.setUTCDate(ref.getUTCDate() - diffToMonday);
   start.setUTCHours(0, 0, 0, 0);
   const end = new Date(start);
   end.setUTCDate(start.getUTCDate() + 6);
@@ -24,7 +25,7 @@ export function getWeekRange(dateOrWeekStart?: string): { start: Date; end: Date
   return { start, end };
 }
 
-/** Format a week range as "Sat Mar 14 – Fri Mar 20, 2026" */
+/** Format a week range as "Mon Mar 9 – Sun Mar 15, 2026" */
 export function formatWeekLabel(start: Date, end: Date): string {
   const fmt = (d: Date) =>
     d.toLocaleDateString("en-US", {
