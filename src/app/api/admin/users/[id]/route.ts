@@ -35,7 +35,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       prisma.recording.aggregate({
         _sum: { durationSec: true },
         _count: true,
-        where: { speakerId: id, status: 'APPROVED' },
+        where: { speakerId: id, status: { in: ['PENDING_TRANSCRIPTION', 'TRANSCRIBED', 'APPROVED'] } },
       }),
       prisma.recording.groupBy({
         by: ['status'],

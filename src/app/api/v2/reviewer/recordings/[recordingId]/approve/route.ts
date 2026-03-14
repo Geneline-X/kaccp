@@ -19,7 +19,14 @@ export async function POST(
 
     const recording = await prisma.recording.findUnique({
       where: { id: recordingId },
-      select: { status: true, audioUrl: true, language: { select: { code: true } } },
+      select: {
+        status: true,
+        audioUrl: true,
+        speakerId: true,
+        durationSec: true,
+        languageId: true,
+        language: { select: { code: true, speakerRatePerMinute: true } },
+      },
     });
 
     if (!recording) {
@@ -37,6 +44,25 @@ export async function POST(
       where: { id: recordingId },
       data: { status: "PENDING_TRANSCRIPTION" },
     });
+
+    // Pay the speaker for approved audio
+    const speakerRatePerMin = recording.language?.speakerRatePerMinute ?? 2.5;
+    const durationMin = Math.max(0.1, recording.durationSec / 60);
+    const speakerAmountCents = Math.round(durationMin * speakerRatePerMin * 100);
+
+    if (speakerAmountCents > 0) {
+      await prisma.walletTransaction.create({
+        data: {
+          userId: recording.speakerId,
+          deltaCents: speakerAmountCents,
+          description: `Recording approved: ${recordingId}`,
+        },
+      });
+      await prisma.user.update({
+        where: { id: recording.speakerId },
+        data: { totalEarningsCents: { increment: speakerAmountCents } },
+      });
+    }
 
     // Fire Kay X auto-transcription asynchronously for approved Krio recordings
     if (kayXClient.isEnabled()) {
