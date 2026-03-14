@@ -51,6 +51,14 @@
         "hours": "hrs",
         "milestoneReached": "Objectif atteint ! Vous avez gagné Le1 000 cette semaine !",
         "milestoneNudge": "Enregistrez {hours} heures de plus pour gagner Le{milestone} au lieu de Le{current}",
-        "milestoneTarget": "Enregistrez {hours} heures cette semaine pour gagner Le1 000"
+        "milestoneTarget": "Enregistrez {hours} heures cette semaine pour gagner Le1 000",
+        "recentRecordings": "Enregistrements Récents",
+        "noRecordingsYet": "Pas encore d'enregistrements. Sélectionnez une langue ci-dessus pour commencer !",
+        "untitledPrompt": "Enregistrement",
+        "statusPendingReview": "En Attente de Révision",
+        "statusApproved": "Approuvé",
+        "statusRejected": "Rejeté",
+        "startRecording": "Commencer l'Enregistrement",
+        "noLanguagesAssigned": "Aucune langue assignée à votre compte pour le moment."
     }
 }

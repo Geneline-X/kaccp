@@ -50,6 +50,14 @@
         "hours": "hrs",
         "milestoneReached": "Milestone reached! You earned Le1,000 this week!",
         "milestoneNudge": "Record {hours} more hours to earn Le{milestone} instead of Le{current}",
-        "milestoneTarget": "Record {hours} hours this week to earn Le1,000"
+        "milestoneTarget": "Record {hours} hours this week to earn Le1,000",
+        "recentRecordings": "Recent Recordings",
+        "noRecordingsYet": "No recordings yet. Select a language above to start!",
+        "untitledPrompt": "Recording",
+        "statusPendingReview": "Pending Review",
+        "statusApproved": "Approved",
+        "statusRejected": "Rejected",
+        "startRecording": "Start Recording",
+        "noLanguagesAssigned": "No languages assigned to your account yet."
     }
 }

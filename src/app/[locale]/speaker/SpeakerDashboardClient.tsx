@@ -26,6 +26,15 @@ interface WeeklyProgress {
   estimatedPayoutLe: number;
 }
 
+interface Recording {
+  id: string;
+  status: string;
+  durationSec: number;
+  createdAt: string;
+  prompt: { englishText: string; category?: string } | null;
+  language: { code: string; name: string } | null;
+}
+
 interface Stats {
   totalRecordings: number;
   totalDurationSec: number;
@@ -41,6 +50,7 @@ export default function SpeakerDashboardClient({ locale }: { locale: string }) {
   const [user, setUser] = useState<any>(null);
   const [languages, setLanguages] = useState<Language[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
+  const [recentRecordings, setRecentRecordings] = useState<Recording[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -73,8 +83,8 @@ export default function SpeakerDashboardClient({ locale }: { locale: string }) {
         setLanguages(data.languages || []);
       });
 
-    // Fetch speaker stats
-    fetch("/api/v2/speaker/recordings?limit=1", {
+    // Fetch speaker stats + recent recordings
+    fetch("/api/v2/speaker/recordings?limit=10", {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -97,6 +107,7 @@ export default function SpeakerDashboardClient({ locale }: { locale: string }) {
             byStatus: data.stats,
           });
         }
+        setRecentRecordings(data.recordings || []);
         setLoading(false);
       });
   }, [router]);
@@ -155,14 +166,14 @@ export default function SpeakerDashboardClient({ locale }: { locale: string }) {
                 Le{(stats?.estimatedEarnings || 0).toFixed(2)}
               </p>
               <p className="text-sm text-green-100 mt-2">
-                {t('speaker.basedOnApproved', { minutes: Math.round((stats?.approvedDurationSec || 0) / 60) })}
+                {t('speaker.basedOnApproved', { minutes: ((stats?.approvedDurationSec || 0) / 60).toFixed(1) })}
               </p>
             </div>
             <div className="text-right">
               <div className="bg-white/20 rounded-lg px-4 py-2">
                 <p className="text-xs text-green-100">{t('speaker.pending')}</p>
                 <p className="text-lg font-semibold">
-                  {Math.round(((stats?.totalDurationSec || 0) - (stats?.approvedDurationSec || 0)) / 60)} {t('common.min')}
+                  {(((stats?.totalDurationSec || 0) - (stats?.approvedDurationSec || 0)) / 60).toFixed(1)} {t('common.min')}
                 </p>
               </div>
             </div>
@@ -238,118 +249,90 @@ export default function SpeakerDashboardClient({ locale }: { locale: string }) {
           );
         })()}
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-sm font-medium text-gray-500">{t('speaker.totalRecordings')}</h3>
-            <p className="text-3xl font-bold text-gray-900">
-              {stats?.totalRecordings || 0}
-            </p>
-          </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-sm font-medium text-gray-500">{t('speaker.totalDuration')}</h3>
-            <p className="text-3xl font-bold text-gray-900">
-              {Math.round((stats?.totalDurationSec || 0) / 60)} {t('common.min')}
-            </p>
-          </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-sm font-medium text-gray-500">{t('speaker.approved')}</h3>
-            <p className="text-3xl font-bold text-green-600">
-              {Math.round((stats?.approvedDurationSec || 0) / 60)} {t('common.min')}
-            </p>
-          </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-sm font-medium text-gray-500">{t('speaker.languages')}</h3>
-            <p className="text-3xl font-bold text-gray-900">
-              {user?.speaksLanguages?.length || 0}
-            </p>
-          </div>
-        </div>
+        {/* My Languages */}
+        {(() => {
+          const userCodes = user?.speaksLanguages || [];
+          const myLanguages = languages.filter((l) => userCodes.includes(l.code));
+          return myLanguages.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+              {myLanguages.map((lang) => (
+                <div key={lang.id} className="bg-white rounded-lg shadow p-5 flex items-center justify-between">
+                  <div>
+                    <h3 className="font-semibold text-gray-900">{lang.name}</h3>
+                    {lang.nativeName && (
+                      <p className="text-sm text-gray-500">{lang.nativeName}</p>
+                    )}
+                    <p className="text-xs text-green-600 mt-1">
+                      Le{lang.speakerRatePerMinute?.toFixed(2) || "0.00"}/{t('common.min')}
+                    </p>
+                  </div>
+                  <Link
+                    href={`/${locale}/speaker/record?languageId=${lang.id}`}
+                    className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    {t('speaker.startRecording')}
+                  </Link>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-white rounded-lg shadow p-6 mb-8 text-center text-gray-500">
+              {t('speaker.noLanguagesAssigned')}
+            </div>
+          );
+        })()}
 
-        {/* Select Language to Record */}
-        <div className="bg-white rounded-lg shadow mb-8">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">
-              {t('speaker.selectLanguageToRecord')}
-            </h2>
-            <p className="text-sm text-gray-500">
-              {t('speaker.chooseLanguage')}
-            </p>
-          </div>
-          <div className="p-6">
-            {languages.length === 0 ? (
-              <p className="text-gray-500">{t('speaker.noLanguagesAvailable')}</p>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {languages.map((lang) => {
-                  const progress = lang.targetMinutes > 0
-                    ? Math.round((lang.approvedMinutes / lang.targetMinutes) * 100)
-                    : 0;
-
-                  return (
-                    <Link
-                      key={lang.id}
-                      href={`/${locale}/speaker/record?languageId=${lang.id}`}
-                      className="block p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition-all"
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <h3 className="font-semibold text-gray-900">{lang.name}</h3>
-                          {lang.nativeName && (
-                            <p className="text-sm text-gray-500">{lang.nativeName}</p>
-                          )}
-                        </div>
-                        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                          {lang.code.toUpperCase()}
-                        </span>
-                      </div>
-                      <div className="mt-3">
-                        <div className="flex justify-between text-xs text-gray-500 mb-1">
-                          <span>{t('speaker.progress')}</span>
-                          <span>{progress}%</span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div
-                            className="bg-blue-600 h-2 rounded-full"
-                            style={{ width: `${Math.min(progress, 100)}%` }}
-                          ></div>
-                        </div>
-                        <div className="flex justify-between items-center mt-2">
-                          <p className="text-xs text-gray-500">
-                            {Math.round(lang.approvedMinutes / 60)}h / {Math.round(lang.targetMinutes / 60)}h
-                          </p>
-                          <span className="text-xs font-medium text-green-600">
-                            Le{lang.speakerRatePerMinute?.toFixed(2) || "0.00"}/{t('common.min')}
-                          </span>
-                        </div>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Quick Actions */}
+        {/* Recent Recordings */}
         <div className="bg-white rounded-lg shadow">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">{t('speaker.quickActions')}</h2>
+            <div className="flex justify-between items-center">
+              <h2 className="text-lg font-semibold text-gray-900">{t('speaker.recentRecordings')}</h2>
+              <span className="text-sm text-gray-500">
+                {stats?.totalRecordings || 0} {t('speaker.totalRecordings').toLowerCase()}
+              </span>
+            </div>
           </div>
-          <div className="p-6 flex flex-wrap gap-4">
-            <Link
-              href={`/${locale}/speaker/history`}
-              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
-            >
-              {t('speaker.viewRecordingHistory')}
-            </Link>
-            <Link
-              href={`/${locale}/speaker/profile`}
-              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
-            >
-              {t('speaker.editProfile')}
-            </Link>
-          </div>
+          {recentRecordings.length === 0 ? (
+            <div className="p-8 text-center text-gray-500">
+              {t('speaker.noRecordingsYet')}
+            </div>
+          ) : (
+            <ul className="divide-y divide-gray-200">
+              {recentRecordings.map((rec) => {
+                const statusConfig: Record<string, { label: string; color: string }> = {
+                  PENDING_REVIEW: { label: t('speaker.statusPendingReview'), color: 'bg-yellow-100 text-yellow-800' },
+                  PENDING_TRANSCRIPTION: { label: t('speaker.statusApproved'), color: 'bg-green-100 text-green-800' },
+                  TRANSCRIBED: { label: t('speaker.statusApproved'), color: 'bg-green-100 text-green-800' },
+                  APPROVED: { label: t('speaker.statusApproved'), color: 'bg-green-100 text-green-800' },
+                  REJECTED: { label: t('speaker.statusRejected'), color: 'bg-red-100 text-red-800' },
+                };
+                const st = statusConfig[rec.status] || { label: rec.status, color: 'bg-gray-100 text-gray-800' };
+                return (
+                  <li key={rec.id} className="px-6 py-4 flex items-center justify-between">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {rec.prompt?.englishText || t('speaker.untitledPrompt')}
+                      </p>
+                      <div className="flex items-center gap-3 mt-1">
+                        <span className="text-xs text-gray-500">
+                          {rec.language?.name}
+                        </span>
+                        <span className="text-xs text-gray-400">
+                          {rec.durationSec}s
+                        </span>
+                        <span className="text-xs text-gray-400">
+                          {new Date(rec.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                    <span className={`inline-flex px-2.5 py-0.5 text-xs font-medium rounded-full ${st.color}`}>
+                      {st.label}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </div>
       </main>
     </div>
