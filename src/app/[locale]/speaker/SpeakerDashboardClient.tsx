@@ -21,6 +21,7 @@ interface Stats {
   totalRecordings: number;
   totalDurationSec: number;
   approvedDurationSec: number;
+  estimatedEarnings: number;
   byStatus: { status: string; _count: number; _sum?: { durationSec: number } }[];
 }
 
@@ -81,6 +82,7 @@ export default function SpeakerDashboardClient({ locale }: { locale: string }) {
             totalRecordings: data.pagination?.total || 0,
             totalDurationSec: totalDuration,
             approvedDurationSec: approvedDuration,
+            estimatedEarnings: data.estimatedEarnings || 0,
             byStatus: data.stats,
           });
         }
@@ -139,7 +141,7 @@ export default function SpeakerDashboardClient({ locale }: { locale: string }) {
             <div>
               <h3 className="text-sm font-medium text-green-100">{t('speaker.estimatedEarnings')}</h3>
               <p className="text-4xl font-bold mt-1">
-                Le{((user?.totalEarningsCents || 0) / 100).toFixed(2)}
+                Le{(stats?.estimatedEarnings || 0).toFixed(2)}
               </p>
               <p className="text-sm text-green-100 mt-2">
                 {t('speaker.basedOnApproved', { minutes: Math.round((stats?.approvedDurationSec || 0) / 60) })}
