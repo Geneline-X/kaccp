@@ -49,7 +49,7 @@ export default function AdminLanguagesPage() {
     nativeName: "",
     countryId: "",
     targetMinutes: 12000,
-    speakerRatePerMinute: 0.05,
+    speakerRatePerMinute: 2.5,
     transcriberRatePerMin: 0.03,
     includeUniversalPrompts: true,
   });
