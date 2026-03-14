@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
       nativeName,
       countryId,
       targetMinutes = 12000, // 200 hours default
-      speakerRatePerMinute = 0.05,
+      speakerRatePerMinute = 2.5,
       transcriberRatePerMin = 0.03,
       includeUniversalPrompts = true,
     } = body;

@@ -30,14 +30,41 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     })
     if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
-    // V1 Stats removed to fix build
-    const reviewsCount = 0
-    const uploadsCount = 0
-    const recentReviews: any[] = []
-    const recentPayments = await prisma.payment.findMany({ where: { userId: id }, orderBy: { createdAt: 'desc' }, take: 10, select: { id: true, amountCents: true, currency: true, status: true, createdAt: true } })
+    // Compute real stats from recordings and transcriptions
+    const [recordingsAgg, statusGroups, transcriptionReviews, recentPayments] = await Promise.all([
+      prisma.recording.aggregate({
+        _sum: { durationSec: true },
+        _count: true,
+        where: { speakerId: id, status: 'APPROVED' },
+      }),
+      prisma.recording.groupBy({
+        by: ['status'],
+        where: { speakerId: id },
+        _count: true,
+      }),
+      prisma.transcription.findMany({
+        where: { reviewerId: id },
+        orderBy: { reviewedAt: 'desc' },
+        take: 10,
+        select: { id: true, status: true, reviewedAt: true },
+      }),
+      prisma.payment.findMany({ where: { userId: id }, orderBy: { createdAt: 'desc' }, take: 10, select: { id: true, amountCents: true, currency: true, status: true, createdAt: true } }),
+    ])
 
-    const approvedMinutes = 0
-    const statusCounts = {}
+    const approvedMinutes = (recordingsAgg._sum?.durationSec || 0) / 60
+    const statusCounts: Record<string, number> = {}
+    for (const g of statusGroups) {
+      const c = (g as any)._count
+      statusCounts[g.status] = typeof c === 'number' ? c : c?._all ?? 0
+    }
+
+    const uploadsCount = Object.values(statusCounts).reduce((sum, c) => sum + c, 0)
+    const reviewsCount = transcriptionReviews.length
+    const recentReviews = transcriptionReviews.map((r) => ({
+      id: r.id,
+      decision: r.status,
+      createdAt: r.reviewedAt?.toISOString() ?? '',
+    }))
 
     return NextResponse.json({
       user,
