@@ -3,8 +3,68 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
+async function backfillSpeakerEarnings() {
+    console.log('\n--- Backfilling missing speaker earnings ---')
+
+    // Find all recordings that passed audio review (speaker should have been paid)
+    const approvedRecordings = await prisma.recording.findMany({
+        where: {
+            status: { in: ['PENDING_TRANSCRIPTION', 'TRANSCRIBED', 'APPROVED'] },
+        },
+        include: {
+            language: true,
+        },
+    })
+
+    console.log(`Found ${approvedRecordings.length} audio-approved recordings.`)
+
+    let paid = 0
+    let skipped = 0
+
+    for (const rec of approvedRecordings) {
+        // Check if speaker was already paid for this recording
+        const existingTx = await prisma.walletTransaction.findFirst({
+            where: {
+                userId: rec.speakerId,
+                description: { contains: rec.id },
+            },
+        })
+
+        if (existingTx) {
+            skipped++
+            continue
+        }
+
+        const speakerRatePerMin = rec.language.speakerRatePerMinute ?? 2.5
+        const durationMin = Math.max(0.1, rec.durationSec / 60)
+        const amountCents = Math.round(durationMin * speakerRatePerMin * 100)
+
+        if (amountCents > 0) {
+            await prisma.$transaction([
+                prisma.walletTransaction.create({
+                    data: {
+                        userId: rec.speakerId,
+                        deltaCents: amountCents,
+                        description: `Recording approved: ${rec.id} (Backfill)`,
+                    },
+                }),
+                prisma.user.update({
+                    where: { id: rec.speakerId },
+                    data: {
+                        totalEarningsCents: { increment: amountCents },
+                    },
+                }),
+            ])
+            paid++
+            console.log(`-> Paid ${amountCents} cents to speaker ${rec.speakerId} for recording ${rec.id}`)
+        }
+    }
+
+    console.log(`Speaker backfill complete. Paid: ${paid}, Already paid: ${skipped}`)
+}
+
 async function main() {
-    console.log('Running backfill for missing transcriber earnings...')
+    console.log('Running backfill for missing earnings...')
 
     // 1. Get all approved transcriptions
     const approvedTranscriptions = await prisma.transcription.findMany({
@@ -66,7 +126,11 @@ async function main() {
         }
     }
 
-    console.log('Backfill complete.')
+    console.log('Transcriber backfill complete.')
+
+    await backfillSpeakerEarnings()
+
+    console.log('\nAll backfills complete.')
 }
 
 main()

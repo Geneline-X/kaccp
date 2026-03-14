@@ -210,26 +210,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Pay the speaker (only on first approval)
-    if (!recordingAlreadyApproved) {
-      const speakerRatePerMin = transcription.recording.language.speakerRatePerMinute ?? 2.5;
-      const speakerDurationMin = Math.max(0.1, transcription.recording.durationSec / 60);
-      const speakerAmountCents = Math.round(speakerDurationMin * speakerRatePerMin * 100);
-
-      if (speakerAmountCents > 0) {
-        await prisma.walletTransaction.create({
-          data: {
-            userId: transcription.recording.speakerId,
-            deltaCents: speakerAmountCents,
-            description: `Recording approved: ${transcription.recordingId}`,
-          },
-        });
-        await prisma.user.update({
-          where: { id: transcription.recording.speakerId },
-          data: { totalEarningsCents: { increment: speakerAmountCents } },
-        });
-      }
-    }
+    // Speaker payment happens at audio approval (reviewer approve route), not here
 
     return NextResponse.json({
       success: true,
