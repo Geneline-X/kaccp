@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
       ...(languageId && { languageId }),
     };
 
-    const [recordings, total, stats] = await Promise.all([
+    const [recordings, total, stats, earningsByLang] = await Promise.all([
       prisma.recording.findMany({
         where,
         include: {
@@ -58,11 +58,30 @@ export async function GET(req: NextRequest) {
           durationSec: true,
         },
       }),
+      // Compute estimated earnings from audio-approved recordings × language rate
+      prisma.recording.findMany({
+        where: {
+          speakerId: user.id,
+          status: { in: ["PENDING_TRANSCRIPTION", "TRANSCRIBED", "APPROVED"] },
+        },
+        select: {
+          durationSec: true,
+          language: { select: { speakerRatePerMinute: true } },
+        },
+      }),
     ]);
+
+    // Sum earnings: duration (min) × rate (Le/min)
+    const estimatedEarnings = earningsByLang.reduce((sum, rec) => {
+      const durationMin = rec.durationSec / 60;
+      const rate = rec.language.speakerRatePerMinute ?? 2.5;
+      return sum + durationMin * rate;
+    }, 0);
 
     return NextResponse.json({
       recordings,
       stats,
+      estimatedEarnings,
       pagination: {
         page,
         limit,
