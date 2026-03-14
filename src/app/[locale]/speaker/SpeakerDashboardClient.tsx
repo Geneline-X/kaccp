@@ -17,11 +17,21 @@ interface Language {
   speakerRatePerMinute: number;
 }
 
+interface WeeklyProgress {
+  weekStart: string;
+  weekEnd: string;
+  approvedDurationSec: number;
+  milestoneTargetSec: number;
+  milestoneHit: boolean;
+  estimatedPayoutLe: number;
+}
+
 interface Stats {
   totalRecordings: number;
   totalDurationSec: number;
   approvedDurationSec: number;
   estimatedEarnings: number;
+  weeklyProgress: WeeklyProgress | null;
   byStatus: { status: string; _count: number; _sum?: { durationSec: number } }[];
 }
 
@@ -83,6 +93,7 @@ export default function SpeakerDashboardClient({ locale }: { locale: string }) {
             totalDurationSec: totalDuration,
             approvedDurationSec: approvedDuration,
             estimatedEarnings: data.estimatedEarnings || 0,
+            weeklyProgress: data.weeklyProgress || null,
             byStatus: data.stats,
           });
         }
@@ -157,6 +168,75 @@ export default function SpeakerDashboardClient({ locale }: { locale: string }) {
             </div>
           </div>
         </div>
+
+        {/* Weekly Progress Card */}
+        {stats?.weeklyProgress && (() => {
+          const wp = stats.weeklyProgress;
+          const approvedHours = wp.approvedDurationSec / 3600;
+          const targetHours = wp.milestoneTargetSec / 3600;
+          const progressPct = Math.min(100, Math.round((approvedHours / targetHours) * 100));
+          const hoursLeft = Math.max(0, targetHours - approvedHours);
+          const perMinuteEarnings = (wp.approvedDurationSec / 60) * 2.5;
+          const showNudge = progressPct >= 50 && progressPct < 100;
+
+          // Calculate days until Friday
+          const now = new Date();
+          const endDate = new Date(wp.weekEnd + "T23:59:59Z");
+          const daysLeft = Math.max(0, Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
+
+          return (
+            <div className="bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl shadow-lg p-6 mb-8 text-white">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className="text-sm font-medium text-purple-100">{t('speaker.weeklyProgress')}</h3>
+                  <p className="text-xs text-purple-200 mt-1">
+                    {wp.weekStart} – {wp.weekEnd}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <div className="bg-white/20 rounded-lg px-3 py-1">
+                    <p className="text-xs text-purple-100">{t('speaker.endsIn')}</p>
+                    <p className="text-sm font-semibold">{daysLeft} {t('speaker.days')}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-end mb-2">
+                <p className="text-2xl font-bold">
+                  {approvedHours.toFixed(1)} / {targetHours.toFixed(1)} {t('speaker.hours')}
+                </p>
+                <p className="text-lg font-semibold">
+                  Le{wp.estimatedPayoutLe.toFixed(2)}
+                </p>
+              </div>
+
+              <div className="w-full bg-white/20 rounded-full h-3 mb-3">
+                <div
+                  className={`h-3 rounded-full transition-all ${wp.milestoneHit ? 'bg-yellow-400' : 'bg-white'}`}
+                  style={{ width: `${progressPct}%` }}
+                ></div>
+              </div>
+
+              {wp.milestoneHit ? (
+                <p className="text-sm text-yellow-200 font-medium">
+                  {t('speaker.milestoneReached')}
+                </p>
+              ) : showNudge ? (
+                <p className="text-sm text-purple-200">
+                  {t('speaker.milestoneNudge', {
+                    hours: hoursLeft.toFixed(1),
+                    milestone: '1,000',
+                    current: perMinuteEarnings.toFixed(0),
+                  })}
+                </p>
+              ) : (
+                <p className="text-sm text-purple-200">
+                  {t('speaker.milestoneTarget', { hours: targetHours.toFixed(0) })}
+                </p>
+              )}
+            </div>
+          );
+        })()}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">

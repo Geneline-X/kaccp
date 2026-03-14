@@ -44,6 +44,13 @@
         "skipPrompt": "Passer cette instruction ->",
         "failedToUpload": "Échec du téléchargement de l'enregistrement",
         "failedToSubmitRecording": "Échec de l'envoi de l'enregistrement",
-        "maximumReached": "Maximum atteint"
+        "maximumReached": "Maximum atteint",
+        "weeklyProgress": "Progression Hebdomadaire",
+        "endsIn": "Fin dans",
+        "days": "jours",
+        "hours": "hrs",
+        "milestoneReached": "Objectif atteint ! Vous avez gagné Le1 000 cette semaine !",
+        "milestoneNudge": "Enregistrez {hours} heures de plus pour gagner Le{milestone} au lieu de Le{current}",
+        "milestoneTarget": "Enregistrez {hours} heures cette semaine pour gagner Le1 000"
     }
 }

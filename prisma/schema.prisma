@@ -260,6 +260,9 @@ model Payment {
   notes              String?
   user               User                @relation(fields: [userId], references: [id])
   walletTransactions WalletTransaction[]
+
+  @@unique([userId, reference])
+  @@index([userId, reference])
 }
 
 model WalletTransaction {

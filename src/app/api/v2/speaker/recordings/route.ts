@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/infra/db/prisma";
 import { getAuthUser } from "@/lib/infra/auth/auth";
+import { getWeekRange, APPROVED_STATUSES, MILESTONE_MINUTES, MILESTONE_PAYOUT_LE } from "@/lib/utils/week";
 
 // GET /api/v2/speaker/recordings - Get speaker's recording history
 export async function GET(req: NextRequest) {
@@ -21,7 +22,9 @@ export async function GET(req: NextRequest) {
       ...(languageId && { languageId }),
     };
 
-    const [recordings, total, stats, earningsByLang] = await Promise.all([
+    const { start: weekStart, end: weekEnd } = getWeekRange();
+
+    const [recordings, total, stats, earningsByLang, weeklyRecordings] = await Promise.all([
       prisma.recording.findMany({
         where,
         include: {
@@ -58,11 +61,23 @@ export async function GET(req: NextRequest) {
           durationSec: true,
         },
       }),
-      // Compute estimated earnings from audio-approved recordings × language rate
+      // All-time approved recordings for total estimated earnings
       prisma.recording.findMany({
         where: {
           speakerId: user.id,
-          status: { in: ["PENDING_TRANSCRIPTION", "TRANSCRIBED", "APPROVED"] },
+          status: { in: [...APPROVED_STATUSES] },
+        },
+        select: {
+          durationSec: true,
+          language: { select: { speakerRatePerMinute: true } },
+        },
+      }),
+      // This week's approved recordings for weekly progress
+      prisma.recording.findMany({
+        where: {
+          speakerId: user.id,
+          status: { in: [...APPROVED_STATUSES] },
+          createdAt: { gte: weekStart, lte: weekEnd },
         },
         select: {
           durationSec: true,
@@ -71,17 +86,36 @@ export async function GET(req: NextRequest) {
       }),
     ]);
 
-    // Sum earnings: duration (min) × rate (Le/min)
+    // All-time earnings
     const estimatedEarnings = earningsByLang.reduce((sum, rec) => {
       const durationMin = rec.durationSec / 60;
       const rate = rec.language.speakerRatePerMinute ?? 2.5;
       return sum + durationMin * rate;
     }, 0);
 
+    // Weekly progress
+    const weeklyApprovedSec = weeklyRecordings.reduce((sum, r) => sum + r.durationSec, 0);
+    const weeklyApprovedMin = weeklyApprovedSec / 60;
+    const weeklyPerMinuteTotal = weeklyRecordings.reduce((sum, r) => {
+      return sum + (r.durationSec / 60) * (r.language.speakerRatePerMinute ?? 2.5);
+    }, 0);
+    const milestoneHit = weeklyApprovedMin >= MILESTONE_MINUTES;
+    const weeklyPayout = milestoneHit
+      ? Math.max(weeklyPerMinuteTotal, MILESTONE_PAYOUT_LE)
+      : weeklyPerMinuteTotal;
+
     return NextResponse.json({
       recordings,
       stats,
-      estimatedEarnings,
+      estimatedEarnings: Math.round(estimatedEarnings * 100) / 100,
+      weeklyProgress: {
+        weekStart: weekStart.toISOString().slice(0, 10),
+        weekEnd: weekEnd.toISOString().slice(0, 10),
+        approvedDurationSec: weeklyApprovedSec,
+        milestoneTargetSec: MILESTONE_MINUTES * 60,
+        milestoneHit,
+        estimatedPayoutLe: Math.round(weeklyPayout * 100) / 100,
+      },
       pagination: {
         page,
         limit,
