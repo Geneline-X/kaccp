@@ -243,35 +243,23 @@ export async function POST(req: NextRequest) {
         consentGiven: true,
         status: "PENDING_REVIEW",
       },
-      include: {
-        prompt: true,
-        language: true,
-      },
     });
 
-    // Update prompt timesRecorded
-    await prisma.prompt.update({
-      where: { id: promptId },
-      data: {
-        timesRecorded: { increment: 1 },
-      },
-    });
-
-    // Update language collectedMinutes
-    await prisma.language.update({
-      where: { id: recordingLanguageIdResolved },
-      data: {
-        collectedMinutes: { increment: durationSec / 60 },
-      },
-    });
-
-    // Update user stats
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        totalRecordingsSec: { increment: durationSec },
-      },
-    });
+    // Update prompt, language, and user stats in parallel
+    await Promise.all([
+      prisma.prompt.update({
+        where: { id: promptId },
+        data: { timesRecorded: { increment: 1 } },
+      }),
+      prisma.language.update({
+        where: { id: recordingLanguageIdResolved },
+        data: { collectedMinutes: { increment: durationSec / 60 } },
+      }),
+      prisma.user.update({
+        where: { id: user.id },
+        data: { totalRecordingsSec: { increment: durationSec } },
+      }),
+    ]);
 
     return NextResponse.json({ recording }, { status: 201 });
   } catch (error) {
