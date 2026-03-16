@@ -21,17 +21,35 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Get prompt to determine language and country
-    const prompt = await prisma.prompt.findUnique({
-      where: { id: promptId },
-      include: {
-        language: {
-          include: {
-            country: true,
+    // Run prompt lookup, speaker count, and recording count in parallel
+    const targetLanguageIdHint = languageId; // used if prompt is universal
+
+    const [prompt, speakerCount, recordingCount] = await Promise.all([
+      prisma.prompt.findUnique({
+        where: { id: promptId },
+        include: {
+          language: {
+            include: {
+              country: true,
+            },
           },
         },
-      },
-    });
+      }),
+      // Speaker number for labeling (e.g., speaker_0001)
+      prisma.user.count({
+        where: {
+          role: "SPEAKER",
+          createdAt: { lte: user.createdAt },
+        },
+      }),
+      // Recording count for this speaker (resolved after prompt lookup if needed)
+      prisma.recording.count({
+        where: {
+          speakerId: user.id,
+          ...(targetLanguageIdHint ? { languageId: targetLanguageIdHint } : {}),
+        },
+      }),
+    ]);
 
     if (!prompt) {
       return NextResponse.json(
@@ -40,24 +58,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Get speaker number for labeling (e.g., speaker_0001)
-    // Count how many speakers exist before this user to generate sequential ID
-    const speakerCount = await prisma.user.count({
-      where: {
-        role: "SPEAKER",
-        createdAt: { lte: user.createdAt },
-      },
-    });
     const speakerLabel = `speaker_${String(speakerCount).padStart(4, "0")}`;
-
-    // Count recordings by this speaker for this language to generate sequential recording number
-    const targetLanguageId = prompt.languageId || languageId;
-    const recordingCount = await prisma.recording.count({
-      where: {
-        speakerId: user.id,
-        ...(targetLanguageId ? { languageId: targetLanguageId } : {}),
-      },
-    });
     const recordingNumber = String(recordingCount + 1).padStart(5, "0");
 
     // For universal prompts (no language), use a default structure

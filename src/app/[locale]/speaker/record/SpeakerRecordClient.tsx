@@ -19,6 +19,75 @@ interface Prompt {
   };
 }
 
+const MIN_DURATION_SEC = 1.5;
+const MAX_DURATION_SEC = 20;
+
+// ─── Amplitude Visualizer ──────────────────────────────────────────────────
+
+function AmplitudeBar({ analyser }: { analyser: AnalyserNode | null }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const rafRef = useRef<number>(0);
+
+  useEffect(() => {
+    if (!analyser || !canvasRef.current) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+    const draw = () => {
+      rafRef.current = requestAnimationFrame(draw);
+      analyser.getByteFrequencyData(dataArray);
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const barCount = 32;
+      const barWidth = canvas.width / barCount;
+      const step = Math.floor(dataArray.length / barCount);
+
+      for (let i = 0; i < barCount; i++) {
+        const value = dataArray[i * step] / 255;
+        const barHeight = value * canvas.height;
+        const x = i * barWidth;
+
+        ctx.fillStyle = value > 0.7 ? "#ef4444" : value > 0.4 ? "#3b82f6" : "#6366f1";
+        ctx.fillRect(x + 1, canvas.height - barHeight, barWidth - 2, barHeight);
+      }
+    };
+
+    draw();
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [analyser]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      width={320}
+      height={48}
+      className="w-full h-12 rounded-lg opacity-80"
+    />
+  );
+}
+
+// ─── Toast Notification ─────────────────────────────────────────────────────
+
+function Toast({ message, visible }: { message: string; visible: boolean }) {
+  return (
+    <div
+      className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 ${
+        visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4 pointer-events-none"
+      }`}
+    >
+      <div className="bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg font-medium text-sm">
+        {message}
+      </div>
+    </div>
+  );
+}
+
+// ─── Main Record Content ────────────────────────────────────────────────────
+
 function RecordContent({ locale }: { locale: string }) {
   const router = useRouter();
   const t = useTranslations();
@@ -34,40 +103,92 @@ function RecordContent({ locale }: { locale: string }) {
   const [duration, setDuration] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [recordingCount, setRecordingCount] = useState(0);
+  const [sessionDurationSec, setSessionDurationSec] = useState(0);
+  const [canRetry, setCanRetry] = useState(false);
+  const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<number>(0);
   const audioContextRef = useRef<AudioContext | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  // Refs for keyboard handler to read current state without stale closures
+  const recordingRef = useRef(false);
+  const audioBlobRef = useRef<Blob | null>(null);
+  const submittingRef = useRef(false);
+  const durationRef = useRef(0);
 
   const currentPrompt = prompts[currentPromptIndex];
 
+  // Keep refs in sync with state
+  useEffect(() => { recordingRef.current = recording; }, [recording]);
+  useEffect(() => { audioBlobRef.current = audioBlob; }, [audioBlob]);
+  useEffect(() => { submittingRef.current = submitting; }, [submitting]);
+  useEffect(() => { durationRef.current = duration; }, [duration]);
+
+  // Show toast briefly
+  const showToast = useCallback((msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 1500);
+  }, []);
+
   // Convert audio blob to WAV format
-  const convertToWav = async (blob: Blob): Promise<Blob> => {
+  const convertToWav = useCallback(async (blob: Blob): Promise<Blob> => {
     try {
-      // Create AudioContext if not exists
       if (!audioContextRef.current) {
         audioContextRef.current = new AudioContext({ sampleRate: 16000 });
       }
       const audioContext = audioContextRef.current;
-
-      // Decode the audio data
       const arrayBuffer = await blob.arrayBuffer();
       const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-
-      // Convert to WAV
       const wavBuffer = toWav(audioBuffer);
       return new Blob([wavBuffer], { type: "audio/wav" });
     } catch (err) {
       console.error("Failed to convert to WAV:", err);
-      // Return original blob if conversion fails
       return blob;
     }
-  };
+  }, []);
+
+  // Acquire mic stream once, reuse across recordings
+  const ensureStream = useCallback(async (): Promise<MediaStream> => {
+    if (streamRef.current && streamRef.current.active) {
+      return streamRef.current;
+    }
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        sampleRate: 16000,
+        channelCount: 1,
+        echoCancellation: true,
+        noiseSuppression: true,
+      },
+    });
+    streamRef.current = stream;
+
+    // Set up analyser for amplitude visualizer
+    if (!audioContextRef.current) {
+      audioContextRef.current = new AudioContext({ sampleRate: 16000 });
+    }
+    const source = audioContextRef.current.createMediaStreamSource(stream);
+    const node = audioContextRef.current.createAnalyser();
+    node.fftSize = 256;
+    source.connect(node);
+    analyserRef.current = node;
+
+    return stream;
+  }, []);
+
+  // Release mic on unmount
+  useEffect(() => {
+    return () => {
+      streamRef.current?.getTracks().forEach((t) => t.stop());
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, []);
 
   // Fetch prompts
   useEffect(() => {
@@ -98,24 +219,50 @@ function RecordContent({ locale }: { locale: string }) {
         setError(t('speaker.failedToLoadPrompts'));
         setLoading(false);
       });
-  }, [languageId, router, t]);
+  }, [languageId, router, t, locale]);
+
+  // Advance to next prompt (shared helper)
+  const advanceToNextPrompt = useCallback(() => {
+    setAudioBlob(null);
+    setAudioUrl(null);
+    setDuration(0);
+    setCanRetry(false);
+
+    if (currentPromptIndex < prompts.length - 1) {
+      setCurrentPromptIndex((i) => i + 1);
+    } else {
+      // Fetch more prompts
+      const token = getToken();
+      setLoading(true);
+      fetch(`/api/v2/speaker/prompts?languageId=${languageId}&limit=20&uiLocale=${locale}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.prompts?.length > 0) {
+            setPrompts(data.prompts);
+            setCurrentPromptIndex(0);
+          } else {
+            // No more prompts — auto-redirect after a moment
+            setError(t('speaker.noMorePrompts'));
+            setTimeout(() => router.push(`/${locale}/speaker`), 3000);
+          }
+          setLoading(false);
+        });
+    }
+  }, [currentPromptIndex, prompts.length, languageId, locale, router, t]);
 
   // Start recording
   const startRecording = useCallback(async () => {
     try {
       setError(null);
+      setCanRetry(false);
       setAudioBlob(null);
       setAudioUrl(null);
       setDuration(0);
 
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          sampleRate: 16000,
-          channelCount: 1,
-          echoCancellation: true,
-          noiseSuppression: true,
-        },
-      });
+      const stream = await ensureStream();
+      setAnalyser(analyserRef.current);
 
       const mediaRecorder = new MediaRecorder(stream, {
         mimeType: MediaRecorder.isTypeSupported("audio/webm")
@@ -136,90 +283,96 @@ function RecordContent({ locale }: { locale: string }) {
         const blob = new Blob(chunksRef.current, { type: mediaRecorder.mimeType });
         setAudioBlob(blob);
         setAudioUrl(URL.createObjectURL(blob));
-        stream.getTracks().forEach((track) => track.stop());
+        setAnalyser(null);
       };
 
       mediaRecorder.start(100);
       setRecording(true);
       startTimeRef.current = Date.now();
 
-      // Update duration every 100ms
       timerRef.current = setInterval(() => {
         const elapsed = (Date.now() - startTimeRef.current) / 1000;
         setDuration(elapsed);
 
-        // Auto-stop at 20 seconds
-        if (elapsed >= 20) {
-          stopRecording();
+        if (elapsed >= MAX_DURATION_SEC) {
+          // Auto-stop: directly stop the MediaRecorder to avoid stale closure
+          if (mediaRecorderRef.current?.state === "recording") {
+            mediaRecorderRef.current.stop();
+            setRecording(false);
+            if (timerRef.current) clearInterval(timerRef.current);
+          }
         }
       }, 100);
     } catch {
       setError(t('speaker.microphoneAccessDenied'));
     }
-  }, [t]);
+  }, [t, ensureStream]);
 
   // Stop recording
   const stopRecording = useCallback(() => {
-    if (mediaRecorderRef.current && recording) {
+    if (mediaRecorderRef.current?.state === "recording") {
+      // Enforce minimum duration
+      const elapsed = (Date.now() - startTimeRef.current) / 1000;
+      if (elapsed < MIN_DURATION_SEC) {
+        return; // Ignore — too short
+      }
       mediaRecorderRef.current.stop();
       setRecording(false);
       if (timerRef.current) {
         clearInterval(timerRef.current);
       }
     }
-  }, [recording]);
+  }, []);
 
   // Submit recording
-  const submitRecording = async () => {
+  const submitRecording = useCallback(async () => {
     if (!audioBlob || !currentPrompt) return;
 
     setSubmitting(true);
     setError(null);
+    setCanRetry(false);
 
     try {
       const token = getToken();
 
-      // 1. Convert audio to WAV format
+      // Convert WAV + get upload URL in parallel
       setStatus(t('speaker.convertingToWav'));
-      const wavBlob = await convertToWav(audioBlob);
-      setStatus(null);
-
-      // 2. Get upload URL (always request WAV)
-      const uploadUrlRes = await fetch("/api/v2/speaker/upload-url", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          promptId: currentPrompt.id,
-          languageId: languageId,
-          contentType: "audio/wav",
+      const [wavBlob, uploadUrlRes] = await Promise.all([
+        convertToWav(audioBlob),
+        fetch("/api/v2/speaker/upload-url", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            promptId: currentPrompt.id,
+            languageId: languageId,
+            contentType: "audio/wav",
+          }),
         }),
-      });
+      ]);
+      setStatus(null);
 
       const uploadUrlData = await uploadUrlRes.json();
       if (uploadUrlData.error) {
         throw new Error(uploadUrlData.error);
       }
 
-      // 3. Upload WAV audio (GCS or local)
+      // Upload WAV audio to GCS
       const uploadRes = await fetch(uploadUrlData.uploadUrl, {
         method: "PUT",
-        headers: {
-          "Content-Type": "audio/wav",
-        },
+        headers: { "Content-Type": "audio/wav" },
         body: wavBlob,
       });
 
-      // Check if upload failed (for GCS, non-2xx means error)
       if (!uploadRes.ok && uploadUrlData.mode === "gcs") {
         const errorText = await uploadRes.text();
         console.error("GCS upload failed:", errorText);
         throw new Error(t('speaker.failedToUpload'));
       }
 
-      // 4. Create recording record
+      // Create recording record
       const recordingRes = await fetch("/api/v2/speaker/recordings", {
         method: "POST",
         headers: {
@@ -228,7 +381,7 @@ function RecordContent({ locale }: { locale: string }) {
         },
         body: JSON.stringify({
           promptId: currentPrompt.id,
-          languageId: languageId, // Include selected language for universal prompts
+          languageId: languageId,
           audioUrl: uploadUrlData.audioUrl,
           durationSec: duration,
           fileSize: wavBlob.size,
@@ -242,58 +395,56 @@ function RecordContent({ locale }: { locale: string }) {
         throw new Error(recordingData.error);
       }
 
-      setSuccess(t('speaker.recordingSubmitted'));
+      // Success — update counts and immediately advance
       setRecordingCount((c) => c + 1);
-
-      // Move to next prompt after 1 second
-      setTimeout(() => {
-        setSuccess(null);
-        setAudioBlob(null);
-        setAudioUrl(null);
-        setDuration(0);
-        if (currentPromptIndex < prompts.length - 1) {
-          setCurrentPromptIndex((i) => i + 1);
-        } else {
-          // Fetch more prompts
-          setLoading(true);
-          fetch(`/api/v2/speaker/prompts?languageId=${languageId}&limit=20&uiLocale=${locale}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              if (data.prompts?.length > 0) {
-                setPrompts(data.prompts);
-                setCurrentPromptIndex(0);
-              } else {
-                setError(t('speaker.noMorePrompts'));
-              }
-              setLoading(false);
-            });
-        }
-      }, 1000);
+      setSessionDurationSec((s) => s + duration);
+      showToast(t('speaker.recordingSubmitted'));
+      advanceToNextPrompt();
     } catch (err: any) {
       setError(err.message || t('speaker.failedToSubmitRecording'));
+      setCanRetry(true); // Allow retry with existing blob
     } finally {
       setSubmitting(false);
     }
-  };
+  }, [audioBlob, currentPrompt, duration, languageId, t, convertToWav, showToast, advanceToNextPrompt]);
 
   // Skip prompt
-  const skipPrompt = () => {
-    setAudioBlob(null);
-    setAudioUrl(null);
-    setDuration(0);
-    if (currentPromptIndex < prompts.length - 1) {
-      setCurrentPromptIndex((i) => i + 1);
-    }
-  };
+  const skipPrompt = useCallback(() => {
+    advanceToNextPrompt();
+  }, [advanceToNextPrompt]);
 
   // Re-record
-  const reRecord = () => {
+  const reRecord = useCallback(() => {
     setAudioBlob(null);
     setAudioUrl(null);
     setDuration(0);
-  };
+    setCanRetry(false);
+  }, []);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      // Ignore if user is typing in an input
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+      if (e.code === "Space") {
+        e.preventDefault();
+        if (audioBlobRef.current && !submittingRef.current) {
+          // Has a recording ready — submit it
+          submitRecording();
+        } else if (recordingRef.current) {
+          // Currently recording — stop
+          stopRecording();
+        } else if (!audioBlobRef.current) {
+          // Idle — start recording
+          startRecording();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [startRecording, stopRecording, submitRecording]);
 
   if (loading) {
     return (
@@ -302,7 +453,6 @@ function RecordContent({ locale }: { locale: string }) {
       </div>
     );
   }
-
 
   if (prompts.length === 0 && !error) {
     return (
@@ -323,7 +473,6 @@ function RecordContent({ locale }: { locale: string }) {
     );
   }
 
-  // Show error state full screen if no prompts loaded to show context
   if (error && prompts.length === 0) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
@@ -341,13 +490,21 @@ function RecordContent({ locale }: { locale: string }) {
     );
   }
 
+  const sessionMinutes = (sessionDurationSec / 60).toFixed(1);
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
+      {/* Toast */}
+      <Toast message={toast || ""} visible={!!toast} />
+
       {/* Header */}
       <header className="bg-gray-800 px-4 py-3">
         <div className="max-w-4xl mx-auto flex justify-between items-center">
           <button
-            onClick={() => router.push(`/${locale}/speaker`)}
+            onClick={() => {
+              streamRef.current?.getTracks().forEach((t) => t.stop());
+              router.push(`/${locale}/speaker`);
+            }}
             className="text-gray-400 hover:text-white"
           >
             ← {t('common.back')}
@@ -358,7 +515,7 @@ function RecordContent({ locale }: { locale: string }) {
             </span>
             <span className="mx-2 text-gray-600">|</span>
             <span className="text-sm text-green-400">
-              {t('speaker.recordedThisSession', { count: recordingCount })}
+              {recordingCount} clips / {sessionMinutes} min
             </span>
           </div>
           <span className="text-sm text-gray-400">
@@ -368,22 +525,25 @@ function RecordContent({ locale }: { locale: string }) {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-8">
-        {/* Error/Success Messages */}
-
+        {/* Error Message with optional Retry */}
         {error && (
-          <div className="mb-6 p-4 bg-red-900/50 border border-red-500 rounded-lg text-red-200">
-            {error}
+          <div className="mb-6 p-4 bg-red-900/50 border border-red-500 rounded-lg text-red-200 flex items-center justify-between">
+            <span>{error}</span>
+            {canRetry && (
+              <button
+                onClick={submitRecording}
+                disabled={submitting}
+                className="ml-4 px-4 py-1.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 disabled:opacity-50 flex-shrink-0"
+              >
+                {submitting ? t('speaker.submitting') : t('speaker.retry')}
+              </button>
+            )}
           </div>
         )}
         {status && (
           <div className="mb-6 p-4 bg-blue-900/50 border border-blue-500 rounded-lg text-blue-200 flex items-center gap-2">
             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-200"></div>
             {status}
-          </div>
-        )}
-        {success && (
-          <div className="mb-6 p-4 bg-green-900/50 border border-green-500 rounded-lg text-green-200">
-            {success}
           </div>
         )}
 
@@ -403,7 +563,7 @@ function RecordContent({ locale }: { locale: string }) {
 
           {currentPrompt?.instruction && (
             <p className="text-sm text-yellow-400 italic">
-              💡 {currentPrompt.instruction}
+              {currentPrompt.instruction}
             </p>
           )}
         </div>
@@ -411,36 +571,54 @@ function RecordContent({ locale }: { locale: string }) {
         {/* Recording Controls */}
         <div className="bg-gray-800 rounded-2xl p-8">
           {/* Duration Display */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-6">
             <div className="text-6xl font-mono font-bold">
               {duration.toFixed(1)}{t('common.secondsShort')}
             </div>
             <div className="text-gray-400 mt-2">
-              {duration >= 20 ? (
+              {recording && duration < MIN_DURATION_SEC ? (
+                <span className="text-yellow-400">{t('speaker.tooShort')}</span>
+              ) : duration >= MAX_DURATION_SEC ? (
                 <span className="text-red-400">{t('speaker.maximumReached')}</span>
               ) : (
-                <span>{t('speaker.maxSeconds', { seconds: 20 })}</span>
+                <span>{t('speaker.maxSeconds', { seconds: MAX_DURATION_SEC })}</span>
               )}
             </div>
             {/* Progress bar */}
-            <div className="w-full bg-gray-700 rounded-full h-2 mt-4">
+            <div className="w-full bg-gray-700 rounded-full h-2 mt-4 relative">
+              {/* Min duration marker */}
               <div
-                className={`h-2 rounded-full transition-all ${duration >= 20 ? "bg-red-500" : "bg-blue-500"
-                  }`}
-                style={{ width: `${Math.min((duration / 20) * 100, 100)}%` }}
+                className="absolute top-0 h-2 w-0.5 bg-yellow-500/60"
+                style={{ left: `${(MIN_DURATION_SEC / MAX_DURATION_SEC) * 100}%` }}
+              ></div>
+              <div
+                className={`h-2 rounded-full transition-all ${
+                  duration >= MAX_DURATION_SEC ? "bg-red-500" : duration < MIN_DURATION_SEC ? "bg-yellow-500" : "bg-blue-500"
+                }`}
+                style={{ width: `${Math.min((duration / MAX_DURATION_SEC) * 100, 100)}%` }}
               ></div>
             </div>
           </div>
 
+          {/* Amplitude visualizer while recording */}
+          {recording && (
+            <div className="mb-6">
+              <AmplitudeBar analyser={analyser} />
+            </div>
+          )}
+
           {/* Record Button */}
           {!audioBlob && (
-            <div className="flex justify-center">
+            <div className="flex flex-col items-center gap-3">
               <button
                 onClick={recording ? stopRecording : startRecording}
-                className={`w-24 h-24 rounded-full flex items-center justify-center transition-all ${recording
-                  ? "bg-red-600 hover:bg-red-700 animate-pulse"
-                  : "bg-blue-600 hover:bg-blue-700"
-                  }`}
+                className={`w-24 h-24 rounded-full flex items-center justify-center transition-all ${
+                  recording
+                    ? duration < MIN_DURATION_SEC
+                      ? "bg-yellow-600 animate-pulse cursor-not-allowed"
+                      : "bg-red-600 hover:bg-red-700 animate-pulse"
+                    : "bg-blue-600 hover:bg-blue-700"
+                }`}
               >
                 {recording ? (
                   <div className="w-8 h-8 bg-white rounded-sm"></div>
@@ -448,6 +626,9 @@ function RecordContent({ locale }: { locale: string }) {
                   <div className="w-8 h-8 bg-white rounded-full"></div>
                 )}
               </button>
+              <span className="text-xs text-gray-500">
+                {recording ? t('speaker.pressSpaceToStop') : t('speaker.pressSpaceToRecord')}
+              </span>
             </div>
           )}
 
@@ -471,6 +652,9 @@ function RecordContent({ locale }: { locale: string }) {
                   {submitting ? t('speaker.submitting') : t('common.submit')}
                 </button>
               </div>
+              <p className="text-center text-xs text-gray-500">
+                {t('speaker.pressSpaceToSubmit')}
+              </p>
             </div>
           )}
 
