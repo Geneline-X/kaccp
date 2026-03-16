@@ -34,7 +34,8 @@ export default function ReviewerLoginClient({ locale }: { locale: string }) {
       }
 
       // Only allow REVIEWER and ADMIN roles
-      if (data.user.role !== "REVIEWER" && data.user.role !== "ADMIN") {
+      const roles: string[] = data.user.roles ?? [data.user.role];
+      if (!roles.includes("REVIEWER") && !roles.includes("ADMIN")) {
         setError(t('auth.accessDeniedReviewer'));
         return;
       }
