@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { getToken, apiFetch } from "@/lib/infra/client/client";
+import { getToken, clearToken, apiFetch } from "@/lib/infra/client/client";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -790,9 +790,20 @@ export default function ReviewerV2Client({ locale }: { locale: string }) {
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white shadow">
-        <div className="max-w-5xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
-          <h1 className="text-2xl font-bold text-gray-900">Reviewer Dashboard</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Audio &amp; transcription review</p>
+        <div className="max-w-5xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Reviewer Dashboard</h1>
+            <p className="text-sm text-gray-500 mt-0.5">Audio &amp; transcription review</p>
+          </div>
+          <button
+            onClick={() => {
+              clearToken();
+              router.push(`/${locale}/reviewer/login`);
+            }}
+            className="text-sm text-gray-500 hover:text-gray-700"
+          >
+            Logout
+          </button>
         </div>
       </header>
 
