@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
 
     const { start: weekStart, end: weekEnd } = getWeekRange();
 
-    const [recordings, total, stats, earningsByLang, weeklyRecordings] = await Promise.all([
+    const [recordings, total, stats, earningsByLang, weeklyRecordings, weeklyAllRecordings] = await Promise.all([
       prisma.recording.findMany({
         where,
         include: {
@@ -84,6 +84,17 @@ export async function GET(req: NextRequest) {
           language: { select: { speakerRatePerMinute: true } },
         },
       }),
+      // This week's ALL recordings (including pending review) for total submitted
+      prisma.recording.findMany({
+        where: {
+          speakerId: user.id,
+          status: { not: "REJECTED" },
+          createdAt: { gte: weekStart, lte: weekEnd },
+        },
+        select: {
+          durationSec: true,
+        },
+      }),
     ]);
 
     // All-time earnings
@@ -104,6 +115,9 @@ export async function GET(req: NextRequest) {
       ? Math.max(weeklyPerMinuteTotal, MILESTONE_PAYOUT_LE)
       : weeklyPerMinuteTotal;
 
+    // Total submitted this week (excluding rejected)
+    const weeklySubmittedSec = weeklyAllRecordings.reduce((sum, r) => sum + r.durationSec, 0);
+
     return NextResponse.json({
       recordings,
       stats,
@@ -112,6 +126,7 @@ export async function GET(req: NextRequest) {
         weekStart: weekStart.toISOString().slice(0, 10),
         weekEnd: weekEnd.toISOString().slice(0, 10),
         approvedDurationSec: weeklyApprovedSec,
+        submittedDurationSec: weeklySubmittedSec,
         milestoneTargetSec: MILESTONE_MINUTES * 60,
         milestoneHit,
         estimatedPayoutLe: Math.round(weeklyPayout * 100) / 100,

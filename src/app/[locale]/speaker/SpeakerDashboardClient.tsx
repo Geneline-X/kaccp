@@ -21,6 +21,7 @@ interface WeeklyProgress {
   weekStart: string;
   weekEnd: string;
   approvedDurationSec: number;
+  submittedDurationSec: number;
   milestoneTargetSec: number;
   milestoneHit: boolean;
   estimatedPayoutLe: number;
@@ -169,9 +170,15 @@ export default function SpeakerDashboardClient({ locale }: { locale: string }) {
                 {t('speaker.basedOnApproved', { minutes: ((stats?.approvedDurationSec || 0) / 60).toFixed(1) })}
               </p>
             </div>
-            <div className="text-right">
+            <div className="text-right space-y-2">
               <div className="bg-white/20 rounded-lg px-4 py-2">
-                <p className="text-xs text-green-100">{t('speaker.pending')}</p>
+                <p className="text-xs text-green-100">{t('speaker.totalRecorded')}</p>
+                <p className="text-lg font-semibold">
+                  {((stats?.totalDurationSec || 0) / 60).toFixed(1)} {t('common.min')}
+                </p>
+              </div>
+              <div className="bg-white/20 rounded-lg px-4 py-2">
+                <p className="text-xs text-green-100">{t('speaker.pendingReview')}</p>
                 <p className="text-lg font-semibold">
                   {(((stats?.totalDurationSec || 0) - (stats?.approvedDurationSec || 0)) / 60).toFixed(1)} {t('common.min')}
                 </p>
@@ -184,13 +191,26 @@ export default function SpeakerDashboardClient({ locale }: { locale: string }) {
         {stats?.weeklyProgress && (() => {
           const wp = stats.weeklyProgress;
           const approvedHours = wp.approvedDurationSec / 3600;
+          const submittedHours = (wp.submittedDurationSec || 0) / 3600;
           const targetHours = wp.milestoneTargetSec / 3600;
-          const progressPct = Math.min(100, Math.round((approvedHours / targetHours) * 100));
-          const hoursLeft = Math.max(0, targetHours - approvedHours);
+          const approvedPct = Math.min(100, Math.round((approvedHours / targetHours) * 100));
+          const submittedPct = Math.min(100, Math.round((submittedHours / targetHours) * 100));
+          const hoursLeft = Math.max(0, targetHours - submittedHours);
           const perMinuteEarnings = (wp.approvedDurationSec / 60) * 2.5;
-          const showNudge = progressPct >= 50 && progressPct < 100;
+          const pendingReviewHours = submittedHours - approvedHours;
 
-          // Calculate days until Friday
+          // Gamified milestones along the progress bar
+          const milestones = [
+            { pct: 25, label: "1h", title: t('speaker.milestoneWarmup') },
+            { pct: 50, label: "2h", title: t('speaker.milestoneHalfway') },
+            { pct: 75, label: "3h", title: t('speaker.milestoneAlmostThere') },
+            { pct: 100, label: "4h", title: t('speaker.milestonePayout') },
+          ];
+          // Find the next unachieved milestone for encouragement
+          const nextMilestone = milestones.find((m) => submittedPct < m.pct);
+          const lastReached = [...milestones].reverse().find((m) => submittedPct >= m.pct);
+
+          // Calculate days until end of week
           const now = new Date();
           const endDate = new Date(wp.weekEnd + "T23:59:59Z");
           const daysLeft = Math.max(0, Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
@@ -212,39 +232,95 @@ export default function SpeakerDashboardClient({ locale }: { locale: string }) {
                 </div>
               </div>
 
-              <div className="flex justify-between items-end mb-2">
+              <div className="flex justify-between items-end mb-1">
                 <p className="text-2xl font-bold">
-                  {approvedHours.toFixed(1)} / {targetHours.toFixed(1)} {t('speaker.hours')}
+                  {submittedHours.toFixed(1)} / {targetHours.toFixed(1)} {t('speaker.hours')}
                 </p>
                 <p className="text-lg font-semibold">
                   Le{wp.estimatedPayoutLe.toFixed(2)}
                 </p>
               </div>
-
-              <div className="w-full bg-white/20 rounded-full h-3 mb-3">
-                <div
-                  className={`h-3 rounded-full transition-all ${wp.milestoneHit ? 'bg-yellow-400' : 'bg-white'}`}
-                  style={{ width: `${progressPct}%` }}
-                ></div>
-              </div>
-
-              {wp.milestoneHit ? (
-                <p className="text-sm text-yellow-200 font-medium">
-                  {t('speaker.milestoneReached')}
-                </p>
-              ) : showNudge ? (
-                <p className="text-sm text-purple-200">
-                  {t('speaker.milestoneNudge', {
-                    hours: hoursLeft.toFixed(1),
-                    milestone: '1,000',
-                    current: perMinuteEarnings.toFixed(0),
+              {pendingReviewHours > 0.01 && (
+                <p className="text-xs text-purple-200 mb-2">
+                  {t('speaker.approvedOfSubmitted', {
+                    approved: approvedHours.toFixed(1),
+                    pending: pendingReviewHours.toFixed(1),
                   })}
                 </p>
-              ) : (
-                <p className="text-sm text-purple-200">
-                  {t('speaker.milestoneTarget', { hours: targetHours.toFixed(0) })}
-                </p>
               )}
+
+              {/* Progress bar with milestone markers */}
+              <div className="relative mt-1 mb-1">
+                <div className="w-full bg-white/20 rounded-full h-4 relative overflow-hidden">
+                  {/* Submitted (pending review) bar */}
+                  <div
+                    className="absolute h-4 rounded-full transition-all duration-500 bg-white/30"
+                    style={{ width: `${submittedPct}%` }}
+                  ></div>
+                  {/* Approved bar */}
+                  <div
+                    className={`absolute h-4 rounded-full transition-all duration-500 ${wp.milestoneHit ? 'bg-yellow-400' : 'bg-white'}`}
+                    style={{ width: `${approvedPct}%` }}
+                  ></div>
+                </div>
+
+                {/* Milestone markers */}
+                {milestones.map((m) => {
+                  const reached = submittedPct >= m.pct;
+                  return (
+                    <div
+                      key={m.pct}
+                      className="absolute top-0 flex flex-col items-center"
+                      style={{ left: `${m.pct}%`, transform: 'translateX(-50%)' }}
+                    >
+                      <div
+                        className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+                          reached
+                            ? 'bg-yellow-400 border-yellow-300 scale-110'
+                            : 'bg-purple-700 border-white/40'
+                        }`}
+                      >
+                        {reached && (
+                          <svg width="8" height="8" viewBox="0 0 12 12" fill="none">
+                            <path d="M2 6L5 9L10 3" stroke={m.pct === 100 ? '#7c3aed' : '#7c3aed'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        )}
+                      </div>
+                      <span className={`text-[10px] mt-0.5 font-medium ${reached ? 'text-yellow-200' : 'text-purple-300'}`}>
+                        {m.label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Milestone feedback */}
+              <div className="mt-4">
+                {wp.milestoneHit ? (
+                  <div className="bg-yellow-400/20 border border-yellow-400/30 rounded-lg px-4 py-2">
+                    <p className="text-sm text-yellow-200 font-semibold">
+                      {t('speaker.milestoneReached')}
+                    </p>
+                  </div>
+                ) : lastReached ? (
+                  <div className="bg-white/10 rounded-lg px-4 py-2">
+                    <p className="text-sm text-purple-100 font-medium">{lastReached.title}</p>
+                    {nextMilestone && (
+                      <p className="text-xs text-purple-300 mt-0.5">
+                        {t('speaker.nextMilestone', { label: nextMilestone.label, hours: hoursLeft.toFixed(1) })}
+                      </p>
+                    )}
+                  </div>
+                ) : nextMilestone ? (
+                  <p className="text-sm text-purple-200">
+                    {t('speaker.nextMilestone', { label: nextMilestone.label, hours: hoursLeft.toFixed(1) })}
+                  </p>
+                ) : (
+                  <p className="text-sm text-purple-200">
+                    {t('speaker.milestoneTarget', { hours: targetHours.toFixed(0) })}
+                  </p>
+                )}
+              </div>
             </div>
           );
         })()}
