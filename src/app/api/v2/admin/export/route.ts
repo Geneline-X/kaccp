@@ -112,6 +112,7 @@ export async function GET(req: NextRequest) {
           category: rec.prompt.category,
           duration_sec: rec.durationSec,
           speaker_id: rec.speakerId,
+          speaker_name: rec.speaker.displayName || rec.speakerId,
           recording_id: rec.id,
         };
         if (includeTranscriptions) {
@@ -123,12 +124,12 @@ export async function GET(req: NextRequest) {
 
     if (format === "csv") {
       const csvHeader = includeTranscriptions
-        ? "id|audio_path|transcription|english_prompt|duration_sec|speaker_id|category"
-        : "id|audio_path|english_prompt|duration_sec|speaker_id|category";
+        ? "id|audio_path|transcription|english_prompt|duration_sec|speaker_id|speaker_name|category"
+        : "id|audio_path|english_prompt|duration_sec|speaker_id|speaker_name|category";
       const csvRows = exportData.map((row) =>
         includeTranscriptions
-          ? `${row.id}|${row.audio_file}|${row.transcription}|${row.english_prompt}|${row.duration_sec}|${row.speaker_id}|${row.category}`
-          : `${row.id}|${row.audio_file}|${row.english_prompt}|${row.duration_sec}|${row.speaker_id}|${row.category}`
+          ? `${row.id}|${row.audio_file}|${row.transcription}|${row.english_prompt}|${row.duration_sec}|${row.speaker_id}|${row.speaker_name}|${row.category}`
+          : `${row.id}|${row.audio_file}|${row.english_prompt}|${row.duration_sec}|${row.speaker_id}|${row.speaker_name}|${row.category}`
       );
       const csvContent = [csvHeader, ...csvRows].join("\n");
 
