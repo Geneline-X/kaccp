@@ -19,6 +19,11 @@ interface Language {
   };
 }
 
+interface Speaker {
+  id: string;
+  displayName: string | null;
+}
+
 interface ExportData {
   language: {
     code: string;
@@ -31,10 +36,11 @@ interface ExportData {
     totalDurationHours: number;
     uniqueSpeakers: number;
   };
+  speakers: Speaker[];
   data: Array<{
     id: string;
     audio_file: string;
-    transcription: string;
+    transcription?: string;
     duration_sec: number;
     category: string;
   }>;
@@ -46,6 +52,9 @@ export default function AdminExportPage() {
   const router = useRouter();
   const [languages, setLanguages] = useState<Language[]>([]);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("");
+  const [selectedSpeaker, setSelectedSpeaker] = useState<string>("");
+  const [includeTranscriptions, setIncludeTranscriptions] = useState(true);
+  const [speakers, setSpeakers] = useState<Speaker[]>([]);
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
   const [exportData, setExportData] = useState<ExportData | null>(null);
@@ -72,6 +81,13 @@ export default function AdminExportPage() {
       });
   }, [token, router]);
 
+  const buildParams = (format: string) => {
+    const params = new URLSearchParams({ languageId: selectedLanguage, format });
+    if (selectedSpeaker) params.set("speakerId", selectedSpeaker);
+    if (!includeTranscriptions) params.set("includeTranscriptions", "false");
+    return params.toString();
+  };
+
   const handlePreview = async () => {
     if (!selectedLanguage) return;
 
@@ -81,7 +97,7 @@ export default function AdminExportPage() {
 
     try {
       const res = await fetch(
-        `/api/v2/admin/export?languageId=${selectedLanguage}&format=json`,
+        `/api/v2/admin/export?${buildParams("json")}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -94,6 +110,7 @@ export default function AdminExportPage() {
       }
 
       setExportData(data);
+      if (data.speakers) setSpeakers(data.speakers);
     } catch {
       setError("Failed to fetch export data");
     } finally {
@@ -104,7 +121,7 @@ export default function AdminExportPage() {
   const handleDownloadCSV = () => {
     if (!selectedLanguage) return;
     window.open(
-      `/api/v2/admin/export?languageId=${selectedLanguage}&format=csv`,
+      `/api/v2/admin/export?${buildParams("csv")}`,
       "_blank"
     );
   };
@@ -156,7 +173,7 @@ export default function AdminExportPage() {
           </h2>
 
           <div className="flex flex-wrap gap-4 items-end">
-            <div className="flex-1 min-w-[200px]">
+            <div className="min-w-[200px]">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 {t('admin.exportPage.language')}
               </label>
@@ -164,6 +181,8 @@ export default function AdminExportPage() {
                 value={selectedLanguage}
                 onChange={(e) => {
                   setSelectedLanguage(e.target.value);
+                  setSelectedSpeaker("");
+                  setSpeakers([]);
                   setExportData(null);
                 }}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg"
@@ -174,6 +193,41 @@ export default function AdminExportPage() {
                   </option>
                 ))}
               </select>
+            </div>
+
+            <div className="min-w-[180px]">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Speaker
+              </label>
+              <select
+                value={selectedSpeaker}
+                onChange={(e) => {
+                  setSelectedSpeaker(e.target.value);
+                  setExportData(null);
+                }}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              >
+                <option value="">All speakers</option>
+                {speakers.map((s) => (
+                  <option key={s.id} value={s.id}>{s.displayName || s.id}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex items-center gap-2 pb-1">
+              <input
+                type="checkbox"
+                id="includeTranscriptions"
+                checked={includeTranscriptions}
+                onChange={(e) => {
+                  setIncludeTranscriptions(e.target.checked);
+                  setExportData(null);
+                }}
+                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <label htmlFor="includeTranscriptions" className="text-sm text-gray-700">
+                Include transcriptions
+              </label>
             </div>
 
             <button
@@ -267,9 +321,11 @@ export default function AdminExportPage() {
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
                         {t('admin.exportPage.audioPath')}
                       </th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                        {t('admin.recordingsPage.transcription')}
-                      </th>
+                      {includeTranscriptions && (
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                          {t('admin.recordingsPage.transcription')}
+                        </th>
+                      )}
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
                         {t('admin.exportPage.duration')}
                       </th>
@@ -287,9 +343,11 @@ export default function AdminExportPage() {
                         <td className="px-4 py-2 text-xs font-mono text-gray-500 max-w-[200px] truncate" title={row.audio_file}>
                           {row.audio_file?.split('/').slice(-2).join('/')}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-900 max-w-xs truncate">
-                          {row.transcription}
-                        </td>
+                        {includeTranscriptions && (
+                          <td className="px-4 py-2 text-sm text-gray-900 max-w-xs truncate">
+                            {row.transcription}
+                          </td>
+                        )}
                         <td className="px-4 py-2 text-sm text-gray-500">
                           {row.duration_sec?.toFixed(1)}s
                         </td>
@@ -312,7 +370,9 @@ export default function AdminExportPage() {
                 {t('admin.exportPage.csvDescription')}
               </p>
               <code className="block bg-blue-100 p-3 rounded text-sm text-blue-900 overflow-x-auto">
-                id|audio_path|transcription|english_prompt|duration_sec|speaker_id|category
+                {includeTranscriptions
+                  ? "id|audio_path|transcription|english_prompt|duration_sec|speaker_id|category"
+                  : "id|audio_path|english_prompt|duration_sec|speaker_id|category"}
               </code>
               <div className="mt-4 text-sm text-blue-700">
                 <p className="font-medium mb-1">{t('admin.exportPage.audioPathFormat')}</p>
