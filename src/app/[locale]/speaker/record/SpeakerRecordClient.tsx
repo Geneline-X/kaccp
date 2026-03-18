@@ -408,10 +408,21 @@ function RecordContent({ locale }: { locale: string }) {
     }
   }, [audioBlob, currentPrompt, duration, languageId, t, convertToWav, showToast, advanceToNextPrompt]);
 
-  // Skip prompt
+  // Skip prompt — persist skip so they never see it again
   const skipPrompt = useCallback(() => {
+    if (currentPrompt) {
+      const token = getToken();
+      fetch("/api/v2/speaker/prompts/skip", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ promptId: currentPrompt.id }),
+      }).catch(() => {}); // fire-and-forget
+    }
     advanceToNextPrompt();
-  }, [advanceToNextPrompt]);
+  }, [advanceToNextPrompt, currentPrompt]);
 
   // Re-record
   const reRecord = useCallback(() => {

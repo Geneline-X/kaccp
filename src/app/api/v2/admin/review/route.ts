@@ -19,15 +19,18 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "20");
     const skip = (page - 1) * limit;
 
+    const speakerId = searchParams.get("speakerId");
+
     const where: any = {
       status,
     };
 
-    if (languageId) {
-      where.recording = { languageId };
-    }
+    const recordingFilter: any = {};
+    if (languageId) recordingFilter.languageId = languageId;
+    if (speakerId) recordingFilter.speakerId = speakerId;
+    if (Object.keys(recordingFilter).length > 0) where.recording = recordingFilter;
 
-    const [transcriptions, total] = await Promise.all([
+    const [transcriptions, total, distinctSpeakers] = await Promise.all([
       prisma.transcription.findMany({
         where,
         include: {
@@ -67,7 +70,19 @@ export async function GET(req: NextRequest) {
         take: limit,
       }),
       prisma.transcription.count({ where }),
+      prisma.transcription.findMany({
+        where: { status: "PENDING_REVIEW" },
+        select: { recording: { select: { speaker: { select: { id: true, displayName: true } } } } },
+        distinct: ["recordingId"],
+      }),
     ]);
+
+    // Deduplicate speakers (distinct is on recordingId, not speakerId)
+    const speakerMap = new Map<string, { id: string; displayName: string | null }>();
+    for (const t of distinctSpeakers) {
+      const s = t.recording?.speaker;
+      if (s && !speakerMap.has(s.id)) speakerMap.set(s.id, s);
+    }
 
     return NextResponse.json({
       transcriptions,
@@ -77,6 +92,7 @@ export async function GET(req: NextRequest) {
         total,
         totalPages: Math.ceil(total / limit),
       },
+      speakers: Array.from(speakerMap.values()),
     });
   } catch (error) {
     console.error("Error fetching transcriptions for review:", error);

@@ -78,6 +78,7 @@ model User {
   transcriberWork          Transcription[]           @relation("TranscriberWork")
   reviewerWork             Transcription[]           @relation("ReviewerWork")
   transcriptionAssignments TranscriptionAssignment[]
+  skippedPrompts           SkippedPrompt[]
 }
 
 // ============================================================================
@@ -139,11 +140,24 @@ model Prompt {
   timesRecorded     Int            @default(0)
 
   recordings        Recording[]
+  skippedBy         SkippedPrompt[]
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
 
   @@index([languageId, category])
   @@index([languageId, isActive])
+}
+
+model SkippedPrompt {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  promptId  String
+  prompt    Prompt   @relation(fields: [promptId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, promptId])
+  @@index([userId])
 }
 
 model Recording {

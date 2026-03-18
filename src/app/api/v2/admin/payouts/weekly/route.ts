@@ -27,17 +27,29 @@ export async function GET(req: NextRequest) {
     const weekRef = `weekly:${start.toISOString().slice(0, 10)}`;
 
     // Find all audio-approved recordings in this week, grouped by speaker + language
-    const recordings = await prisma.recording.findMany({
-      where: {
-        status: { in: [...APPROVED_STATUSES] },
-        createdAt: { gte: start, lte: end },
-      },
-      select: {
-        speakerId: true,
-        durationSec: true,
-        language: { select: { speakerRatePerMinute: true } },
-      },
-    });
+    const [recordings, pendingRecordings] = await Promise.all([
+      prisma.recording.findMany({
+        where: {
+          status: { in: [...APPROVED_STATUSES] },
+          createdAt: { gte: start, lte: end },
+        },
+        select: {
+          speakerId: true,
+          durationSec: true,
+          language: { select: { speakerRatePerMinute: true } },
+        },
+      }),
+      prisma.recording.findMany({
+        where: {
+          status: "PENDING_REVIEW",
+          createdAt: { gte: start, lte: end },
+        },
+        select: {
+          speakerId: true,
+          durationSec: true,
+        },
+      }),
+    ]);
 
     // Group by speaker
     const speakerMap = new Map<
@@ -55,7 +67,13 @@ export async function GET(req: NextRequest) {
       speakerMap.set(rec.speakerId, entry);
     }
 
-    if (speakerMap.size === 0) {
+    // Group pending recordings by speaker
+    const pendingMap = new Map<string, number>();
+    for (const rec of pendingRecordings) {
+      pendingMap.set(rec.speakerId, (pendingMap.get(rec.speakerId) || 0) + rec.durationSec);
+    }
+
+    if (speakerMap.size === 0 && pendingMap.size === 0) {
       return NextResponse.json({
         week: {
           start: start.toISOString().slice(0, 10),
@@ -71,8 +89,8 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // Fetch speaker details
-    const speakerIds = Array.from(speakerMap.keys());
+    // Fetch speaker details (include speakers with only pending recordings too)
+    const speakerIds = Array.from(new Set([...speakerMap.keys(), ...pendingMap.keys()]));
     const [speakers, existingPayments] = await Promise.all([
       prisma.user.findMany({
         where: { id: { in: speakerIds } },
@@ -87,7 +105,7 @@ export async function GET(req: NextRequest) {
     const paidMap = new Map(existingPayments.map((p) => [p.userId, p.id]));
 
     const speakerRows = speakers.map((s) => {
-      const data = speakerMap.get(s.id)!;
+      const data = speakerMap.get(s.id) || { totalSec: 0, perMinuteTotal: 0 };
       const approvedMinutes = data.totalSec / 60;
       const milestoneHit = approvedMinutes >= MILESTONE_MINUTES;
       const payoutLe = milestoneHit
@@ -100,6 +118,7 @@ export async function GET(req: NextRequest) {
         email: s.email,
         approvedDurationSec: data.totalSec,
         approvedMinutes: Math.round(approvedMinutes * 100) / 100,
+        pendingDurationSec: pendingMap.get(s.id) || 0,
         milestoneHit,
         payoutLe: Math.round(payoutLe * 100) / 100,
         paid: paidMap.has(s.id),

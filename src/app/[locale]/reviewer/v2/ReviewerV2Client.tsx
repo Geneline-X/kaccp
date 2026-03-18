@@ -392,6 +392,11 @@ function PaginationBar({
 
 // ─── Recordings Panel ────────────────────────────────────────────────────────
 
+interface SpeakerOption {
+  id: string;
+  displayName: string | null;
+}
+
 function RecordingsPanel({
   languages,
   onCountChange,
@@ -402,6 +407,8 @@ function RecordingsPanel({
   const [recordings, setRecordings] = useState<Recording[]>([]);
   const [loading, setLoading] = useState(false);
   const [languageFilter, setLanguageFilter] = useState("");
+  const [speakerFilter, setSpeakerFilter] = useState("");
+  const [speakers, setSpeakers] = useState<SpeakerOption[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState<PaginationData>({ page: 1, total: 0, totalPages: 1 });
@@ -417,19 +424,22 @@ function RecordingsPanel({
     try {
       const params = new URLSearchParams({ page: String(page) });
       if (languageFilter) params.set("languageId", languageFilter);
+      if (speakerFilter) params.set("speakerId", speakerFilter);
       const data = await apiFetch<{
         recordings?: Recording[];
         pagination?: PaginationData;
+        speakers?: SpeakerOption[];
         error?: string;
       }>(`/api/v2/reviewer/recordings?${params}`);
       if (!data.error) {
         setRecordings(data.recordings ?? []);
         setPagination(data.pagination ?? { page: 1, total: 0, totalPages: 1 });
+        if (data.speakers) setSpeakers(data.speakers);
       }
     } finally {
       setLoading(false);
     }
-  }, [page, languageFilter, refreshKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [page, languageFilter, speakerFilter, refreshKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     fetchRecordings();
@@ -495,7 +505,7 @@ function RecordingsPanel({
 
   return (
     <div>
-      <div className="flex items-center gap-3 mb-4">
+      <div className="flex items-center gap-3 mb-4 flex-wrap">
         <select
           value={languageFilter}
           onChange={(e) => { setLanguageFilter(e.target.value); setPage(1); }}
@@ -504,6 +514,16 @@ function RecordingsPanel({
           <option value="">All languages</option>
           {languages.map((l) => (
             <option key={l.id} value={l.id}>{l.name}</option>
+          ))}
+        </select>
+        <select
+          value={speakerFilter}
+          onChange={(e) => { setSpeakerFilter(e.target.value); setPage(1); }}
+          className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+        >
+          <option value="">All speakers</option>
+          {speakers.map((s) => (
+            <option key={s.id} value={s.id}>{s.displayName || s.id}</option>
           ))}
         </select>
         <button
@@ -575,6 +595,8 @@ function TranscriptionsPanel({
   const [transcriptions, setTranscriptions] = useState<Transcription[]>([]);
   const [loading, setLoading] = useState(false);
   const [languageFilter, setLanguageFilter] = useState("");
+  const [speakerFilter, setSpeakerFilter] = useState("");
+  const [speakers, setSpeakers] = useState<SpeakerOption[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState<PaginationData>({ page: 1, total: 0, totalPages: 1 });
@@ -590,19 +612,22 @@ function TranscriptionsPanel({
     try {
       const params = new URLSearchParams({ status: "PENDING_REVIEW", page: String(page) });
       if (languageFilter) params.set("languageId", languageFilter);
+      if (speakerFilter) params.set("speakerId", speakerFilter);
       const data = await apiFetch<{
         transcriptions?: Transcription[];
         pagination?: PaginationData;
+        speakers?: SpeakerOption[];
         error?: string;
       }>(`/api/v2/admin/review?${params}`);
       if (!data.error) {
         setTranscriptions(data.transcriptions ?? []);
         setPagination(data.pagination ?? { page: 1, total: 0, totalPages: 1 });
+        if (data.speakers) setSpeakers(data.speakers);
       }
     } finally {
       setLoading(false);
     }
-  }, [page, languageFilter, refreshKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [page, languageFilter, speakerFilter, refreshKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     fetchTranscriptions();
@@ -661,7 +686,7 @@ function TranscriptionsPanel({
 
   return (
     <div>
-      <div className="flex items-center gap-3 mb-4">
+      <div className="flex items-center gap-3 mb-4 flex-wrap">
         <select
           value={languageFilter}
           onChange={(e) => { setLanguageFilter(e.target.value); setPage(1); }}
@@ -670,6 +695,16 @@ function TranscriptionsPanel({
           <option value="">All languages</option>
           {languages.map((l) => (
             <option key={l.id} value={l.id}>{l.name}</option>
+          ))}
+        </select>
+        <select
+          value={speakerFilter}
+          onChange={(e) => { setSpeakerFilter(e.target.value); setPage(1); }}
+          className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+        >
+          <option value="">All speakers</option>
+          {speakers.map((s) => (
+            <option key={s.id} value={s.id}>{s.displayName || s.id}</option>
           ))}
         </select>
         <button

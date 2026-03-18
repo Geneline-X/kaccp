@@ -3,8 +3,3 @@
 
 export * from './prompts';
 export * from './users';
-export * from './recordings';
-export * from './transcriptions';
-export * from './payments';
-export * from './languages';
-export * from './countries';

@@ -18,10 +18,13 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "20");
     const skip = (page - 1) * limit;
 
+    const speakerId = searchParams.get("speakerId");
+
     const where: Prisma.RecordingWhereInput = { status: "PENDING_REVIEW" };
     if (languageId) where.languageId = languageId;
+    if (speakerId) where.speakerId = speakerId;
 
-    const [recordings, total] = await Promise.all([
+    const [recordings, total, distinctSpeakers] = await Promise.all([
       prisma.recording.findMany({
         where,
         include: {
@@ -34,6 +37,11 @@ export async function GET(req: NextRequest) {
         take: limit,
       }),
       prisma.recording.count({ where }),
+      prisma.recording.findMany({
+        where: { status: "PENDING_REVIEW" },
+        select: { speaker: { select: { id: true, displayName: true } } },
+        distinct: ["speakerId"],
+      }),
     ]);
 
     const recordingsWithUrls = await Promise.all(
@@ -53,6 +61,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       recordings: recordingsWithUrls,
       pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+      speakers: distinctSpeakers.map((r) => r.speaker).filter(Boolean),
     });
   } catch (error) {
     console.error("Error fetching recordings for review:", error);
