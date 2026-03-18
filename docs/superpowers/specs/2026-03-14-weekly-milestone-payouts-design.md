@@ -6,11 +6,12 @@ Replace the current manual payment page with a weekly payout system. Speakers ea
 
 ## Payout Rules
 
-- **Week boundary**: Saturday 00:00 to Friday 23:59 (local time)
-- **Eligible recordings**: status in `PENDING_TRANSCRIPTION`, `TRANSCRIBED`, `APPROVED` — i.e., audio has been reviewed and approved by a reviewer
-- **Base rate**: `approvedMinutes × language.speakerRatePerMinute` (default 2.5 Le/min)
-- **Milestone**: if `approvedMinutes >= 240` (4 hours), payout is a flat 1,000 Le regardless of per-minute calculation
+- **Week boundary**: Saturday 00:00 UTC to Friday 23:59:59 UTC
+- **Eligible recordings**: status in `PENDING_TRANSCRIPTION`, `TRANSCRIBED`, `APPROVED` — i.e., audio has passed reviewer approval. This means a recording counts toward a speaker's weekly total as soon as the reviewer approves the audio quality, regardless of transcription status. This is intentional: the speaker's work is the audio, and they shouldn't wait for the transcription pipeline to complete. If a recording is later rejected (e.g., re-flagged), it was already counted — accepted risk for simplicity.
+- **Base rate**: per-minute earnings summed per language: `durationMin × language.speakerRatePerMinute`
+- **Milestone**: if total `approvedMinutes >= 240` (4 hours across all languages), payout is the **greater of** the per-minute total or the flat 1,000 Le. This prevents edge cases where high per-language rates would make the milestone a penalty.
 - **Every speaker gets paid weekly** — milestone or not
+- **Rounding**: per-minute payouts are rounded to 2 decimal places (Le) using standard rounding (`Math.round(value * 100) / 100`)
 
 ### Constants (in code)
 
@@ -28,10 +29,11 @@ Add a weekly progress card to the existing speaker dashboard (`SpeakerDashboardC
 - **Progress bar**: approved hours this week out of 4-hour target
 - **Approved hours**: e.g., "2.5 / 4.0 hours"
 - **Current estimated payout**: calculated from approved recordings this week
-  - Under milestone: `approvedMin × rate` (e.g., "Le375.00")
-  - At/above milestone: "Le1,000.00"
+  - Under milestone: per-minute total (e.g., "Le375.00")
+  - At/above milestone: "Le1,000.00" (or per-minute if higher)
 - **Motivational nudge** (when between 50%–99% of milestone): "Record X more hours to earn Le1,000 instead of LeY"
 - **Week label**: "This week: Sat Mar 14 – Fri Mar 20"
+- **Week ends indicator**: "Ends in 3 days" countdown
 
 ### Data Source
 
@@ -52,11 +54,11 @@ Computed on the fly — query recordings by `speakerId`, approved statuses, and 
 
 ## Admin Weekly Payout Page
 
-Replace the existing admin payment page (`/admin/payments/`) with a new weekly payout interface.
+Replace the existing admin payment page (`/admin/payments/`) with a new weekly payout interface. The old page is kept as a read-only archive at its current URL for viewing historical manual payments.
 
 ### URL
 
-`/[locale]/admin/v2/payouts` (replaces `/[locale]/admin/payments`)
+`/[locale]/admin/v2/payouts` (new primary payment interface)
 
 ### Layout
 
@@ -81,10 +83,11 @@ Replace the existing admin payment page (`/admin/payments/`) with a new weekly p
 ### Payout Calculation Per Speaker
 
 ```
+perMinuteTotal = sum of (durationMin × language.speakerRatePerMinute) per language
 if approvedMinutes >= 240:
-  payout = 1000 Le
+  payout = max(perMinuteTotal, 1000)
 else:
-  payout = approvedMinutes × speakerRatePerMinute
+  payout = perMinuteTotal
 ```
 
 ### When "Pay" Is Clicked
@@ -96,14 +99,16 @@ For each speaker being paid:
    - `amountCents`: payout in cents (Le × 100)
    - `currency`: SLE
    - `status`: PAID
-   - `reference`: "Weekly payout: YYYY-MM-DD to YYYY-MM-DD"
+   - `reference`: `weekly:YYYY-MM-DD` (the Saturday date, used as a stable dedup key)
    - `notes`: "Milestone" or "Per-minute" to indicate which rate applied
 
-2. No wallet transactions or `totalEarningsCents` updates — those are being phased out in favor of on-the-fly computation.
+2. No wallet transactions or `totalEarningsCents` updates — earnings are computed on the fly.
 
 ### Preventing Double Payment
 
-Query existing `Payment` records for the same speaker with a matching weekly reference string. If a payment exists for that speaker and week, show as "paid" and disable the action.
+Use a `@@unique([userId, reference])` constraint on the `Payment` model (schema migration required). This provides database-level protection against duplicate payments for the same speaker and week. The `reference` format `weekly:YYYY-MM-DD` is a stable, machine-readable key.
+
+Additionally, add an index on `Payment(userId, reference)` for efficient lookups.
 
 ## API Endpoints
 
@@ -141,8 +146,8 @@ Returns the payout summary for a given week.
 **Implementation:**
 1. Calculate the Sat–Fri range from `weekStart`
 2. Find all recordings with approved statuses and `createdAt` in range, grouped by `speakerId`
-3. For each speaker, sum duration and determine payout (milestone or per-minute)
-4. Check `Payment` table for existing payments with matching week reference
+3. For each speaker, sum duration per language, calculate per-minute total, check milestone
+4. Check `Payment` table for existing payments with matching `reference` (`weekly:YYYY-MM-DD`)
 5. Return the summary
 
 ### `POST /api/v2/admin/payouts/weekly`
@@ -153,15 +158,15 @@ Process payouts for one or more speakers.
 ```typescript
 {
   weekStart: string;           // ISO date for the Saturday
-  speakerIds: string[];        // speakers to pay (or "all" for bulk)
+  speakerIds: string[];        // speakers to pay
+  payAll?: boolean;            // if true, pay all unpaid speakers (ignores speakerIds)
 }
 ```
 
 **Implementation:**
 1. Recalculate each speaker's payout for the week (don't trust client-sent amounts)
-2. Check for existing payments to prevent doubles
-3. Create `Payment` records with status PAID
-4. Return created payment IDs
+2. Create `Payment` records — the unique constraint on `(userId, reference)` prevents doubles at the DB level
+3. Return created payment IDs
 
 ### Updated: `GET /api/v2/speaker/recordings`
 
@@ -172,41 +177,52 @@ Add `weeklyProgress` to the existing response (see Speaker Dashboard section abo
 ### New Files
 - `src/app/api/v2/admin/payouts/weekly/route.ts` — weekly payout API (GET + POST)
 - `src/app/[locale]/admin/v2/payouts/page.tsx` — admin weekly payout page
+- `src/lib/utils/week.ts` — week boundary helper (shared between speaker and admin APIs)
 
 ### Modified Files
 - `src/app/api/v2/speaker/recordings/route.ts` — add `weeklyProgress` to response
 - `src/app/[locale]/speaker/SpeakerDashboardClient.tsx` — add weekly progress card
-- `src/app/[locale]/admin/v2/AdminV2DashboardClient.tsx` — update nav link from old payments page to new payouts page (if linked)
+- `src/app/[locale]/admin/v2/AdminV2DashboardClient.tsx` — update nav link to new payouts page
+- `prisma/schema.prisma` — add `@@unique([userId, reference])` and `@@index([userId, reference])` to Payment model
 
-### Removed Files
-- `src/app/[locale]/admin/payments/page.tsx` — replaced by new payouts page
+### Kept (read-only archive)
+- `src/app/[locale]/admin/payments/page.tsx` — kept for viewing historical manual payments
 
 ### Unchanged
-- Prisma schema — no new tables needed. Using existing `Payment`, `Recording`, `Language` models.
 - `WalletTransaction` — not used in the new flow. Existing records stay for history but no new ones are created.
 
 ## Week Boundary Helper
 
-Utility function used by both speaker and admin APIs:
+Utility function in `src/lib/utils/week.ts`, used by both speaker and admin APIs:
 
 ```typescript
-function getCurrentWeekRange(): { start: Date; end: Date } {
-  const now = new Date();
-  const day = now.getDay(); // 0=Sun, 6=Sat
-  const diffToSaturday = day >= 6 ? day - 6 : day + 1; // days since last Saturday
-  const start = new Date(now);
-  start.setDate(now.getDate() - diffToSaturday);
-  start.setHours(0, 0, 0, 0);
+export function getWeekRange(dateOrWeekStart?: string): { start: Date; end: Date } {
+  let ref: Date;
+  if (dateOrWeekStart) {
+    ref = new Date(dateOrWeekStart + "T00:00:00Z");
+  } else {
+    ref = new Date();
+  }
+  const day = ref.getUTCDay(); // 0=Sun, 6=Sat
+  const diffToSaturday = day >= 6 ? day - 6 : day + 1;
+  const start = new Date(ref);
+  start.setUTCDate(ref.getUTCDate() - diffToSaturday);
+  start.setUTCHours(0, 0, 0, 0);
   const end = new Date(start);
-  end.setDate(start.getDate() + 6);
-  end.setHours(23, 59, 59, 999);
+  end.setUTCDate(start.getUTCDate() + 6);
+  end.setUTCHours(23, 59, 59, 999);
   return { start, end };
 }
+
+export const MILESTONE_MINUTES = 240;
+export const MILESTONE_PAYOUT_LE = 1000;
 ```
 
 ## Edge Cases
 
-- **Speaker records in multiple languages**: sum all approved durations across languages for milestone check. Payout uses per-language rates for the per-minute calculation, or flat 1,000 Le if milestone is hit.
-- **Recording approved after week ends**: the recording's `createdAt` determines which week it belongs to, not the approval date. This way speakers know exactly how much they recorded that week.
+- **Speaker records in multiple languages**: sum all approved durations across languages for milestone check. Per-minute payout is calculated per language using each language's rate, then summed. If milestone is hit, payout is `max(perMinuteTotal, 1000 Le)`.
+- **Recording's `createdAt` determines the week**: not the approval date. This way speakers know exactly how much they recorded that week.
 - **Partial weeks**: first and last weeks work the same — no proration.
 - **No recordings**: speaker doesn't appear in the payout table.
+- **Recording volume**: each recording is max ~20 seconds. Reaching 4 hours requires ~720 recordings in a week (~100/day). This is achievable for active speakers doing focused recording sessions.
+- **Concurrent payout requests**: the `@@unique([userId, reference])` constraint prevents double payments at the database level even with concurrent admin requests.

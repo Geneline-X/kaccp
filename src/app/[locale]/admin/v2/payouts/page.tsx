@@ -10,6 +10,7 @@ interface Speaker {
   email: string;
   approvedDurationSec: number;
   approvedMinutes: number;
+  pendingDurationSec: number;
   milestoneHit: boolean;
   payoutLe: number;
   paid: boolean;
@@ -209,6 +210,9 @@ export default function WeeklyPayoutsPage() {
                       {t("admin.approvedHours")}
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Pending Review
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       {t("admin.milestone")}
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
@@ -240,6 +244,15 @@ export default function WeeklyPayoutsPage() {
                       </td>
                       <td className="px-4 py-3 text-sm">
                         {fmtHours(speaker.approvedDurationSec)}
+                      </td>
+                      <td className="px-4 py-3 text-sm">
+                        {speaker.pendingDurationSec > 0 ? (
+                          <span className="text-orange-600 font-medium">
+                            {fmtHours(speaker.pendingDurationSec)}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400">—</span>
+                        )}
                       </td>
                       <td className="px-4 py-3">
                         {speaker.milestoneHit ? (

@@ -182,6 +182,7 @@ export default function AdminPromptsPage() {
         category: "GREETINGS",
         emotion: "NEUTRAL",
         instruction: "",
+        languageId: "",
       });
     } catch {
       alert("Failed to create prompt");

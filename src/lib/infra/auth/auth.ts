@@ -8,6 +8,7 @@ import { UserRole } from '@prisma/client'
 export type JwtPayload = {
   sub: string // user id
   role: UserRole  // ADMIN | SPEAKER | TRANSCRIBER
+  availableRoles?: UserRole[]
 }
 
 const getJwtSecret = (): string => {
