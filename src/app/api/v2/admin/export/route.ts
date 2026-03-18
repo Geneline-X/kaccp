@@ -13,6 +13,8 @@ export async function GET(req: NextRequest) {
 
     const { searchParams } = new URL(req.url);
     const languageId = searchParams.get("languageId");
+    const speakerId = searchParams.get("speakerId");
+    const includeTranscriptions = searchParams.get("includeTranscriptions") !== "false";
     const format = searchParams.get("format") || "json"; // json or csv
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "500");
@@ -41,14 +43,18 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Get approved recordings with transcriptions (paginated)
-    const [recordings, total] = await Promise.all([
+    // Build where clause based on filters
+    const where: any = {
+      languageId,
+      status: "APPROVED",
+    };
+    if (speakerId) where.speakerId = speakerId;
+    if (includeTranscriptions) where.transcription = { status: "APPROVED" };
+
+    // Fetch distinct speakers for this language (for filter dropdown)
+    const [recordings, total, distinctSpeakers] = await Promise.all([
       prisma.recording.findMany({
-        where: {
-          languageId,
-          status: "APPROVED",
-          transcription: { status: "APPROVED" },
-        },
+        where,
         include: {
           transcription: true,
           speaker: {
@@ -68,12 +74,11 @@ export async function GET(req: NextRequest) {
         skip,
         take: limit,
       }),
-      prisma.recording.count({
-        where: {
-          languageId,
-          status: "APPROVED",
-          transcription: { status: "APPROVED" },
-        },
+      prisma.recording.count({ where }),
+      prisma.recording.findMany({
+        where: { languageId, status: "APPROVED" },
+        select: { speaker: { select: { id: true, displayName: true } } },
+        distinct: ["speakerId"],
       }),
     ]);
 
@@ -100,25 +105,30 @@ export async function GET(req: NextRequest) {
           }
         }
 
-        return {
+        const base: any = {
           id: ljId,
           audio_file: audioFile,
-          transcription: rec.transcription?.text || "",
           english_prompt: rec.prompt.englishText,
           category: rec.prompt.category,
           duration_sec: rec.durationSec,
           speaker_id: rec.speakerId,
           recording_id: rec.id,
         };
+        if (includeTranscriptions) {
+          base.transcription = rec.transcription?.text || "";
+        }
+        return base;
       })
     );
 
     if (format === "csv") {
-      // Generate LJSpeech-style metadata.csv with full audio paths
-      // Format: id|audio_path|transcription|english_prompt|duration_sec|speaker_id|category
-      const csvHeader = "id|audio_path|transcription|english_prompt|duration_sec|speaker_id|category";
-      const csvRows = exportData.map(
-        (row) => `${row.id}|${row.audio_file}|${row.transcription}|${row.english_prompt}|${row.duration_sec}|${row.speaker_id}|${row.category}`
+      const csvHeader = includeTranscriptions
+        ? "id|audio_path|transcription|english_prompt|duration_sec|speaker_id|category"
+        : "id|audio_path|english_prompt|duration_sec|speaker_id|category";
+      const csvRows = exportData.map((row) =>
+        includeTranscriptions
+          ? `${row.id}|${row.audio_file}|${row.transcription}|${row.english_prompt}|${row.duration_sec}|${row.speaker_id}|${row.category}`
+          : `${row.id}|${row.audio_file}|${row.english_prompt}|${row.duration_sec}|${row.speaker_id}|${row.category}`
       );
       const csvContent = [csvHeader, ...csvRows].join("\n");
 
@@ -143,6 +153,7 @@ export async function GET(req: NextRequest) {
         uniqueSpeakers: new Set(recordings.map((r) => r.speakerId)).size,
       },
       pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+      speakers: distinctSpeakers.map((r) => r.speaker).filter(Boolean),
       data: exportData,
       exportedAt: new Date().toISOString(),
     });
