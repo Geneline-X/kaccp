@@ -4,6 +4,7 @@
             "checkingAuth": "Checking auth..."
         },
         "loading": "Chargement...",
+        "controlCenter": "Centre de contrôle admin",
         "title": "Admin KACCP",
         "category": "Catégorie",
         "required": "Requis",

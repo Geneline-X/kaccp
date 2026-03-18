@@ -42,6 +42,8 @@ interface ExportData {
     audio_file: string;
     transcription?: string;
     duration_sec: number;
+    speaker_id: string;
+    speaker_name: string;
     category: string;
   }>;
   exportedAt: string;
@@ -81,6 +83,19 @@ export default function AdminExportPage() {
       });
   }, [token, router]);
 
+  // Fetch speakers for the selected language
+  useEffect(() => {
+    if (!token || !selectedLanguage) return;
+    fetch(`/api/v2/admin/export?languageId=${selectedLanguage}&format=json&limit=1`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.speakers) setSpeakers(data.speakers);
+      })
+      .catch(() => {});
+  }, [token, selectedLanguage]);
+
   const buildParams = (format: string) => {
     const params = new URLSearchParams({ languageId: selectedLanguage, format });
     if (selectedSpeaker) params.set("speakerId", selectedSpeaker);
@@ -118,12 +133,27 @@ export default function AdminExportPage() {
     }
   };
 
-  const handleDownloadCSV = () => {
+  const handleDownloadCSV = async () => {
     if (!selectedLanguage) return;
-    window.open(
-      `/api/v2/admin/export?${buildParams("csv")}`,
-      "_blank"
-    );
+    try {
+      const res = await fetch(`/api/v2/admin/export?${buildParams("csv")}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        setError("Failed to download CSV");
+        return;
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const disposition = res.headers.get("Content-Disposition");
+      a.download = disposition?.match(/filename=(.+)/)?.[1] || "export.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      setError("Failed to download CSV");
+    }
   };
 
   const handleDownloadJSON = () => {
@@ -330,6 +360,9 @@ export default function AdminExportPage() {
                         {t('admin.exportPage.duration')}
                       </th>
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                        Speaker
+                      </th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
                         {t('admin.promptsPage.category')}
                       </th>
                     </tr>
@@ -351,6 +384,9 @@ export default function AdminExportPage() {
                         <td className="px-4 py-2 text-sm text-gray-500">
                           {row.duration_sec?.toFixed(1)}s
                         </td>
+                        <td className="px-4 py-2 text-sm text-gray-700">
+                          {row.speaker_name}
+                        </td>
                         <td className="px-4 py-2 text-xs text-gray-500">
                           {row.category}
                         </td>
@@ -371,8 +407,8 @@ export default function AdminExportPage() {
               </p>
               <code className="block bg-blue-100 p-3 rounded text-sm text-blue-900 overflow-x-auto">
                 {includeTranscriptions
-                  ? "id|audio_path|transcription|english_prompt|duration_sec|speaker_id|category"
-                  : "id|audio_path|english_prompt|duration_sec|speaker_id|category"}
+                  ? "id|audio_path|transcription|english_prompt|duration_sec|speaker_id|speaker_name|category"
+                  : "id|audio_path|english_prompt|duration_sec|speaker_id|speaker_name|category"}
               </code>
               <div className="mt-4 text-sm text-blue-700">
                 <p className="font-medium mb-1">{t('admin.exportPage.audioPathFormat')}</p>
