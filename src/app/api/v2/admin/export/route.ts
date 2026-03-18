@@ -83,10 +83,14 @@ export async function GET(req: NextRequest) {
     ]);
 
     if (recordings.length === 0 && page === 1) {
-      return NextResponse.json(
-        { error: "No approved recordings found for this language" },
-        { status: 404 }
-      );
+      return NextResponse.json({
+        language: { code: language.code, name: language.name, country: language.country.name },
+        stats: { totalRecordings: 0, totalDurationSec: 0, totalDurationHours: 0, uniqueSpeakers: 0 },
+        pagination: { page, limit, total: 0, totalPages: 0 },
+        speakers: distinctSpeakers.map((r) => r.speaker).filter(Boolean),
+        data: [],
+        exportedAt: new Date().toISOString(),
+      });
     }
 
     // Format data for LJSpeech-style export

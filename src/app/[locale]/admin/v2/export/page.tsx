@@ -83,10 +83,10 @@ export default function AdminExportPage() {
       });
   }, [token, router]);
 
-  // Fetch speakers for the selected language
+  // Fetch speakers for the selected language (always without transcription filter so all approved speakers show)
   useEffect(() => {
     if (!token || !selectedLanguage) return;
-    fetch(`/api/v2/admin/export?languageId=${selectedLanguage}&format=json&limit=1`, {
+    fetch(`/api/v2/admin/export?languageId=${selectedLanguage}&format=json&limit=1&includeTranscriptions=false`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
