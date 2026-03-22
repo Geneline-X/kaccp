@@ -91,10 +91,9 @@ export default function SpeakerDashboardClient({ locale }: { locale: string }) {
       .then((res) => res.json())
       .then((data) => {
         if (data.stats) {
-          const totalDuration = data.stats.reduce(
-            (sum: number, s: any) => sum + (s._sum?.durationSec || 0),
-            0
-          );
+          const totalDuration = data.stats
+            .filter((s: any) => s.status !== "REJECTED")
+            .reduce((sum: number, s: any) => sum + (s._sum?.durationSec || 0), 0);
           const approvedStatuses = ["PENDING_TRANSCRIPTION", "TRANSCRIBED", "APPROVED"];
           const approvedDuration = data.stats
             .filter((s: any) => approvedStatuses.includes(s.status))
