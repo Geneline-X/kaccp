@@ -154,6 +154,12 @@ export default function AdminRecordingsPage() {
                                 {t('admin.allRecordings')}
                             </h1>
                         </div>
+                        <Link
+                            href="/admin/v2/recordings/trim-silence"
+                            className="px-4 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center gap-2"
+                        >
+                            ✂ Trim Silence
+                        </Link>
                     </div>
                 </div>
             </header>
