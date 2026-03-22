@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { getToken, clearToken, apiFetch } from "@/lib/infra/client/client";
 
@@ -390,6 +390,257 @@ function PaginationBar({
   );
 }
 
+// ─── Focus Mode View ─────────────────────────────────────────────────────────
+
+const SPEEDS = [0.75, 1, 1.25, 1.5, 2];
+
+function FocusModeView({
+  recordings,
+  currentIndex,
+  setCurrentIndex,
+  onApprove,
+  onDirectReject,
+  actionPending,
+  pagination,
+  onNextPage,
+}: {
+  recordings: Recording[];
+  currentIndex: number;
+  setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
+  onApprove: (id: string) => void;
+  onDirectReject: (id: string) => void;
+  actionPending: string | null;
+  pagination: PaginationData;
+  onNextPage: () => void;
+}) {
+  const recording = recordings[currentIndex];
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [loadingAudio, setLoadingAudio] = useState(false);
+  const [speed, setSpeed] = useState(1);
+  const [swipeDir, setSwipeDir] = useState<"approve" | "reject" | null>(null);
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+
+  // Auto-load and play audio when the active recording changes
+  useEffect(() => {
+    if (!recording) return;
+    setAudioUrl(null);
+    setLoadingAudio(true);
+    const load = async () => {
+      try {
+        if (recording.playbackUrl) {
+          setAudioUrl(recording.playbackUrl);
+        } else {
+          const token = getToken();
+          const res = await fetch(`/api/v2/audio/${recording.id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const data = await res.json();
+          setAudioUrl(data.signedUrl || data.url || null);
+        }
+      } catch {
+        setAudioUrl(null);
+      } finally {
+        setLoadingAudio(false);
+      }
+    };
+    load();
+  }, [recording?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const applySpeed = useCallback(() => {
+    if (audioRef.current) audioRef.current.playbackRate = speed;
+  }, [speed]);
+
+  useEffect(() => { applySpeed(); }, [applySpeed]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    if (!recording) return;
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement).tagName;
+      if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
+      if (actionPending) return;
+      switch (e.key) {
+        case "a": case "A":
+          e.preventDefault(); onApprove(recording.id); break;
+        case "r": case "R":
+          e.preventDefault(); onDirectReject(recording.id); break;
+        case " ":
+          e.preventDefault();
+          if (audioRef.current) {
+            audioRef.current.paused ? audioRef.current.play() : audioRef.current.pause();
+          }
+          break;
+        case "ArrowRight":
+          e.preventDefault();
+          setCurrentIndex(i => Math.min(i + 1, recordings.length - 1)); break;
+        case "ArrowLeft":
+          e.preventDefault();
+          setCurrentIndex(i => Math.max(i - 1, 0)); break;
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [recording, recordings.length, onApprove, onDirectReject, setCurrentIndex, actionPending]);
+
+  // Touch swipe gestures
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+  const onTouchMove = (e: React.TouchEvent) => {
+    if (touchStartX.current == null) return;
+    const dx = e.touches[0].clientX - touchStartX.current;
+    const dy = Math.abs(e.touches[0].clientY - (touchStartY.current ?? 0));
+    if (dy > 50) { setSwipeDir(null); return; }
+    if (dx > 50) setSwipeDir("approve");
+    else if (dx < -50) setSwipeDir("reject");
+    else setSwipeDir(null);
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current == null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    const dy = Math.abs(e.changedTouches[0].clientY - (touchStartY.current ?? 0));
+    if (dy < 60 && Math.abs(dx) > 90) {
+      dx > 0 ? onApprove(recording.id) : onDirectReject(recording.id);
+    }
+    touchStartX.current = null;
+    touchStartY.current = null;
+    setSwipeDir(null);
+  };
+
+  if (!recording) {
+    return (
+      <div className="bg-white rounded-xl shadow p-8 text-center text-gray-500">
+        No recordings to review.
+        {pagination.page < pagination.totalPages && (
+          <button onClick={onNextPage} className="mt-4 block mx-auto px-4 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+            Load next page →
+          </button>
+        )}
+      </div>
+    );
+  }
+
+  const pending = actionPending === recording.id;
+
+  return (
+    <div className="max-w-xl mx-auto" onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
+      {/* Progress + speed */}
+      <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setCurrentIndex(i => Math.max(0, i - 1))}
+            disabled={currentIndex === 0}
+            className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-40 text-sm"
+          >←</button>
+          <span className="text-sm text-gray-600 font-medium">
+            {currentIndex + 1} / {recordings.length}
+            {pagination.totalPages > 1 && (
+              <span className="text-gray-400 text-xs"> · p.{pagination.page}/{pagination.totalPages}</span>
+            )}
+          </span>
+          <button
+            onClick={() => setCurrentIndex(i => Math.min(i + 1, recordings.length - 1))}
+            disabled={currentIndex === recordings.length - 1}
+            className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-40 text-sm"
+          >→</button>
+        </div>
+        <div className="flex items-center gap-1">
+          <span className="text-xs text-gray-400 mr-1">Speed</span>
+          {SPEEDS.map(s => (
+            <button
+              key={s}
+              onClick={() => { setSpeed(s); if (audioRef.current) audioRef.current.playbackRate = s; }}
+              className={`px-2 py-1 text-xs rounded-md font-medium transition-colors ${speed === s ? "bg-purple-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
+            >{s}x</button>
+          ))}
+        </div>
+      </div>
+
+      {/* Card */}
+      <div className={`bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-150 ${
+        swipeDir === "approve" ? "ring-4 ring-green-400" :
+        swipeDir === "reject" ? "ring-4 ring-red-400" : ""
+      }`}>
+        {swipeDir && (
+          <div className={`py-2 text-center text-sm font-semibold ${swipeDir === "approve" ? "bg-green-500 text-white" : "bg-red-500 text-white"}`}>
+            {swipeDir === "approve" ? "✓ Release to Approve" : "✕ Release to Reject"}
+          </div>
+        )}
+        <div className="p-5 sm:p-6">
+          <div className="flex flex-wrap gap-2 mb-3">
+            <span className="px-2 py-0.5 text-xs font-medium bg-purple-100 text-purple-800 rounded">{recording.language.name}</span>
+            <span className="px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 rounded">{categoryLabel(recording.prompt.category)}</span>
+            <span className="px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-600 rounded font-mono">{fmtDuration(recording.durationSec)}</span>
+          </div>
+
+          <p className="text-lg sm:text-xl font-semibold text-gray-900 mb-1">{recording.prompt.englishText}</p>
+          {recording.prompt.instruction && (
+            <p className="text-sm text-gray-500 italic mb-2">{recording.prompt.instruction}</p>
+          )}
+          <p className="text-sm text-gray-500 mb-5">
+            Speaker: <span className="font-medium text-gray-700">{recording.speaker?.displayName || "Anonymous"}</span>
+          </p>
+
+          {loadingAudio ? (
+            <div className="flex items-center gap-3 bg-gray-900 rounded-xl px-4 py-4 mb-5">
+              <span className="w-5 h-5 border-2 border-gray-600 border-t-purple-400 rounded-full animate-spin" />
+              <span className="text-sm text-gray-400">Loading audio…</span>
+            </div>
+          ) : audioUrl ? (
+            <audio ref={audioRef} controls autoPlay src={audioUrl} className="w-full mb-5" onLoadedMetadata={applySpeed} />
+          ) : (
+            <div className="bg-gray-900 rounded-xl px-4 py-4 mb-5 text-center text-sm text-gray-400">Failed to load audio</div>
+          )}
+
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={() => onDirectReject(recording.id)}
+              disabled={pending}
+              className="py-4 text-base font-semibold text-red-700 border-2 border-red-200 rounded-xl hover:bg-red-50 active:bg-red-100 disabled:opacity-50 transition-colors"
+            >
+              {pending
+                ? <span className="inline-block w-4 h-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
+                : <span>✕ Reject <span className="hidden sm:inline text-xs font-normal text-red-400">(R)</span></span>}
+            </button>
+            <button
+              onClick={() => onApprove(recording.id)}
+              disabled={pending}
+              className="py-4 text-base font-semibold text-white bg-green-600 rounded-xl hover:bg-green-700 active:bg-green-800 disabled:opacity-50 transition-colors"
+            >
+              {pending
+                ? <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                : <span>✓ Approve <span className="hidden sm:inline text-xs font-normal text-green-200">(A)</span></span>}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Hints */}
+      <div className="hidden sm:flex justify-center gap-5 mt-3 text-xs text-gray-400">
+        <span><kbd className="bg-gray-100 px-1.5 py-0.5 rounded text-gray-500">A</kbd> Approve</span>
+        <span><kbd className="bg-gray-100 px-1.5 py-0.5 rounded text-gray-500">R</kbd> Reject</span>
+        <span><kbd className="bg-gray-100 px-1.5 py-0.5 rounded text-gray-500">Space</kbd> Replay</span>
+        <span><kbd className="bg-gray-100 px-1.5 py-0.5 rounded text-gray-500">← →</kbd> Navigate</span>
+      </div>
+      <div className="sm:hidden flex justify-center gap-6 mt-3 text-xs text-gray-400">
+        <span>← Swipe to reject</span>
+        <span>Swipe right to approve →</span>
+      </div>
+
+      {currentIndex === recordings.length - 1 && pagination.page < pagination.totalPages && (
+        <div className="mt-4 text-center">
+          <button onClick={onNextPage} className="px-5 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+            Load next page →
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Recordings Panel ────────────────────────────────────────────────────────
 
 interface SpeakerOption {
@@ -416,6 +667,15 @@ function RecordingsPanel({
   const [rejectTarget, setRejectTarget] = useState<string | null>(null);
   const [confirming, setConfirming] = useState(false);
   const [actionPending, setActionPending] = useState<string | null>(null);
+  const [focusMode, setFocusMode] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  // Synchronous guard — prevents double-trigger before React state re-renders
+  const actionInFlight = useRef<string | null>(null);
+
+  // Keep currentIndex in bounds when recordings list shrinks
+  useEffect(() => {
+    setCurrentIndex(prev => Math.max(0, Math.min(prev, recordings.length - 1)));
+  }, [recordings.length]);
 
   const fetchRecordings = useCallback(async () => {
     const token = getToken();
@@ -478,6 +738,8 @@ function RecordingsPanel({
   }, []);
 
   const handleApprove = useCallback(async (id: string) => {
+    if (actionInFlight.current) return;
+    actionInFlight.current = id;
     setActionPending(id);
     try {
       await apiFetch(`/api/v2/reviewer/recordings/${id}/approve`, { method: "POST" });
@@ -485,6 +747,7 @@ function RecordingsPanel({
       setPagination((prev) => ({ ...prev, total: Math.max(0, prev.total - 1) }));
       onCountChange(-1);
     } finally {
+      actionInFlight.current = null;
       setActionPending(null);
     }
   }, [onCountChange]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -502,6 +765,22 @@ function RecordingsPanel({
       setConfirming(false);
     }
   }, [rejectTarget, onCountChange]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Focus mode: reject without modal (no undo, faster flow)
+  const handleDirectReject = useCallback(async (id: string) => {
+    if (actionInFlight.current) return;
+    actionInFlight.current = id;
+    setActionPending(id);
+    try {
+      await apiFetch(`/api/v2/reviewer/recordings/${id}/reject`, { method: "POST" });
+      setRecordings(prev => prev.filter(r => r.id !== id));
+      setPagination(prev => ({ ...prev, total: Math.max(0, prev.total - 1) }));
+      onCountChange(-1);
+    } finally {
+      actionInFlight.current = null;
+      setActionPending(null);
+    }
+  }, [onCountChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div>
@@ -532,12 +811,37 @@ function RecordingsPanel({
         >
           Refresh
         </button>
+        <button
+          onClick={() => { setFocusMode(m => !m); setCurrentIndex(0); }}
+          className={`px-3 py-2 text-sm rounded-lg border font-medium transition-colors ${
+            focusMode ? "bg-purple-600 text-white border-purple-600" : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+          }`}
+        >
+          {focusMode ? "⊞ List view" : "⊡ Focus mode"}
+        </button>
         {pagination.total > 0 && (
           <span className="text-sm text-gray-500 ml-auto">{pagination.total} pending</span>
         )}
       </div>
 
-      {loading ? (
+      {focusMode ? (
+        loading ? (
+          <div className="flex justify-center py-12">
+            <span className="animate-spin h-8 w-8 border-b-2 border-purple-600 rounded-full" />
+          </div>
+        ) : (
+          <FocusModeView
+            recordings={recordings}
+            currentIndex={currentIndex}
+            setCurrentIndex={setCurrentIndex}
+            onApprove={handleApprove}
+            onDirectReject={handleDirectReject}
+            actionPending={actionPending}
+            pagination={pagination}
+            onNextPage={() => setPage(p => p + 1)}
+          />
+        )
+      ) : loading ? (
         <div className="flex justify-center py-12">
           <span className="animate-spin h-8 w-8 border-b-2 border-purple-600 rounded-full" />
         </div>

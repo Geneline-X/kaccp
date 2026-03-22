@@ -93,6 +93,19 @@ export async function deleteObject(gsUri: string): Promise<void> {
   await storage.bucket(bucket).file(object).delete({ ignoreNotFound: true });
 }
 
+export async function downloadBuffer(gsUri: string): Promise<Buffer> {
+  const { bucket, object } = parseGsUri(gsUri);
+  const storage = getStorage();
+  const [data] = await storage.bucket(bucket).file(object).download();
+  return data as Buffer;
+}
+
+export async function uploadBuffer(gsUri: string, buffer: Buffer, contentType: string): Promise<void> {
+  const { bucket, object } = parseGsUri(gsUri);
+  const storage = getStorage();
+  await storage.bucket(bucket).file(object).save(buffer, { contentType, resumable: false });
+}
+
 export async function listObjects(gsPrefix: string): Promise<string[]> {
   // Accept either gs://bucket/prefix or bucket/prefix. Return absolute gs:// URIs.
   let bucket: string | undefined;
