@@ -425,27 +425,29 @@ function FocusModeView({
   // Auto-load and play audio when the active recording changes
   useEffect(() => {
     if (!recording) return;
+    let cancelled = false;
     setAudioUrl(null);
     setLoadingAudio(true);
     const load = async () => {
       try {
         if (recording.playbackUrl) {
-          setAudioUrl(recording.playbackUrl);
+          if (!cancelled) setAudioUrl(recording.playbackUrl);
         } else {
           const token = getToken();
           const res = await fetch(`/api/v2/audio/${recording.id}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           const data = await res.json();
-          setAudioUrl(data.signedUrl || data.url || null);
+          if (!cancelled) setAudioUrl(data.signedUrl || data.url || null);
         }
       } catch {
-        setAudioUrl(null);
+        if (!cancelled) setAudioUrl(null);
       } finally {
-        setLoadingAudio(false);
+        if (!cancelled) setLoadingAudio(false);
       }
     };
     load();
+    return () => { cancelled = true; };
   }, [recording?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const applySpeed = useCallback(() => {
@@ -741,12 +743,16 @@ function RecordingsPanel({
     if (actionInFlight.current) return;
     actionInFlight.current = id;
     setActionPending(id);
+    let succeeded = false;
     try {
       await apiFetch(`/api/v2/reviewer/recordings/${id}/approve`, { method: "POST" });
+      succeeded = true;
+    } catch {
+      // Already handled by another reviewer or network error — remove from list anyway
+    } finally {
       setRecordings((prev) => prev.filter((r) => r.id !== id));
       setPagination((prev) => ({ ...prev, total: Math.max(0, prev.total - 1) }));
-      onCountChange(-1);
-    } finally {
+      if (succeeded) onCountChange(-1);
       actionInFlight.current = null;
       setActionPending(null);
     }
@@ -757,11 +763,13 @@ function RecordingsPanel({
     setConfirming(true);
     try {
       await apiFetch(`/api/v2/reviewer/recordings/${rejectTarget}/reject`, { method: "POST" });
+      onCountChange(-1);
+    } catch {
+      // Already handled — still remove from list
+    } finally {
       setRecordings((prev) => prev.filter((r) => r.id !== rejectTarget));
       setPagination((prev) => ({ ...prev, total: Math.max(0, prev.total - 1) }));
-      onCountChange(-1);
       setRejectTarget(null);
-    } finally {
       setConfirming(false);
     }
   }, [rejectTarget, onCountChange]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -771,12 +779,16 @@ function RecordingsPanel({
     if (actionInFlight.current) return;
     actionInFlight.current = id;
     setActionPending(id);
+    let succeeded = false;
     try {
       await apiFetch(`/api/v2/reviewer/recordings/${id}/reject`, { method: "POST" });
-      setRecordings(prev => prev.filter(r => r.id !== id));
-      setPagination(prev => ({ ...prev, total: Math.max(0, prev.total - 1) }));
-      onCountChange(-1);
+      succeeded = true;
+    } catch {
+      // Already handled by another reviewer or network error — remove from list anyway
     } finally {
+      setRecordings((prev) => prev.filter((r) => r.id !== id));
+      setPagination((prev) => ({ ...prev, total: Math.max(0, prev.total - 1) }));
+      if (succeeded) onCountChange(-1);
       actionInFlight.current = null;
       setActionPending(null);
     }
