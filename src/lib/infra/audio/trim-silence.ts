@@ -1,5 +1,5 @@
 /**
- * Trims trailing silence from PCM WAV audio files.
+ * Trims leading and trailing silence from PCM WAV audio files.
  * Zero external dependencies — uses raw WAV header parsing.
  */
 
@@ -50,6 +50,31 @@ function buildWav(original: Buffer, dataOffset: number, pcmData: Buffer): Buffer
   return Buffer.concat([header, pcmData]);
 }
 
+function windowRms(
+  buf: Buffer,
+  dataOffset: number,
+  bytesPerFrame: number,
+  bitsPerSample: number,
+  startFrame: number,
+  endFrame: number,
+): number {
+  let sumSq = 0;
+  for (let f = startFrame; f < endFrame; f++) {
+    const off = dataOffset + f * bytesPerFrame;
+    let s: number;
+    if (bitsPerSample === 16) {
+      s = buf.readInt16LE(off) / 32768;
+    } else if (bitsPerSample === 32) {
+      s = buf.readInt32LE(off) / 2147483648;
+    } else {
+      // 8-bit WAV is unsigned, centered at 128
+      s = (buf.readUInt8(off) - 128) / 128;
+    }
+    sumSq += s * s;
+  }
+  return Math.sqrt(sumSq / (endFrame - startFrame));
+}
+
 export interface TrimResult {
   buffer: Buffer;
   originalDurationSec: number;
@@ -59,18 +84,20 @@ export interface TrimResult {
 }
 
 /**
- * Trims trailing silence from a WAV buffer.
+ * Trims leading AND trailing silence from a WAV buffer.
  *
- * @param wavBuf         Raw WAV file bytes
- * @param thresholdDb    Silence threshold in dBFS (default -40)
- * @param minRemoveSec   Minimum silence to remove before acting (default 0.5s)
- * @param tailPaddingSec Silence padding kept after the last detected sound (default 0.15s)
+ * @param wavBuf          Raw WAV file bytes
+ * @param thresholdDb     Silence threshold in dBFS (default -40)
+ * @param minRemoveSec    Minimum total silence to remove before acting (default 0.3s)
+ * @param tailPaddingSec  Padding kept after the last detected sound (default 0.15s)
+ * @param headPaddingSec  Padding kept before the first detected sound (default 0.05s)
  */
 export function trimTrailingSilence(
   wavBuf: Buffer,
   thresholdDb = -40,
-  minRemoveSec = 0.5,
+  minRemoveSec = 0.3,
   tailPaddingSec = 0.15,
+  headPaddingSec = 0.05,
 ): TrimResult {
   const { sampleRate, channels, bitsPerSample, dataOffset, dataLength } = parseWav(wavBuf);
   const bytesPerSample = bitsPerSample / 8;
@@ -79,41 +106,39 @@ export function trimTrailingSilence(
   const originalDurationSec = totalFrames / sampleRate;
 
   const threshold = Math.pow(10, thresholdDb / 20); // dBFS → linear amplitude
+  const windowFrames = Math.ceil(0.02 * sampleRate); // 20ms windows
 
-  // Scan backwards in 20ms windows to find the last frame with audible sound
-  const windowFrames = Math.ceil(0.02 * sampleRate);
+  // ── Scan forward: find first audible frame (leading silence) ──────────────
+  let firstSoundFrame = totalFrames; // default: all silent
+  for (let base = 0; base + windowFrames <= totalFrames; base += windowFrames) {
+    const end = Math.min(base + windowFrames, totalFrames);
+    if (windowRms(wavBuf, dataOffset, bytesPerFrame, bitsPerSample, base, end) > threshold) {
+      firstSoundFrame = base;
+      break;
+    }
+  }
+
+  const headPaddingFrames = Math.ceil(headPaddingSec * sampleRate);
+  const startFrame = Math.max(0, firstSoundFrame - headPaddingFrames);
+
+  // ── Scan backward: find last audible frame (trailing silence) ─────────────
   let lastSoundFrame = totalFrames;
-
   for (let base = totalFrames - windowFrames; base >= 0; base -= windowFrames) {
     const end = Math.min(base + windowFrames, totalFrames);
-    let sumSq = 0;
-
-    for (let f = base; f < end; f++) {
-      const off = dataOffset + f * bytesPerFrame;
-      let s: number;
-      if (bitsPerSample === 16) {
-        s = wavBuf.readInt16LE(off) / 32768;
-      } else if (bitsPerSample === 32) {
-        s = wavBuf.readInt32LE(off) / 2147483648;
-      } else {
-        // 8-bit WAV is unsigned, centered at 128
-        s = (wavBuf.readUInt8(off) - 128) / 128;
-      }
-      sumSq += s * s;
-    }
-
-    const rms = Math.sqrt(sumSq / (end - base));
-    if (rms > threshold) {
+    if (windowRms(wavBuf, dataOffset, bytesPerFrame, bitsPerSample, base, end) > threshold) {
       lastSoundFrame = end;
       break;
     }
   }
 
-  const paddingFrames = Math.ceil(tailPaddingSec * sampleRate);
-  const keepFrames = Math.min(lastSoundFrame + paddingFrames, totalFrames);
-  const removedSec = (totalFrames - keepFrames) / sampleRate;
+  const tailPaddingFrames = Math.ceil(tailPaddingSec * sampleRate);
+  const endFrame = Math.min(lastSoundFrame + tailPaddingFrames, totalFrames);
 
-  if (removedSec < minRemoveSec) {
+  const leadingRemovedSec = startFrame / sampleRate;
+  const trailingRemovedSec = (totalFrames - endFrame) / sampleRate;
+  const totalRemovedSec = leadingRemovedSec + trailingRemovedSec;
+
+  if (totalRemovedSec < minRemoveSec) {
     return {
       buffer: wavBuf,
       originalDurationSec,
@@ -123,15 +148,19 @@ export function trimTrailingSilence(
     };
   }
 
-  const pcmData = wavBuf.slice(dataOffset, dataOffset + keepFrames * bytesPerFrame);
+  const pcmData = wavBuf.slice(
+    dataOffset + startFrame * bytesPerFrame,
+    dataOffset + endFrame * bytesPerFrame,
+  );
   const newBuf = buildWav(wavBuf, dataOffset, pcmData);
+  const keepFrames = endFrame - startFrame;
   const trimmedDurationSec = keepFrames / sampleRate;
 
   return {
     buffer: newBuf,
     originalDurationSec,
     trimmedDurationSec,
-    removedSec,
+    removedSec: totalRemovedSec,
     wasModified: true,
   };
 }
