@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getToken, clearToken } from "@/lib/infra/client/client";
 import { useTranslations } from "next-intl";
+import { formatDuration } from "@/lib/utils/format";
 
 interface Language {
   id: string;
@@ -45,16 +46,6 @@ interface Stats {
   estimatedEarnings: number;
   weeklyProgress: WeeklyProgress | null;
   byStatus: { status: string; _count: number; _sum?: { durationSec: number } }[];
-}
-
-function formatDuration(sec: number): string {
-  if (sec < 60) return `${Math.round(sec)}s`;
-  const totalMin = Math.floor(sec / 60);
-  const s = Math.round(sec % 60);
-  if (totalMin < 60) return s > 0 ? `${totalMin}m ${s}s` : `${totalMin}m`;
-  const h = Math.floor(totalMin / 60);
-  const m = totalMin % 60;
-  return m > 0 ? `${h}h ${m}m` : `${h}h`;
 }
 
 export default function SpeakerDashboardClient({ locale }: { locale: string }) {
