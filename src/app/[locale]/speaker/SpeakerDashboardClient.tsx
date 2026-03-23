@@ -47,6 +47,16 @@ interface Stats {
   byStatus: { status: string; _count: number; _sum?: { durationSec: number } }[];
 }
 
+function formatDuration(sec: number): string {
+  if (sec < 60) return `${Math.round(sec)}s`;
+  const totalMin = Math.floor(sec / 60);
+  const s = Math.round(sec % 60);
+  if (totalMin < 60) return s > 0 ? `${totalMin}m ${s}s` : `${totalMin}m`;
+  const h = Math.floor(totalMin / 60);
+  const m = totalMin % 60;
+  return m > 0 ? `${h}h ${m}m` : `${h}h`;
+}
+
 export default function SpeakerDashboardClient({ locale }: { locale: string }) {
   const router = useRouter();
   const t = useTranslations();
@@ -178,7 +188,7 @@ export default function SpeakerDashboardClient({ locale }: { locale: string }) {
                 ).toFixed(2)}
               </p>
               <p className="text-sm text-green-100 mt-2">
-                {t('speaker.basedOnApproved', { minutes: ((stats?.weeklyProgress?.approvedDurationSec || 0) / 60).toFixed(1) })}
+                {t('speaker.basedOnApproved', { duration: formatDuration(stats?.weeklyProgress?.approvedDurationSec || 0) })}
               </p>
               <p className="text-xs text-green-200 mt-1">
                 {t('speaker.totalAllTime')}: Le{(stats?.estimatedEarnings || 0).toFixed(2)}
@@ -188,13 +198,13 @@ export default function SpeakerDashboardClient({ locale }: { locale: string }) {
               <div className="bg-white/20 rounded-lg px-4 py-2">
                 <p className="text-xs text-green-100">{t('speaker.thisWeekRecorded')}</p>
                 <p className="text-lg font-semibold">
-                  {((stats?.weeklyProgress?.submittedDurationSec || 0) / 60).toFixed(1)} {t('common.min')}
+                  {formatDuration(stats?.weeklyProgress?.submittedDurationSec || 0)}
                 </p>
               </div>
               <div className="bg-white/20 rounded-lg px-4 py-2">
                 <p className="text-xs text-green-100">{t('speaker.pendingReview')}</p>
                 <p className="text-lg font-semibold">
-                  {(Math.max(0, (stats?.weeklyProgress?.submittedDurationSec || 0) - (stats?.weeklyProgress?.approvedDurationSec || 0)) / 60).toFixed(1)} {t('common.min')}
+                  {formatDuration(Math.max(0, (stats?.weeklyProgress?.submittedDurationSec || 0) - (stats?.weeklyProgress?.approvedDurationSec || 0)))}
                 </p>
               </div>
             </div>
@@ -248,7 +258,7 @@ export default function SpeakerDashboardClient({ locale }: { locale: string }) {
 
               <div className="flex justify-between items-end mb-1">
                 <p className="text-2xl font-bold">
-                  {submittedHours.toFixed(1)} / {targetHours.toFixed(1)} {t('speaker.hours')}
+                  {formatDuration(wp.submittedDurationSec)} / {targetHours.toFixed(1)} {t('speaker.hours')}
                 </p>
                 <p className="text-lg font-semibold">
                   Le{wp.estimatedPayoutLe.toFixed(2)}
@@ -257,8 +267,8 @@ export default function SpeakerDashboardClient({ locale }: { locale: string }) {
               {pendingReviewHours > 0.01 && (
                 <p className="text-xs text-purple-200 mb-2">
                   {t('speaker.approvedOfSubmitted', {
-                    approved: approvedHours.toFixed(1),
-                    pending: pendingReviewHours.toFixed(1),
+                    approved: formatDuration(wp.approvedDurationSec),
+                    pending: formatDuration(Math.max(0, wp.submittedDurationSec - wp.approvedDurationSec)),
                   })}
                 </p>
               )}
