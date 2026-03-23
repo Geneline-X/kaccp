@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { getToken } from "@/lib/infra/client/client";
 import toWav from "audiobuffer-to-wav";
 import { useTranslations } from "next-intl";
+import { formatDuration } from "@/lib/utils/format";
 
 interface Prompt {
   id: string;
@@ -501,8 +502,6 @@ function RecordContent({ locale }: { locale: string }) {
     );
   }
 
-  const sessionMinutes = (sessionDurationSec / 60).toFixed(1);
-
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Toast */}
@@ -526,7 +525,7 @@ function RecordContent({ locale }: { locale: string }) {
             </span>
             <span className="mx-2 text-gray-600">|</span>
             <span className="text-sm text-green-400">
-              {recordingCount} clips / {sessionMinutes} min
+              {recordingCount} clips / {formatDuration(sessionDurationSec)}
             </span>
           </div>
           <span className="text-sm text-gray-400">
