@@ -23,8 +23,9 @@ export async function GET(req: NextRequest) {
     };
 
     const { start: weekStart, end: weekEnd } = getWeekRange();
+    const weekRef = `weekly:${weekStart.toISOString().slice(0, 10)}`;
 
-    const [recordings, total, stats, earningsByLang, weeklyRecordings, weeklyAllRecordings] = await Promise.all([
+    const [recordings, total, stats, earningsByLang, weeklyRecordings, weeklyAllRecordings, weeklyPayment] = await Promise.all([
       prisma.recording.findMany({
         where,
         include: {
@@ -95,6 +96,11 @@ export async function GET(req: NextRequest) {
           durationSec: true,
         },
       }),
+      // Current week's payment record (if admin has already paid)
+      prisma.payment.findFirst({
+        where: { userId: user.id, reference: weekRef },
+        select: { id: true, amountCents: true },
+      }),
     ]);
 
     // All-time earnings
@@ -130,6 +136,8 @@ export async function GET(req: NextRequest) {
         milestoneTargetSec: MILESTONE_MINUTES * 60,
         milestoneHit,
         estimatedPayoutLe: Math.round(weeklyPayout * 100) / 100,
+        isPaid: !!weeklyPayment,
+        paidAmountLe: weeklyPayment ? weeklyPayment.amountCents / 100 : null,
       },
       pagination: {
         page,

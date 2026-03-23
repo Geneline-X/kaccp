@@ -25,6 +25,8 @@ interface WeeklyProgress {
   milestoneTargetSec: number;
   milestoneHit: boolean;
   estimatedPayoutLe: number;
+  isPaid: boolean;
+  paidAmountLe: number | null;
 }
 
 interface Recording {
@@ -161,25 +163,38 @@ export default function SpeakerDashboardClient({ locale }: { locale: string }) {
         <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl shadow-lg p-6 mb-8 text-white">
           <div className="flex justify-between items-start">
             <div>
-              <h3 className="text-sm font-medium text-green-100">{t('speaker.estimatedEarnings')}</h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-medium text-green-100">{t('speaker.thisWeeksEarnings')}</h3>
+                {stats?.weeklyProgress?.isPaid && (
+                  <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full">
+                    PAID
+                  </span>
+                )}
+              </div>
               <p className="text-4xl font-bold mt-1">
-                Le{(stats?.estimatedEarnings || 0).toFixed(2)}
+                Le{(stats?.weeklyProgress?.isPaid
+                  ? (stats.weeklyProgress.paidAmountLe ?? stats.weeklyProgress.estimatedPayoutLe)
+                  : (stats?.weeklyProgress?.estimatedPayoutLe ?? 0)
+                ).toFixed(2)}
               </p>
               <p className="text-sm text-green-100 mt-2">
-                {t('speaker.basedOnApproved', { minutes: ((stats?.approvedDurationSec || 0) / 60).toFixed(1) })}
+                {t('speaker.basedOnApproved', { minutes: ((stats?.weeklyProgress?.approvedDurationSec || 0) / 60).toFixed(1) })}
+              </p>
+              <p className="text-xs text-green-200 mt-1">
+                {t('speaker.totalAllTime')}: Le{(stats?.estimatedEarnings || 0).toFixed(2)}
               </p>
             </div>
             <div className="text-right space-y-2">
               <div className="bg-white/20 rounded-lg px-4 py-2">
-                <p className="text-xs text-green-100">{t('speaker.totalRecorded')}</p>
+                <p className="text-xs text-green-100">{t('speaker.thisWeekRecorded')}</p>
                 <p className="text-lg font-semibold">
-                  {((stats?.totalDurationSec || 0) / 60).toFixed(1)} {t('common.min')}
+                  {((stats?.weeklyProgress?.submittedDurationSec || 0) / 60).toFixed(1)} {t('common.min')}
                 </p>
               </div>
               <div className="bg-white/20 rounded-lg px-4 py-2">
                 <p className="text-xs text-green-100">{t('speaker.pendingReview')}</p>
                 <p className="text-lg font-semibold">
-                  {(((stats?.totalDurationSec || 0) - (stats?.approvedDurationSec || 0)) / 60).toFixed(1)} {t('common.min')}
+                  {(Math.max(0, (stats?.weeklyProgress?.submittedDurationSec || 0) - (stats?.weeklyProgress?.approvedDurationSec || 0)) / 60).toFixed(1)} {t('common.min')}
                 </p>
               </div>
             </div>
