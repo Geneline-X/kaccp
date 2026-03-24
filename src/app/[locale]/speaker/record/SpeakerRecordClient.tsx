@@ -21,7 +21,7 @@ interface Prompt {
   };
 }
 
-const MIN_DURATION_SEC = 1.5;
+const MIN_DURATION_SEC = 1.0;
 const MAX_DURATION_SEC = 20;
 
 // ─── Amplitude Visualizer ──────────────────────────────────────────────────
