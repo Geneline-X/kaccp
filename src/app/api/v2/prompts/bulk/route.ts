@@ -10,6 +10,7 @@ interface CSVPrompt {
   emotion?: string;
   instruction?: string;
   target_duration_sec?: string;
+  hint?: string;
 }
 
 // POST /api/v2/prompts/bulk - Bulk import prompts from CSV data (Admin only)
@@ -58,6 +59,7 @@ export async function POST(req: NextRequest) {
       emotion: PromptEmotion;
       instruction: string | null;
       targetDurationSec: number;
+      hint: string | null;
     }[] = [];
     const errors: { row: number; error: string }[] = [];
 
@@ -100,6 +102,7 @@ export async function POST(req: NextRequest) {
         emotion,
         instruction: prompt.instruction?.trim() || null,
         targetDurationSec: parseInt(prompt.target_duration_sec || "5") || 5,
+        hint: prompt.hint?.trim() || null,
       });
     });
 

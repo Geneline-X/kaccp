@@ -1,9 +1,38 @@
 import OpenAI from 'openai'
 
 const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY || 'mock-key',
+    apiKey: (process.env.OPENAI_API_KEY || 'mock-key').trim(),
     dangerouslyAllowBrowser: true // Just in case, though this is server side
 })
+
+// Generate a plain-language hint to help speakers understand what to say
+export async function generatePromptHint(englishText: string): Promise<string | null> {
+    if (!process.env.OPENAI_API_KEY) return null
+    try {
+        const response = await openai.chat.completions.create({
+            model: 'gpt-4o-mini',
+            messages: [
+                {
+                    role: 'system',
+                    content: `You help West African speakers (Krio, Fula, Mandingo) understand English prompts.
+Write a single short hint (max 12 words) that explains the IDEA of the sentence in the simplest possible English — like you are explaining it to someone who speaks very little English.
+Do NOT translate. Just say what the person should talk about.
+Examples:
+- "I need to pay five thousand leones for a bag of rice" → "Talk about paying money for food"
+- "Good morning, how did you sleep last night?" → "Greet someone in the morning and ask how they slept"
+- "The doctor said I need to rest for one week" → "Say what a doctor told you to do"
+Return only the hint text, nothing else.`
+                },
+                { role: 'user', content: englishText }
+            ],
+            max_tokens: 40,
+            temperature: 0.3,
+        })
+        return response.choices[0].message.content?.trim() || null
+    } catch {
+        return null
+    }
+}
 
 export async function improveEnglish(text: string): Promise<{ corrected: string, model: string, score: number }> {
     if (!process.env.OPENAI_API_KEY) {

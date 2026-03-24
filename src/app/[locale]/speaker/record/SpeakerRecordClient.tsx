@@ -13,6 +13,7 @@ interface Prompt {
   category: string;
   emotion: string;
   instruction?: string;
+  hint?: string;
   targetDurationSec: number;
   language: {
     code: string;
@@ -534,16 +535,16 @@ function RecordContent({ locale }: { locale: string }) {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-8">
-        {/* Error Message with optional Retry */}
+      <main className="max-w-4xl mx-auto px-4 py-3">
+        {/* Error / status banners */}
         {error && (
-          <div className="mb-6 p-4 bg-red-900/50 border border-red-500 rounded-lg text-red-200 flex items-center justify-between">
+          <div className="mb-3 p-3 bg-red-900/50 border border-red-500 rounded-lg text-red-200 text-sm flex items-center justify-between">
             <span>{error}</span>
             {canRetry && (
               <button
                 onClick={submitRecording}
                 disabled={submitting}
-                className="ml-4 px-4 py-1.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 disabled:opacity-50 flex-shrink-0"
+                className="ml-4 px-3 py-1 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 disabled:opacity-50 flex-shrink-0"
               >
                 {submitting ? t('speaker.submitting') : t('speaker.retry')}
               </button>
@@ -551,138 +552,151 @@ function RecordContent({ locale }: { locale: string }) {
           </div>
         )}
         {status && (
-          <div className="mb-6 p-4 bg-blue-900/50 border border-blue-500 rounded-lg text-blue-200 flex items-center gap-2">
+          <div className="mb-3 p-3 bg-blue-900/50 border border-blue-500 rounded-lg text-blue-200 text-sm flex items-center gap-2">
             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-200"></div>
             {status}
           </div>
         )}
 
-        {/* Prompt Card */}
-        <div className="bg-gray-800 rounded-2xl p-8 mb-8">
-          <div className="flex items-center gap-2 mb-4">
-            <span className="px-3 py-1 bg-blue-600/20 text-blue-400 rounded-full text-sm">
-              {currentPrompt?.category.replace(/_/g, " ")}
-            </span>
-            <span className="px-3 py-1 bg-purple-600/20 text-purple-400 rounded-full text-sm">
-              {currentPrompt?.emotion}
-            </span>
-          </div>
+        {/* Single card: Prompt + Controls */}
+        <div className="bg-gray-800 rounded-2xl px-5 py-4 flex flex-col">
 
-          <p className="text-sm text-gray-400 mb-2">{t('speaker.sayThisInYourLanguage')}:</p>
-          <h2 className="text-3xl font-bold mb-4">{currentPrompt?.englishText}</h2>
-
-          {currentPrompt?.instruction && (
-            <p className="text-sm text-yellow-400 italic">
-              {currentPrompt.instruction}
-            </p>
-          )}
-        </div>
-
-        {/* Recording Controls */}
-        <div className="bg-gray-800 rounded-2xl p-8">
-          {/* Duration Display */}
-          <div className="text-center mb-6">
-            <div className="text-6xl font-mono font-bold">
-              {duration.toFixed(1)}{t('common.secondsShort')}
-            </div>
-            <div className="text-gray-400 mt-2">
-              {recording && duration < MIN_DURATION_SEC ? (
-                <span className="text-yellow-400">{t('speaker.tooShort')}</span>
-              ) : duration >= MAX_DURATION_SEC ? (
-                <span className="text-red-400">{t('speaker.maximumReached')}</span>
-              ) : (
-                <span>{t('speaker.maxSeconds', { seconds: MAX_DURATION_SEC })}</span>
-              )}
-            </div>
-            {/* Progress bar */}
-            <div className="w-full bg-gray-700 rounded-full h-2 mt-4 relative">
-              {/* Min duration marker */}
-              <div
-                className="absolute top-0 h-2 w-0.5 bg-yellow-500/60"
-                style={{ left: `${(MIN_DURATION_SEC / MAX_DURATION_SEC) * 100}%` }}
-              ></div>
-              <div
-                className={`h-2 rounded-full transition-all ${
-                  duration >= MAX_DURATION_SEC ? "bg-red-500" : duration < MIN_DURATION_SEC ? "bg-yellow-500" : "bg-blue-500"
-                }`}
-                style={{ width: `${Math.min((duration / MAX_DURATION_SEC) * 100, 100)}%` }}
-              ></div>
-            </div>
-          </div>
-
-          {/* Amplitude visualizer while recording */}
-          {recording && (
-            <div className="mb-6">
-              <AmplitudeBar analyser={analyser} />
-            </div>
-          )}
-
-          {/* Record Button */}
-          {!audioBlob && (
-            <div className="flex flex-col items-center gap-3">
-              <button
-                onClick={recording ? stopRecording : startRecording}
-                className={`w-24 h-24 rounded-full flex items-center justify-center transition-all ${
-                  recording
-                    ? duration < MIN_DURATION_SEC
-                      ? "bg-yellow-600 animate-pulse cursor-not-allowed"
-                      : "bg-red-600 hover:bg-red-700 animate-pulse"
-                    : "bg-blue-600 hover:bg-blue-700"
-                }`}
-              >
-                {recording ? (
-                  <div className="w-8 h-8 bg-white rounded-sm"></div>
-                ) : (
-                  <div className="w-8 h-8 bg-white rounded-full"></div>
-                )}
-              </button>
-              <span className="text-xs text-gray-500">
-                {recording ? t('speaker.pressSpaceToStop') : t('speaker.pressSpaceToRecord')}
+          {/* Prompt section */}
+          <div className="mb-3">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="px-2 py-0.5 bg-blue-600/20 text-blue-400 rounded-full text-xs">
+                {currentPrompt?.category.replace(/_/g, " ")}
+              </span>
+              <span className="px-2 py-0.5 bg-purple-600/20 text-purple-400 rounded-full text-xs">
+                {currentPrompt?.emotion}
               </span>
             </div>
-          )}
 
-          {/* Playback & Submit */}
-          {audioBlob && audioUrl && (
-            <div className="space-y-6">
-              <audio src={audioUrl} controls className="w-full" />
+            <p className="text-xs text-gray-400 mb-1">{t('speaker.sayThisInYourLanguage')}:</p>
+            <h2 className="text-xl md:text-2xl font-bold leading-snug">{currentPrompt?.englishText}</h2>
 
-              <div className="flex justify-center gap-4">
+            {/* Hint — helps speakers who struggle to translate */}
+            {currentPrompt?.hint?.trim() && (
+              <div className="mt-2 px-3 py-2 bg-blue-900/30 border border-blue-700/40 rounded-lg">
+                <p className="text-xs text-blue-300">💡 {currentPrompt.hint}</p>
+              </div>
+            )}
+
+            {currentPrompt?.instruction?.trim() && (
+              <p className="text-xs text-yellow-400 italic mt-1">
+                {currentPrompt.instruction}
+              </p>
+            )}
+          </div>
+
+          {/* Divider */}
+          <div className="border-t border-gray-700 my-2"></div>
+
+          {/* Controls */}
+          <div className="flex flex-col items-center">
+            {/* Timer + progress bar inline */}
+            <div className="flex items-center gap-3 mb-3 w-full">
+              <span className="text-3xl font-mono font-bold tabular-nums w-20 text-center flex-shrink-0">
+                {duration.toFixed(1)}s
+              </span>
+              <div className="flex-1">
+                <div className="w-full bg-gray-700 rounded-full h-2 relative">
+                  <div
+                    className="absolute top-0 h-2 w-0.5 bg-yellow-500/60"
+                    style={{ left: `${(MIN_DURATION_SEC / MAX_DURATION_SEC) * 100}%` }}
+                  ></div>
+                  <div
+                    className={`h-2 rounded-full transition-all ${
+                      duration >= MAX_DURATION_SEC ? "bg-red-500" : duration < MIN_DURATION_SEC ? "bg-yellow-500" : "bg-blue-500"
+                    }`}
+                    style={{ width: `${Math.min((duration / MAX_DURATION_SEC) * 100, 100)}%` }}
+                  ></div>
+                </div>
+                <div className="text-xs text-gray-500 mt-1">
+                  {recording && duration < MIN_DURATION_SEC ? (
+                    <span className="text-yellow-400">{t('speaker.tooShort')}</span>
+                  ) : duration >= MAX_DURATION_SEC ? (
+                    <span className="text-red-400">{t('speaker.maximumReached')}</span>
+                  ) : (
+                    <span>{t('speaker.maxSeconds', { seconds: MAX_DURATION_SEC })}</span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Amplitude visualizer */}
+            {recording && (
+              <div className="mb-3 w-full">
+                <AmplitudeBar analyser={analyser} />
+              </div>
+            )}
+
+            {/* Record Button */}
+            {!audioBlob && (
+              <div className="flex flex-col items-center gap-2">
                 <button
-                  onClick={reRecord}
-                  className="px-6 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-600"
+                  onClick={recording ? stopRecording : startRecording}
+                  className={`w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center transition-all ${
+                    recording
+                      ? duration < MIN_DURATION_SEC
+                        ? "bg-yellow-600 animate-pulse cursor-not-allowed"
+                        : "bg-red-600 hover:bg-red-700 animate-pulse"
+                      : "bg-blue-600 hover:bg-blue-700"
+                  }`}
                 >
-                  {t('speaker.reRecord')}
+                  {recording ? (
+                    <div className="w-7 h-7 bg-white rounded-sm"></div>
+                  ) : (
+                    <div className="w-7 h-7 bg-white rounded-full"></div>
+                  )}
                 </button>
+                <span className="text-xs text-gray-500">
+                  {recording ? t('speaker.pressSpaceToStop') : t('speaker.pressSpaceToRecord')}
+                </span>
+              </div>
+            )}
+
+            {/* Playback & Submit */}
+            {audioBlob && audioUrl && (
+              <div className="space-y-4">
+                <audio src={audioUrl} controls className="w-full h-10" />
+                <div className="flex justify-center gap-3">
+                  <button
+                    onClick={reRecord}
+                    className="px-5 py-2.5 bg-gray-700 text-white rounded-lg hover:bg-gray-600 text-sm"
+                  >
+                    {t('speaker.reRecord')}
+                  </button>
+                  <button
+                    onClick={submitRecording}
+                    disabled={submitting}
+                    className="px-6 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 text-sm"
+                  >
+                    {submitting ? t('speaker.submitting') : t('common.submit')}
+                  </button>
+                </div>
+                <p className="text-center text-xs text-gray-500">
+                  {t('speaker.pressSpaceToSubmit')}
+                </p>
+              </div>
+            )}
+
+            {/* Skip Button */}
+            {!recording && !audioBlob && (
+              <div className="text-center mt-3">
                 <button
-                  onClick={submitRecording}
-                  disabled={submitting}
-                  className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+                  onClick={skipPrompt}
+                  className="text-gray-400 hover:text-white text-sm"
                 >
-                  {submitting ? t('speaker.submitting') : t('common.submit')}
+                  {t('speaker.skipPrompt')}
                 </button>
               </div>
-              <p className="text-center text-xs text-gray-500">
-                {t('speaker.pressSpaceToSubmit')}
-              </p>
-            </div>
-          )}
+            )}
+          </div>
+        </div>{/* end single card */}
 
-          {/* Skip Button */}
-          {!recording && !audioBlob && (
-            <div className="text-center mt-6">
-              <button
-                onClick={skipPrompt}
-                className="text-gray-400 hover:text-white text-sm"
-              >
-                {t('speaker.skipPrompt')}
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Tips */}
-        <div className="mt-8 p-4 bg-gray-800/50 rounded-lg">
+        {/* Tips — desktop only */}
+        <div className="mt-4 p-4 bg-gray-800/50 rounded-lg hidden md:block">
           <h3 className="font-semibold mb-2">{t('speaker.recordingTips')}:</h3>
           <ul className="text-sm text-gray-400 space-y-1">
             <li>• {t('speaker.tip1')}</li>

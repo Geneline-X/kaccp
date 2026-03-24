@@ -3,6 +3,7 @@ import { prisma } from "@/lib/infra/db/prisma";
 import { getAuthUser } from "@/lib/infra/auth/auth";
 import { locales, defaultLocale } from "@/i18n";
 import { resolveTranslatedText } from "@/lib/translations/resolver";
+import { generatePromptHint } from "@/lib/infra/ai/openai";
 
 // GET /api/v2/speaker/prompts - Get available prompts for speaker to record
 export async function GET(req: NextRequest) {
@@ -96,28 +97,40 @@ export async function GET(req: NextRequest) {
 
     const promptsWithDisplayText = await Promise.all(
       prompts.map(async (prompt) => {
-        const displayText = await resolveTranslatedText({
-          entityType: "prompt",
-          entityId: prompt.id,
-          field: "englishText",
-          originalText: prompt.englishText,
-          requestedLanguage: uiLocale,
-          defaultLanguage: defaultLocale,
-        });
+        const [displayText, displayInstruction] = await Promise.all([
+          resolveTranslatedText({
+            entityType: "prompt",
+            entityId: prompt.id,
+            field: "englishText",
+            originalText: prompt.englishText,
+            requestedLanguage: uiLocale,
+            defaultLanguage: defaultLocale,
+          }),
+          resolveTranslatedText({
+            entityType: "prompt",
+            entityId: prompt.id,
+            field: "instruction",
+            originalText: prompt.instruction || "",
+            requestedLanguage: uiLocale,
+            defaultLanguage: defaultLocale,
+          }),
+        ]);
 
-        const displayInstruction = await resolveTranslatedText({
-          entityType: "prompt",
-          entityId: prompt.id,
-          field: "instruction",
-          originalText: prompt.instruction || "",
-          requestedLanguage: uiLocale,
-          defaultLanguage: defaultLocale,
-        });
+        // Use stored hint, or generate + cache one via OpenAI if missing
+        let hint = prompt.hint?.trim() || null;
+        if (!hint) {
+          hint = await generatePromptHint(prompt.englishText);
+          if (hint) {
+            // Cache in DB so next speaker gets it instantly (fire and forget)
+            prisma.prompt.update({ where: { id: prompt.id }, data: { hint } }).catch(() => {});
+          }
+        }
 
         return {
           ...prompt,
           displayText: displayText.text,
-          displayInstruction: displayInstruction.text || null,
+          displayInstruction: displayInstruction.text?.trim() || null,
+          hint,
         };
       })
     );

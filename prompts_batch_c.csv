@@ -1,0 +1,261 @@
+english_text,category,emotion,instruction,target_duration_sec,hint
+"Good morning to all of you, may this day bring you peace and many blessings.",GREETINGS,HAPPY,,9,Greet a group in the morning and wish them blessings
+"Peace be upon you and upon your entire household and all the people you love.",GREETINGS,NEUTRAL,,9,Give the Islamic greeting of peace
+"And upon you also be peace, welcome to our village, you are most welcome here.",GREETINGS,HAPPY,,9,Return the greeting of peace and welcome a visitor
+"How did you sleep, did the mosquitoes disturb you, or did you rest well last night?",GREETINGS,QUESTION,,10,Ask how someone slept and if mosquitoes disturbed them
+"I slept very well, thank God, the breeze came and it was cool all through the night.",GREETINGS,HAPPY,,10,Say you slept well thanks to a cool breeze
+"Welcome home, we have been waiting for you, come and sit and eat with us.",GREETINGS,HAPPY,,9,Welcome someone home and invite them to eat
+"How is the family at home, are the children well and the old people keeping strong?",GREETINGS,QUESTION,,10,Ask about someone's family and elderly relatives
+"Everyone is fine, thank God, and we pray God keeps you and your own family well too.",GREETINGS,HAPPY,,10,Say all are well and pray for the other person's family
+"It has been a very long time since I saw you, where have you been hiding yourself?",GREETINGS,HAPPY,,10,Say it's been long and ask where someone has been
+"I have been busy with the farm and the children, time flies when there is so much to do.",GREETINGS,NEUTRAL,,10,Say you've been busy with farm and children
+"Welcome to our home, please sit down and let us bring you something to drink first.",GREETINGS,HAPPY,,9,Welcome a guest and offer them a drink
+"Good evening to you and your family, I hope the day was good to all of you.",GREETINGS,NEUTRAL,,8,Give an evening greeting and hope their day was good
+"Good afternoon, may your afternoon be full of good news and God's blessing.",GREETINGS,NEUTRAL,,8,Give an afternoon greeting with blessings
+"Come in, come in, do not stand at the door, this is your own home too.",GREETINGS,HAPPY,,8,Invite someone in warmly and make them feel at home
+"How are the children growing? Are they eating well and going to school every day?",GREETINGS,QUESTION,,9,Ask how the children are growing and attending school
+"Thank God they are all well and getting bigger every day, the youngest just started walking.",GREETINGS,HAPPY,,10,Say children are growing and the youngest just learned to walk
+"We have not seen you in so long, have you come back to stay or just passing through?",GREETINGS,QUESTION,,10,Ask if someone has returned for good or just passing through
+"I have come back for good, I missed this place and these people too much to stay away.",GREETINGS,HAPPY,,10,Say you came back for good because you missed home
+"You have grown so tall and strong since the last time I saw you, look at you now!",GREETINGS,HAPPY,,9,Express surprise at how much someone has grown
+"My grandmother always greets everyone by name and asks about each person individually.",GREETINGS,NEUTRAL,,10,Say your grandmother greets everyone by name one by one
+"Whenever my uncle visits he greets the elders first before he even sits down to rest.",GREETINGS,NEUTRAL,,10,Say your uncle always greets elders before sitting down
+"Good morning to you, teacher, how are you feeling after the long journey from the city?",GREETINGS,NEUTRAL,,10,Greet a teacher and ask about their journey
+"We greet the sunrise every morning by saying thank you to God for another day of life.",GREETINGS,NEUTRAL,,10,Say you thank God for a new day every morning at sunrise
+"In our culture, you greet every elder you pass on the road even if you do not know them.",GREETINGS,NEUTRAL,,10,Say in your culture you greet all elders on the road
+"The children run to greet their father every evening when they hear his voice at the gate.",GREETINGS,HAPPY,,10,Say children run to greet their father every evening
+"After a long journey it is so good to see the faces of your family waiting at the door.",GREETINGS,HAPPY,,10,Say it's good to see family faces waiting after a long journey
+"She greeted us in three different languages before finally settling on the one we all knew.",GREETINGS,NEUTRAL,,10,Say someone greeted in three languages before using a shared one
+"Good morning, I hope the rains came to your farm last night and your crops are happy.",GREETINGS,NEUTRAL,,9,Greet someone and hope rain came to their farm
+"Welcome back from the hospital, we are so glad to see you looking well and strong again.",GREETINGS,HAPPY,,10,Welcome someone back from hospital looking well
+"May God grant you a long life and keep all your family in good health every single day.",GREETINGS,HAPPY,,10,Pray for someone's long life and family's health
+"Hello my friend, where are you going in such a hurry today in this hot afternoon sun?",GREETINGS,NEUTRAL,,10,Greet a friend and ask where they're rushing in the heat
+"I am on my way to see my aunt, she has not been well and I want to check on her.",GREETINGS,NEUTRAL,,9,Say you're going to check on a sick aunt
+"Greet your father for me when you get home and tell him we have been asking about him.",GREETINGS,NEUTRAL,,9,Ask someone to give greetings to their father
+"She always ends her greetings with a prayer for whoever she is speaking to at the time.",GREETINGS,NEUTRAL,,10,Say a woman always ends greetings with a prayer
+"We say good night to each child individually and give each one a small blessing before bed.",GREETINGS,NEUTRAL,,10,Say you say good night and bless each child individually
+"My brother is the best man at saying good morning in a way that makes your whole day bright.",GREETINGS,HAPPY,,10,Say your brother gives the most cheerful good mornings
+"After prayers we always stand at the door of the mosque and greet everyone as they leave.",GREETINGS,NEUTRAL,,10,Say you greet people at the mosque door after prayers
+"Good afternoon uncle, please sit and rest, I will bring water for you to wash your hands.",GREETINGS,NEUTRAL,,10,Greet an uncle and offer water to wash before eating
+"When an elder walks into the room we all stand up to greet them out of respect.",GREETINGS,NEUTRAL,,9,Say everyone stands to greet an elder who enters the room
+"Even strangers on the road deserve a greeting because you do not know who they may be.",GREETINGS,NEUTRAL,,9,Say you should greet even strangers on the road
+"My sister is the one who always arrives with a smile and a kind word for every single person.",GREETINGS,HAPPY,,10,Say your sister always arrives smiling with kind words for all
+"My eldest son works far away in the mining town and sends money home every two months.",FAMILY_PEOPLE,NEUTRAL,,11,Say your eldest son works at mines and sends money home
+"My grandmother raised six children on her own after my grandfather passed away too young.",FAMILY_PEOPLE,NEUTRAL,,10,Say grandmother raised six children alone after grandfather died
+"My youngest daughter has a talent for numbers and her teacher says she will be an accountant.",FAMILY_PEOPLE,HAPPY,,11,Say your daughter has talent for numbers and may become accountant
+"The whole family gathers at my parents' house for every Eid without missing a single one.",FAMILY_PEOPLE,HAPPY,,11,Say the family always gathers at parents' house for Eid
+"My wife's mother moved in with us when she got old and we have no regrets about it.",FAMILY_PEOPLE,NEUTRAL,,10,Say your mother-in-law moved in when old and you don't regret it
+"My father never raised his voice at us, he always spoke with patience and quiet wisdom.",FAMILY_PEOPLE,NEUTRAL,,10,Say your father spoke with patience and never raised his voice
+"I am the fourth of seven children and we all still live in the same town as each other.",FAMILY_PEOPLE,NEUTRAL,,10,Say you are fourth of seven children all living in the same town
+"My brother married a woman from a different ethnic group and both families accepted it well.",FAMILY_PEOPLE,NEUTRAL,,10,Say your brother married across ethnic groups and families accepted
+"Every Sunday afternoon my aunts come to visit and the whole compound fills with noise.",FAMILY_PEOPLE,HAPPY,,10,Say aunts visit every Sunday and fill the compound with noise
+"My mother taught me to cook and sew and say thank you to everyone who helps me.",FAMILY_PEOPLE,NEUTRAL,,10,Say your mother taught you to cook, sew, and be grateful
+"We share the same grandfather but our fathers went in different directions after their father died.",FAMILY_PEOPLE,NEUTRAL,,11,Say you share a grandfather but your fathers went different ways
+"The cousin who grew up with me like a sister now lives far away and I miss her greatly.",FAMILY_PEOPLE,SAD,,10,Say a cousin like a sister now lives far away and you miss her
+"My uncle is the person I go to when I have a serious problem because he always listens.",FAMILY_PEOPLE,NEUTRAL,,11,Say your uncle is the person you go to with serious problems
+"We named the baby after my father's mother who passed away three months before she was born.",FAMILY_PEOPLE,NEUTRAL,,11,Say the baby was named after a grandmother who died before the birth
+"My son came first in his class at the end of the term and we were so very proud of him.",FAMILY_PEOPLE,HAPPY,,11,Say your son topped his class and you were very proud
+"My older sister sends the children school fees even though she lives in another country now.",FAMILY_PEOPLE,NEUTRAL,,10,Say your sister abroad pays the children's school fees
+"The whole family pitched in when my father got sick and needed money for his hospital bills.",FAMILY_PEOPLE,NEUTRAL,,10,Say the family pooled money when father was sick in hospital
+"My brother-in-law built a room at the back of our house and we all share one compound.",FAMILY_PEOPLE,NEUTRAL,,10,Say your brother-in-law built a room in your compound
+"We do not use the word stepmother here, she is just mother to all the children the same.",FAMILY_PEOPLE,NEUTRAL,,9,Say stepmothers are simply called mother and treated equally
+"My father has four wives and seventeen children and he knows every one of them by heart.",FAMILY_PEOPLE,NEUTRAL,,10,Say your father has four wives and seventeen children
+"I learned patience and hard work by watching my parents get through the difficult years.",FAMILY_PEOPLE,NEUTRAL,,10,Say you learned patience and hard work by watching your parents
+"The older children are expected to help take care of the younger ones after school.",FAMILY_PEOPLE,NEUTRAL,,10,Say older children must help care for younger siblings after school
+"My mother raised us to never go to sleep while there is still a guest in the house.",FAMILY_PEOPLE,NEUTRAL,,10,Say your mother taught you never to sleep while guests are present
+"When my father died our uncle took responsibility for us all as if we were his own children.",FAMILY_PEOPLE,NEUTRAL,,11,Say your uncle took care of you all after your father died
+"We have a family meeting every three months to discuss how everyone is doing and what is needed.",FAMILY_PEOPLE,NEUTRAL,,12,Say the family meets every three months to discuss needs
+"My grandmother remembers events from sixty years ago better than things that happened last week.",FAMILY_PEOPLE,NEUTRAL,,12,Say grandmother remembers old events better than recent ones
+"The new baby in the family has brought happiness to everyone including the oldest grandparent.",FAMILY_PEOPLE,HAPPY,,11,Say the new baby has brought joy to the whole family
+"My father always said that a family that eats together stays together through hard times.",FAMILY_PEOPLE,NEUTRAL,,11,Say father always said eating together keeps the family united
+"When my wife was in hospital my mother-in-law came and cooked for our children every day.",FAMILY_PEOPLE,NEUTRAL,,11,Say your mother-in-law cooked for the children while wife was in hospital
+"My nephew failed his exams but we encouraged him and he passed the resit with flying colors.",FAMILY_PEOPLE,HAPPY,,11,Say your nephew failed then passed his resit exams
+"My grandmother still cooks on firewood because she says the food tastes better that way.",FAMILY_PEOPLE,NEUTRAL,,11,Say your grandmother cooks on wood fire because food tastes better
+"My father walked ten kilometers to school every day when he was young and never missed class.",FAMILY_PEOPLE,NEUTRAL,,11,Say your father walked ten kilometers to school daily as a child
+"We celebrate every birthday in our family no matter how old the person is turning.",FAMILY_PEOPLE,HAPPY,,9,Say your family celebrates every birthday regardless of age
+"My mother prays for each one of us by name in her morning prayers without fail each day.",FAMILY_PEOPLE,NEUTRAL,,11,Say your mother prays for each child by name every morning
+"My father has a headache and has been lying down since this morning, he needs medicine.",HEALTH,NEUTRAL,,10,Say your father has a headache and needs medicine
+"The child has had a fever for two days and we need to take her to the clinic today.",HEALTH,NEUTRAL,,10,Say the child has had a fever for two days and needs clinic
+"The nurse told me to drink plenty of water and take the tablet three times a day with food.",HEALTH,NEUTRAL,,10,Say the nurse said to drink water and take tablets three times daily
+"My stomach has been painful since yesterday and I cannot eat anything without feeling sick.",HEALTH,NEUTRAL,,10,Say your stomach has hurt since yesterday and you can't eat
+"The malaria test came back positive so the doctor gave me a five-day treatment course.",HEALTH,NEUTRAL,,10,Say your malaria test was positive and you got a five-day treatment
+"We boil all our drinking water because the well water sometimes carries germs that make you sick.",HEALTH,NEUTRAL,,11,Say you boil all water because well water can make you sick
+"The old wound on my leg has not healed properly and it is swollen and hot to the touch.",HEALTH,NEUTRAL,,10,Say an old leg wound is swollen, hot, and not healing
+"I have been coughing for a week and there is pain in my chest when I breathe deeply.",HEALTH,NEUTRAL,,10,Say you've had a week-long cough with chest pain when breathing
+"They gave the children deworming tablets at school and told us to take them every six months.",HEALTH,NEUTRAL,,11,Say children got deworming tablets at school every six months
+"My blood pressure is high and the doctor told me to stop eating too much salt immediately.",HEALTH,NEUTRAL,,10,Say your blood pressure is high and the doctor banned extra salt
+"She fainted at the market and people carried her to the health center near the road.",HEALTH,NEUTRAL,,10,Say a woman fainted at market and was carried to the health center
+"The traditional healer gave me herbs to boil and drink but the pain is still not going away.",HEALTH,NEUTRAL,,11,Say the traditional healer's herbs haven't stopped the pain
+"My mother has diabetes and she has to watch everything she eats and test her blood daily.",HEALTH,NEUTRAL,,11,Say your mother has diabetes and must monitor her food and blood
+"The baby was underweight when born so they kept her in hospital for two extra weeks.",HEALTH,NEUTRAL,,10,Say the underweight baby stayed two extra weeks in hospital
+"I twisted my ankle on the road last week and it is still too painful to walk on properly.",HEALTH,NEUTRAL,,10,Say you twisted your ankle last week and it still hurts
+"The community health worker came to weigh all the children under five and check their growth.",HEALTH,NEUTRAL,,10,Say the health worker came to weigh and check young children
+"She uses a mixture of crushed leaves and shea butter on skin rashes with good results.",HEALTH,NEUTRAL,,10,Say she treats skin rashes with crushed leaves and shea butter
+"I have had diarrhea since this morning and I am feeling weak and dizzy from it already.",HEALTH,NEUTRAL,,10,Say you've had diarrhea since morning and feel weak and dizzy
+"The hospital is far but there is a health post only twenty minutes walk from here.",HEALTH,NEUTRAL,,9,Say the hospital is far but a health post is twenty minutes away
+"Drink lots of clean water when you have malaria because you lose so much from the fever.",HEALTH,NEUTRAL,,10,Advise someone with malaria to drink lots of clean water
+"They vaccinated all the children in the village against measles and polio yesterday morning.",HEALTH,NEUTRAL,,10,Say all village children were vaccinated against measles and polio
+"My knee has been hurting for three years now but I only have money to see the doctor now.",HEALTH,NEUTRAL,,11,Say your knee has hurt for three years and you're finally seeing a doctor
+"The midwife delivered the baby at home because the road to the hospital was completely flooded.",HEALTH,NEUTRAL,,11,Say the midwife delivered at home because the hospital road flooded
+"She refused to take the injection because she was afraid but the nurse convinced her gently.",HEALTH,NEUTRAL,,10,Say someone refused an injection but the nurse convinced them
+"The patient needs blood and the family is asking if anyone can donate at the hospital today.",HEALTH,URGENT,,10,Say a patient needs blood and family is seeking donors at hospital
+"Rest is the best medicine for a cold but people here cannot afford to rest for even one day.",HEALTH,NEUTRAL,,11,Say rest cures a cold but people here can't afford to rest
+"My eyes have been red and painful for three days and light makes them worse when I open them.",HEALTH,NEUTRAL,,11,Say your eyes have been red, painful, and sensitive to light
+"The new clinic has a solar refrigerator for vaccines and medicines that need to stay cold.",HEALTH,NEUTRAL,,10,Say the new clinic has a solar fridge to keep vaccines cold
+"He has been limping since the accident last month and still has not gone to be examined.",HEALTH,NEUTRAL,,10,Say someone has been limping since an accident and avoided the doctor
+"One, two, three, four, five, the five fingers on my hand, each one different from the last.",NUMBERS_MONEY,NEUTRAL,,8,Count five fingers on your hand one by one
+"Ten thousand leones is not enough to feed my family for even three days in this economy.",NUMBERS_MONEY,NEUTRAL,,10,Say ten thousand leones barely feeds family for three days
+"The price went from five hundred to two thousand in just one year, that is too much increase.",NUMBERS_MONEY,NEUTRAL,,10,Say the price rose from five hundred to two thousand in one year
+"I am saving fifty thousand every month and in ten months I will have the school fees ready.",NUMBERS_MONEY,NEUTRAL,,11,Say you save fifty thousand monthly for school fees in ten months
+"He owes me fifteen thousand from three months ago and I need it back by the end of this week.",NUMBERS_MONEY,NEUTRAL,,10,Say someone owes you fifteen thousand from three months ago
+"The total cost for the whole wedding came to four million five hundred thousand altogether.",NUMBERS_MONEY,NEUTRAL,,10,Say the wedding total cost was four million five hundred thousand
+"I paid one million two hundred for the motorbike and it broke down within the first six months.",NUMBERS_MONEY,NEUTRAL,,11,Say you paid over a million for a motorbike that broke in six months
+"Twenty-five people came to the naming ceremony and each one brought a gift for the baby.",NUMBERS_MONEY,NEUTRAL,,10,Say twenty-five people came to the naming ceremony with gifts
+"She earns thirty thousand per week and pays twelve thousand for rent alone each month.",NUMBERS_MONEY,NEUTRAL,,11,Say someone earns thirty thousand weekly but pays twelve thousand rent
+"The school fees are two hundred and fifty thousand per term for the secondary school.",NUMBERS_MONEY,NEUTRAL,,9,Say secondary school fees are two hundred fifty thousand per term
+"I borrowed three hundred thousand last year and have paid back two hundred so far.",NUMBERS_MONEY,NEUTRAL,,9,Say you borrowed three hundred thousand and repaid two hundred
+"The car broke down three times and the repair costs have already reached over one million.",NUMBERS_MONEY,NEUTRAL,,10,Say the car broke down three times costing over a million in repairs
+"At fifty years old my father decided to go back to school and learn to read and write.",NUMBERS_MONEY,NEUTRAL,,10,Say your father returned to school at fifty to learn to read
+"My grandmother is eighty-seven years old and still remembers everything from her childhood.",NUMBERS_MONEY,NEUTRAL,,10,Say your grandmother is eighty-seven and has sharp childhood memories
+"We have thirty cows, twelve goats, and a small flock of about forty chickens on the farm.",NUMBERS_MONEY,NEUTRAL,,10,Say you have thirty cows, twelve goats, and forty chickens
+"The farmer got six bags of rice per acre this season, which is double what he got last year.",NUMBERS_MONEY,NEUTRAL,,10,Say the farmer got double the rice harvest per acre this season
+"One hundred grams of dried fish costs more than a full fresh fish from the river right now.",NUMBERS_MONEY,NEUTRAL,,10,Say dried fish per gram costs more than a whole fresh fish
+"She has been doing this job for twenty-two years and she still loves it as much as day one.",NUMBERS_MONEY,NEUTRAL,,10,Say someone has loved their job for twenty-two years
+"The second child is usually the easiest according to my mother who raised seven of us.",NUMBERS_MONEY,NEUTRAL,,9,Say the second child is easiest according to a mother of seven
+"Three hundred families in this village rely on the single well for all their daily water.",NUMBERS_MONEY,NEUTRAL,,10,Say three hundred families rely on one well for all their water
+"The journey that used to take two hours now takes four because of the state of the road.",NUMBERS_MONEY,NEUTRAL,,10,Say a two-hour journey now takes four due to bad roads
+"I work six days a week and rest on Friday to go to the mosque for the midday prayers.",NUMBERS_MONEY,NEUTRAL,,10,Say you work six days and rest Friday for mosque prayers
+"At thirty-five years old he finally built his own house after saving for fifteen long years.",NUMBERS_MONEY,NEUTRAL,,10,Say someone built their own house at thirty-five after fifteen years of saving
+"The market woman told me a kilo of beef is now six hundred leones per hundred grams.",NUMBERS_MONEY,NEUTRAL,,10,Say beef is now six hundred per hundred grams at the market
+"Four hundred children go to that school but there are only eight teachers for all of them.",NUMBERS_MONEY,NEUTRAL,,10,Say four hundred children share only eight teachers at one school
+"My mobile money account shows I have two thousand three hundred remaining in the balance.",NUMBERS_MONEY,NEUTRAL,,10,Say your mobile money balance shows two thousand three hundred
+"The second wife brought nine cows as part of the marriage dowry from her family.",NUMBERS_MONEY,NEUTRAL,,8,Say the second wife brought nine cows as dowry
+"Three boys and two girls in my family, five children total, and I am the middle child.",NUMBERS_MONEY,NEUTRAL,,9,Say your family has three boys, two girls, and you're the middle
+"She has been to the market one hundred and fifty-two times this year, she keeps a record.",NUMBERS_MONEY,NEUTRAL,,10,Say someone went to market one hundred and fifty-two times this year
+"Close the gate before you go to bed tonight so the animals do not get out in the dark.",COMMANDS_REQUESTS,NEUTRAL,,10,Ask someone to close the gate before sleeping
+"Put the firewood away under the roof before the rain comes and makes it too wet to burn.",COMMANDS_REQUESTS,NEUTRAL,,10,Ask to store firewood under the roof before rain
+"Tell your brother to come home immediately, there is something important he must hear.",COMMANDS_REQUESTS,NEUTRAL,,9,Ask someone to tell their brother to come home urgently
+"Do not let the children near the well without an adult watching them at all times.",COMMANDS_REQUESTS,NEUTRAL,,9,Warn not to let children near the well unsupervised
+"Stir the soup carefully so it does not stick to the bottom and burn before it is ready.",COMMANDS_REQUESTS,NEUTRAL,,10,Ask someone to stir the soup carefully to prevent burning
+"Bring me the small container that is on the shelf next to the blue plastic bag.",COMMANDS_REQUESTS,NEUTRAL,,9,Ask for a specific container from the shelf
+"Remind me tomorrow morning to take my medicine because I always forget in the rush.",COMMANDS_REQUESTS,NEUTRAL,,9,Ask to be reminded tomorrow to take medicine
+"Lower your voice please, the baby just fell asleep and we do not want to wake her.",COMMANDS_REQUESTS,NEUTRAL,,9,Ask someone to lower their voice so baby stays asleep
+"Sweep the compound before the guests arrive so the place looks clean and welcoming.",COMMANDS_REQUESTS,NEUTRAL,,9,Ask to sweep before guests arrive to look clean and welcoming
+"Go and check if the fire under the pot has gone out or if it still needs more wood.",COMMANDS_REQUESTS,NEUTRAL,,9,Ask someone to check if the fire under the pot has gone out
+"Do not forget to greet the old woman at the end of the road when you pass her house.",COMMANDS_REQUESTS,NEUTRAL,,9,Remind someone to greet the old woman when passing her house
+"Lift the bag properly from the bottom or you will tear it and spill everything inside.",COMMANDS_REQUESTS,NEUTRAL,,9,Advise how to lift a bag correctly without tearing it
+"Write down everything you spend today so we can check the accounts at the end of the week.",COMMANDS_REQUESTS,NEUTRAL,,10,Ask to write down all spending for weekly accounting
+"Feed the animals first before you eat your own food, they have been waiting since morning.",COMMANDS_REQUESTS,NEUTRAL,,9,Ask to feed the animals before eating your own food
+"Be respectful when you speak to the elders, do not interrupt and do not raise your voice.",COMMANDS_REQUESTS,NEUTRAL,,9,Advise how to behave respectfully with elders
+"Leave a portion for your brother, he is coming back tonight and he will be hungry from the road.",COMMANDS_REQUESTS,NEUTRAL,,10,Ask to save food for a brother who is coming home tonight
+"Let the dough rest for one hour before you roll it out or it will be too tough to eat.",COMMANDS_REQUESTS,NEUTRAL,,9,Advise letting dough rest before rolling to avoid toughness
+"Call out to the man at the gate and tell him to wait until I am finished eating.",COMMANDS_REQUESTS,NEUTRAL,,9,Ask to tell the man at the gate to wait while you finish eating
+"Make sure the children say their prayers before they go to sleep every single night.",COMMANDS_REQUESTS,NEUTRAL,,9,Ask to make sure children pray before sleeping every night
+"Pack everything carefully in the bag so nothing gets damaged on the long journey home.",COMMANDS_REQUESTS,NEUTRAL,,9,Ask to pack everything carefully for the journey home
+"Boil the water for at least ten minutes before you use it for drinking and cooking.",COMMANDS_REQUESTS,NEUTRAL,,9,Ask to boil water ten minutes before using for drinking
+"Keep the medicine in a cool dry place and away from the reach of the young children.",COMMANDS_REQUESTS,NEUTRAL,,9,Ask to store medicine in a cool place away from children
+"Ask the driver to wait five more minutes while I go back and lock the door properly.",COMMANDS_REQUESTS,NEUTRAL,,9,Ask the driver to wait five minutes while you lock up
+"Count the money twice before you give it to him so there is no argument about it later.",COMMANDS_REQUESTS,NEUTRAL,,9,Ask to count money twice before handing it over
+"Plant the seeds one hand-width apart so they have room to grow without competing.",COMMANDS_REQUESTS,NEUTRAL,,9,Advise planting seeds a hand-width apart for room to grow
+"Separate the ripe mangoes from the unripe ones so the unripe ones can finish ripening.",COMMANDS_REQUESTS,NEUTRAL,,9,Ask to separate ripe and unripe mangoes so the unripe can finish
+"Turn left at the big cotton tree and walk straight until you see the blue gate on the right.",DIRECTIONS_PLACES,NEUTRAL,,10,Say turn left at the cotton tree then walk to the blue gate
+"Cross the market and then go past the mosque, the house you want is the third one after.",DIRECTIONS_PLACES,NEUTRAL,,10,Say cross the market, pass the mosque, and it's the third house
+"Go straight down this road for about twenty minutes, you will see the school on your left.",DIRECTIONS_PLACES,NEUTRAL,,10,Say go straight twenty minutes and you'll see the school on the left
+"The clinic is not far, just go past the junction and turn right at the painted wall.",DIRECTIONS_PLACES,NEUTRAL,,9,Say the clinic is past the junction, turn right at the painted wall
+"Ask anyone near the motor park and they will tell you exactly how to get to the market.",DIRECTIONS_PLACES,NEUTRAL,,9,Say to ask at the motor park for market directions
+"Take the road going east from the village and after the second hill you will see the town.",DIRECTIONS_PLACES,NEUTRAL,,9,Say take the eastern road past the second hill to reach town
+"The river crossing is about three kilometers north of here, follow the cattle path there.",DIRECTIONS_PLACES,NEUTRAL,,10,Say the river crossing is three kilometers north on the cattle path
+"When you reach the old bridge, do not cross it, take the footpath on the left bank instead.",DIRECTIONS_PLACES,NEUTRAL,,10,Say don't cross the old bridge but take the left bank footpath
+"You cannot miss the house, it has a bright red door and a mango tree right in front.",DIRECTIONS_PLACES,NEUTRAL,,9,Say the house has a red door and a mango tree in front
+"The path through the forest is shorter but the long road around is safer for strangers.",DIRECTIONS_PLACES,NEUTRAL,,10,Say the forest path is shorter but the road is safer for strangers
+"Keep walking until the road ends at the river and then you turn left along the water.",DIRECTIONS_PLACES,NEUTRAL,,9,Say walk until the road ends at the river then turn left
+"The health center is directly behind the primary school, you cannot miss it from there.",DIRECTIONS_PLACES,NEUTRAL,,9,Say the health center is behind the primary school
+"Go back the way you came and take the first turning on your right before the big tree.",DIRECTIONS_PLACES,NEUTRAL,,9,Say to go back and take the first right before the big tree
+"Walk through the compound and out the back gate, then you are already at the right road.",DIRECTIONS_PLACES,NEUTRAL,,9,Say walk through the compound and exit the back gate to reach the road
+"The well is at the very bottom of the hill, follow the path that the women walk every morning.",DIRECTIONS_PLACES,NEUTRAL,,9,Say the well is at the bottom of the hill on the women's morning path
+"Bear right when the road splits and stay on the high road that runs along the ridge.",DIRECTIONS_PLACES,NEUTRAL,,9,Say bear right at the fork and stay on the high ridge road
+"Pass the school, pass the clinic, go all the way to the end and the mosque is on your left.",DIRECTIONS_PLACES,NEUTRAL,,10,Say pass school, pass clinic, go to the end and the mosque is left
+"The shortcut through the cassava field saves thirty minutes but can be muddy after rain.",DIRECTIONS_PLACES,NEUTRAL,,10,Say the cassava field shortcut saves thirty minutes but gets muddy
+"From the main road take the unmarked path going north, it is small but it goes directly.",DIRECTIONS_PLACES,NEUTRAL,,9,Say take the unmarked north path from the main road
+"The village meeting point is under the large tree at the center of the compound always.",DIRECTIONS_PLACES,NEUTRAL,,9,Say the meeting point is always under the large center tree
+"The dry season path and the rainy season path to the next village are different routes.",DIRECTIONS_PLACES,NEUTRAL,,9,Say different paths are used in dry and rainy seasons to the village
+"Walk toward the rising sun in the morning and you will reach the market before it opens.",DIRECTIONS_PLACES,NEUTRAL,,9,Say walk east in the morning to reach the market early
+"Go past three compounds and when you see the woman selling bananas, turn left there.",DIRECTIONS_PLACES,NEUTRAL,,9,Say pass three compounds and turn left at the banana seller
+"The river is to the west and the market is to the east, so you are already between them.",DIRECTIONS_PLACES,NEUTRAL,,9,Say the river is west, the market is east, and you're between them
+"The afternoon harmattan blew the dust across the fields and made the sky turn a dark orange.",WEATHER_TIME,NEUTRAL,,11,Say the harmattan blew dust and turned the sky orange
+"The rains have been very irregular this year, some weeks too much and some weeks nothing.",WEATHER_TIME,NEUTRAL,,10,Say this year's rains are irregular, sometimes too much and sometimes none
+"It will rain before nightfall, the clouds are building from the west and the air smells like earth.",WEATHER_TIME,NEUTRAL,,11,Say rain will come before dark, you can smell it in the air
+"The dry season starts in November and by February the ground is cracked and parched.",WEATHER_TIME,NEUTRAL,,10,Say dry season starts November and by February the ground cracks
+"This harmattan is colder than last year, even in the daytime we need to wear a sweater.",WEATHER_TIME,NEUTRAL,,10,Say this year's harmattan is colder than last, even in the daytime
+"After three days of heavy rain the road was completely submerged and no vehicle could pass.",WEATHER_TIME,NEUTRAL,,11,Say three days of rain flooded the road and stopped all vehicles
+"The first rain of the season fell last night and this morning the whole earth smells fresh.",WEATHER_TIME,HAPPY,,10,Say the first rain fell last night and earth smells fresh this morning
+"The mango season begins in March when the trees start to flower and the air smells sweet.",WEATHER_TIME,NEUTRAL,,10,Say mango season starts in March when trees flower and air smells sweet
+"By the time the sun reaches the middle of the sky it is too hot to work in the fields.",WEATHER_TIME,NEUTRAL,,10,Say by midday it is too hot to work in the fields
+"The thunderstorm last night was so loud that all the children woke up and came to our bed.",WEATHER_TIME,NEUTRAL,,10,Say last night's thunderstorm was so loud children came to your bed
+"The planting season only lasts about two months so we have to work very fast and hard.",WEATHER_TIME,NEUTRAL,,9,Say the planting season is only two months so work must be fast
+"When the baobab leaves come out in April we know the rains are about four weeks away.",WEATHER_TIME,NEUTRAL,,10,Say when baobab leaves appear in April, rain is four weeks away
+"The river rises so quickly during the rainy season that it can flood a village in hours.",WEATHER_TIME,NEUTRAL,,10,Say the river rises fast enough in rains to flood a village in hours
+"We planted cassava at the end of the rainy season so it would grow through the dry months.",WEATHER_TIME,NEUTRAL,,10,Say you planted cassava at end of rains to grow through dry season
+"The temperature drops sharply at night in the dry season and the mornings are very cold.",WEATHER_TIME,NEUTRAL,,10,Say dry season nights are cold and mornings are sharp and cool
+"By six in the morning the fishermen have already gone out before the wind picks up.",WEATHER_TIME,NEUTRAL,,9,Say fishermen leave before six before the wind picks up
+"The hottest part of the year is just before the first rains when the air sits heavy and still.",WEATHER_TIME,NEUTRAL,,10,Say the year is hottest just before the rains when air is heavy
+"We always store extra water in the big drums before the pipe goes off in the dry months.",WEATHER_TIME,NEUTRAL,,10,Say you store water in drums before the pipe stops in dry months
+"It has been six weeks without any rain and the crops are beginning to wilt in the fields.",WEATHER_TIME,NEUTRAL,,10,Say six rainless weeks are causing crops to wilt in the fields
+"The evening sky turned red before the storm and we knew it would be a powerful one tonight.",WEATHER_TIME,NEUTRAL,,10,Say a red evening sky warned of the powerful storm to come
+"Time passes so fast when you are busy, I cannot believe this year is already almost over.",WEATHER_TIME,NEUTRAL,,9,Say time passes fast when you're busy and the year is almost done
+"The storm season brings dangerous lightning and we always unplug everything in the house.",WEATHER_TIME,NEUTRAL,,10,Say storm season brings lightning so you unplug everything
+"Could you explain to me what this document is asking me to sign and what it means?",FUNCTIONAL_PHRASES,QUESTION,,9,Ask someone to explain a document before you sign it
+"I need to find someone who can translate this letter from French into English for me.",FUNCTIONAL_PHRASES,NEUTRAL,,9,Say you need someone to translate a letter from French to English
+"My child needs the school enrollment form, where do I go to collect it from please?",FUNCTIONAL_PHRASES,QUESTION,,8,Ask where to collect the school enrollment form for your child
+"Is there a place nearby where I can print and photocopy some documents today?",FUNCTIONAL_PHRASES,QUESTION,,8,Ask if there is a nearby printing and photocopying service
+"I would like to file a complaint about the water supply, who should I speak to here?",FUNCTIONAL_PHRASES,QUESTION,,9,Ask who to speak to about making a water complaint
+"Can you help me fill in this form because I cannot read all the small letters clearly?",FUNCTIONAL_PHRASES,NEUTRAL,,9,Ask for help filling a form because you can't read the small print
+"I need to reach the next town urgently, is there any vehicle going that way today?",FUNCTIONAL_PHRASES,URGENT,,8,Say you urgently need a vehicle to the next town
+"Do you know if the health center is still open at this time on a Saturday afternoon?",FUNCTIONAL_PHRASES,QUESTION,,9,Ask if the health center is open on Saturday afternoon
+"My phone ran out of credit and I need to make one important call, may I borrow yours?",FUNCTIONAL_PHRASES,NEUTRAL,,9,Ask to borrow someone's phone for one important call
+"I was told to collect a package here but the person who sent it did not give me a reference.",FUNCTIONAL_PHRASES,NEUTRAL,,10,Say you came to collect a package but have no reference number
+"How do I register my child for the national school examinations that are coming up?",FUNCTIONAL_PHRASES,QUESTION,,9,Ask how to register a child for the national school exams
+"I lost my identity card last week and I need to know how to get a replacement quickly.",FUNCTIONAL_PHRASES,NEUTRAL,,9,Say you lost your identity card and need a replacement
+"Can you hold this for me while I go to the tap to wash my hands before eating?",FUNCTIONAL_PHRASES,NEUTRAL,,8,Ask someone to hold something while you wash your hands
+"Is this the queue for registering a new mobile number or for paying the bill only?",FUNCTIONAL_PHRASES,QUESTION,,8,Ask if the queue is for new registration or bill payment only
+"I need someone to witness my signature on this agreement, will you do it for me?",FUNCTIONAL_PHRASES,NEUTRAL,,8,Ask someone to witness your signature on an agreement
+"The taxi driver dropped me at the wrong location, how do I get to where I need to be?",FUNCTIONAL_PHRASES,NEUTRAL,,9,Say the taxi took you to the wrong place and ask for directions
+"There is a strong smell of smoke coming from next door, should we be worried about fire?",FUNCTIONAL_PHRASES,QUESTION,,9,Ask if smoke from next door could mean fire is a danger
+"I have been told that my application was rejected but nobody has told me the reason why.",FUNCTIONAL_PHRASES,NEUTRAL,,9,Say your application was rejected without any explanation
+"Can you please show me how to use this machine, I have never operated one like this before?",FUNCTIONAL_PHRASES,NEUTRAL,,9,Ask someone to show you how to use an unfamiliar machine
+"I need to report that there is a broken water pipe at the corner of our road leaking badly.",FUNCTIONAL_PHRASES,NEUTRAL,,9,Say you want to report a broken leaking water pipe
+"What documents do I need to bring to register the birth of my child at the office?",FUNCTIONAL_PHRASES,QUESTION,,9,Ask what documents are needed to register a birth
+"I have been coming every day for a week and nobody can tell me when my case will be heard.",FUNCTIONAL_PHRASES,NEUTRAL,,10,Say you've come every day for a week with no news on your case
+"The medicine they gave me last time made me feel worse, not better, what should I do?",FUNCTIONAL_PHRASES,QUESTION,,10,Say your last medicine made you worse and ask what to do
+"I am looking for work and someone told me this is the place to ask about available jobs.",FUNCTIONAL_PHRASES,NEUTRAL,,10,Say you are job-seeking and were told to ask here
+"Can you give me a receipt for this payment so I have proof that I paid what I owed?",FUNCTIONAL_PHRASES,NEUTRAL,,8,Ask for a receipt as proof of payment
+"I am so happy right now that I feel like singing and dancing in the middle of the road.",EMOTIONS_HAPPY,HAPPY,,10,Say you're so happy you feel like singing and dancing in the road
+"My heart is full of joy because my daughter passed her exams and will go to university.",EMOTIONS_HAPPY,HAPPY,,10,Say your heart is full of joy because daughter passed for university
+"When I heard the good news I could not stop smiling for the rest of the entire day.",EMOTIONS_HAPPY,HAPPY,,9,Say you couldn't stop smiling all day after hearing good news
+"I feel light as a feather today, everything seems bright and the world feels very good.",EMOTIONS_HAPPY,HAPPY,,9,Say you feel light, bright, and the world feels wonderful today
+"The happiness I felt when I held my first child for the very first time is impossible to describe.",EMOTIONS_HAPPY,HAPPY,,11,Say the joy of holding your first baby was impossible to describe
+"My whole body fills with warmth whenever I see my family gathered together in one place.",EMOTIONS_HAPPY,HAPPY,,10,Say warmth fills you whenever the whole family gathers together
+"We laughed until our stomachs hurt at the story the old man told us last night.",EMOTIONS_HAPPY,HAPPY,,10,Say you laughed so hard your stomach hurt at an old man's story
+"Today is a very good day and I want to thank God for every small blessing in my life.",EMOTIONS_HAPPY,HAPPY,,10,Give thanks for the small blessings on a good day
+"I cannot contain my excitement, I have been looking forward to this day for so long now.",EMOTIONS_HAPPY,EXCITED,,9,Say you're bursting with excitement for a long-awaited day
+"The wedding was so joyful and full of dancing and singing that nobody wanted to go home.",EMOTIONS_HAPPY,HAPPY,,10,Say the wedding was so joyful nobody wanted to leave
+"She squealed with delight when she saw the surprise that we had prepared for her birthday.",EMOTIONS_HAPPY,EXCITED,,10,Say she squealed with delight at her birthday surprise
+"When my father came home after two years away, I ran to him and would not let him go.",EMOTIONS_HAPPY,HAPPY,,10,Say you ran to your father and held on when he came home after two years
+"The whole village celebrated when the school results came and seven children had passed.",EMOTIONS_HAPPY,HAPPY,,10,Say the village celebrated when seven children passed the school exams
+"I have never felt so proud in my life as when my son gave his first speech at graduation.",EMOTIONS_HAPPY,HAPPY,,11,Say you never felt prouder than at your son's graduation speech
+"Happiness is when you have good health, a roof over your head, and your family near you.",EMOTIONS_HAPPY,HAPPY,,10,Define happiness as health, shelter, and family nearby
+"I feel very sad today because my old friend left this morning to go back to his village.",EMOTIONS_SAD,SAD,,9,Say you're sad because an old friend left to go back to his village
+"The grief of losing a parent is something that stays with you for the rest of your life.",EMOTIONS_SAD,SAD,,10,Say the grief of losing a parent stays with you forever
+"My heart sank when I heard the news and I sat down because my legs went weak under me.",EMOTIONS_SAD,SAD,,10,Say your heart sank and legs went weak when you heard bad news
+"She has been crying quietly to herself ever since she got the letter three days ago.",EMOTIONS_SAD,SAD,,9,Say she has been crying quietly since receiving a letter
+"The loneliness of being far from home is something I feel every single day I am here.",EMOTIONS_SAD,SAD,,9,Say loneliness from being far from home is felt every single day
+"When things go wrong all at once it is hard to know which problem to face first.",EMOTIONS_SAD,SAD,,9,Say it's hard to know where to start when everything goes wrong at once
+"I miss the sound of my mother's voice and the smell of her cooking more than anything else.",EMOTIONS_SAD,SAD,,9,Say you miss your mother's voice and cooking most of all
+"The whole neighborhood became quiet with grief when the young child passed away so suddenly.",EMOTIONS_SAD,SAD,,10,Say the neighborhood fell quiet with grief when a young child died
+"He came home from the city with nothing and the sadness in his eyes was hard to witness.",EMOTIONS_SAD,SAD,,10,Say someone came home from the city with nothing and sorrow in his eyes
+"Even though I smile on the outside, there is a heaviness in my chest that will not go away.",EMOTIONS_SAD,SAD,,10,Say you smile outwardly but carry a heavy sadness inside
+"We cried together at the graveside and held each other because there were no words to say.",EMOTIONS_SAD,SAD,,10,Say you cried together at the grave with no words left to speak
+"She did not say much but the look in her eyes said everything that she was feeling inside.",EMOTIONS_SAD,SAD,,9,Say someone's eyes showed everything without any words
+"It breaks my heart to see my old parents struggling when I am not able to help them more.",EMOTIONS_SAD,SAD,,10,Say it breaks your heart to see aging parents struggle when you can't help more
+"I have not heard from my brother in six months and I am beginning to worry about him.",EMOTIONS_SAD,SAD,,9,Say you haven't heard from your brother in six months and are worried
+"The hardest thing in this world is watching someone you love suffer and being able to do nothing.",EMOTIONS_SAD,SAD,,11,Say watching a loved one suffer while you're helpless is the hardest thing

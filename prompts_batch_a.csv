@@ -1,0 +1,504 @@
+english_text,category,emotion,instruction,target_duration_sec,hint
+"I woke up early this morning before the sun came up to start cooking breakfast.",DAILY_LIFE,NEUTRAL,,11,Say you woke early to cook breakfast
+"My mother always makes porridge with groundnuts for the whole family on Sunday mornings.",DAILY_LIFE,NEUTRAL,,12,Talk about Sunday morning porridge with groundnuts
+"After eating in the morning, I wash the dishes and sweep the compound before leaving.",DAILY_LIFE,NEUTRAL,,12,Describe morning chores before going out
+"The generator ran out of fuel last night so we had no lights until morning came.",DAILY_LIFE,NEUTRAL,,12,Say the generator stopped and there was no light
+"I charged my phone at the neighbor's house because our power was cut again.",DAILY_LIFE,NEUTRAL,,10,Say you charged your phone at a neighbor's house
+"Every morning I pour water on my face first before doing anything else in the house.",DAILY_LIFE,NEUTRAL,,12,Describe the first thing you do in the morning
+"The children refused to eat the rice this morning because there was no stew with it.",DAILY_LIFE,NEUTRAL,,12,Say children refused to eat rice without stew
+"My wife left for the market at six in the morning and has not returned yet.",DAILY_LIFE,NEUTRAL,,11,Say your wife went to market early and isn't back
+"I need to fill the water containers before the pipe stops running at noon today.",DAILY_LIFE,NEUTRAL,,12,Say you need to fill water before the tap stops
+"We sat outside under the mango tree and ate our evening meal together as a family.",DAILY_LIFE,HAPPY,,11,Describe eating dinner together under a tree
+"The food finished quickly because there were many visitors at the house yesterday.",DAILY_LIFE,NEUTRAL,,11,Say food ran out because of many visitors
+"I spent the whole afternoon cleaning the house from top to bottom before the guests arrived.",DAILY_LIFE,NEUTRAL,,12,Describe cleaning the whole house for guests
+"My son forgot his school bag at home and had to come back to collect it.",DAILY_LIFE,NEUTRAL,,11,Say your son forgot his bag and came back for it
+"The baby kept crying all through the night and nobody in the house could sleep.",DAILY_LIFE,NEUTRAL,,11,Say the baby cried all night and no one slept
+"We ran out of rice three days ago and have been eating bread and beans since then.",DAILY_LIFE,NEUTRAL,,12,Say you ran out of rice and are eating bread and beans
+"I sent my daughter to buy tomatoes and onions from the shop down the road.",DAILY_LIFE,NEUTRAL,,11,Say you sent a child to buy vegetables nearby
+"The tap water came on at midnight and we all had to rush outside to fill the drums.",DAILY_LIFE,NEUTRAL,,13,Say the tap came on at midnight and you rushed to fill drums
+"My husband works two jobs now to pay the school fees and the rent together.",DAILY_LIFE,NEUTRAL,,11,Say your husband works two jobs for school fees and rent
+"The mosquitoes were very bad last night so I lit coils inside the room before sleeping.",DAILY_LIFE,NEUTRAL,,12,Say mosquitoes were bad and you burned coils at night
+"We cooked jollof rice with fried fish and plantain for the naming ceremony yesterday.",DAILY_LIFE,HAPPY,,11,Describe cooking jollof rice and fish for a ceremony
+"I spent all morning ironing clothes because my iron had been broken for two weeks.",DAILY_LIFE,NEUTRAL,,11,Say you spent the morning ironing after the iron was fixed
+"My neighbor borrowed my big cooking pot and has not returned it for over a week.",DAILY_LIFE,NEUTRAL,,11,Say a neighbor borrowed your pot and hasn't returned it
+"The dog barked all night and kept everyone in the house awake until morning came.",DAILY_LIFE,NEUTRAL,,11,Say the dog barked all night and kept everyone awake
+"I have to wake up at five every morning to get to work before the traffic gets bad.",DAILY_LIFE,NEUTRAL,,12,Say you wake at five to beat morning traffic
+"We planted groundnuts and cassava in the garden this rainy season behind the house.",DAILY_LIFE,NEUTRAL,,11,Say you planted groundnuts and cassava this rainy season
+"The roof started leaking again when the heavy rain came last week so we need repairs.",DAILY_LIFE,NEUTRAL,,12,Say the roof leaks again after heavy rain
+"My sister braids hair at home every weekend to earn some extra money for herself.",DAILY_LIFE,NEUTRAL,,11,Say your sister braids hair on weekends for money
+"We always eat together as one family and no one goes to bed before the father comes home.",DAILY_LIFE,NEUTRAL,,13,Describe eating together and waiting for the father
+"I forgot to buy cooking oil when I was at the market so I had to go back again.",DAILY_LIFE,NEUTRAL,,11,Say you forgot to buy oil and had to return to market
+"The children helped me carry the heavy bags from the market all the way home today.",DAILY_LIFE,HAPPY,,10,Say children helped carry bags from market
+"Every evening I boil water for tea and we all sit together before the news comes on.",DAILY_LIFE,NEUTRAL,,12,Describe evening tea together before watching news
+"My mother-in-law came to stay with us for two weeks and we had to rearrange the rooms.",DAILY_LIFE,NEUTRAL,,12,Say mother-in-law came to stay and rooms were rearranged
+"I cut my hand while peeling yam in the kitchen this afternoon and had to bandage it.",DAILY_LIFE,NEUTRAL,,12,Say you cut your hand peeling yam and bandaged it
+"The school uniform is too small now because the boy has grown so much this year.",DAILY_LIFE,NEUTRAL,,11,Say the school uniform is too small because the child grew
+"My phone fell in the bucket of water while I was washing clothes and stopped working.",DAILY_LIFE,NEUTRAL,,12,Say your phone fell in water while washing clothes
+"We killed a chicken this morning because my uncle visited from upcountry without warning.",DAILY_LIFE,NEUTRAL,,12,Say you killed a chicken for an unexpected uncle's visit
+"The children came home from school hungry and there was nothing prepared for them to eat.",DAILY_LIFE,NEUTRAL,,12,Say children came home hungry with no food ready
+"I spend about two hours every day fetching firewood from the edge of the village.",DAILY_LIFE,NEUTRAL,,11,Say you spend two hours daily collecting firewood
+"We washed all the laundry by hand early in the morning while the water was still cold.",DAILY_LIFE,NEUTRAL,,11,Describe hand-washing laundry in the cold morning water
+"My father fixed the broken door himself instead of calling a carpenter to save money.",DAILY_LIFE,NEUTRAL,,11,Say your father fixed the door himself to save money
+"I had to walk to work this morning because the motorbike would not start at all.",DAILY_LIFE,NEUTRAL,,11,Say you walked to work because the bike didn't start
+"The old woman next door brought us some food when she heard my wife was not feeling well.",DAILY_LIFE,HAPPY,,12,Say a neighbor brought food when your wife was sick
+"I spent the whole evening helping my son with his school homework until it was very late.",DAILY_LIFE,NEUTRAL,,12,Say you spent the evening helping your son with homework
+"We buried the food scraps in the garden so they would turn into good compost for the soil.",DAILY_LIFE,NEUTRAL,,11,Say you buried food scraps to make compost for the garden
+"The wind blew the zinc roof off the kitchen during last night's big storm.",DAILY_LIFE,NEUTRAL,,10,Say the storm blew the kitchen roof off last night
+"I sewed the torn school shirt late at night by lamplight so it would be ready in the morning.",DAILY_LIFE,NEUTRAL,,13,Say you sewed a school shirt by lamplight at night
+"My daughter spilled the whole pot of soup on the floor and it made a huge mess.",DAILY_LIFE,NEUTRAL,,11,Say your daughter spilled the whole pot of soup
+"We dug a new rubbish pit at the back of the compound because the old one was full.",DAILY_LIFE,NEUTRAL,,11,Say you dug a new rubbish pit because the old one was full
+"I soaked the beans overnight so they would be soft enough to cook in the morning.",DAILY_LIFE,NEUTRAL,,11,Say you soaked beans overnight to soften them
+"The whole family gathered around the radio to listen to the evening news broadcast.",DAILY_LIFE,NEUTRAL,,10,Describe the family listening to radio news together
+"My mother woke me up three times this morning before I finally got out of the bed.",DAILY_LIFE,NEUTRAL,,11,Say your mother woke you three times before you got up
+"I found a big scorpion under my sleeping mat last night and screamed very loudly.",DAILY_LIFE,SURPRISED,,11,Say you found a scorpion under your mat and screamed
+"The market woman gives me credit every month because I always pay her back on time.",DAILY_LIFE,NEUTRAL,,11,Say the market woman gives you credit and you always repay
+"We ate leftover rice from last night for breakfast because there was nothing fresh.",DAILY_LIFE,NEUTRAL,,11,Say you ate leftover rice for breakfast
+"My brother sent money by mobile transfer and I received it within just a few minutes.",DAILY_LIFE,HAPPY,,11,Say your brother sent mobile money and you received it fast
+"I burned the old clothes and rubbish in the yard in the afternoon to clear the compound.",DAILY_LIFE,NEUTRAL,,11,Say you burned old clothes and rubbish to clean up
+"The children were so tired from playing all day that they fell asleep before dinner was ready.",DAILY_LIFE,NEUTRAL,,13,Say children fell asleep from tiredness before dinner
+"I ground pepper and tomatoes on the stone this morning to make fresh stew sauce.",DAILY_LIFE,NEUTRAL,,10,Say you ground pepper and tomatoes for fresh stew
+"My husband forgot to close the chicken pen and a fox got in during the night.",DAILY_LIFE,NEUTRAL,,11,Say husband forgot to close the chicken pen and a fox entered
+"We all took turns bathing from one bucket of water because the tap was not flowing.",DAILY_LIFE,NEUTRAL,,12,Say the family shared one bucket of water to bathe
+"The termites destroyed the wooden frame of the window and now we need to replace it.",DAILY_LIFE,NEUTRAL,,11,Say termites destroyed the window frame and it needs replacing
+"My wife sold a bag of cassava at the roadside today and made enough for the week's food.",DAILY_LIFE,NEUTRAL,,12,Say your wife sold cassava and earned enough for the week
+"I stayed up until midnight finishing the sewing order for the customer who needed it urgent.",DAILY_LIFE,NEUTRAL,,12,Say you stayed up sewing a customer's urgent order
+"We had to share the sleeping mat because there were too many of us in the one room.",DAILY_LIFE,NEUTRAL,,11,Say you had to share mats because of too many people
+"I always keep a small amount of money hidden in the house for real emergencies only.",DAILY_LIFE,NEUTRAL,,11,Say you keep emergency money hidden at home
+"The whole compound smelled wonderful when my mother was frying the groundnut oil.",DAILY_LIFE,HAPPY,,10,Say the compound smelled wonderful when oil was frying
+"I helped the old man at the end of the road carry his bags up the steep hill.",DAILY_LIFE,HAPPY,,11,Say you helped an old man carry bags up a hill
+"We ran out of matches so I borrowed fire from the neighbor's kitchen to light the stove.",DAILY_LIFE,NEUTRAL,,12,Say you ran out of matches and borrowed fire from the neighbor
+"My daughter washes the compound floor every Saturday morning without being asked to.",DAILY_LIFE,HAPPY,,11,Say your daughter washes the floor every Saturday willingly
+"The cassava dough took a long time to pound because it was very fresh and hard.",DAILY_LIFE,NEUTRAL,,11,Say pounding fresh cassava took a long time
+"I boiled groundnuts all afternoon and sold them in the evening by the roadside.",DAILY_LIFE,NEUTRAL,,10,Say you boiled and sold groundnuts by the roadside
+"We sat outside until very late talking about the old days when things were much easier.",DAILY_LIFE,NEUTRAL,,12,Describe sitting outside late talking about the past
+"My wife always puts a little extra food aside for anyone who may come to visit us.",DAILY_LIFE,HAPPY,,11,Say your wife always keeps food aside for unexpected visitors
+"The whole house was quiet by nine because everyone had woken up so early that morning.",DAILY_LIFE,NEUTRAL,,11,Say everyone slept early because they woke so early
+"I cut the grass around the house with a machete before the rains came to prevent snakes.",DAILY_LIFE,NEUTRAL,,12,Say you cut grass before rains to prevent snakes
+"The old woman ground her own corn by hand every morning even though she is over eighty years old.",DAILY_LIFE,SURPRISED,,13,Say an old woman grinds corn by hand even at over eighty
+"We slaughtered a goat for my brother's graduation and invited all the neighbors to celebrate.",DAILY_LIFE,HAPPY,,12,Say you slaughtered a goat for a brother's graduation
+"I always soak my feet in warm salted water after a long day of walking and working.",DAILY_LIFE,NEUTRAL,,11,Say you soak your feet in warm salty water after long days
+"My father built our house with his own hands and it has stood for over thirty years now.",DAILY_LIFE,HAPPY,,11,Say your father built the family house himself thirty years ago
+"I carry the water drum on my head every morning because it is the only way to balance it.",DAILY_LIFE,NEUTRAL,,11,Say you carry the water drum on your head every morning
+"The old woman told us to put the leftover food outside for the spirits before we sleep.",DAILY_LIFE,NEUTRAL,,12,Say an old woman told you to leave food outside for spirits
+"We repainted the whole house for the Eid celebration and it looks completely new now.",DAILY_LIFE,HAPPY,,11,Say you repainted the house for Eid and it looks new
+"I use a small kerosene lamp for light when the electricity goes off in the evening.",DAILY_LIFE,NEUTRAL,,11,Say you use a kerosene lamp when electricity goes off
+"My youngest child refused to sleep anywhere except in my arms for three whole months.",DAILY_LIFE,NEUTRAL,,11,Say your youngest baby only slept in your arms for months
+"We dry the fish in the sun for three days before storing them in the sacks.",DAILY_LIFE,NEUTRAL,,10,Say you sun-dry fish for three days before storing
+"I cook enough food on Sunday to last us until Tuesday so I don't have to cook every day.",DAILY_LIFE,NEUTRAL,,12,Say you cook on Sunday to last until Tuesday
+"The school sent a letter home saying we need to pay the fees by end of the month.",DAILY_LIFE,NEUTRAL,,11,Say school sent a letter asking for fees by end of month
+"My sister's new baby has grown so fat and healthy in just two short months.",DAILY_LIFE,HAPPY,,10,Say a baby has grown fat and healthy in two months
+"I always buy groundnut oil, salt, and maggi when I go to market no matter what else.",DAILY_LIFE,NEUTRAL,,12,Say you always buy groundnut oil, salt, and Maggi at the market
+"We celebrated by drinking attaya tea until midnight when my uncle passed his exams.",DAILY_LIFE,HAPPY,,11,Say you drank attaya until midnight to celebrate an uncle's exams
+"The whole road was flooded and we had to take a longer route to get home.",DAILY_LIFE,NEUTRAL,,10,Say the road flooded and you took a longer way home
+"I twisted my ankle on the uneven ground outside the mosque after Friday prayers.",DAILY_LIFE,NEUTRAL,,11,Say you twisted your ankle on uneven ground after prayers
+"My husband came home late every night this week because of the work at the workshop.",DAILY_LIFE,NEUTRAL,,11,Say your husband came home late all week because of work
+"The neighbor's goat ate all the herbs I planted in the small garden by the fence.",DAILY_LIFE,NEUTRAL,,10,Say a neighbor's goat ate your garden plants
+"We got a new mattress delivered this week and everyone has been sleeping much better.",DAILY_LIFE,HAPPY,,10,Say a new mattress came and everyone sleeps better
+"I asked for a loan from my work place to fix the plumbing before the rainy season.",DAILY_LIFE,NEUTRAL,,11,Say you asked for a work loan to fix plumbing before rains
+"My daughter tied and dyed ten yards of fabric and sold them all at the market last week.",DAILY_LIFE,NEUTRAL,,12,Say your daughter made and sold tie-dye fabric at market
+"The whole family is expected to contribute when there is a funeral in the compound.",DAILY_LIFE,NEUTRAL,,11,Say the whole family contributes for funerals
+"I cannot sleep without a fan because the heat is too much in this small room at night.",DAILY_LIFE,NEUTRAL,,12,Say you can't sleep without a fan in the heat
+"We always keep a bowl of water outside for people who come to wash their hands before eating.",DAILY_LIFE,NEUTRAL,,13,Say you keep water outside for hand-washing before meals
+"The smoke from the coal pot filled the whole kitchen when the fire was not drawing well.",DAILY_LIFE,NEUTRAL,,12,Say smoke filled the kitchen when the fire drew badly
+"I was helping my mother plait her hair when the electricity suddenly came on and surprised us.",DAILY_LIFE,SURPRISED,,12,Say electricity came on while you were plaiting mother's hair
+"My uncle taught me how to fix a motorbike engine and now I repair them for neighbors.",DAILY_LIFE,NEUTRAL,,12,Say your uncle taught you to fix bikes and now you help neighbors
+"We spread the groundnuts on the large mat in the sun to dry after harvesting them.",DAILY_LIFE,NEUTRAL,,11,Say you spread groundnuts on a mat to dry in the sun
+"The old radio only works when you hold the antenna in a certain position at an angle.",DAILY_LIFE,NEUTRAL,,11,Say the old radio only works when you hold the antenna a special way
+"I need to buy a new pair of sandals because mine broke during the walk to the market today.",DAILY_LIFE,NEUTRAL,,12,Say your sandals broke walking to market and you need new ones
+"My mother keeps all the important papers wrapped in a plastic bag inside the old suitcase.",DAILY_LIFE,NEUTRAL,,12,Say your mother keeps important papers in a plastic bag in a suitcase
+"We hang the mosquito net over the bed every night even during the dry season just to be safe.",DAILY_LIFE,NEUTRAL,,13,Say you always hang the mosquito net even in dry season
+"The landlord came this morning asking for two months rent that we have not been able to pay.",DAILY_LIFE,NEUTRAL,,12,Say the landlord came asking for two months unpaid rent
+"I make a small fire outside every evening to keep the mosquitoes away from the sitting area.",DAILY_LIFE,NEUTRAL,,12,Say you make a fire each evening to keep mosquitoes away
+"My son traded his bicycle for a mobile phone and I was very angry when I found out.",DAILY_LIFE,ANGRY,,11,Say your son swapped his bike for a phone and you were angry
+"We always say a short prayer together before the first person leaves the house in the morning.",DAILY_LIFE,NEUTRAL,,12,Say the family prays together before anyone leaves in the morning
+"The bucket of water was so heavy that the young boy had to rest three times on the way.",DAILY_LIFE,NEUTRAL,,11,Say the water bucket was so heavy the boy rested three times
+"I finally painted the front door blue because the old color had been fading for two years.",DAILY_LIFE,NEUTRAL,,11,Say you finally painted the door blue after it faded
+"The old woman across the road still wakes up before dawn to begin her morning prayers.",DAILY_LIFE,NEUTRAL,,11,Say the old woman wakes before dawn for morning prayers
+"We always buy extra candles and matches at the start of the rainy season just in case.",DAILY_LIFE,NEUTRAL,,11,Say you buy extra candles before the rainy season
+"My daughter started selling cold water sachets at the roadside to save money for school.",DAILY_LIFE,NEUTRAL,,12,Say your daughter sells water sachets to save for school
+"I fell asleep on the bench outside and woke up with mosquito bites all over my arms.",DAILY_LIFE,NEUTRAL,,11,Say you fell asleep outside and woke with mosquito bites
+"We had an argument about who should go to the market but in the end we went together.",DAILY_LIFE,NEUTRAL,,11,Say you argued about who goes to market then went together
+"The first thing I do every morning is check if the children slept well through the night.",DAILY_LIFE,NEUTRAL,,11,Say you check on the children every morning
+"I keep a notebook where I write down every single thing I spend money on each day.",DAILY_LIFE,NEUTRAL,,10,Say you write down every expense in a notebook daily
+"We use palm leaves to cover the roof temporarily when the rain damages the zinc sheets.",DAILY_LIFE,NEUTRAL,,12,Say you use palm leaves as temporary roof cover after damage
+"The electricity company came to disconnect us but my neighbor paid the bill for me.",DAILY_LIFE,NEUTRAL,,11,Say the power company came but a neighbor paid your bill
+"I borrowed my sister's wrapper to wear to the naming ceremony because mine was torn.",DAILY_LIFE,NEUTRAL,,11,Say you borrowed your sister's wrapper for the ceremony
+"We chased the goat out of the garden five times today but it kept coming back again.",DAILY_LIFE,NEUTRAL,,11,Say you chased the goat from the garden five times
+"The fish I bought at the market was already starting to smell by the time I got home.",DAILY_LIFE,NEUTRAL,,11,Say the market fish was going bad by the time you got home
+"My mother told me not to take the shortcut through the forest after it gets dark.",DAILY_LIFE,NEUTRAL,,11,Say your mother warned not to take the forest shortcut at night
+"I buy a bag of charcoal every week because we cook everything on the coal pot.",DAILY_LIFE,NEUTRAL,,10,Say you buy charcoal weekly because you cook on a coal pot
+"The whole house woke up when the goat got into the kitchen and knocked everything over.",DAILY_LIFE,NEUTRAL,,11,Say a goat entered the kitchen and woke the whole house
+"We always look for fallen mango branches after a storm to use as firewood for the week.",DAILY_LIFE,NEUTRAL,,11,Say you collect fallen mango branches for firewood after storms
+"What time does the bus leave for town in the morning?",QUESTIONS,QUESTION,,7,Ask what time the morning bus goes to town
+"Where can I find the nearest pharmacy that is open right now?",QUESTIONS,QUESTION,,8,Ask where the nearest open pharmacy is
+"How many children do you have and what are their ages?",QUESTIONS,QUESTION,,8,Ask how many children someone has and their ages
+"Why is the road closed and when will it be open again?",QUESTIONS,QUESTION,,8,Ask why the road is closed and when it will reopen
+"Who is the person I should talk to about registering for school?",QUESTIONS,QUESTION,,9,Ask who to see about school registration
+"What is the price of one kilo of rice at the market today?",QUESTIONS,QUESTION,,9,Ask the price of one kilo of rice
+"How long have you been living in this neighborhood?",QUESTIONS,QUESTION,,7,Ask how long someone has lived in the area
+"When will the rain stop and the road become passable again?",QUESTIONS,QUESTION,,8,Ask when the rain will stop and the road will clear
+"Which hospital in this town has the best treatment for malaria?",QUESTIONS,QUESTION,,9,Ask which hospital treats malaria best
+"Why did the children not go to school yesterday morning?",QUESTIONS,QUESTION,,7,Ask why the children missed school yesterday
+"How do you get to the ferry terminal from the center of town?",QUESTIONS,QUESTION,,9,Ask for directions to the ferry terminal
+"What did the doctor say when you went to see him last week?",QUESTIONS,QUESTION,,9,Ask what the doctor said at the visit
+"Is there a mechanic nearby who can fix a broken motorbike today?",QUESTIONS,QUESTION,,9,Ask if there is a nearby motorbike mechanic
+"Can you show me the way to the central mosque from here?",QUESTIONS,QUESTION,,8,Ask someone to show you the way to the mosque
+"How much does it cost to send a bag by bus to Kenema?",QUESTIONS,QUESTION,,8,Ask the cost of sending a bag by bus to Kenema
+"Did anyone call for me while I was away from the house?",QUESTIONS,QUESTION,,8,Ask if someone called while you were away
+"What time does the market open in the morning on weekdays?",QUESTIONS,QUESTION,,8,Ask what time the market opens on weekdays
+"How far is it from here to the nearest town with a hospital?",QUESTIONS,QUESTION,,9,Ask how far the nearest town with a hospital is
+"Who told you about this problem and when did they say it?",QUESTIONS,QUESTION,,8,Ask who said something and when
+"Are there any houses for rent near the primary school in this area?",QUESTIONS,QUESTION,,9,Ask if any houses are for rent near the primary school
+"What language do they speak most at home in that village?",QUESTIONS,QUESTION,,8,Ask what language people speak at home in a village
+"How many days will it take to travel from here to Conakry by road?",QUESTIONS,QUESTION,,9,Ask how many days it takes to travel to Conakry
+"Is this the right road that goes to the rice fields in the east?",QUESTIONS,QUESTION,,9,Ask if this road leads to the rice fields
+"Why does the water taste different here than at our place?",QUESTIONS,QUESTION,,8,Ask why the water tastes different here
+"What do you think is the best way to get to the border town?",QUESTIONS,QUESTION,,9,Ask what is the best way to get to the border
+"How often does the doctor come to this health post each week?",QUESTIONS,QUESTION,,9,Ask how often the doctor visits the health post
+"When will the chief announce his decision about the land dispute?",QUESTIONS,QUESTION,,9,Ask when the chief will decide about the land
+"Who is responsible for collecting rubbish from this part of town?",QUESTIONS,QUESTION,,9,Ask who collects rubbish in this area
+"Can we get water from that well during the dry season too?",QUESTIONS,QUESTION,,8,Ask if the well has water in the dry season
+"What is the difference between the two roads going to the same place?",QUESTIONS,QUESTION,,9,Ask what is different between two roads to the same place
+"How long will it take to cook if we use the big fire outside?",QUESTIONS,QUESTION,,9,Ask how long cooking will take on a big fire
+"Where do people go to report when something is stolen in this area?",QUESTIONS,QUESTION,,9,Ask where to report a theft in the area
+"Did you hear about the accident that happened near the market last night?",QUESTIONS,QUESTION,,9,Ask if someone heard about last night's market accident
+"Is this the medicine the nurse gave you or did you buy it yourself?",QUESTIONS,QUESTION,,9,Ask if the medicine was from the nurse or bought
+"What time did the last group of travelers pass through this road today?",QUESTIONS,QUESTION,,9,Ask when the last travelers passed through
+"How much rain fell last night, was it enough for the young crops?",QUESTIONS,QUESTION,,9,Ask if last night's rain was enough for crops
+"Who is the headman of this village and where does he live?",QUESTIONS,QUESTION,,8,Ask who leads the village and where they live
+"Are you the first person in your family to go to secondary school?",QUESTIONS,QUESTION,,9,Ask if someone is first in family to attend secondary school
+"What crops grow best in this part of the country during the wet season?",QUESTIONS,QUESTION,,9,Ask what crops grow well here in the wet season
+"When was the last time you spoke to your brother who lives in the city?",QUESTIONS,QUESTION,,10,Ask when someone last spoke to their city-dwelling brother
+"Why did your family decide to move from the village to the town?",QUESTIONS,QUESTION,,9,Ask why a family moved from village to town
+"How many hours of sleep do you usually get when the baby is not well?",QUESTIONS,QUESTION,,9,Ask how much sleep someone gets when the baby is sick
+"Is the school near your house accepting new pupils for the new term?",QUESTIONS,QUESTION,,9,Ask if the nearby school is taking new pupils
+"What do you usually cook when you have very little money at home?",QUESTIONS,QUESTION,,9,Ask what someone cooks when money is scarce
+"Can you teach me how to tie this wrapper the right way please?",QUESTIONS,QUESTION,,8,Ask to be taught how to tie a wrapper properly
+"How many people are there living in your house including the children?",QUESTIONS,QUESTION,,9,Ask how many people live in someone's house
+"Where did you learn to speak that language so fluently at your age?",QUESTIONS,QUESTION,,9,Ask where someone learned to speak a language so well
+"Is there a night market here where we can buy food after dark?",QUESTIONS,QUESTION,,8,Ask if there is a night market for food after dark
+"What will happen if we plant early before all the rains have come?",QUESTIONS,QUESTION,,9,Ask what happens if you plant before all rains arrive
+"How did your grandfather manage to build such a big house by himself?",QUESTIONS,QUESTION,,9,Ask how grandfather built such a big house alone
+"Are the children allowed to swim in the river at this time of year?",QUESTIONS,QUESTION,,9,Ask if children can swim in the river now
+"Who knows the best place to get cheap fabric before the festival season?",QUESTIONS,QUESTION,,9,Ask who knows where to buy cheap fabric before festivals
+"How long does it take to smoke fish properly so it keeps for a long time?",QUESTIONS,QUESTION,,10,Ask how long to smoke fish so it keeps well
+"Did the landlord agree to fix the roof before the next rains arrived?",QUESTIONS,QUESTION,,9,Ask if the landlord agreed to fix the roof before rains
+"What happened at the village meeting last week that everyone is talking about?",QUESTIONS,QUESTION,,9,Ask what happened at a village meeting everyone is talking about
+"Where is the best place to cross the river when it is this high with water?",QUESTIONS,QUESTION,,10,Ask where to safely cross a flooded river
+"How long have your parents been living in the same house in that village?",QUESTIONS,QUESTION,,9,Ask how long someone's parents have lived in their village house
+"Why do some animals refuse to drink water from certain wells in the dry season?",QUESTIONS,QUESTION,,10,Ask why some animals avoid certain wells
+"Is it true that the bridge was washed away and the road is now completely blocked?",QUESTIONS,QUESTION,,10,Ask if it's true the bridge washed away and road is blocked
+"Can your mother still walk all the way to the farm at her age now?",QUESTIONS,QUESTION,,9,Ask if someone's elderly mother can still walk to the farm
+"When is the next time that the mobile clinic will come to this village?",QUESTIONS,QUESTION,,9,Ask when the next mobile clinic will visit the village
+"What is the name of that tree with the red flowers that blooms in December?",QUESTIONS,QUESTION,,9,Ask the name of a tree with red December flowers
+"How do you store yams so that they do not rot before the dry season ends?",QUESTIONS,QUESTION,,9,Ask how to store yams without them rotting
+"Who was the man speaking at the mosque after prayers this afternoon?",QUESTIONS,QUESTION,,8,Ask who was speaking at the mosque after prayers
+"Are there any schools near here that teach in the local language as well?",QUESTIONS,QUESTION,,9,Ask if any nearby schools teach in the local language
+"What is the name of the medicine for stomach pain that you mentioned yesterday?",QUESTIONS,QUESTION,,9,Ask for the name of a stomach medicine mentioned before
+"How old were you when you first learned to ride a bicycle on your own?",QUESTIONS,QUESTION,,9,Ask how old someone was when they first rode a bike alone
+"Is this the type of soil that is good for growing sweet potatoes and cassava?",QUESTIONS,QUESTION,,9,Ask if this soil is good for sweet potatoes and cassava
+"What do you usually do when someone owes you money and refuses to pay it back?",QUESTIONS,QUESTION,,10,Ask what someone does when a debtor refuses to pay
+"Who was responsible for looking after the animals when you were away last week?",QUESTIONS,QUESTION,,9,Ask who looked after the animals while someone was away
+"How far did the water rise in your compound during the flooding last rainy season?",QUESTIONS,QUESTION,,10,Ask how high the flood water rose in someone's compound
+"Did you remember to take the medicine this morning before eating your breakfast?",QUESTIONS,QUESTION,,9,Ask if someone took their medicine before breakfast
+"Where exactly is the place where they sell charcoal near the secondary school?",QUESTIONS,QUESTION,,9,Ask where to buy charcoal near the secondary school
+"Why are the mango trees not producing fruit this year like they did last year?",QUESTIONS,QUESTION,,9,Ask why the mango trees have no fruit this year
+"How many more weeks do we need to wait before the cassava is ready to harvest?",QUESTIONS,QUESTION,,9,Ask how many weeks until cassava is ready to harvest
+"Is the water level in the river safe enough to cross with young children today?",QUESTIONS,QUESTION,,10,Ask if the river is safe to cross with children
+"What kind of wood burns the slowest and gives the most heat for cooking?",QUESTIONS,QUESTION,,9,Ask what wood burns slowest and gives most heat
+"Can you help me find a place to wash my clothes where the water is cleaner?",QUESTIONS,QUESTION,,9,Ask for help finding a clean place to wash clothes
+"How much money should I bring to the hospital if I am going without insurance?",QUESTIONS,QUESTION,,10,Ask how much money to bring to hospital without insurance
+"Why do the children in this village start school so much later than in the city?",QUESTIONS,QUESTION,,10,Ask why village children start school later than city children
+"Who in this village is best at fixing radios and small electrical appliances?",QUESTIONS,QUESTION,,9,Ask who in the village is best at fixing radios
+"Are we going to have enough food stored to last through the whole dry season?",QUESTIONS,QUESTION,,9,Ask if stored food will last through the dry season
+"What should I plant first, the rice or the vegetables, before the rains get heavy?",QUESTIONS,QUESTION,,10,Ask whether to plant rice or vegetables first before heavy rains
+"Good morning, how is your family keeping today?",CONVERSATIONS,NEUTRAL,,6,Ask how someone's family is doing this morning
+"We are all fine, thank God, how about you and your household?",CONVERSATIONS,NEUTRAL,,8,Reply that all are well and ask about the other family
+"I heard you had visitors from upcountry staying with you this week.",CONVERSATIONS,NEUTRAL,,8,Say you heard someone had out-of-town visitors
+"Yes, my sister and her whole family came without any warning at all.",CONVERSATIONS,NEUTRAL,,8,Say your sister's family came without warning
+"How long are they planning to stay with you this time around?",CONVERSATIONS,QUESTION,,7,Ask how long the visitors plan to stay
+"I think they will be here until after the school holidays finish.",CONVERSATIONS,NEUTRAL,,8,Say visitors will stay until after school holidays
+"That is always nice, family visits make the house feel so alive.",CONVERSATIONS,HAPPY,,8,Say family visits make the house lively
+"Did you manage to see the doctor about that pain you had last week?",CONVERSATIONS,QUESTION,,9,Ask if someone saw the doctor for their pain
+"Not yet, the queue was too long so I turned back and went home.",CONVERSATIONS,NEUTRAL,,8,Say the hospital queue was too long so you left
+"You should try going very early in the morning before the crowd builds up.",CONVERSATIONS,NEUTRAL,,9,Advise going to the hospital early before it gets crowded
+"That is a good idea, I will try to go tomorrow before sunrise.",CONVERSATIONS,NEUTRAL,,8,Accept the advice and say you'll go before sunrise tomorrow
+"Make sure you bring someone with you in case they keep you for observation.",CONVERSATIONS,NEUTRAL,,10,Advise bringing someone to the hospital in case you're kept in
+"My neighbor said the small clinic near the mosque is faster these days.",CONVERSATIONS,NEUTRAL,,10,Say a neighbor recommended a faster clinic near the mosque
+"I have heard that too, maybe we should both go and check it out first.",CONVERSATIONS,NEUTRAL,,10,Suggest going to the clinic together to see for yourselves
+"Are you going to the ceremony at the chief's compound on Saturday?",CONVERSATIONS,QUESTION,,8,Ask if someone is going to the chief's ceremony on Saturday
+"I would like to go but I am not sure if I can get away from the farm.",CONVERSATIONS,NEUTRAL,,10,Say you'd like to go but might be stuck at the farm
+"I can give you a lift on the motorbike if you are ready by two o'clock.",CONVERSATIONS,HAPPY,,10,Offer a motorbike lift if they're ready by two o'clock
+"That would be very helpful, I will make sure to be ready by then.",CONVERSATIONS,HAPPY,,9,Accept the lift offer and promise to be ready on time
+"Have you heard anything about the new school they want to build near the river?",CONVERSATIONS,QUESTION,,10,Ask if someone heard about the new school near the river
+"Yes, the government said they will start construction after the dry season ends.",CONVERSATIONS,NEUTRAL,,10,Say government will start school construction after dry season
+"That is long overdue, the children here walk too far to school every day.",CONVERSATIONS,NEUTRAL,,10,Say the school is needed because children walk too far
+"My son has been walking three kilometers every morning just to get to his school.",CONVERSATIONS,NEUTRAL,,10,Say your son walks three kilometers to school every day
+"Once the new school opens it will make a big difference for this whole community.",CONVERSATIONS,HAPPY,,10,Say the new school will benefit the whole community
+"Did the water come on last night or was it dry again this week too?",CONVERSATIONS,QUESTION,,9,Ask if the tap water came on last night
+"It came for about thirty minutes at midnight and then went off again.",CONVERSATIONS,NEUTRAL,,9,Say the water came for thirty minutes at midnight then stopped
+"We are all struggling here, everyone is buying sachets because the pipes are dry.",CONVERSATIONS,NEUTRAL,,10,Say everyone is buying sachet water because pipes are dry
+"I spoke to someone at the water board and they said next week it will be fixed.",CONVERSATIONS,NEUTRAL,,10,Say the water board promised pipes will be fixed next week
+"Let us hope they keep their word this time unlike all the previous times.",CONVERSATIONS,NEUTRAL,,9,Hope the water board keeps their promise this time
+"Is your farm ready for planting or are you still clearing the new ground?",CONVERSATIONS,QUESTION,,9,Ask if the farm is ready to plant or still being cleared
+"I finished clearing last week, I just need to wait for the rain to settle.",CONVERSATIONS,NEUTRAL,,9,Say farm is cleared and you're waiting for rain to settle
+"The rain seems to be coming later than usual this year across the whole region.",CONVERSATIONS,NEUTRAL,,10,Say the rain is coming later than usual this year
+"The old farmer at the end of the village said it will be a good season though.",CONVERSATIONS,NEUTRAL,,10,Say the old farmer predicted a good season ahead
+"Old farmers know the land better than anyone, I will take his word for it.",CONVERSATIONS,NEUTRAL,,9,Say you trust the old farmer's knowledge of the land
+"How is your wife doing since she came back from the hospital?",CONVERSATIONS,QUESTION,,8,Ask how someone's wife is doing after leaving hospital
+"She is much better now, thank God, she is eating well and moving around.",CONVERSATIONS,HAPPY,,9,Say wife is much better, eating and moving well
+"The whole compound was worried when we heard she had been admitted.",CONVERSATIONS,NEUTRAL,,9,Say everyone was worried when they heard she was admitted
+"We appreciate all the prayers and the food people brought during that difficult time.",CONVERSATIONS,HAPPY,,10,Thank people for prayers and food during a hard time
+"That is what community is for, we are all here for each other in this life.",CONVERSATIONS,HAPPY,,10,Say community is about supporting each other
+"Is your mother still making and selling the groundnut cake near the school?",CONVERSATIONS,QUESTION,,9,Ask if someone's mother still sells groundnut cake near the school
+"She stopped for a while but she started again just last month it seems.",CONVERSATIONS,NEUTRAL,,9,Say she stopped but started selling again last month
+"I was going to look for her last week because I wanted to buy some for my wife.",CONVERSATIONS,NEUTRAL,,10,Say you were looking for her because you wanted to buy some
+"She is there every weekday from morning until the school closes in the afternoon.",CONVERSATIONS,NEUTRAL,,10,Say she sells every weekday from morning until school closes
+"Perfect, I will send my son to buy some before he comes home from school today.",CONVERSATIONS,NEUTRAL,,9,Say you'll send your son to buy some after school
+"It is good to know that small businesses like that are still going strong.",CONVERSATIONS,NEUTRAL,,9,Say it is good that small businesses are still thriving
+"Thank God for the people who work hard to feed their families every single day.",CONVERSATIONS,HAPPY,,10,Give thanks for people who work hard to feed their families
+"All right my friend, I have to go now but let us talk more another day soon.",CONVERSATIONS,NEUTRAL,,9,Say goodbye and promise to talk again soon
+"Take care of yourself and greet the family from me when you get home.",CONVERSATIONS,HAPPY,,8,Say goodbye and send greetings to the other person's family
+"God willing I will see you again at the mosque on Friday for prayers.",CONVERSATIONS,NEUTRAL,,9,Say you'll see someone at Friday mosque prayers
+"He said good morning to the old woman then waited for her to sit down first.",CONVERSATIONS,NEUTRAL,,10,Say a man greeted an old woman and waited for her to sit
+"She asked me three times before I finally agreed to help her carry the load.",CONVERSATIONS,NEUTRAL,,10,Say someone asked three times before you agreed to help
+"I could not understand what he was saying so I asked him to slow down.",CONVERSATIONS,NEUTRAL,,9,Say you couldn't understand and asked someone to slow down
+"She told me to come back next week because the person I need was not there.",CONVERSATIONS,NEUTRAL,,9,Say you were told to come back next week
+"He offered to pay for my tea but I refused and paid for it myself.",CONVERSATIONS,NEUTRAL,,8,Say someone offered to pay your tea but you declined
+"She was so happy when she heard the news that she started crying with joy.",CONVERSATIONS,HAPPY,,9,Say someone cried with joy when they heard good news
+"He walked all the way from the next village just to give us the message.",CONVERSATIONS,NEUTRAL,,8,Say someone walked from the next village to deliver a message
+"She reminded me three times to take the medicine before I finally remembered.",CONVERSATIONS,NEUTRAL,,9,Say someone had to remind you three times about medicine
+"He arrived at exactly the wrong moment when we were all in the middle of eating.",CONVERSATIONS,NEUTRAL,,9,Say someone arrived at the wrong time during a meal
+"She sat quietly and listened to everything before she gave her opinion at the end.",CONVERSATIONS,NEUTRAL,,9,Say someone listened to everything before speaking
+"He borrowed twenty thousand from me last month and has not mentioned it since.",CONVERSATIONS,NEUTRAL,,9,Say someone borrowed money and hasn't mentioned repaying it
+"She sang so beautifully at the naming ceremony that everyone fell silent to listen.",CONVERSATIONS,HAPPY,,10,Say someone sang so beautifully everyone went quiet
+"He told me to forget about the debt but I could not accept that in good conscience.",CONVERSATIONS,NEUTRAL,,9,Say someone said to forget a debt but you couldn't accept it
+"She cooked enough food for thirty people when only ten of us came to eat.",CONVERSATIONS,SURPRISED,,9,Say someone cooked for thirty but only ten came
+"The market here sells fresh fruit and vegetables every day except on Sunday mornings.",PHONETIC_COVERAGE,NEUTRAL,,11,Say the market sells fresh produce daily except Sunday mornings
+"Five fat frogs and four fine fish filled the farmer's friendly frying pan fully.",PHONETIC_COVERAGE,NEUTRAL,,10,Describe a tongue twister about frogs, fish, and frying
+"The thirty-three thin threads that the tailor twisted together all broke at once.",PHONETIC_COVERAGE,NEUTRAL,,10,Say thirty-three threads the tailor twisted all broke
+"She sells seashells along the seashore south of our small seaside settlement.",PHONETIC_COVERAGE,NEUTRAL,,9,Say a person sells seashells by the seashore
+"Bright blue birds build beautiful nests between the branches of the big baobab tree.",PHONETIC_COVERAGE,NEUTRAL,,10,Say blue birds build nests in the baobab tree
+"Peter's pepper plants produce plenty of perfectly purple peppers in the planting season.",PHONETIC_COVERAGE,NEUTRAL,,11,Describe Peter's pepper plants producing purple peppers
+"The thick thorn thicket that the thirty thieves thought through thoroughly was theirs.",PHONETIC_COVERAGE,NEUTRAL,,10,A tongue twister about thorns, thieves, and thinking
+"Green grasshoppers graze gladly on great green grassy grounds near the golden river.",PHONETIC_COVERAGE,NEUTRAL,,10,Say grasshoppers graze on green grass near a golden river
+"Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday, one full week passes.",PHONETIC_COVERAGE,NEUTRAL,,9,Name all seven days of the week in order
+"January, February, March, April, May, June, July, August, September, October.",PHONETIC_COVERAGE,NEUTRAL,,10,Name the first ten months of the year in order
+"November and December are the last two months of the twelve-month calendar year.",PHONETIC_COVERAGE,NEUTRAL,,10,Say November and December are the last two months
+"One, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve, thirteen.",PHONETIC_COVERAGE,NEUTRAL,,8,Count from one to thirteen slowly and clearly
+"Twenty, thirty, forty, fifty, sixty, seventy, eighty, ninety, and one hundred exactly.",PHONETIC_COVERAGE,NEUTRAL,,9,Count in tens from twenty to one hundred
+"One thousand, two thousand, five thousand, ten thousand, fifty thousand, one hundred thousand.",PHONETIC_COVERAGE,NEUTRAL,,9,Count in thousands from one to one hundred thousand
+"The clever crow carefully carried a copper coin across the cool clear shallow creek.",PHONETIC_COVERAGE,NEUTRAL,,10,Tongue twister about a crow carrying a coin across a creek
+"Red lorry, yellow lorry, red lorry, yellow lorry going round the roundabout today.",PHONETIC_COVERAGE,NEUTRAL,,9,Tongue twister with red and yellow lorries going around
+"The quick brown fox jumped over the lazy sleeping dog near the old farm fence.",PHONETIC_COVERAGE,NEUTRAL,,10,Classic tongue twister about a fox jumping over a dog
+"A proper copper coffee pot holds a cup of perfectly brewed hot coffee inside.",PHONETIC_COVERAGE,NEUTRAL,,9,A tongue twister about a copper coffee pot
+"Unique New York, unique New York, you know you need unique New York today.",PHONETIC_COVERAGE,NEUTRAL,,8,Tongue twister with unique New York repeated
+"How much wood would a woodchuck chuck if a woodchuck could chuck real wood?",PHONETIC_COVERAGE,QUESTION,,8,Classic woodchuck tongue twister question
+"Whether the weather is warm or whether the weather is cold we play outside.",PHONETIC_COVERAGE,NEUTRAL,,9,Whether weather tongue twister about playing outside
+"The sixth sick sheikh's sixth sheep is sick and resting in the shade today.",PHONETIC_COVERAGE,NEUTRAL,,9,Tongue twister about a sick sheep in the shade
+"Sister Susie sewing shirts for soldiers is sitting by the sunny seaside window.",PHONETIC_COVERAGE,NEUTRAL,,9,Tongue twister about Susie sewing shirts for soldiers
+"He thought this thought but this thought that he thought was not the right thought.",PHONETIC_COVERAGE,NEUTRAL,,9,Tongue twister about the right thought
+"If two witches watched two watches which witch would watch which watch at night?",PHONETIC_COVERAGE,QUESTION,,9,Tongue twister about two witches watching watches
+"Which wristwatches are Swiss wristwatches and which ones are not Swiss wristwatches?",PHONETIC_COVERAGE,QUESTION,,9,Tongue twister asking which watches are Swiss
+"The big black bug bit the big black bear but the bear bled blue blood.",PHONETIC_COVERAGE,NEUTRAL,,9,Tongue twister about a bug biting a bear that bleeds blue
+"Six slippery snails slid slowly seaward along the smooth stones in the morning.",PHONETIC_COVERAGE,NEUTRAL,,9,Tongue twister about snails sliding toward the sea
+"She saw Sherif's sheep sitting and sleeping, so she said she should shear Sherif's sheep.",PHONETIC_COVERAGE,NEUTRAL,,10,Tongue twister about shearing Sherif's sheep
+"North, south, east, west, up, down, left, right, in, out, near, far, front, back.",PHONETIC_COVERAGE,NEUTRAL,,8,Say directional and positional words in sequence
+"Hot, cold, wet, dry, loud, quiet, fast, slow, big, small, long, short, dark, light.",PHONETIC_COVERAGE,NEUTRAL,,9,Say opposite word pairs one after the other
+"Red, orange, yellow, green, blue, indigo, violet, these make up the rainbow colors.",PHONETIC_COVERAGE,NEUTRAL,,9,Name all the colors of the rainbow in order
+"A black cat sat flat on the mat, that's that, and that is a fact, quite right.",PHONETIC_COVERAGE,NEUTRAL,,9,Rhyming tongue twister about a black cat on a mat
+"The bowl of blue broth and the bowl of black broth are both in the kitchen.",PHONETIC_COVERAGE,NEUTRAL,,9,Tongue twister comparing blue broth and black broth
+"The sun rises slowly from the eastern horizon and sets in the golden western sky.",PHONETIC_COVERAGE,NEUTRAL,,10,Describe the sun rising in the east and setting in the west
+"Two tall thin trees tottered and toppled together in the terrible Tuesday thunderstorm.",PHONETIC_COVERAGE,NEUTRAL,,10,Tongue twister about two tall trees falling in a storm
+"Fresh French food from a fine French chef fills the front of the French restaurant.",PHONETIC_COVERAGE,NEUTRAL,,9,Tongue twister about French food and a French chef
+"The wooden wheel wobbled wildly while the wagon wound its way down the winding hill.",PHONETIC_COVERAGE,NEUTRAL,,10,Tongue twister about a wobbling wooden wagon wheel
+"Mixed biscuits, mixed biscuits, a box of mixed biscuits, mix a box of biscuits please.",PHONETIC_COVERAGE,NEUTRAL,,9,Tongue twister about mixed biscuits in a box
+"She had such a shawl, should such a shawl show such stitching, shall she?",PHONETIC_COVERAGE,QUESTION,,8,Tongue twister about a shawl with stitching
+"The bottom of the butter bucket is the most bitter and the hardest to clean.",PHONETIC_COVERAGE,NEUTRAL,,9,Tongue twister about the bottom of a butter bucket
+"If you notice this notice you will notice this notice is not worth noticing at all.",PHONETIC_COVERAGE,NEUTRAL,,10,Tongue twister about noticing a notice
+"The rural ruler wore a rural ruler's role, rolling rhythmically round the rough road.",PHONETIC_COVERAGE,NEUTRAL,,10,Tongue twister about a rural ruler rolling on a road
+"Double bubble gum bubbles double, double trouble trouble comes in bubbles of two.",PHONETIC_COVERAGE,NEUTRAL,,9,Tongue twister about double bubble gum bubbling
+"A skunk sat on a stump and thunk the stump stunk but the stump thunk the skunk stunk.",PHONETIC_COVERAGE,NEUTRAL,,9,Classic skunk stump tongue twister
+"I thought the thought but I thought the thought I thought would not be thought through.",PHONETIC_COVERAGE,NEUTRAL,,9,Tongue twister about thinking thoughts through
+"The lips, the teeth, the tip of the tongue, the tip of the tongue, the teeth, the lips.",PHONETIC_COVERAGE,NEUTRAL,,8,Classic speech exercise naming mouth parts in order
+"He ran from the rain, he hid under the railing, he heard the rain rattle, real hard.",PHONETIC_COVERAGE,NEUTRAL,,9,Tongue twister about hiding from rain under a railing
+"Pop goes the weasel and up goes the popping pod, pop, pop, pop, pop, popping.",PHONETIC_COVERAGE,NEUTRAL,,8,Tongue twister with pop, weasel, and pod popping
+"Literally little llamas love lounging lazily by the lake in the lazy late afternoon.",PHONETIC_COVERAGE,NEUTRAL,,10,Tongue twister about llamas lounging by the lake
+"Good food, great grains, gold gleaming, green gardens growing, grateful gatherers giving.",PHONETIC_COVERAGE,NEUTRAL,,9,Alliterative sentence about good food and grateful farmers
+"The cook took the cook's book and cooked by the book in the cool cookhouse kitchen.",PHONETIC_COVERAGE,NEUTRAL,,9,Tongue twister about a cook using a cookbook
+"Near and far, here and there, now and then, come and go, give and take, rise and fall.",PHONETIC_COVERAGE,NEUTRAL,,9,Say pairs of opposite words in a flowing sequence
+"I saw Esau kissing Kate, I saw Esau, he saw me, and she saw I saw Esau too.",PHONETIC_COVERAGE,NEUTRAL,,9,Classic Esau tongue twister with seeing and kissing
+"Scissors sizzle, thistles sizzle, does a shirt, a sibling, or a sieve sizzle too?",PHONETIC_COVERAGE,QUESTION,,8,Tongue twister about things that sizzle
+"Whether woven wool or washed white linen, the weaver's workshop weaves it all well.",PHONETIC_COVERAGE,NEUTRAL,,9,Tongue twister about a weaver's wool and linen workshop
+"Bright blessings bring brilliant bounty, better bonds build bigger better communities.",PHONETIC_COVERAGE,NEUTRAL,,9,Alliterative sentence about blessings and community
+"A tutor who tooted the flute tried to tutor two tooters to toot by the fountain.",PHONETIC_COVERAGE,NEUTRAL,,9,Classic tutor and flute tongue twister
+"The king's cattle kicked the kitchen cabinet, causing chaos in the castle kitchen.",PHONETIC_COVERAGE,NEUTRAL,,9,Tongue twister about the king's cattle kicking a cabinet
+"Knick-knack paddywhack, give a dog a bone, this old man came rolling nicely home.",PHONETIC_COVERAGE,NEUTRAL,,8,Classic knick-knack paddywhack nursery rhyme line
+"The wind blows cold across the cliff face where the wild waves crash and roar below.",PHONETIC_COVERAGE,NEUTRAL,,10,Say cold wind blows on cliffs where wild waves crash below
+"Eleven benevolent elephants enjoyed their evening entertainments extraordinarily well.",PHONETIC_COVERAGE,NEUTRAL,,8,Tongue twister about eleven elephants enjoying the evening
+"Fragrant fresh fruit from far-off forests fills Father Faroukou's favorite fruit basket.",PHONETIC_COVERAGE,NEUTRAL,,9,Tongue twister about fresh fruit in Father Faroukou's basket
+"The spinning top spun so fast that it looked completely still standing there in place.",PHONETIC_COVERAGE,NEUTRAL,,9,Say a spinning top spun so fast it looked still
+"Black background, white background, which background is the best for writing on?",PHONETIC_COVERAGE,QUESTION,,8,Ask whether black or white background is best for writing
+"Plump pink pigs play pleasantly in pretty purple puddles on the planting plain.",PHONETIC_COVERAGE,NEUTRAL,,9,Tongue twister about pink pigs playing in purple puddles
+"The great grey geese grazed greedily in the green grass by the glittering grey lake.",PHONETIC_COVERAGE,NEUTRAL,,9,Tongue twister about grey geese grazing by a grey lake
+"Sounding out syllables slowly strengthens speaking skills and builds strong clear speech.",PHONETIC_COVERAGE,NEUTRAL,,9,Say that sounding out syllables builds speaking skills
+"Three free throws, three free throws, the thrower threw three free throws perfectly.",PHONETIC_COVERAGE,NEUTRAL,,8,Tongue twister about three free throws
+"If you understand, stand up; if you don't understand, also stand up and ask someone.",PHONETIC_COVERAGE,NEUTRAL,,10,Say to stand whether you understand or don't understand
+"The children play in the evening.",SHORT_PHRASES,NEUTRAL,,4,Say children play in the evening
+"She went to the river.",SHORT_PHRASES,NEUTRAL,,3,Say she went to the river
+"We are almost there now.",SHORT_PHRASES,NEUTRAL,,3,Say you are almost there
+"He is a very clever man.",SHORT_PHRASES,NEUTRAL,,3,Say someone is a clever man
+"The rain is coming fast.",SHORT_PHRASES,NEUTRAL,,3,Say rain is coming quickly
+"I am very happy today.",SHORT_PHRASES,HAPPY,,3,Say you are very happy
+"The food smells wonderful.",SHORT_PHRASES,HAPPY,,3,Say the food smells good
+"Look at the big river.",SHORT_PHRASES,NEUTRAL,,3,Point out a big river
+"God is always with us.",SHORT_PHRASES,NEUTRAL,,3,Say God is always present
+"My heart is very heavy.",SHORT_PHRASES,SAD,,3,Say you feel very sad
+"That makes no sense at all.",SHORT_PHRASES,NEUTRAL,,3,Say something makes no sense
+"Be patient, God provides.",SHORT_PHRASES,NEUTRAL,,3,Tell someone to be patient and trust God
+"I need your help now.",SHORT_PHRASES,NEUTRAL,,3,Say you need help right now
+"He ran very fast away.",SHORT_PHRASES,NEUTRAL,,3,Say someone ran away fast
+"She knows this place well.",SHORT_PHRASES,NEUTRAL,,3,Say someone knows this place well
+"This is my father's land.",SHORT_PHRASES,NEUTRAL,,3,Say this is your father's land
+"The child fell and cried.",SHORT_PHRASES,NEUTRAL,,3,Say a child fell down and cried
+"I am so very tired.",SHORT_PHRASES,NEUTRAL,,3,Say you are very tired
+"The path is too narrow.",SHORT_PHRASES,NEUTRAL,,3,Say the path is too narrow
+"She is a hard worker.",SHORT_PHRASES,NEUTRAL,,3,Say someone works very hard
+"God bless this food.",SHORT_PHRASES,HAPPY,,3,Bless the food before eating
+"I forgot my money home.",SHORT_PHRASES,NEUTRAL,,3,Say you left your money at home
+"The cow has run off.",SHORT_PHRASES,NEUTRAL,,3,Say the cow ran away
+"Everybody is here now.",SHORT_PHRASES,NEUTRAL,,3,Say everyone has arrived
+"Wait a little while.",SHORT_PHRASES,NEUTRAL,,3,Ask someone to wait a short time
+"I saw him just now.",SHORT_PHRASES,NEUTRAL,,3,Say you just saw someone
+"She speaks very softly.",SHORT_PHRASES,NEUTRAL,,3,Say someone speaks in a soft voice
+"The bridge is broken.",SHORT_PHRASES,NEUTRAL,,3,Say the bridge is broken
+"God answers our prayers.",SHORT_PHRASES,HAPPY,,3,Say God answers prayers
+"I am not going anywhere.",SHORT_PHRASES,NEUTRAL,,3,Say you are staying put
+"He slept very late today.",SHORT_PHRASES,NEUTRAL,,3,Say someone slept in late
+"The water is very cold.",SHORT_PHRASES,NEUTRAL,,3,Say the water is cold
+"Give me some time please.",SHORT_PHRASES,NEUTRAL,,3,Ask for a little more time
+"I agree with you fully.",SHORT_PHRASES,NEUTRAL,,3,Say you fully agree
+"She cried for a long time.",SHORT_PHRASES,SAD,,3,Say someone cried for a long time
+"The sun is too hot today.",SHORT_PHRASES,NEUTRAL,,3,Say the sun is very hot
+"Nothing is easy in life.",SHORT_PHRASES,NEUTRAL,,3,Say nothing in life is easy
+"He works day and night.",SHORT_PHRASES,NEUTRAL,,3,Say someone works day and night
+"I love my family dearly.",SHORT_PHRASES,HAPPY,,3,Say you love your family very much
+"The door is wide open.",SHORT_PHRASES,NEUTRAL,,3,Say the door is open wide
+"Put the bag over there.",SHORT_PHRASES,NEUTRAL,,3,Ask someone to put a bag somewhere
+"The night is very dark.",SHORT_PHRASES,NEUTRAL,,3,Say the night is very dark
+"I will pray for you.",SHORT_PHRASES,NEUTRAL,,3,Say you will pray for someone
+"That is not my problem.",SHORT_PHRASES,NEUTRAL,,3,Say something is not your problem
+"She is my only sister.",SHORT_PHRASES,NEUTRAL,,3,Say someone is your only sister
+"Come and see this now.",SHORT_PHRASES,NEUTRAL,,3,Call someone to come see something
+"The fire is going out.",SHORT_PHRASES,NEUTRAL,,3,Say the fire is dying down
+"He told me the truth.",SHORT_PHRASES,NEUTRAL,,3,Say someone told you the truth
+"I almost fell down there.",SHORT_PHRASES,NEUTRAL,,3,Say you almost fell down
+"She is waiting outside.",SHORT_PHRASES,NEUTRAL,,3,Say someone is waiting outside
+"The bag is very heavy.",SHORT_PHRASES,NEUTRAL,,3,Say a bag is very heavy
+"God only gives us strength.",SHORT_PHRASES,NEUTRAL,,3,Say God is the source of strength
+"He got angry very quickly.",SHORT_PHRASES,NEUTRAL,,3,Say someone got angry fast
+"It is not my fault at all.",SHORT_PHRASES,NEUTRAL,,3,Say something is not your fault
+"She helped me a lot.",SHORT_PHRASES,NEUTRAL,,3,Say someone helped you greatly
+"The cow is giving good milk.",SHORT_PHRASES,NEUTRAL,,3,Say the cow is producing good milk
+"I missed the bus today.",SHORT_PHRASES,NEUTRAL,,3,Say you missed the bus
+"Come closer to the fire.",SHORT_PHRASES,NEUTRAL,,3,Ask someone to come closer to the fire
+"The night passed peacefully.",SHORT_PHRASES,NEUTRAL,,3,Say the night passed without trouble
+"He has good manners.",SHORT_PHRASES,NEUTRAL,,3,Say someone has good manners
+"She came home crying.",SHORT_PHRASES,SAD,,3,Say someone came home in tears
+"The baby is very fat.",SHORT_PHRASES,HAPPY,,3,Say the baby is healthy and fat
+"I need to rest now.",SHORT_PHRASES,NEUTRAL,,3,Say you need to rest
+"He speaks the truth always.",SHORT_PHRASES,NEUTRAL,,3,Say someone always speaks truth
+"The road has many holes.",SHORT_PHRASES,NEUTRAL,,3,Say the road has many potholes
+"My throat hurts today.",SHORT_PHRASES,NEUTRAL,,3,Say your throat is sore
+"She cannot read or write.",SHORT_PHRASES,NEUTRAL,,3,Say someone cannot read or write
+"He is a very old man.",SHORT_PHRASES,NEUTRAL,,3,Say someone is a very old man
+"The harvest was very good.",SHORT_PHRASES,HAPPY,,3,Say the harvest went well
+"I did not understand that.",SHORT_PHRASES,NEUTRAL,,3,Say you didn't understand something
+"The child is fast asleep.",SHORT_PHRASES,NEUTRAL,,3,Say the child is deeply asleep
+"My father is a farmer.",SHORT_PHRASES,NEUTRAL,,3,Say your father is a farmer
+"She runs a small shop.",SHORT_PHRASES,NEUTRAL,,3,Say someone runs a small shop
+"We eat twice a day.",SHORT_PHRASES,NEUTRAL,,3,Say you eat two meals a day
+"The wind is blowing strong.",SHORT_PHRASES,NEUTRAL,,3,Say the wind is blowing strongly
+"He forgot my name again.",SHORT_PHRASES,NEUTRAL,,3,Say someone forgot your name again
+"I woke up very late.",SHORT_PHRASES,NEUTRAL,,3,Say you woke up late
+"She always keeps her word.",SHORT_PHRASES,NEUTRAL,,3,Say someone always keeps their promise
+"God will provide for us.",SHORT_PHRASES,NEUTRAL,,3,Say God will provide
+"The river flooded badly.",SHORT_PHRASES,NEUTRAL,,3,Say the river flooded badly
+"I cannot eat this food.",SHORT_PHRASES,NEUTRAL,,3,Say you can't eat this food
+"He is my cousin's son.",SHORT_PHRASES,NEUTRAL,,3,Say someone is your cousin's son
+"The school starts at eight.",SHORT_PHRASES,NEUTRAL,,3,Say school starts at eight o'clock
+"She sang very beautifully.",SHORT_PHRASES,HAPPY,,3,Say someone sang beautifully
+"My head is pounding badly.",SHORT_PHRASES,NEUTRAL,,3,Say you have a bad headache
+"The cat climbed the roof.",SHORT_PHRASES,NEUTRAL,,3,Say the cat climbed onto the roof
+"I need cold water now.",SHORT_PHRASES,NEUTRAL,,3,Say you want cold water urgently
+"She is a very kind woman.",SHORT_PHRASES,HAPPY,,3,Say someone is a very kind woman
+"The fire burned all night.",SHORT_PHRASES,NEUTRAL,,3,Say the fire burned through the night
+"He came back empty-handed.",SHORT_PHRASES,NEUTRAL,,3,Say someone returned with nothing
+"I miss my old village.",SHORT_PHRASES,SAD,,3,Say you miss where you grew up
+"God willing it will rain.",SHORT_PHRASES,NEUTRAL,,3,Say you hope God sends rain
+"The goat ate my garden.",SHORT_PHRASES,NEUTRAL,,3,Say the goat destroyed your garden
+"She never raises her voice.",SHORT_PHRASES,NEUTRAL,,3,Say someone never shouts
+"I am done talking now.",SHORT_PHRASES,NEUTRAL,,3,Say you have finished speaking
+"The market was very loud.",SHORT_PHRASES,NEUTRAL,,3,Say the market was very noisy
+"He deserves to be praised.",SHORT_PHRASES,HAPPY,,3,Say someone deserves praise
+"She is my mother's friend.",SHORT_PHRASES,NEUTRAL,,3,Say someone is your mother's friend
+"I cleaned it this morning.",SHORT_PHRASES,NEUTRAL,,3,Say you cleaned something this morning
+"The old man is sleeping.",SHORT_PHRASES,NEUTRAL,,3,Say the old man is asleep
+"He has no family here.",SHORT_PHRASES,SAD,,3,Say someone has no family nearby
+"Come inside out of the rain.",SHORT_PHRASES,NEUTRAL,,4,Ask someone to come inside from the rain
+"I was wrong, forgive me.",SHORT_PHRASES,NEUTRAL,,4,Admit being wrong and ask forgiveness
+"The child has a fever.",SHORT_PHRASES,NEUTRAL,,3,Say a child has a fever
+"We always help each other.",SHORT_PHRASES,HAPPY,,3,Say people always help each other
+"God knows what is best.",SHORT_PHRASES,NEUTRAL,,3,Say God knows what is best
+"He sold his only cow.",SHORT_PHRASES,NEUTRAL,,3,Say someone sold their only cow
+"She is the village healer.",SHORT_PHRASES,NEUTRAL,,3,Say someone is the local healer
+"I returned the money.",SHORT_PHRASES,NEUTRAL,,3,Say you gave the money back
+"The night is peaceful now.",SHORT_PHRASES,NEUTRAL,,3,Say the night is calm now
+"He works for himself only.",SHORT_PHRASES,NEUTRAL,,3,Say someone works only for himself
+"She cooked while singing.",SHORT_PHRASES,HAPPY,,3,Say someone cooked while singing
+"I heard thunder last night.",SHORT_PHRASES,NEUTRAL,,3,Say you heard thunder at night
+"The elders decide everything.",SHORT_PHRASES,NEUTRAL,,3,Say the elders make all decisions
+"He prays five times daily.",SHORT_PHRASES,NEUTRAL,,3,Say someone prays five times every day
+"I cannot afford that price.",SHORT_PHRASES,NEUTRAL,,3,Say you can't pay that price
+"She knows everyone here.",SHORT_PHRASES,NEUTRAL,,3,Say someone knows all the people here
+"The dry season is here.",SHORT_PHRASES,NEUTRAL,,3,Say the dry season has arrived
+"He walked all night long.",SHORT_PHRASES,NEUTRAL,,3,Say someone walked the whole night
+"I will be back by sunset.",SHORT_PHRASES,NEUTRAL,,3,Say you'll return before sunset
+"She tied the baby tight.",SHORT_PHRASES,NEUTRAL,,3,Say a woman tied her baby securely on her back
+"The wind is very cold.",SHORT_PHRASES,NEUTRAL,,3,Say the wind is bitterly cold
+"He counts money carefully.",SHORT_PHRASES,NEUTRAL,,3,Say someone counts money with care
+"I prayed before I slept.",SHORT_PHRASES,NEUTRAL,,3,Say you prayed before sleeping
+"She wore her best clothes.",SHORT_PHRASES,NEUTRAL,,3,Say someone wore their finest outfit
+"The children came home late.",SHORT_PHRASES,NEUTRAL,,3,Say the children came home late
+"He speaks three languages.",SHORT_PHRASES,NEUTRAL,,3,Say someone speaks three languages
+"I trust no one here.",SHORT_PHRASES,NEUTRAL,,3,Say you don't trust anyone here
+"She dried the fish herself.",SHORT_PHRASES,NEUTRAL,,3,Say someone dried the fish by themselves
+"The baby said mama today.",SHORT_PHRASES,HAPPY,,3,Say the baby said mama for the first time
+"I will send it tomorrow.",SHORT_PHRASES,NEUTRAL,,3,Say you will send something tomorrow
+"He is a good listener.",SHORT_PHRASES,NEUTRAL,,3,Say someone listens well
+"She gave me good advice.",SHORT_PHRASES,NEUTRAL,,3,Say someone gave you good advice
+"The path leads to water.",SHORT_PHRASES,NEUTRAL,,3,Say the path goes to a water source
+"I said what I mean.",SHORT_PHRASES,NEUTRAL,,3,Say you meant what you said
+"He ran from the danger.",SHORT_PHRASES,NEUTRAL,,3,Say someone ran away from danger
+"She wears a white headscarf.",SHORT_PHRASES,NEUTRAL,,3,Say someone wears a white headscarf
+"I counted three times over.",SHORT_PHRASES,NEUTRAL,,3,Say you counted three times to be sure
+"The storm passed quickly.",SHORT_PHRASES,NEUTRAL,,3,Say the storm passed fast
+"He is honest and fair.",SHORT_PHRASES,NEUTRAL,,3,Say someone is honest and fair
+"She prays for her children.",SHORT_PHRASES,NEUTRAL,,3,Say a woman prays for her children
+"The market is very far.",SHORT_PHRASES,NEUTRAL,,3,Say the market is far away
+"I carry this every day.",SHORT_PHRASES,NEUTRAL,,3,Say you carry something every day
+"He walked without stopping.",SHORT_PHRASES,NEUTRAL,,3,Say someone walked without resting
+"She screamed for help loudly.",SHORT_PHRASES,URGENT,,3,Say someone screamed for help loudly
+"The cow drinks at sunset.",SHORT_PHRASES,NEUTRAL,,3,Say the cow drinks water at sunset
+"I stay here every night.",SHORT_PHRASES,NEUTRAL,,3,Say you sleep here every night
+"He fixed it without tools.",SHORT_PHRASES,SURPRISED,,3,Say someone fixed something with bare hands
+"She is not here today.",SHORT_PHRASES,NEUTRAL,,3,Say someone is absent today
+"The river is not safe.",SHORT_PHRASES,NEUTRAL,,3,Say the river is dangerous
+"I need two more days.",SHORT_PHRASES,NEUTRAL,,3,Say you need two more days
+"He agreed without questions.",SHORT_PHRASES,NEUTRAL,,3,Say someone agreed without asking anything
+"She is braver than us.",SHORT_PHRASES,NEUTRAL,,3,Say someone is braver than the rest
+"The fields are very green.",SHORT_PHRASES,HAPPY,,3,Say the fields look lush and green
+"I spoke too quickly again.",SHORT_PHRASES,NEUTRAL,,3,Say you spoke too fast again
+"He wants nothing from us.",SHORT_PHRASES,NEUTRAL,,3,Say someone wants nothing from you
+"She learned it by herself.",SHORT_PHRASES,NEUTRAL,,3,Say someone taught themselves something
+"The rains brought good news.",SHORT_PHRASES,HAPPY,,3,Say the rains brought something good

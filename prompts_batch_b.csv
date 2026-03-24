@@ -1,0 +1,291 @@
+english_text,category,emotion,instruction,target_duration_sec,hint
+"The poda poda was so full that passengers were hanging off the back door all the way.",LOCAL_SCENARIOS,NEUTRAL,,11,Say the minibus was so full people hung off the back
+"I waited two hours at the motor park before a vehicle finally came going my direction.",LOCAL_SCENARIOS,NEUTRAL,,11,Say you waited two hours at the motor park for a vehicle
+"The okada rider charged double because the road was flooded and the way was very long.",LOCAL_SCENARIOS,NEUTRAL,,11,Say the motorbike taxi doubled the fare for the flooded road
+"We stood in a long queue at the mobile money agent because the network was down.",LOCAL_SCENARIOS,NEUTRAL,,11,Say you queued at mobile money while the network was down
+"The village chief called a community meeting to discuss the boundary of the farmland.",LOCAL_SCENARIOS,NEUTRAL,,11,Say the chief called a meeting about farmland boundaries
+"The mining company offered jobs to young men from the village and many accepted quickly.",LOCAL_SCENARIOS,NEUTRAL,,11,Say a mining company offered jobs and young men joined
+"Electricity only comes in the evening hours and goes off again before midnight every day.",LOCAL_SCENARIOS,NEUTRAL,,11,Say electricity comes in the evening and goes off before midnight
+"The paramount chief settled the land dispute and both families accepted his decision.",LOCAL_SCENARIOS,NEUTRAL,,11,Say the chief settled a land dispute and both sides accepted
+"We formed a savings group in our neighborhood where we all contribute each week.",LOCAL_SCENARIOS,NEUTRAL,,11,Say your neighborhood has a weekly savings group
+"The community came together to repair the road that was washed away by the rains.",LOCAL_SCENARIOS,NEUTRAL,,11,Say the community joined to fix a road washed out by rain
+"The street lights in our area have not worked for the past three months now.",LOCAL_SCENARIOS,NEUTRAL,,10,Say street lights have been off for three months
+"Young people from the village travel to the diamond mining areas to look for work.",LOCAL_SCENARIOS,NEUTRAL,,11,Say young people go to diamond mines looking for work
+"The school PTA held a fundraiser to buy new chairs and desks for the classrooms.",LOCAL_SCENARIOS,NEUTRAL,,11,Say the school PTA raised money for new chairs and desks
+"Mobile money has made it easier to send money to family in distant villages.",LOCAL_SCENARIOS,NEUTRAL,,11,Say mobile money makes sending money to villages easier
+"The market women went on strike to protest the new fees being charged for their spaces.",LOCAL_SCENARIOS,NEUTRAL,,11,Say market women struck to protest new market fees
+"I registered to vote last month and I am very excited about the upcoming elections.",LOCAL_SCENARIOS,NEUTRAL,,10,Say you registered to vote and are excited about elections
+"The election results were announced and there was dancing in the streets all night long.",LOCAL_SCENARIOS,HAPPY,,11,Say election results led to dancing in the streets all night
+"The bridge collapsed during the floods and now the whole community is cut off from town.",LOCAL_SCENARIOS,NEUTRAL,,12,Say a bridge collapsed in floods and cut off the community
+"Water pressure is so low that the water barely reaches the upper floors of our building.",LOCAL_SCENARIOS,NEUTRAL,,11,Say water pressure is too low to reach upper floors
+"The neighborhood development committee organized a cleanup of the main road last Saturday.",LOCAL_SCENARIOS,NEUTRAL,,11,Say the development committee organized a road cleanup
+"Fuel scarcity has made the cost of transport very expensive for everyone right now.",LOCAL_SCENARIOS,NEUTRAL,,11,Say fuel shortage has made transport very expensive
+"My nephew passed the WAEC exam with six credits and the whole family celebrated together.",LOCAL_SCENARIOS,HAPPY,,11,Say a nephew passed WAEC exams with six credits
+"The nurse at the health center gives free malaria medicine to children under five years.",LOCAL_SCENARIOS,NEUTRAL,,12,Say the health center gives free malaria medicine to under-fives
+"During the dry season water trucks come around to sell water to our compound daily.",LOCAL_SCENARIOS,NEUTRAL,,11,Say water trucks sell to the compound in dry season
+"The school feeding program stopped last term and many children are coming to school hungry.",LOCAL_SCENARIOS,NEUTRAL,,12,Say the school feeding program stopped and children come hungry
+"My friend paid a deposit on a room in a new compound that is still being built.",LOCAL_SCENARIOS,NEUTRAL,,11,Say a friend paid deposit on a room under construction
+"The pastor announced that the church will help pay school fees for orphans this term.",LOCAL_SCENARIOS,NEUTRAL,,11,Say the church will pay school fees for orphans
+"The landlord raised the rent and said we must pay in full or move out by month end.",LOCAL_SCENARIOS,NEUTRAL,,11,Say landlord raised rent and demands payment or eviction
+"Rice prices went up after the harvest failed in the northern region this year.",LOCAL_SCENARIOS,NEUTRAL,,11,Say rice prices rose after a failed harvest in the north
+"Our compound has a borehole that was drilled by an NGO and we share it with six families.",LOCAL_SCENARIOS,NEUTRAL,,11,Say an NGO drilled a borehole shared by six families
+"The police set up a checkpoint on the road and checked everyone's documents very carefully.",LOCAL_SCENARIOS,NEUTRAL,,11,Say police set up a checkpoint and checked everyone's papers
+"The community health worker came door to door giving out bed nets to all the households.",LOCAL_SCENARIOS,NEUTRAL,,12,Say a health worker gave bed nets to every household
+"My cousin was chosen by the village to go to the city and study nursing at the hospital.",LOCAL_SCENARIOS,NEUTRAL,,11,Say a cousin was chosen by the village to study nursing
+"The NGO built a community well but the pump broke after only six months of use.",LOCAL_SCENARIOS,NEUTRAL,,11,Say an NGO built a well but the pump broke in six months
+"We had a power outage for four days straight last week and the food in the fridge spoiled.",LOCAL_SCENARIOS,NEUTRAL,,12,Say a four-day power cut caused the fridge food to spoil
+"They are building a new health center on the hill and people are very pleased about it.",LOCAL_SCENARIOS,HAPPY,,11,Say a new health center is being built and people are happy
+"The market has a new section for electronic phones and accessories at the back now.",LOCAL_SCENARIOS,NEUTRAL,,11,Say the market has a new phone accessories section at the back
+"My uncle worked in the diamond mines for twenty years and came back with very little money.",LOCAL_SCENARIOS,NEUTRAL,,11,Say uncle worked in mines twenty years and came back poor
+"The rainy season road condition means it takes twice as long to reach the next town.",LOCAL_SCENARIOS,NEUTRAL,,11,Say rainy season roads double the journey time to the next town
+"The imam organized a food distribution for the poor at the mosque after Friday prayers.",LOCAL_SCENARIOS,NEUTRAL,,11,Say the imam distributed food to the poor after Friday prayers
+"Young men formed a vigilante group to patrol the village at night after several robberies.",LOCAL_SCENARIOS,NEUTRAL,,11,Say young men patrol the village at night after robberies
+"The government secondary school charges fees even though it is supposed to be free.",LOCAL_SCENARIOS,NEUTRAL,,11,Say the government school charges fees though it should be free
+"We had to carry the sick woman on a hammock to the road because there was no vehicle.",LOCAL_SCENARIOS,NEUTRAL,,11,Say a sick woman was carried by hammock to reach the road
+"The water supply was cut off for two weeks because someone broke the main pipe.",LOCAL_SCENARIOS,NEUTRAL,,11,Say the water supply was cut for two weeks after pipe damage
+"The community built a small bridge over the stream using local timber and rope.",LOCAL_SCENARIOS,HAPPY,,10,Say the community built a timber and rope bridge over a stream
+"During elections the poda podas are free because the politicians pay for everyone's fare.",LOCAL_SCENARIOS,NEUTRAL,,12,Say minibuses are free during elections because politicians pay
+"The land registration process takes months and requires so many documents at the office.",LOCAL_SCENARIOS,NEUTRAL,,11,Say land registration takes months and needs many documents
+"Every family in the village is expected to contribute labor to build the community hall.",LOCAL_SCENARIOS,NEUTRAL,,11,Say all families must contribute labor for the community hall
+"The youth group planted trees along both sides of the main road through the town.",LOCAL_SCENARIOS,HAPPY,,10,Say the youth group planted trees along the main road
+"Many teachers have moved to the city because the salary is too low to live in the village.",LOCAL_SCENARIOS,NEUTRAL,,12,Say teachers moved to city because village salary is too low
+"The solar panel system installed by the NGO powers the health center lights at night.",LOCAL_SCENARIOS,NEUTRAL,,11,Say an NGO solar system powers the health center at night
+"A community radio station was set up and now broadcasts news in four local languages.",LOCAL_SCENARIOS,HAPPY,,11,Say a local radio station broadcasts in four languages
+"My uncle was arrested at the checkpoint because his motorbike papers were not complete.",LOCAL_SCENARIOS,NEUTRAL,,11,Say uncle was arrested at a checkpoint for incomplete papers
+"The cassava farm was destroyed when the company cleared land for a new mining operation.",LOCAL_SCENARIOS,NEUTRAL,,11,Say a cassava farm was destroyed by a mining company
+"We collect rainwater from the roof into big drums during the rains to use in the dry season.",LOCAL_SCENARIOS,NEUTRAL,,12,Say you collect roof rainwater in drums for the dry season
+"The motorbike taxi association has set fixed fares so no one can overcharge passengers.",LOCAL_SCENARIOS,NEUTRAL,,11,Say the okada association fixed fares to stop overcharging
+"Our village got a new borehole after the women walked three days to meet with the minister.",LOCAL_SCENARIOS,NEUTRAL,,12,Say women walked three days to get a borehole for the village
+"The children miss school during farming season because they are needed to help on the land.",LOCAL_SCENARIOS,NEUTRAL,,11,Say children miss school in farming season to help on the farm
+"The politician visited the village and promised electricity but it has not come in two years.",LOCAL_SCENARIOS,NEUTRAL,,12,Say a politician promised electricity two years ago but it never came
+"We form informal insurance groups where if one of us has a death we all contribute money.",LOCAL_SCENARIOS,NEUTRAL,,12,Describe an informal community death insurance group
+"They put sleeping policemen on the road near the school to slow down the fast vehicles.",LOCAL_SCENARIOS,NEUTRAL,,11,Say speed bumps were put near the school to slow traffic
+"The whole town turned out to welcome the new teacher who came all the way from the capital.",LOCAL_SCENARIOS,HAPPY,,11,Say the whole town welcomed the new teacher from the capital
+"The mobile clinic visits our village once a month and brings medicine and vaccination cards.",LOCAL_SCENARIOS,NEUTRAL,,12,Say a mobile clinic visits monthly with medicine and vaccines
+"Since the mill broke down we have to pound our corn and cassava by hand like before.",LOCAL_SCENARIOS,NEUTRAL,,11,Say the mill is broken so you pound by hand again
+"We held an emergency meeting when the river started rising toward the houses in the valley.",LOCAL_SCENARIOS,NEUTRAL,,11,Say an emergency meeting was held when the river rose
+"The local welder made a new gate for the school compound after the old one rusted away.",LOCAL_SCENARIOS,NEUTRAL,,10,Say a local welder made a new school gate
+"They are testing the new road and if it passes inspection it will open next month.",LOCAL_SCENARIOS,NEUTRAL,,11,Say a new road is being tested before opening next month
+"The cooperative buys our groundnuts in bulk and we get a better price than selling alone.",LOCAL_SCENARIOS,NEUTRAL,,12,Say a cooperative buys groundnuts in bulk for better prices
+"My friend got a scholarship to study agriculture and will leave for the capital next term.",LOCAL_SCENARIOS,HAPPY,,11,Say a friend got an agriculture scholarship for the capital
+"The women's group meets every Thursday to discuss savings and to support new businesses.",LOCAL_SCENARIOS,NEUTRAL,,11,Say the women's group meets Thursdays for savings and business
+"The solar street lights they installed last year have already been vandalized and are broken.",LOCAL_SCENARIOS,NEUTRAL,,11,Say solar street lights from last year are already vandalized
+"People travel from many villages to the big market in town on Saturdays for special goods.",LOCAL_SCENARIOS,NEUTRAL,,11,Say people come from far villages to town market on Saturdays
+"The flood ruined the harvest of fifty families and they need help to survive until next season.",LOCAL_SCENARIOS,NEUTRAL,,12,Say floods ruined harvests of fifty families needing help
+"The city council is building new public toilets near the market after years of complaints.",LOCAL_SCENARIOS,NEUTRAL,,11,Say the council is building toilets near market after complaints
+"Police came to our compound checking if we had permits for the extension we built.",LOCAL_SCENARIOS,NEUTRAL,,10,Say police checked for building permits on your extension
+"The new market stalls built by the council have no drainage and flood when it rains heavily.",LOCAL_SCENARIOS,NEUTRAL,,12,Say new market stalls flood because there is no drainage
+"I traded my cattle at Labé market and used the money to buy a new zinc roof.",MARKET_SHOPPING,NEUTRAL,,10,Say you sold cattle at market to buy a new zinc roof
+"The tomatoes were selling for double the usual price because the rains had not come yet.",MARKET_SHOPPING,NEUTRAL,,11,Say tomatoes cost double because of the late rains
+"The woman selling dried fish wrapped mine in a newspaper because she had no bags.",MARKET_SHOPPING,NEUTRAL,,10,Say the fish seller wrapped your fish in newspaper
+"I bargained for twenty minutes before the fabric seller agreed to lower her price.",MARKET_SHOPPING,NEUTRAL,,10,Say you bargained twenty minutes before the price dropped
+"The palm oil in the big container is cheaper per liter than buying the small bottles.",MARKET_SHOPPING,NEUTRAL,,11,Say bulk palm oil is cheaper per liter than small bottles
+"She sells smoked catfish on Tuesdays and Fridays at the corner near the old tree.",MARKET_SHOPPING,NEUTRAL,,10,Say a woman sells smoked catfish twice a week at a corner
+"The tailor in the market charges different prices for sewing depending on how difficult.",MARKET_SHOPPING,NEUTRAL,,11,Say the tailor charges more for harder sewing work
+"I bought a second-hand mobile phone from the electronics section for a very good price.",MARKET_SHOPPING,NEUTRAL,,10,Say you bought a second-hand phone at a good price
+"The price of a fifty kilo bag of rice has gone up three times since the beginning of the year.",MARKET_SHOPPING,NEUTRAL,,12,Say a bag of rice has tripled in price this year
+"She gives credit to regulars and writes the amount in a small notebook every single time.",MARKET_SHOPPING,NEUTRAL,,11,Say a seller gives credit to regulars and records it
+"I walked through the whole market twice before finding the herbs I needed for the sauce.",MARKET_SHOPPING,NEUTRAL,,11,Say you walked the whole market twice looking for herbs
+"The salt here is cheaper if you buy it by the sack rather than by the small cup.",MARKET_SHOPPING,NEUTRAL,,11,Say buying salt by the sack is cheaper than by the cup
+"The woman selling vegetables reduces her prices in the late afternoon so nothing goes bad.",MARKET_SHOPPING,NEUTRAL,,12,Say the vegetable seller lowers prices in the afternoon
+"I came to the market without enough money and had to borrow from the woman I always buy from.",MARKET_SHOPPING,NEUTRAL,,12,Say you borrowed money from your regular seller at the market
+"The onion seller travels from the north every two weeks to stock the local markets here.",MARKET_SHOPPING,NEUTRAL,,11,Say the onion seller travels from the north every two weeks
+"You can find anything you want in this market as long as you know which section to go to.",MARKET_SHOPPING,NEUTRAL,,11,Say you can find anything in the market if you know where
+"The meat section smells strongest in the early morning before the sellers pack up and go.",MARKET_SHOPPING,NEUTRAL,,11,Say the meat section smells strongest early morning
+"She always brings fresh kola nuts from her farm and people wait specifically for her arrival.",MARKET_SHOPPING,NEUTRAL,,11,Say a seller brings fresh kola nuts people wait for
+"The price the wholesaler charges me is still too high to make a decent profit in the market.",MARKET_SHOPPING,NEUTRAL,,11,Say the wholesaler's price is too high for a good margin
+"Market day comes every seven days here and traders travel from three districts to attend it.",MARKET_SHOPPING,NEUTRAL,,11,Say market day is weekly and traders come from three districts
+"The young men carry loads from the truck to the stalls for a small fee per trip.",MARKET_SHOPPING,NEUTRAL,,10,Say young men carry loads for a small fee per trip
+"I always taste before I buy if the seller will let me because sometimes fruit is not ripe.",MARKET_SHOPPING,NEUTRAL,,12,Say you taste fruit before buying to check if it's ripe
+"The fabric seller showed me ten different patterns before I found one I was happy with.",MARKET_SHOPPING,NEUTRAL,,11,Say the fabric seller showed ten patterns before you chose
+"She buys her goods in Conakry and sells them here at double the price and still sells out.",MARKET_SHOPPING,NEUTRAL,,11,Say a trader buys in Conakry and doubles the price here
+"The charcoal comes from the forest villages and reaches the city market by truck every week.",MARKET_SHOPPING,NEUTRAL,,11,Say charcoal comes from forest villages to market weekly
+"They sell groundnut oil by the liter using an old bottle as the measuring container.",MARKET_SHOPPING,NEUTRAL,,10,Say oil is sold by the liter using an old bottle to measure
+"I paid in installments for the sewing machine and finished paying three months later.",MARKET_SHOPPING,NEUTRAL,,10,Say you paid for a sewing machine in installments over three months
+"The second-hand clothing bale arrived and the whole market crowded around to buy quickly.",MARKET_SHOPPING,NEUTRAL,,11,Say a bale of second-hand clothes arrived and people crowded round
+"Buying medicine from the pharmacy is much safer than buying from the roadside drug sellers.",MARKET_SHOPPING,NEUTRAL,,11,Say pharmacy medicine is safer than roadside drug sellers
+"The price always goes up just before Eid and comes back down again a few days later.",MARKET_SHOPPING,NEUTRAL,,11,Say prices rise before Eid then fall back down after
+"She has a regular spot in the market that she has held for over twenty-five years.",MARKET_SHOPPING,NEUTRAL,,10,Say a woman has kept the same market spot for twenty-five years
+"I asked for fresh groundnut paste and she ground it in front of me while I waited.",MARKET_SHOPPING,NEUTRAL,,11,Say the seller ground fresh groundnut paste while you watched
+"The pepper seller's eyes were watering all day from handling so much fresh hot pepper.",MARKET_SHOPPING,NEUTRAL,,11,Say the pepper seller's eyes watered from handling hot pepper
+"The whole market goes silent and everyone goes to pray when the afternoon call comes.",MARKET_SHOPPING,NEUTRAL,,11,Say the whole market stops for afternoon prayer call
+"The traders from Guinea bring beautiful hand-dyed fabric that you cannot find anywhere else.",MARKET_SHOPPING,NEUTRAL,,11,Say Guinean traders bring unique hand-dyed fabric
+"She let me keep the goods for one week and pay when I came back from the farm.",MARKET_SHOPPING,NEUTRAL,,11,Say a seller let you keep goods and pay later from farm
+"The electronic spare parts stall in the corner fixes everything from radios to refrigerators.",MARKET_SHOPPING,NEUTRAL,,11,Say a spare parts seller in the corner fixes all electronics
+"I bought cassava leaves, sweet potato leaves, and baobab leaves for different soups.",MARKET_SHOPPING,NEUTRAL,,11,Say you bought three types of leaves for different soups
+"The shoe seller has new stock every three months when the container arrives from China.",MARKET_SHOPPING,NEUTRAL,,10,Say the shoe seller gets new stock from China every three months
+"She wraps the dried fish in newspaper and ties it tightly so it does not spill on the way.",MARKET_SHOPPING,NEUTRAL,,11,Say fish is wrapped in newspaper and tied tightly
+"The market association regulates who can sell what and where so there is no overlap.",MARKET_SHOPPING,NEUTRAL,,11,Say the market association controls who sells what and where
+"I could not pay all at once so the seller agreed to take half now and half next week.",MARKET_SHOPPING,NEUTRAL,,11,Say you paid half now and half next week for goods
+"The mango season brings so many mangoes to market that the price drops to almost nothing.",MARKET_SHOPPING,NEUTRAL,,11,Say mango season floods the market and prices fall
+"Fresh groundnuts in season are much cheaper and tastier than the stored ones from last year.",MARKET_SHOPPING,NEUTRAL,,11,Say fresh groundnuts in season beat stored ones in price and taste
+"The market security guard chased away the boys who were stealing mangoes from the stalls.",MARKET_SHOPPING,NEUTRAL,,11,Say the market guard chased away boys stealing mangoes
+"I always check three different sellers before I buy because the prices can vary so much.",MARKET_SHOPPING,NEUTRAL,,11,Say you check three sellers before buying because prices vary
+"She gives me a small extra portion as a gift because I am one of her loyal customers.",MARKET_SHOPPING,HAPPY,,10,Say a seller gives you a little extra as a loyal customer gift
+"The cassava flour from the mill tastes better than the packaged one from the big shop.",MARKET_SHOPPING,NEUTRAL,,11,Say mill cassava flour tastes better than packaged flour
+"He sells good luck charms, herbal medicines, and protective amulets at a small stall.",MARKET_SHOPPING,NEUTRAL,,10,Say a man sells charms, herbs, and amulets at a small stall
+"The new market building has a roof so sellers do not lose their goods in the rain now.",MARKET_SHOPPING,HAPPY,,10,Say the new roofed market protects goods from rain
+"I need to buy three meters of cotton fabric for the children's Eid clothes this year.",MARKET_SHOPPING,NEUTRAL,,11,Say you need three meters of cotton fabric for Eid clothes
+"She told me to come back on Thursday when the fresh fish arrives from the coast by truck.",MARKET_SHOPPING,NEUTRAL,,10,Say fresh fish arrives by truck on Thursdays
+"The blacksmith at the edge of the market makes all the farm tools including hoes and cutlasses.",MARKET_SHOPPING,NEUTRAL,,12,Say the market blacksmith makes farm tools like hoes and cutlasses
+"They weigh the goods on a small scale and the argument starts when the buyer thinks it is wrong.",MARKET_SHOPPING,NEUTRAL,,12,Say arguments start when the buyer doubts the scale is right
+"We wake at four every morning to drive the cattle across the dry plain before the heat rises.",PASTORAL_LIFE,NEUTRAL,,11,Say you leave at four to cross the plain before the heat
+"The young calf that was born last night is already standing and trying to walk on its own.",PASTORAL_LIFE,NEUTRAL,,11,Say a newborn calf is already trying to walk
+"We follow the same migration path our grandfathers walked for over a hundred years now.",PASTORAL_LIFE,NEUTRAL,,10,Say you follow the same ancient migration path
+"The cow with the bell tied to her neck is the one the herd always follows without question.",PASTORAL_LIFE,NEUTRAL,,11,Say the cow with the bell leads and others follow
+"Good morning milk is thicker and richer than evening milk because the cow has rested well.",PASTORAL_LIFE,NEUTRAL,,11,Say morning milk is richer than evening milk
+"When the harmattan wind blows from the north the cattle become restless and hard to manage.",PASTORAL_LIFE,NEUTRAL,,11,Say the harmattan wind makes cattle restless and hard to control
+"The herder reads the sky, watches the grass color, and listens to the birds to know the weather.",PASTORAL_LIFE,NEUTRAL,,12,Say herders read the sky, grass, and birds to predict weather
+"We need at least twenty liters of milk every day just to make enough butter for the week.",PASTORAL_LIFE,NEUTRAL,,11,Say you need twenty liters of daily milk for the week's butter
+"The pasture near the river is the best in the dry season because the grass stays green longer.",PASTORAL_LIFE,NEUTRAL,,12,Say river pasture is best in dry season because grass stays green
+"I know each of my cows by the way they walk and by the sound of their individual voices.",PASTORAL_LIFE,NEUTRAL,,11,Say you know each cow by walk and voice
+"The young bulls need to be separated or they will fight and injure each other and the herd.",PASTORAL_LIFE,NEUTRAL,,11,Say young bulls must be separated to prevent fighting
+"My father gave me three cows when I married and I have grown that herd to over twenty now.",PASTORAL_LIFE,NEUTRAL,,11,Say you grew a wedding gift of three cows into twenty
+"The sour milk drink we make from fermented cow milk keeps for two days in the clay pot.",PASTORAL_LIFE,NEUTRAL,,11,Say fermented cow milk drink keeps two days in a clay pot
+"A Fula man without cattle is like a tree without roots, he has no standing in the community.",PASTORAL_LIFE,NEUTRAL,,11,Say a Fula man without cattle has no standing in community
+"The dry season camps are made from branches and grass because we move them every few weeks.",PASTORAL_LIFE,NEUTRAL,,11,Say dry season camps are moveable grass and branch shelters
+"The cattle become thin and weak by the end of the long dry season before the rains return.",PASTORAL_LIFE,NEUTRAL,,11,Say cattle become thin and weak by the end of dry season
+"We trade milk and butter with the farming communities for grain, vegetables, and other food.",PASTORAL_LIFE,NEUTRAL,,11,Say herders trade milk and butter to farmers for grain
+"The ticks are worst just before the rainy season and many cattle get sick if not treated.",PASTORAL_LIFE,NEUTRAL,,11,Say ticks are worst before rainy season and make cattle sick
+"A skilled herdsman can guide a herd of two hundred cattle alone using only his voice and stick.",PASTORAL_LIFE,NEUTRAL,,12,Say a skilled herdsman guides two hundred cattle with voice and stick
+"The village farmers are angry because our cattle crossed into their fields and ate the crops.",PASTORAL_LIFE,NEUTRAL,,11,Say farmers are angry because your cattle ate their crops
+"We keep the sick animals far away from the healthy ones and treat them with both herbs and medicine.",PASTORAL_LIFE,NEUTRAL,,12,Say you separate and treat sick cattle with herbs and medicine
+"The best time to let the cows graze is early morning before the sun gets too hot for them.",PASTORAL_LIFE,NEUTRAL,,11,Say the best grazing time is early before the heat
+"My grandfather could tell the health of a cow just by looking at its eyes and its skin.",PASTORAL_LIFE,NEUTRAL,,11,Say grandfather could judge a cow's health from eyes and skin
+"We trade excess cattle when we have too many and buy back when the herd gets too small.",PASTORAL_LIFE,NEUTRAL,,11,Say you trade cattle when you have too many or too few
+"The water hole we have used for twenty years finally dried up this February completely.",PASTORAL_LIFE,NEUTRAL,,10,Say the twenty-year-old water hole finally dried up this year
+"We build the thorn fence very tall and thick so not even a hyena can push through it at night.",PASTORAL_LIFE,NEUTRAL,,12,Say the thorn fence is too tall and thick for even hyenas
+"When the pasture runs out you see thin cattle and hear the calves crying for their mothers.",PASTORAL_LIFE,SAD,,11,Say when pasture runs out you see thin cattle and crying calves
+"The cattle bring prestige to the family and a man is judged by the size and health of his herd.",PASTORAL_LIFE,NEUTRAL,,12,Say cattle bring prestige and a man is judged by his herd
+"The Fula woman who sells milk at dawn in the village is my father's oldest sister.",PASTORAL_LIFE,NEUTRAL,,10,Say the dawn milk seller is your father's oldest sister
+"A good dog trained to herd cattle is worth more than ten lazy young men combined.",PASTORAL_LIFE,NEUTRAL,,10,Say a trained herding dog is worth ten lazy workers
+"We mix the cattle dung with water and plaster it on the walls to cool the house in the heat.",PASTORAL_LIFE,NEUTRAL,,11,Say you mix cattle dung with water to plaster and cool walls
+"Our cattle have survived droughts, floods, and disease over many generations of herding.",PASTORAL_LIFE,NEUTRAL,,11,Say your cattle have survived drought, floods, and disease
+"The rainy season pasture is so rich that the cattle gain weight very fast in just a few weeks.",PASTORAL_LIFE,HAPPY,,11,Say rainy season pasture fattens cattle quickly
+"When we say bismillah before we start, we are asking God to bless our work and protect us.",RELIGION_FAITH,NEUTRAL,,11,Say bismillah means asking God to bless and protect the work
+"The night of the twenty-seventh of Ramadan is the most sacred night of the whole year.",RELIGION_FAITH,NEUTRAL,,10,Say the 27th night of Ramadan is the holiest night
+"God created the heavens and the earth and everything between them in just six days.",RELIGION_FAITH,NEUTRAL,,10,Say God created heaven and earth and all between in six days
+"We recite prayers for rain when the drought goes on for too long and the crops begin dying.",RELIGION_FAITH,NEUTRAL,,11,Say you recite rain prayers when drought kills crops
+"The pilgrimage to Mecca is the fifth pillar of Islam and every Muslim hopes to go once.",RELIGION_FAITH,NEUTRAL,,11,Say Hajj is the fifth pillar of Islam every Muslim hopes to fulfill
+"If you feed a poor person today, God will feed you tomorrow in a way you did not expect.",RELIGION_FAITH,NEUTRAL,,11,Say feeding the poor today earns God's unexpected provision tomorrow
+"We slaughter an animal and give a third to the poor, a third to neighbors, a third to family.",RELIGION_FAITH,NEUTRAL,,12,Say the slaughter is divided three ways: poor, neighbors, family
+"The Quran says the best of people are those who benefit others the most in this life.",RELIGION_FAITH,NEUTRAL,,11,Say the Quran says the best people are those who help others
+"The muezzin who calls the prayer has been doing it from that same mosque for forty years.",RELIGION_FAITH,NEUTRAL,,11,Say the same muezzin has called prayer for forty years
+"Learning the Quran by heart is one of the greatest achievements a Muslim can accomplish.",RELIGION_FAITH,NEUTRAL,,11,Say memorizing the Quran is one of the greatest achievements
+"Give in charity before you go out and the charity will protect you from harm that day.",RELIGION_FAITH,NEUTRAL,,11,Say giving charity before going out protects you from harm
+"After Eid prayers the elders and children line up and shake hands and receive blessings.",RELIGION_FAITH,HAPPY,,11,Say elders and children line up to shake hands after Eid prayers
+"May God give you long life and bless all the work of your hands every single day.",RELIGION_FAITH,HAPPY,,9,Pray for someone to have long life and blessed work
+"The scholar came to our village and taught the children for one whole month for free.",RELIGION_FAITH,NEUTRAL,,10,Say a religious scholar taught village children free for a month
+"We bathe and wear clean white clothes on the morning of Eid before going to the prayers.",RELIGION_FAITH,NEUTRAL,,10,Say you bathe and wear white on Eid morning before prayers
+"God does not need our worship but we need it to keep our hearts clean and our minds right.",RELIGION_FAITH,NEUTRAL,,11,Say we need worship to keep our hearts and minds pure
+"I have memorized the first ten chapters of the Quran since I was nine years old.",RELIGION_FAITH,NEUTRAL,,9,Say you memorized ten Quran chapters since age nine
+"The mosque committee collects donations every Friday to maintain the building and its needs.",RELIGION_FAITH,NEUTRAL,,11,Say the mosque committee collects Friday donations for upkeep
+"All debts should be repaid before a person dies because debts follow the soul after death.",RELIGION_FAITH,NEUTRAL,,11,Say debts must be repaid because they follow the soul after death
+"The Friday sermon reminded us that the best prayer is the one prayed on time every day.",RELIGION_FAITH,NEUTRAL,,11,Say the sermon said the best prayer is always on time
+"We are all guests in this world and this life is just a short stop on the way to the next.",RELIGION_FAITH,NEUTRAL,,10,Say this life is a short stop and we are all guests here
+"The woman who gives to the poor with a smile will get double the reward from God.",RELIGION_FAITH,NEUTRAL,,10,Say a smiling giver gets double reward from God
+"We do not know the hour of our death but we should live as if today is our last day.",RELIGION_FAITH,NEUTRAL,,11,Say we don't know when we die so live each day as the last
+"The fast of Ramadan teaches patience, gratitude, and compassion for those who have nothing.",RELIGION_FAITH,NEUTRAL,,11,Say Ramadan teaches patience, gratitude, and compassion
+"On the day of Eid the whole community gathers at the prayer ground before sunrise arrives.",RELIGION_FAITH,NEUTRAL,,10,Say the community gathers at the prayer ground on Eid morning
+"May God protect your journey and return you safely to your family at home.",RELIGION_FAITH,NEUTRAL,,9,Pray for someone's safe journey and safe return home
+"The Islamic greeting reminds us that peace is the foundation of all good human relations.",RELIGION_FAITH,NEUTRAL,,11,Say the Islamic greeting shows peace is the foundation of relations
+"God tests those He loves with difficulties, so every hardship is also a form of mercy.",RELIGION_FAITH,NEUTRAL,,10,Say difficulties are God's mercy and test for those He loves
+"After the burial, the family recites Quran together for three nights to pray for the soul.",RELIGION_FAITH,NEUTRAL,,11,Say the family recites Quran for three nights after burial
+"A man who feeds his family well and raises them with faith has fulfilled a great trust.",RELIGION_FAITH,NEUTRAL,,10,Say a man who feeds and raises family with faith fulfills a trust
+"Before buying cattle at the market, my father always recites the opening chapter quietly.",PASTORAL_LIFE,NEUTRAL,,11,Say your father recites Quran opening before buying cattle
+"We tie a small leather amulet around the neck of our best bull to protect it from envy.",PASTORAL_LIFE,NEUTRAL,,10,Say you tie a leather amulet on the best bull against envy
+"The Fula settlement sits on a hill so the breeze can cool the animals and the people inside.",PASTORAL_LIFE,NEUTRAL,,11,Say the Fula settlement is on a hill for cooling breezes
+"The whole family sleeps outside around the fire in the dry season when the nights are warm.",PASTORAL_LIFE,NEUTRAL,,11,Say the family sleeps outside by fire in the warm dry season
+"We cure animal wounds with a mixture of shea butter and herbs that the elders taught us.",PASTORAL_LIFE,NEUTRAL,,11,Say you cure wounds with a shea butter and herb mixture
+"My oldest cow gave birth to twin calves this morning and everyone came to see them.",PASTORAL_LIFE,HAPPY,,10,Say your oldest cow had twin calves and people came to see
+"The children learn to herd goats before they are old enough to handle the bigger cattle.",PASTORAL_LIFE,NEUTRAL,,11,Say children herd goats before they are old enough for cattle
+"We share the milking duties among the family and each wife milks her own assigned cows.",PASTORAL_LIFE,NEUTRAL,,11,Say milking duties are shared and each wife milks her own cows
+"The cattle know their home pen and return there on their own as the sun begins to set.",PASTORAL_LIFE,NEUTRAL,,11,Say cattle return to their pen on their own at sunset
+"When the rains finally come after a long drought the cattle run to the water with great joy.",PASTORAL_LIFE,HAPPY,,11,Say cattle run joyfully to water when rain breaks a drought
+"We calculate a man's bride price partly based on the number of cattle his family owns.",PASTORAL_LIFE,NEUTRAL,,11,Say bride price is partly based on how many cattle the family has
+"The spotted cow always gives the most milk and the children named her after the first daughter.",PASTORAL_LIFE,HAPPY,,12,Say the best milk cow is named after the firstborn daughter
+"We spent a whole month building the new cattle pen from timber cut from the nearby forest.",PASTORAL_LIFE,NEUTRAL,,10,Say you spent a month building a new cattle pen from timber
+"The cattle tax must be paid each year and the chief comes to count the herd personally.",PASTORAL_LIFE,NEUTRAL,,10,Say the chief counts the herd each year to collect cattle tax
+"The wisdom of an old cattle herder is worth more than twenty books on animal keeping.",PASTORAL_LIFE,NEUTRAL,,10,Say an old herder's wisdom beats twenty books on animal care
+"A man who speaks soft words to his cattle will have calmer animals than a harsh man.",PASTORAL_LIFE,NEUTRAL,,10,Say cattle respond better to a man who speaks to them gently
+"We do not sell the grandmother cow because she is the memory of all the cattle before her.",PASTORAL_LIFE,NEUTRAL,,11,Say you never sell the oldest cow because she holds herd memory
+"You cannot buy what you have not seen, so always look at the animal before you pay.",PROVERBS,NEUTRAL,,9,Say you must see an animal before paying for it
+"The elder who does not speak when he should is no better than a stone in the shade.",PROVERBS,NEUTRAL,,10,Say a silent elder is as useless as a stone in the shade
+"Fire that is covered does not go out, it only waits for the right moment to burn bright.",PROVERBS,NEUTRAL,,10,Say a hidden fire waits to burn — hidden strength returns
+"When the shepherd is absent, the wolves do not sleep or take a day off from hunting.",PROVERBS,NEUTRAL,,10,Say trouble never rests when the protector is away
+"The person who digs the pit that their neighbor falls into will not escape it themselves.",PROVERBS,NEUTRAL,,11,Say those who trap others will fall in their own trap
+"Water never flows uphill no matter how hard the wind pushes against the current.",PROVERBS,NEUTRAL,,9,Say some things are impossible no matter how hard you try
+"The palm tree that stands alone in the field gets cut down first by the approaching storm.",PROVERBS,NEUTRAL,,11,Say standing alone makes you vulnerable to danger
+"Knowledge is the only wealth a thief cannot take from you while you sleep at night.",PROVERBS,NEUTRAL,,10,Say knowledge is the one wealth thieves cannot steal
+"The frog in the well does not know the size of the great ocean beyond his small world.",PROVERBS,NEUTRAL,,11,Say someone who stays in one place doesn't know the wider world
+"A man who never makes a mistake never makes anything worth remembering at all.",PROVERBS,NEUTRAL,,9,Say making mistakes is part of making something meaningful
+"The stick that was used to beat you today can be used to protect you tomorrow.",PROVERBS,NEUTRAL,,10,Say what hurts you now can protect you later
+"You cannot wake up someone who is only pretending to be asleep in the afternoon.",PROVERBS,NEUTRAL,,10,Say you cannot help someone who refuses to see the truth
+"The fish that opens its mouth too wide in the water is the one that the fisher hook catches.",PROVERBS,NEUTRAL,,11,Say talking too much gets you into trouble
+"A person who tells all his secrets to his friend has given his friend a knife to use.",PROVERBS,NEUTRAL,,10,Say telling all your secrets gives others power over you
+"Where the tree falls, that is where it rests, and life ends where God decided from the start.",PROVERBS,NEUTRAL,,11,Say we end where God intended, like a fallen tree
+"Sweep the dust from your own door before telling your neighbor his compound is dirty.",PROVERBS,NEUTRAL,,11,Say clean your own house before criticizing your neighbor's
+"When the cat is away the rats do not mourn, they eat the food and dance on the table.",PROVERBS,NEUTRAL,,11,Say people misbehave when authority is absent
+"The calabash that travels far from home always comes back cracked and full of new stories.",PROVERBS,NEUTRAL,,10,Say travelers return changed and with many stories
+"Greet the person at the door before you ask them what they want and why they came.",PROVERBS,NEUTRAL,,10,Say greet first, ask questions later — show hospitality first
+"A gift given in anger is not a gift, it is a burden wrapped up in nice cloth for the eye.",PROVERBS,NEUTRAL,,11,Say a gift given in anger is not truly a gift
+"The one who carries the heavy load uphill does not brag about it when they reach the top.",PROVERBS,NEUTRAL,,10,Say those who work hardest are often the most humble
+"If you want to know a man's character, give him power and then watch what he does.",PROVERBS,NEUTRAL,,10,Say power reveals character — watch what someone does with it
+"The tree does not hate the axe because the axe does not know what it is doing.",PROVERBS,NEUTRAL,,10,Say forgive those who hurt you — they often don't know better
+"Even the sweetest water from the deepest well will become bitter if you take too much.",PROVERBS,NEUTRAL,,11,Say even the best things become bad when you take too much
+"A sleeping leopard is still more dangerous than a running rabbit if you are too close.",PROVERBS,NEUTRAL,,10,Say a quiet danger can still be more dangerous than an active one
+"The young man who disrespects elders is building a house on sand at the ocean's edge.",PROVERBS,NEUTRAL,,11,Say disrespecting elders is building your life on an unstable foundation
+"Do not count your harvest before the rain has stopped and the last crop is safely in.",PROVERBS,NEUTRAL,,11,Say don't celebrate too early before everything is secured
+"The community that shares its problems has already halved them before speaking out loud.",PROVERBS,NEUTRAL,,11,Say sharing problems with community already makes them smaller
+"A wise leader speaks last so he can hear everything before he decides on the right path.",PROVERBS,NEUTRAL,,10,Say a wise leader speaks last after hearing everything
+"What the old woman says sitting still, the young man cannot see running up the mountain.",PROVERBS,NEUTRAL,,11,Say elders have wisdom that youth cannot gain through activity
+"The goat does not know it is leading itself to the ceremony until it smells the smoke.",PROVERBS,NEUTRAL,,11,Say some people don't realize where their choices are taking them
+"Walk softly in your neighbor's house so that your neighbor will walk softly in yours.",PROVERBS,NEUTRAL,,10,Say treat others how you want to be treated in your own home
+"Anger is fire inside a house and patience is the water that keeps it from burning down.",PROVERBS,NEUTRAL,,10,Say anger destroys but patience protects like water fights fire
+"The bird that builds its nest close to the ground is always the first to be disturbed.",PROVERBS,NEUTRAL,,10,Say those who take shortcuts end up most vulnerable
+"Every mouth has its own taste and every person has their own reason for the things they do.",PROVERBS,NEUTRAL,,11,Say everyone has their own perspective and reasons for their choices
+"Even the sun which gives light to all the world must bow and rest at the end of its day.",PROVERBS,NEUTRAL,,11,Say even the greatest must rest — no one is above needing rest
+"A soldier's bravery is not shown in words but in what he does when the enemy arrives.",PROVERBS,NEUTRAL,,11,Say bravery is shown in action not in words
+"The crocodile does not tell you it is dangerous, you know this already from what you see.",PROVERBS,NEUTRAL,,10,Say some dangers announce themselves clearly without words
+"Never refuse a gift from an elder even if it is small because the thought is the treasure.",PROVERBS,NEUTRAL,,10,Say never refuse an elder's gift however small — the thought is what counts
+"The ground does not forget the seeds that were planted in it even after many dry seasons.",PROVERBS,NEUTRAL,,10,Say the ground remembers seeds — good deeds are never forgotten
+"A community that stops its traditions slowly loses the rope that holds all its people together.",PROVERBS,NEUTRAL,,11,Say losing traditions weakens the bonds that hold a community
+"Tell me who walks with you and I will tell you where you are most likely going in this life.",PROVERBS,NEUTRAL,,11,Say the company you keep shows where your life is headed
+"The termite builds its tall mound one grain of sand at a time over many patient seasons.",PROVERBS,NEUTRAL,,10,Say big things are built slowly with patience one small step at a time
+"Freetown's cotton tree has stood at the center of town for centuries watching everything.",PLACE_NAMES,NEUTRAL,,11,Say Freetown's cotton tree has stood for centuries in the center
+"The baobab trees along the Gambia River are some of the oldest living things in West Africa.",PLACE_NAMES,NEUTRAL,,11,Say the Gambia River baobabs are among West Africa's oldest trees
+"The Sierra Leone River estuary is one of the widest and most beautiful in all of Africa.",PLACE_NAMES,NEUTRAL,,10,Say the Sierra Leone estuary is one of Africa's widest and most beautiful
+"The crossing from Banjul to Barra on the Gambia River takes about thirty minutes by ferry.",PLACE_NAMES,NEUTRAL,,11,Say the Banjul to Barra ferry crossing takes thirty minutes
+"The Fouta Djallon highlands in Guinea are the source of many great rivers in West Africa.",PLACE_NAMES,NEUTRAL,,11,Say the Fouta Djallon highlands are the source of many rivers
+"The border crossing at Rosso between Senegal and Mauritania is always busy and crowded.",PLACE_NAMES,NEUTRAL,,11,Say the Rosso border crossing between Senegal and Mauritania is always busy
+"Kolda in southern Senegal is surrounded by rice paddies and dense forest on all sides.",PLACE_NAMES,NEUTRAL,,10,Say Kolda is surrounded by rice paddies and dense forest
+"The old colonial buildings along Lumley Beach in Freetown have seen a hundred years pass.",PLACE_NAMES,NEUTRAL,,11,Say old colonial buildings on Lumley Beach have stood a century
+"The Mano River forms the border between Sierra Leone and Liberia in the south.",PLACE_NAMES,NEUTRAL,,9,Say the Mano River forms the Sierra Leone-Liberia border
+"The Niokolo-Koba national park in Senegal is home to lions, elephants, and hippos.",PLACE_NAMES,NEUTRAL,,10,Say Niokolo-Koba park in Senegal has lions, elephants, and hippos
+"The great mosque in Touba in Senegal draws millions of pilgrims every year for the festival.",PLACE_NAMES,NEUTRAL,,11,Say Touba mosque in Senegal draws millions of pilgrims each year
+"Many Fula people from Guinea and Mali meet at the great cattle market in Diaobé.",PLACE_NAMES,NEUTRAL,,10,Say Fula people from Guinea and Mali meet at the Diaobé cattle market
+"The road that connects Freetown to the provinces is often the first to flood in heavy rain.",PLACE_NAMES,NEUTRAL,,11,Say the Freetown provincial road floods first in heavy rain
+"Conakry is a peninsula city surrounded by water on three sides and growing fast.",PLACE_NAMES,NEUTRAL,,9,Say Conakry is a peninsula city growing quickly
+"The Kola Peninsula area north of Freetown is known for its fine beaches and fishing villages.",PLACE_NAMES,NEUTRAL,,11,Say the Kola Peninsula has fine beaches and fishing villages
+"The border town of Gbalamuya connects Guinea and Sierra Leone through the forest road.",PLACE_NAMES,NEUTRAL,,10,Say Gbalamuya border town connects Guinea and Sierra Leone
+"My grandfather walked from Labé to Conakry twice a year trading cattle and buying goods.",PLACE_NAMES,NEUTRAL,,11,Say grandfather walked from Labé to Conakry twice yearly to trade
+"The Senegambia region has one of the densest concentrations of ancient stone circles in Africa.",PLACE_NAMES,NEUTRAL,,11,Say Senegambia has the densest ancient stone circles in Africa
+"The new deep water port at Freetown handles more shipping containers than ever before.",PLACE_NAMES,NEUTRAL,,10,Say Freetown's deep water port handles more containers than before
+"Kankan city on the Milo River in Guinea is an ancient trading and Islamic learning center.",PLACE_NAMES,NEUTRAL,,11,Say Kankan on the Milo River is an old trading and learning center
+"The Gambia River bisects the entire country from east to west providing water and transport.",PLACE_NAMES,NEUTRAL,,11,Say the Gambia River crosses the whole country east to west
+"The road from Ziguinchor to Kolda in Casamance passes through beautiful green forest.",PLACE_NAMES,NEUTRAL,,10,Say the Ziguinchor to Kolda road passes through green forest
+"We traveled by pirogue up the Casamance River to reach the village near the Senegal border.",PLACE_NAMES,NEUTRAL,,11,Say you traveled by pirogue up the Casamance River to a village
+"The Futa Jallon plateau in Guinea receives so much rain that it feeds rivers in six countries.",PLACE_NAMES,NEUTRAL,,11,Say the Futa Jallon plateau feeds rivers in six countries
+"Cape Sierra Leone at the northern tip of the peninsula is where ships first see the land.",PLACE_NAMES,NEUTRAL,,10,Say Cape Sierra Leone is the first land ships see
+"Kaolack on the Saloum River is Senegal's second busiest port and biggest peanut market.",PLACE_NAMES,NEUTRAL,,11,Say Kaolack is Senegal's second port and biggest peanut market
+"The Great Green Wall project is planting trees from Dakar all the way east to Djibouti.",PLACE_NAMES,NEUTRAL,,11,Say the Great Green Wall plants trees from Dakar to Djibouti
+"Koinadugu district in Sierra Leone has the highest altitude and coolest climate in the country.",PLACE_NAMES,NEUTRAL,,11,Say Koinadugu is Sierra Leone's highest and coolest district
+"We sailed from Banjul down the coast past the fishing village of Bakau in the afternoon.",PLACE_NAMES,NEUTRAL,,10,Say you sailed from Banjul past Bakau village in the afternoon
+"The ancient city of Kumbi Saleh in Mali was once the capital of the Ghana Empire long ago.",PLACE_NAMES,NEUTRAL,,11,Say Kumbi Saleh in Mali was once the ancient Ghana Empire capital
+"The Fouta Djallon herders bring their cattle down to the Gambia lowlands every dry season.",PLACE_NAMES,NEUTRAL,,11,Say Fouta Djallon herders bring cattle to Gambia lowlands in dry season
+"Timbuktu on the edge of the Sahara Desert was once the greatest center of learning in Africa.",PLACE_NAMES,NEUTRAL,,11,Say Timbuktu on the Sahara was once Africa's greatest learning center
+"The Atlantic Ocean coast of Sierra Leone stretches for over five hundred kilometers of beaches.",PLACE_NAMES,NEUTRAL,,10,Say Sierra Leone's Atlantic coast stretches five hundred kilometers
+"The iron ore mine at Tonkolili is one of the largest in all of West Africa by volume.",PLACE_NAMES,NEUTRAL,,10,Say the Tonkolili iron ore mine is one of West Africa's largest
+"The sacred Kankurang forest in Gambia is where young men go for their initiation ceremonies.",PLACE_NAMES,NEUTRAL,,11,Say the Kankurang forest is where Gambian young men go for initiation
+"Boundiali in northern Côte d'Ivoire is close to the border and shares much with Mandingo culture.",PLACE_NAMES,NEUTRAL,,11,Say Boundiali near the border shares Mandingo cultural ties
+"The coast road from Freetown to Tombo village is one of the most scenic in all of Sierra Leone.",PLACE_NAMES,NEUTRAL,,11,Say the Freetown to Tombo coast road is one of Sierra Leone's most scenic
