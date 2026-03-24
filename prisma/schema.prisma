@@ -136,6 +136,7 @@ model Prompt {
   instruction       String?                 // Extra guidance: "Say with excitement"
 
   targetDurationSec Int            @default(5)   // Expected: 3-10 seconds
+  hint              String?        // Simple plain-language explanation to help speakers understand what to say
   isActive          Boolean        @default(true)
   timesRecorded     Int            @default(0)
 
@@ -363,6 +364,12 @@ enum PromptCategory {
   LOCAL_SCENARIOS     // Sierra Leone specific situations
   PHONETIC_COVERAGE   // Words covering all sounds
   CONVERSATIONS       // Short dialogue lines
+  SHORT_PHRASES       // Very short 1-4s utterances: "Yes", "No problem", "Come here"
+  PLACE_NAMES         // Regional place names: Freetown, Conakry, Banjul, Labé
+  PROVERBS            // Traditional proverbs and fixed expressions
+  PASTORAL_LIFE       // Cattle herding, farming, rural life (Fula-relevant)
+  RELIGION_FAITH      // Prayers, Islamic greetings, faith expressions
+  FUNCTIONAL_PHRASES  // Basic responses: yes/no, I don't know, wait, thank you
 }
 
 enum PromptEmotion {

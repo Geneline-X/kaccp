@@ -1,0 +1,336 @@
+english_text,category,emotion,instruction,target_duration_sec,hint
+"Yes, that is correct.",SHORT_PHRASES,NEUTRAL,,3,Say yes and agree
+"No, I do not want that.",SHORT_PHRASES,NEUTRAL,,3,Say no to something
+"Come here right now.",SHORT_PHRASES,NEUTRAL,,3,Tell someone to come
+"Wait for me please.",SHORT_PHRASES,NEUTRAL,,3,Ask someone to wait
+"Thank you very much.",SHORT_PHRASES,HAPPY,,3,Say thank you
+"I do not know.",SHORT_PHRASES,NEUTRAL,,3,Say you don't know
+"I am coming soon.",SHORT_PHRASES,NEUTRAL,,3,Say you will come
+"Please help me.",SHORT_PHRASES,NEUTRAL,,3,Ask for help
+"Be careful now.",SHORT_PHRASES,NEUTRAL,,3,Warn someone to be careful
+"Good morning to you.",SHORT_PHRASES,NEUTRAL,,3,Say good morning
+"Good night everyone.",SHORT_PHRASES,NEUTRAL,,3,Say good night
+"How are you today?",SHORT_PHRASES,QUESTION,,3,Ask how someone is
+"I am fine thanks.",SHORT_PHRASES,HAPPY,,3,Say you are well
+"See you tomorrow.",SHORT_PHRASES,NEUTRAL,,3,Say goodbye until tomorrow
+"Let us go now.",SHORT_PHRASES,NEUTRAL,,3,Say let's leave
+"Stop doing that.",SHORT_PHRASES,NEUTRAL,,3,Tell someone to stop
+"Sit down here.",SHORT_PHRASES,NEUTRAL,,3,Tell someone to sit
+"Stand up please.",SHORT_PHRASES,NEUTRAL,,3,Ask someone to stand
+"Give it to me.",SHORT_PHRASES,NEUTRAL,,3,Ask for something
+"I am hungry now.",SHORT_PHRASES,NEUTRAL,,3,Say you are hungry
+"I am very tired.",SHORT_PHRASES,NEUTRAL,,3,Say you are tired
+"It is very hot.",SHORT_PHRASES,NEUTRAL,,3,Say it is hot
+"It is raining outside.",SHORT_PHRASES,NEUTRAL,,3,Say it is raining
+"Let me pass please.",SHORT_PHRASES,NEUTRAL,,3,Ask to be let through
+"Move out of the way.",SHORT_PHRASES,NEUTRAL,,3,Ask someone to move
+"Call me later today.",SHORT_PHRASES,NEUTRAL,,3,Ask someone to call you
+"I will be back.",SHORT_PHRASES,NEUTRAL,,3,Say you will return
+"Not yet, be patient.",SHORT_PHRASES,NEUTRAL,,3,Tell someone to wait more
+"Hurry up, let us go.",SHORT_PHRASES,NEUTRAL,,3,Tell someone to be fast
+"Keep quiet please.",SHORT_PHRASES,NEUTRAL,,3,Ask for silence
+"Speak slowly please.",SHORT_PHRASES,NEUTRAL,,3,Ask someone to speak slowly
+"I did not hear you.",SHORT_PHRASES,NEUTRAL,,3,Say you couldn't hear
+"Say it again please.",SHORT_PHRASES,NEUTRAL,,3,Ask someone to repeat
+"Very good, well done.",SHORT_PHRASES,HAPPY,,3,Praise someone
+"That is not right.",SHORT_PHRASES,NEUTRAL,,3,Say something is wrong
+"OK, I understand now.",SHORT_PHRASES,NEUTRAL,,3,Say you understand
+"No problem at all.",SHORT_PHRASES,NEUTRAL,,3,Say there is no issue
+"Be quiet right now.",SHORT_PHRASES,NEUTRAL,,3,Tell someone to be quiet
+"Come and eat food.",SHORT_PHRASES,NEUTRAL,,3,Call someone to eat
+"Wash your hands first.",SHORT_PHRASES,NEUTRAL,,3,Tell someone to wash hands
+"Close the door please.",SHORT_PHRASES,NEUTRAL,,3,Ask someone to close door
+"Open the window now.",SHORT_PHRASES,NEUTRAL,,3,Ask someone to open window
+"Turn off the light.",SHORT_PHRASES,NEUTRAL,,3,Ask to turn light off
+"Go to sleep now.",SHORT_PHRASES,NEUTRAL,,3,Tell someone to sleep
+"Wake up, it is morning.",SHORT_PHRASES,NEUTRAL,,3,Tell someone to wake up
+"Bring me some water.",SHORT_PHRASES,NEUTRAL,,3,Ask for water
+"I want to rest.",SHORT_PHRASES,NEUTRAL,,3,Say you want to rest
+"God willing, tomorrow.",SHORT_PHRASES,NEUTRAL,,3,Say if God allows tomorrow
+"Praise be to God.",SHORT_PHRASES,HAPPY,,3,Give thanks to God
+"God is great indeed.",SHORT_PHRASES,HAPPY,,3,Praise God's greatness
+"In the name of God.",SHORT_PHRASES,NEUTRAL,,3,Begin something in God's name
+"I am going home.",SHORT_PHRASES,NEUTRAL,,3,Say you are going home
+"The child is crying.",SHORT_PHRASES,NEUTRAL,,3,Say a child is crying
+"The food is ready.",SHORT_PHRASES,HAPPY,,3,Say food is prepared
+"Take care, goodbye.",SHORT_PHRASES,NEUTRAL,,3,Say farewell
+"I am not feeling well.",SHORT_PHRASES,NEUTRAL,,3,Say you feel sick
+"It is getting late.",SHORT_PHRASES,NEUTRAL,,3,Say time is passing
+"Do you understand me?",SHORT_PHRASES,QUESTION,,3,Ask if someone understands
+"Say it in simple words.",SHORT_PHRASES,NEUTRAL,,3,Ask for simple explanation
+"How much does it cost?",SHORT_PHRASES,QUESTION,,3,Ask the price
+"That is very expensive.",SHORT_PHRASES,NEUTRAL,,3,Say the price is too high
+"I will pay tomorrow.",SHORT_PHRASES,NEUTRAL,,3,Promise to pay later
+"Can I borrow this?",SHORT_PHRASES,QUESTION,,3,Ask to borrow something
+"This belongs to me.",SHORT_PHRASES,NEUTRAL,,3,Say something is yours
+"Where did you go?",SHORT_PHRASES,QUESTION,,3,Ask where someone went
+"I was at the market.",SHORT_PHRASES,NEUTRAL,,3,Say you were at the market
+"My phone is dead.",SHORT_PHRASES,NEUTRAL,,3,Say your phone has no battery
+"I have no money now.",SHORT_PHRASES,NEUTRAL,,3,Say you have no money
+"The road is blocked.",SHORT_PHRASES,NEUTRAL,,3,Say the road is closed
+"It is very far from here.",SHORT_PHRASES,NEUTRAL,,3,Say a place is far
+"Turn left at the junction.",SHORT_PHRASES,NEUTRAL,,4,Tell direction to turn left
+"The mosque is nearby.",SHORT_PHRASES,NEUTRAL,,3,Say the mosque is close
+"My family is waiting.",SHORT_PHRASES,NEUTRAL,,3,Say your family is waiting
+"Let us pray together.",SHORT_PHRASES,NEUTRAL,,3,Invite someone to pray
+"I missed you so much.",SHORT_PHRASES,HAPPY,,3,Say you missed someone
+"Come back very soon.",SHORT_PHRASES,NEUTRAL,,3,Ask someone to return soon
+"The baby is sleeping.",SHORT_PHRASES,NEUTRAL,,3,Say the baby is asleep
+"Be strong and brave.",SHORT_PHRASES,NEUTRAL,,3,Encourage someone
+"Trust in God always.",SHORT_PHRASES,NEUTRAL,,3,Tell someone to trust God
+"We are almost there.",SHORT_PHRASES,NEUTRAL,,3,Say you are nearly arrived
+"Watch out, danger ahead.",SHORT_PHRASES,URGENT,,3,Warn of danger
+"I am lost right now.",SHORT_PHRASES,NEUTRAL,,3,Say you are lost
+"Which way should I go?",SHORT_PHRASES,QUESTION,,3,Ask for directions
+"Follow me this way.",SHORT_PHRASES,NEUTRAL,,3,Tell someone to follow
+"Pray for our journey.",SHORT_PHRASES,NEUTRAL,,3,Ask prayer for travel
+"The market is open today.",SHORT_PHRASES,NEUTRAL,,4,Say the market is open
+"My name is Mamadou.",SHORT_PHRASES,NEUTRAL,,3,Say your name
+"I speak a little English.",SHORT_PHRASES,NEUTRAL,,4,Say you speak some English
+"God bless you and your family.",SHORT_PHRASES,HAPPY,,4,Give blessing to someone
+"Travel safely my friend.",SHORT_PHRASES,NEUTRAL,,3,Wish someone safe travel
+"I will remember you always.",SHORT_PHRASES,NEUTRAL,,3,Say you won't forget someone
+"This is my home village.",SHORT_PHRASES,NEUTRAL,,3,Point to your home place
+"The elders have spoken.",SHORT_PHRASES,NEUTRAL,,3,Say the elders decided
+"Listen to me carefully.",SHORT_PHRASES,NEUTRAL,,3,Ask for careful attention
+"I promise you sincerely.",SHORT_PHRASES,NEUTRAL,,3,Make a sincere promise
+"She went to the river.",SHORT_PHRASES,NEUTRAL,,3,Say someone went to river
+"The rain will come soon.",SHORT_PHRASES,NEUTRAL,,3,Predict rain is coming
+"My cow needs water now.",SHORT_PHRASES,NEUTRAL,,3,Say cattle need water
+"He is a good man.",SHORT_PHRASES,NEUTRAL,,3,Describe someone as good
+"We arrived safely today.",SHORT_PHRASES,HAPPY,,3,Say you arrived safely
+"I was born in Freetown.",SHORT_PHRASES,NEUTRAL,,4,Say where you were born
+"She lives near the mosque.",SHORT_PHRASES,NEUTRAL,,3,Say where someone lives
+"The children are playing outside in the yard.",PLACE_NAMES,NEUTRAL,,8,Say children play outside
+"I was born in Freetown and grew up by the coast.",PLACE_NAMES,NEUTRAL,,10,Talk about being from Freetown
+"We traveled from Conakry to Labé through the hills.",PLACE_NAMES,NEUTRAL,,10,Talk about traveling in Guinea
+"The market in Bo town is very busy on Saturdays.",PLACE_NAMES,NEUTRAL,,10,Talk about a busy market in Bo
+"My grandmother lives in Kenema near the forest.",PLACE_NAMES,NEUTRAL,,9,Talk about family in Kenema
+"The ferry from Banjul goes across the river every morning.",PLACE_NAMES,NEUTRAL,,11,Talk about a ferry in Banjul
+"I studied at university in Freetown for four years.",PLACE_NAMES,NEUTRAL,,9,Talk about studying in Freetown
+"The road from Makeni to Kabala passes through the mountains.",PLACE_NAMES,NEUTRAL,,11,Talk about a road in Sierra Leone
+"My uncle moved to Dakar to find work last year.",PLACE_NAMES,NEUTRAL,,10,Talk about going to Dakar for work
+"We crossed the border from Guinea into Sierra Leone at Pamelap.",PLACE_NAMES,NEUTRAL,,12,Talk about crossing a border
+"The port of Freetown handles ships from many countries.",PLACE_NAMES,NEUTRAL,,9,Talk about Freetown's port
+"Kankan is a big city in eastern Guinea with many traders.",PLACE_NAMES,NEUTRAL,,11,Talk about Kankan city
+"My father grew up in Tambacounda before moving to the city.",PLACE_NAMES,NEUTRAL,,11,Talk about someone from Tambacounda
+"The cattle market in Farafenni draws people from all over Gambia.",PLACE_NAMES,NEUTRAL,,12,Talk about a cattle market in Gambia
+"She took the bus from Serrekunda to Brikama early in the morning.",PLACE_NAMES,NEUTRAL,,12,Talk about bus travel in Gambia
+"The hospital in Makeni serves people from many surrounding villages.",PLACE_NAMES,NEUTRAL,,11,Talk about a hospital in Makeni
+"We fished at the lagoon near Bonthe Island last weekend.",PLACE_NAMES,NEUTRAL,,10,Talk about fishing near Bonthe
+"The gold mines near Koidu bring many workers from different places.",PLACE_NAMES,NEUTRAL,,11,Talk about mines in Koidu
+"Port Loko is about an hour's drive from Freetown by road.",PLACE_NAMES,NEUTRAL,,11,Talk about distance to Port Loko
+"My sister got married in Kindia and now lives there with her husband.",PLACE_NAMES,NEUTRAL,,12,Talk about someone married in Kindia
+"The border town of Rosso connects Senegal and Mauritania by ferry.",PLACE_NAMES,NEUTRAL,,11,Talk about a border crossing
+"Kolda is a major town in southern Senegal close to the Gambia border.",PLACE_NAMES,NEUTRAL,,12,Talk about Kolda town
+"The rice fields near Ziguinchor are flooded during the rainy season.",PLACE_NAMES,NEUTRAL,,11,Talk about rice farming near Ziguinchor
+"We drove through Labé on our way to Mamou during the festival.",PLACE_NAMES,NEUTRAL,,11,Talk about traveling through Guinea
+"The weekly market in Basse draws traders from Mali and Senegal.",PLACE_NAMES,NEUTRAL,,11,Talk about Basse market in Gambia
+"Nzérékoré is the largest city in the forest region of Guinea.",PLACE_NAMES,NEUTRAL,,10,Talk about Nzérékoré city
+"My brother works on the docks in Conakry near the presidential palace.",PLACE_NAMES,NEUTRAL,,12,Talk about working in Conakry
+"We prayed at the old mosque in the center of Kaolack.",PLACE_NAMES,NEUTRAL,,10,Talk about praying in Kaolack
+"The school in Moyamba district was built by the community together.",PLACE_NAMES,NEUTRAL,,10,Talk about a community school
+"Siguiri is known for gold mining along the river in Guinea.",PLACE_NAMES,NEUTRAL,,10,Talk about gold mining in Siguiri
+"The bridge over the Gambia River connects the north and south banks.",PLACE_NAMES,NEUTRAL,,11,Talk about a river bridge in Gambia
+"We spent three days in Mopti visiting the old mud mosques.",PLACE_NAMES,NEUTRAL,,10,Talk about visiting Mopti in Mali
+"The road to Kailahun used to take a whole day to travel.",PLACE_NAMES,NEUTRAL,,10,Talk about a long road journey
+"Faranah is where the Niger River begins its long journey to the sea.",PLACE_NAMES,NEUTRAL,,11,Talk about the Niger River source
+"My cousin runs a small shop in Thiès near the train station.",PLACE_NAMES,NEUTRAL,,10,Talk about a shop in Thiès
+"The children from Pujehun district walk far to reach their school.",PLACE_NAMES,NEUTRAL,,10,Talk about children walking to school
+"Kanifing is now a very crowded suburb just outside the capital Banjul.",PLACE_NAMES,NEUTRAL,,11,Talk about a growing suburb
+"We passed through Boké on our way to the bauxite mining area.",PLACE_NAMES,NEUTRAL,,10,Talk about passing through Boké
+"The women of Vélingara are famous for their beautiful woven cloth.",PLACE_NAMES,NEUTRAL,,10,Talk about women weavers in Vélingara
+"Koinadugu district is known for its cool highland climate in Sierra Leone.",PLACE_NAMES,NEUTRAL,,11,Talk about cool highlands in Sierra Leone
+"Saint-Louis was once the capital of French West Africa long ago.",PLACE_NAMES,NEUTRAL,,10,Talk about history of Saint-Louis
+"The fishing boats leave from Yawri Bay before the sunrise every morning.",PLACE_NAMES,NEUTRAL,,10,Talk about fishermen leaving early
+"Georgetown on the Gambia River is a quiet but beautiful old town.",PLACE_NAMES,NEUTRAL,,10,Talk about Georgetown in Gambia
+"Bambali village in Guinea is surrounded by mountains and green valleys.",PLACE_NAMES,NEUTRAL,,10,Talk about a village in the mountains
+"My parents traveled from Kayes to Bamako looking for better opportunities.",PLACE_NAMES,NEUTRAL,,11,Talk about moving to Bamako
+"The ferry to Lungi airport crosses the estuary from central Freetown.",PLACE_NAMES,NEUTRAL,,10,Talk about crossing to the airport
+"Ségou is an important city on the Niger River known for its pottery.",PLACE_NAMES,NEUTRAL,,10,Talk about Ségou's pottery
+"The children swam in the clear water of the Rokel River near Makali.",PLACE_NAMES,NEUTRAL,,11,Talk about children swimming in a river
+"There are beautiful beaches along the coast between Freetown and Tokeh.",PLACE_NAMES,NEUTRAL,,10,Talk about beaches near Freetown
+"The border between Sierra Leone and Liberia passes through thick forest.",PLACE_NAMES,NEUTRAL,,10,Talk about a forested border
+"Mamou is an important crossroads town in the middle of Guinea.",PLACE_NAMES,NEUTRAL,,9,Talk about Mamou as a crossroads
+"The university hospital in Conakry is the biggest in the whole country.",PLACE_NAMES,NEUTRAL,,10,Talk about a big hospital
+"Sikasso in southern Mali is known for its fruit and rich farmland.",PLACE_NAMES,NEUTRAL,,10,Talk about farming near Sikasso
+"We arrived in Banjul after a long journey by bus from Tambacounda.",PLACE_NAMES,NEUTRAL,,10,Talk about a long bus journey
+"The iron ore from Tonkolili is transported by train down to the coast.",PLACE_NAMES,NEUTRAL,,10,Talk about iron ore transport
+"The old market in Freetown called Big Market has been there for centuries.",PLACE_NAMES,NEUTRAL,,11,Talk about Freetown's old market
+"Gao in northern Mali sits on the edge of the Sahara Desert.",PLACE_NAMES,NEUTRAL,,9,Talk about Gao near the desert
+"If you run away from a problem, it will follow you home and knock on your door.",PROVERBS,NEUTRAL,,13,Problems you avoid will come back to you
+"The hand that gives is always higher than the hand that receives.",PROVERBS,NEUTRAL,,11,Giving is better than receiving
+"A tree that bends in the wind does not break like one that stands stiff.",PROVERBS,NEUTRAL,,13,Being flexible helps you survive
+"When the lion roars the loudest, it is often the most hungry and desperate.",PROVERBS,NEUTRAL,,12,Loud anger often comes from weakness
+"The child who is always sheltered from rain never learns to value dry days.",PROVERBS,NEUTRAL,,13,Hardship teaches you to appreciate good things
+"A wise man listens more than he speaks, for words are the seeds of action.",PROVERBS,NEUTRAL,,13,Listen more and speak wisely
+"The goat that has no friend must graze at the edge of the herd alone.",PROVERBS,NEUTRAL,,12,Having no friends leaves you isolated
+"Rain does not ask permission before it falls on the farmer's fields.",PROVERBS,NEUTRAL,,11,Some things happen whether you're ready or not
+"The path made by the first traveler is easy for all who come behind him.",PROVERBS,NEUTRAL,,12,Those who go first make it easier for others
+"When two elephants fight, it is the grass beneath them that gets hurt.",PROVERBS,NEUTRAL,,12,When powerful people fight, weaker ones suffer
+"A person who has no village has no name and no one to call family.",PROVERBS,NEUTRAL,,12,Your community gives you identity
+"You cannot tell a hungry man to be patient until tomorrow for his food.",PROVERBS,NEUTRAL,,12,Do not delay urgent needs of others
+"The ear that does not listen to advice will hear the sound of regret.",PROVERBS,NEUTRAL,,12,Not taking advice leads to regret
+"A sharp knife that cuts only its owner is more dangerous than useful.",PROVERBS,NEUTRAL,,11,Skills used wrongly hurt yourself
+"No matter how long the night lasts, the morning always comes after.",PROVERBS,NEUTRAL,,11,Hard times always end eventually
+"The farmer who plants in the dry season prays for the rain to come.",PROVERBS,NEUTRAL,,11,Hard work paired with hope and prayer
+"A single hand cannot tie a bundle, but two hands make it easy work.",PROVERBS,NEUTRAL,,12,Teamwork makes hard things possible
+"Speak the truth even if your voice shakes and your knees feel weak.",PROVERBS,NEUTRAL,,11,Always speak truth even when afraid
+"A proud man and a foolish man often walk the same road to ruin.",PROVERBS,NEUTRAL,,11,Pride and foolishness lead to the same end
+"The cow that stands alone far from the herd is the first one eaten.",PROVERBS,NEUTRAL,,11,Safety comes from being with your group
+"A small fire can burn down the whole forest if no one tends to it.",PROVERBS,NEUTRAL,,11,Small problems grow if you ignore them
+"Even the mightiest river started as a small trickle from a spring.",PROVERBS,NEUTRAL,,11,Big things begin small
+"The monkey does not mock the fish for not being able to climb trees.",PROVERBS,NEUTRAL,,12,Do not mock others for their different skills
+"A bird that flies too high and forgets the branch will fall to earth.",PROVERBS,NEUTRAL,,12,Do not forget your roots when you succeed
+"The one who plants shade trees knows they will not sit under them alone.",PROVERBS,NEUTRAL,,12,Good deeds benefit future generations
+"An empty bag cannot stand upright on its own without support from inside.",PROVERBS,NEUTRAL,,11,You need substance to stand strong
+"Words are like eggs, once they drop from your mouth they cannot go back.",PROVERBS,NEUTRAL,,12,Think before you speak
+"Do not point at your parents' house with your left hand in anger.",PROVERBS,NEUTRAL,,11,Always respect your parents and home
+"The night hides many things but the sun always reveals the truth.",PROVERBS,NEUTRAL,,10,Truth comes to light eventually
+"A child who listens to their elders saves themselves years of hard lessons.",PROVERBS,NEUTRAL,,11,Wisdom from elders saves you from mistakes
+"The hyena laughs loudest after the lion has done all the difficult work.",PROVERBS,NEUTRAL,,12,Some people enjoy what others worked hard for
+"It takes a whole village to raise one good child in this world.",PROVERBS,NEUTRAL,,11,Children need a whole community to grow well
+"A guest who stays too long in your house becomes a burden.",PROVERBS,NEUTRAL,,10,Know when to leave; too long is too much
+"The traveler who asks questions does not get lost on the long road.",PROVERBS,NEUTRAL,,11,Ask for help to find your way
+"When the morning dew disappears it does not mean the grass was not wet.",PROVERBS,NEUTRAL,,12,Something can be true even when the evidence is gone
+"A person's character is more valuable than all the gold and silver combined.",PROVERBS,NEUTRAL,,12,Good character is worth more than riches
+"The stone that rolls around does not grow moss and stays clean.",PROVERBS,NEUTRAL,,10,Constant movement keeps you fresh
+"What the elder saw sitting down, the young cannot see standing up.",PROVERBS,NEUTRAL,,11,Elders have wisdom the young haven't gained yet
+"The sweetest water often comes from the deepest and hardest wells.",PROVERBS,NEUTRAL,,11,The best things require the most effort
+"Until the lion learns to write, the hunter's story will always be told.",PROVERBS,NEUTRAL,,12,Those with power tell their side of history
+"A person without knowledge is like a tree without roots in the dry season.",PROVERBS,NEUTRAL,,12,Knowledge gives you stability and strength
+"Do not look where you fell but look where you slipped on the way.",PROVERBS,NEUTRAL,,11,Find the cause of problems not just the result
+"Rain falling at night is a blessing that needs no umbrella to receive.",PROVERBS,NEUTRAL,,12,Hidden blessings come without you knowing
+"The dog that barks at the moon does not prevent the night from passing.",PROVERBS,NEUTRAL,,13,Complaining loudly changes nothing
+"A child raised without discipline is like a garden without a fence around it.",PROVERBS,NEUTRAL,,13,Children need boundaries to grow well
+"The bones of your grandparents lie in this earth, so respect this ground.",PROVERBS,NEUTRAL,,12,Respect the land of your ancestors
+"You do not teach a grown elephant how to use its trunk to drink.",PROVERBS,NEUTRAL,,12,Do not give unwanted advice to the experienced
+"Patience is the mother of all virtues and the father of all success.",PROVERBS,NEUTRAL,,11,Being patient leads to everything good
+"A man who chases two rabbits at the same time catches neither one.",PROVERBS,NEUTRAL,,11,Focus on one thing to succeed
+"The forest knows every secret but the trees never speak to strangers.",PROVERBS,NEUTRAL,,11,Nature holds secrets that are not easily shared
+"When you wake in the morning, thank God before you speak to anyone else.",RELIGION_FAITH,NEUTRAL,,11,Give thanks to God first thing in the morning
+"Bismillah, I begin this work in the name of the most merciful God.",RELIGION_FAITH,NEUTRAL,,11,Start work by saying God's name
+"Alhamdulillah, God has given us another blessed day to live and breathe.",RELIGION_FAITH,HAPPY,,11,Thank God for another day of life
+"Inshallah, we will all meet again at the next prayer time if God wills.",RELIGION_FAITH,NEUTRAL,,12,Say you will meet again if God wills
+"The imam called us to the mosque for evening prayers as the sun set.",RELIGION_FAITH,NEUTRAL,,11,Describe being called to evening prayer
+"We washed our hands and feet before entering the mosque for Friday prayer.",RELIGION_FAITH,NEUTRAL,,11,Describe preparing for mosque prayer
+"After the morning prayer, my father always reads quietly from the holy book.",RELIGION_FAITH,NEUTRAL,,11,Describe reading holy book after prayer
+"The month of Ramadan is a time for fasting, prayer, and giving to others.",RELIGION_FAITH,NEUTRAL,,12,Explain what Ramadan is about
+"We broke our fast together as a family when the evening call to prayer came.",RELIGION_FAITH,HAPPY,,12,Describe breaking fast with family
+"The holy book tells us to care for the poor, the orphan, and the traveler.",RELIGION_FAITH,NEUTRAL,,12,Recite a religious teaching about helping others
+"Allahu Akbar, God is greater than anything in this world or the next.",RELIGION_FAITH,NEUTRAL,,10,Proclaim God's greatness
+"We gave charity to the poor before leaving the house on the morning of Eid.",RELIGION_FAITH,NEUTRAL,,12,Describe giving charity on Eid day
+"The night of power in Ramadan is better than a thousand months of worship.",RELIGION_FAITH,NEUTRAL,,12,Describe the importance of Laylat al-Qadr
+"May God protect our family, our cattle, and our crops from all evil.",RELIGION_FAITH,NEUTRAL,,10,Pray for protection of family and livelihood
+"We recited the opening chapter of the holy book before beginning the journey.",RELIGION_FAITH,NEUTRAL,,11,Describe reciting prayer before travel
+"The children go to the Quranic school every morning before the regular school.",RELIGION_FAITH,NEUTRAL,,11,Describe children going to Quranic school
+"May God reward you with good things for your kindness toward our family.",RELIGION_FAITH,HAPPY,,10,Bless someone for their kindness
+"We slaughtered a ram and shared the meat with neighbors on the day of Eid.",RELIGION_FAITH,NEUTRAL,,12,Describe Eid al-Adha celebration
+"The pilgrimage to Mecca is a dream that every good Muslim hopes to fulfill.",RELIGION_FAITH,NEUTRAL,,11,Talk about the dream of Hajj
+"God does not burden any soul with more than it is able to carry.",RELIGION_FAITH,NEUTRAL,,11,Share a comforting religious truth
+"Seek knowledge even if you have to travel as far as China to find it.",RELIGION_FAITH,NEUTRAL,,11,Share a saying about seeking knowledge
+"Make your prayers, keep your fast, and give charity and God will bless you.",RELIGION_FAITH,NEUTRAL,,12,Describe the pillars of good Muslim practice
+"We listened as the scholar explained the meaning of the verse after prayers.",RELIGION_FAITH,NEUTRAL,,11,Describe learning from a religious scholar
+"Every morning before the sun rises, the muezzin calls us to the first prayer.",RELIGION_FAITH,NEUTRAL,,11,Describe the early morning call to prayer
+"God gave us two ears and one mouth so we could listen twice as much.",RELIGION_FAITH,NEUTRAL,,11,Share a wisdom saying about listening
+"I asked God for patience when my heart felt heavy and my burdens great.",RELIGION_FAITH,NEUTRAL,,11,Describe praying for patience
+"The holy book is a guide for all people in all places and all times.",RELIGION_FAITH,NEUTRAL,,10,Describe the holy book as a guide
+"Thank God for the rain that fell last night on our dry and thirsty fields.",RELIGION_FAITH,HAPPY,,11,Thank God for rain on the crops
+"We pray five times every day because prayer keeps the heart at peace.",RELIGION_FAITH,NEUTRAL,,11,Explain why Muslims pray five times daily
+"When you say Alhamdulillah for everything, God increases your blessings more.",RELIGION_FAITH,HAPPY,,11,Explain the blessing of giving thanks
+"The old teacher said the greatest jihad is the struggle against your own desires.",RELIGION_FAITH,NEUTRAL,,12,Share a teaching about inner struggle
+"God forgives those who truly repent and turn back to him in sincerity.",RELIGION_FAITH,NEUTRAL,,11,Talk about God's forgiveness
+"Recite the Fatiha for the soul of the one who has passed from this world.",RELIGION_FAITH,NEUTRAL,,11,Describe praying for the dead
+"We stayed up through the night praying during the last ten days of Ramadan.",RELIGION_FAITH,NEUTRAL,,11,Describe night prayers in Ramadan
+"A person who prays is never truly alone even in the deepest dark forest.",RELIGION_FAITH,NEUTRAL,,11,Say prayer brings God's presence
+"The prophets were sent to show us how to live a good and honest life.",RELIGION_FAITH,NEUTRAL,,10,Talk about the purpose of prophets
+"Do good deeds quietly without seeking praise and God will reward you greatly.",RELIGION_FAITH,NEUTRAL,,11,Share teaching about doing good secretly
+"A kind word is charity and a smile at your brother's face is also charity.",RELIGION_FAITH,HAPPY,,12,Share a saying about simple acts of kindness
+"Do not waste the water you use for washing, it is a gift from God above.",RELIGION_FAITH,NEUTRAL,,11,Teach about not wasting water
+"Say Bismillah before you eat and Alhamdulillah when you have finished eating.",RELIGION_FAITH,NEUTRAL,,11,Describe mealtime prayers
+"The young boy who memorized the whole Quran was celebrated by the whole village.",RELIGION_FAITH,HAPPY,,12,Describe celebrating a child who memorized Quran
+"We gathered on the night of Eid to sing nasheeds and praise the prophet.",RELIGION_FAITH,HAPPY,,11,Describe Eid night celebration
+"God sees every act of kindness even when no human eye is watching you.",RELIGION_FAITH,NEUTRAL,,10,Remind that God sees all good deeds
+"My mother prays for us every morning before we leave the house for work.",RELIGION_FAITH,NEUTRAL,,11,Describe a mother's morning prayer
+"The elders say that a house with prayer in it will never truly fall apart.",RELIGION_FAITH,NEUTRAL,,11,Share elder wisdom about prayer protecting homes
+"We give thanks to God for the harvest and share food with all the village.",RELIGION_FAITH,HAPPY,,11,Describe harvest thanksgiving gathering
+"Before the herd drinks, the lead cow always tests the water at the edge carefully.",PASTORAL_LIFE,NEUTRAL,,12,Say the lead cow checks water before others drink
+"The rains came late this year and the grass did not grow tall enough for grazing.",PASTORAL_LIFE,NEUTRAL,,13,Say rain was late so grass is short
+"My grandfather moved his cattle from the lowlands to the hills when the dry season started.",PASTORAL_LIFE,NEUTRAL,,13,Say cattle moved to hills in dry season
+"The young bulls are separated from the herd until they are old enough to breed.",PASTORAL_LIFE,NEUTRAL,,12,Say young bulls are kept apart
+"We milk the cows twice a day, once in the morning and once in the evening.",PASTORAL_LIFE,NEUTRAL,,12,Describe milking cows twice daily
+"A good herder knows each animal by its face, its voice, and its walk.",PASTORAL_LIFE,NEUTRAL,,11,Say a good herder knows each animal
+"The well dried up last month so we have to walk further to find water now.",PASTORAL_LIFE,NEUTRAL,,12,Say the well dried and you walk farther
+"During the harmattan, the cattle suffer from the dry wind and the dusty air.",PASTORAL_LIFE,NEUTRAL,,12,Describe cattle suffering in the dry harmattan season
+"We mark our cattle with a hot iron so we can identify them in the herd.",PASTORAL_LIFE,NEUTRAL,,12,Describe branding cattle to identify them
+"The shepherd boys sing to the goats to keep them calm during thunderstorms.",PASTORAL_LIFE,NEUTRAL,,11,Say boys sing to calm goats in storms
+"My father taught me to read the sky for signs of rain before moving the herd.",PASTORAL_LIFE,NEUTRAL,,12,Say you learn to predict rain from the sky
+"When the grass in the north runs out, we head south along the old migration path.",PASTORAL_LIFE,NEUTRAL,,12,Describe following seasonal migration routes
+"The fresh milk from the cow this morning will be made into butter and yogurt.",PASTORAL_LIFE,NEUTRAL,,11,Describe what to do with fresh morning milk
+"A cow that gives no milk is still useful for plowing and carrying heavy loads.",PASTORAL_LIFE,NEUTRAL,,12,Say even non-milking cows have uses
+"We traded two goats for a sack of millet and some salt at the market.",PASTORAL_LIFE,NEUTRAL,,11,Describe trading livestock at the market
+"The newborn calf stood on wobbly legs and called out to its mother nearby.",PASTORAL_LIFE,NEUTRAL,,11,Describe a newborn calf finding its mother
+"In our tradition, a man's wealth is counted by the number of cattle he owns.",PASTORAL_LIFE,NEUTRAL,,12,Explain cattle as wealth in tradition
+"The river is swollen now but by February it will be a thin dry stream.",PASTORAL_LIFE,NEUTRAL,,11,Describe how the river changes with seasons
+"We built a thorn fence around the cattle pen to keep the leopards out at night.",PASTORAL_LIFE,NEUTRAL,,12,Describe protecting cattle from predators at night
+"The elder said the best pasture in the whole region is three days walk to the east.",PASTORAL_LIFE,NEUTRAL,,13,Say an elder pointed out distant good pasture
+"When the hyena howled close to camp last night, the cattle became restless and noisy.",PASTORAL_LIFE,NEUTRAL,,13,Describe cattle reacting to a hyena at night
+"My mother churned the milk in the calabash for a long time before it turned to butter.",PASTORAL_LIFE,NEUTRAL,,13,Describe making butter from milk in a calabash
+"The old cow with the crooked horn always leads the others to water without fail.",PASTORAL_LIFE,NEUTRAL,,12,Describe an old lead cow guiding the herd
+"We camp near the river during the dry season so the cattle can drink easily.",PASTORAL_LIFE,NEUTRAL,,11,Say you camp near water in dry season
+"The boy ran fast to bring the herd home before the dark storm arrived.",PASTORAL_LIFE,NEUTRAL,,11,Describe rushing cattle home before a storm
+"Good pasture with clean water nearby is worth more than gold to a herder.",PASTORAL_LIFE,NEUTRAL,,11,Say good pasture and water are most valuable
+"The salt lick brings all the animals together from across the wide plain.",PASTORAL_LIFE,NEUTRAL,,11,Describe animals gathering at a salt lick
+"After three days of walking, we reached the seasonal pasture full of green grass.",PASTORAL_LIFE,HAPPY,,11,Describe arriving at fresh seasonal pasture
+"The Fula woman sells fresh milk and sour cream at the morning market every day.",PASTORAL_LIFE,NEUTRAL,,11,Describe a Fula woman selling dairy products
+"The young herder learned to throw a stick with great accuracy to guide the cattle.",PASTORAL_LIFE,NEUTRAL,,11,Describe a herder learning to guide cattle
+"When the rainy season ends, the Fula families begin their long journey southward.",PASTORAL_LIFE,NEUTRAL,,11,Describe the start of seasonal migration
+"The cattle thief was caught and brought before the village elders for judgment.",PASTORAL_LIFE,NEUTRAL,,11,Describe a cattle thief being judged
+"A sick cow must be separated from the herd quickly before others fall ill.",PASTORAL_LIFE,NEUTRAL,,11,Say sick cattle must be kept apart
+"The herdsman counts his animals every evening to make sure none have strayed.",PASTORAL_LIFE,NEUTRAL,,11,Describe counting cattle each evening
+"We gave the exhausted cow extra water and let her rest in the shade all day.",PASTORAL_LIFE,NEUTRAL,,11,Describe caring for a tired cow
+"The children help to herd the goats while the men take the cattle to pasture.",PASTORAL_LIFE,NEUTRAL,,11,Describe children helping with goat herding
+"A good dog trained well is worth more than three lazy men as a cattle guard.",PASTORAL_LIFE,NEUTRAL,,12,Say a good dog beats lazy guards for cattle
+"The water hole that many animals share must be kept clean and free of mud.",PASTORAL_LIFE,NEUTRAL,,11,Say the shared water hole must be kept clean
+"My grandmother used to cure animal sickness with plants she found in the bush.",PASTORAL_LIFE,NEUTRAL,,11,Describe a grandmother's traditional animal medicine
+"The first thing you do in the morning is greet your animals and check them.",PASTORAL_LIFE,NEUTRAL,,10,Say checking animals is the first morning task
+"When buying cattle at the market, look at the teeth first to judge the age.",PASTORAL_LIFE,NEUTRAL,,11,Give advice on how to judge cattle age
+"I do not understand what you are saying, can you please say it again?",FUNCTIONAL_PHRASES,NEUTRAL,,9,Ask someone to repeat what they said
+"Excuse me, I am looking for the road that goes to the central market.",FUNCTIONAL_PHRASES,NEUTRAL,,10,Ask for directions to the market
+"I am sorry, I did not mean to do that, it was an accident.",FUNCTIONAL_PHRASES,NEUTRAL,,9,Apologize for doing something by accident
+"Can you help me carry this heavy bag to my house nearby?",FUNCTIONAL_PHRASES,NEUTRAL,,9,Ask for help carrying something heavy
+"How do I get to the hospital from this place where I am now?",FUNCTIONAL_PHRASES,QUESTION,,9,Ask for directions to the hospital
+"I would like to buy two of those, how much will that cost me?",FUNCTIONAL_PHRASES,QUESTION,,10,Ask how much two items will cost
+"Please can you write your phone number here so I can call you later?",FUNCTIONAL_PHRASES,NEUTRAL,,10,Ask for someone's phone number
+"I am not from here, I am just visiting this town for a few days.",FUNCTIONAL_PHRASES,NEUTRAL,,10,Explain you are a visitor to the town
+"What time does the morning bus leave from this station to the next town?",FUNCTIONAL_PHRASES,QUESTION,,10,Ask about bus departure time
+"I need to charge my phone, do you have a place where I can do that?",FUNCTIONAL_PHRASES,QUESTION,,10,Ask if you can charge your phone somewhere
+"My bag is missing and I think I left it on the bus this morning.",FUNCTIONAL_PHRASES,NEUTRAL,,10,Report a missing bag left on a bus
+"I would like to exchange some money, where is the money changer here?",FUNCTIONAL_PHRASES,QUESTION,,10,Ask where to exchange money
+"Can you speak more slowly please, I am still learning your language?",FUNCTIONAL_PHRASES,NEUTRAL,,9,Ask someone to speak slower while learning
+"I am looking for somewhere to sleep tonight, is there a guesthouse near here?",FUNCTIONAL_PHRASES,QUESTION,,10,Ask about a place to sleep nearby
+"Do you have something smaller than this note to give me as change?",FUNCTIONAL_PHRASES,QUESTION,,9,Ask for change for a large note
+"I am feeling very unwell today, I think I need to see a doctor soon.",FUNCTIONAL_PHRASES,NEUTRAL,,10,Say you feel sick and need a doctor
+"Could you please tell me your name again, I forgot what you said before?",FUNCTIONAL_PHRASES,NEUTRAL,,9,Ask someone to repeat their name
+"Is there anyone here who can speak a little English to help me please?",FUNCTIONAL_PHRASES,QUESTION,,10,Ask if anyone speaks English to help
+"I want to send this to my family but I do not know how much it costs.",FUNCTIONAL_PHRASES,NEUTRAL,,10,Say you want to send something but need cost
+"I have been waiting here for more than one hour and no one has come.",FUNCTIONAL_PHRASES,NEUTRAL,,10,Complain about waiting a long time
+"This is not what I ordered, I asked for something different from this.",FUNCTIONAL_PHRASES,NEUTRAL,,9,Complain you got the wrong order
+"I cannot eat this food because I do not eat meat for religious reasons.",FUNCTIONAL_PHRASES,NEUTRAL,,10,Explain you cannot eat meat for religion
+"My child is very sick with a high fever and I am very worried about her.",FUNCTIONAL_PHRASES,NEUTRAL,,10,Say your child has a fever and you're worried
+"Please call an ambulance immediately, there has been a bad accident here.",FUNCTIONAL_PHRASES,URGENT,,9,Ask someone to call emergency services
+"I left my passport at the hotel, can you wait for me while I go to get it?",FUNCTIONAL_PHRASES,NEUTRAL,,12,Ask someone to wait while you get your passport
+"Can you show me where the toilet is in this building please?",FUNCTIONAL_PHRASES,NEUTRAL,,8,Ask where the toilet is
+"I want to make a phone call, do you have a phone I can borrow for a moment?",FUNCTIONAL_PHRASES,QUESTION,,11,Ask to borrow someone's phone for a call
+"I do not have enough money right now, can I pay you the rest tomorrow?",FUNCTIONAL_PHRASES,NEUTRAL,,10,Ask to pay the remaining money tomorrow
+"How long will it take to get to the border crossing by bus from here?",FUNCTIONAL_PHRASES,QUESTION,,10,Ask how long the bus journey to the border takes
+"I need to find a mechanic because my motorbike broke down on the road.",FUNCTIONAL_PHRASES,NEUTRAL,,10,Say your motorbike broke down and you need help
+"Could you please hold my bag for a moment while I look for my money?",FUNCTIONAL_PHRASES,NEUTRAL,,10,Ask someone to hold your bag briefly
+"Is this seat taken or is it free for me to sit down here with you?",FUNCTIONAL_PHRASES,QUESTION,,10,Ask if a seat is available to sit
+"I want to go to the main mosque for Friday prayers, which way is it?",FUNCTIONAL_PHRASES,QUESTION,,10,Ask for directions to the Friday mosque
+"Do you know someone who can help me translate this letter into French?",FUNCTIONAL_PHRASES,QUESTION,,10,Ask for help translating a letter to French
+"I need to find a pharmacy that is still open at this time of night.",FUNCTIONAL_PHRASES,NEUTRAL,,10,Say you need a pharmacy open at night
+"Can you help me read this form because my eyesight is not very good?",FUNCTIONAL_PHRASES,NEUTRAL,,9,Ask for help reading a form
+"I missed the last bus and now I need to find somewhere to spend the night.",FUNCTIONAL_PHRASES,NEUTRAL,,10,Say you missed the bus and need accommodation
+"Please let the doctor know that I have been waiting here since early morning.",FUNCTIONAL_PHRASES,NEUTRAL,,10,Ask to tell the doctor you've been waiting long
+"I want to register my child for school, who is the person I should speak to?",FUNCTIONAL_PHRASES,QUESTION,,11,Ask who to talk to about enrolling a child in school

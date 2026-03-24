@@ -1,0 +1,1007 @@
+english_text,category,emotion,instruction,target_duration_sec
+"Good morning my dear friend, how did you sleep last night at home?",GREETINGS,NEUTRAL,,13
+"Hello everybody in this place, I am so happy to see all of you here today",GREETINGS,HAPPY,,13
+"Good afternoon to you, I really hope your whole day is going well so far",GREETINGS,NEUTRAL,,13
+"Welcome to our small house, please come right inside and sit down with us",GREETINGS,HAPPY,,13
+"Goodbye my good friend, I will surely see you again next week at the market",GREETINGS,NEUTRAL,,13
+"Good evening to you, how was your work today, are you feeling very tired now?",GREETINGS,NEUTRAL,,13
+"It is so nice to finally meet you, I am coming all the way from Freetown",GREETINGS,HAPPY,,13
+Thank you very much for coming to visit me here at my house today,GREETINGS,HAPPY,,13
+"How are you doing these days, I have not seen you for such a long time now",GREETINGS,NEUTRAL,,13
+Please greet your dear mother and father for me when you finally go back home,GREETINGS,NEUTRAL,,13
+"Good night everybody here, sleep very well and I will see all of you again tomorrow",GREETINGS,NEUTRAL,,13
+"Hey my brother, where have you been hiding all this very long time from us?",GREETINGS,EXCITED,,13
+"Welcome back home again, we really missed you so very much around here every day",GREETINGS,HAPPY,,13
+"I am doing fine thank you, and how is your whole family doing these days?",GREETINGS,NEUTRAL,,13
+"Good morning teacher, I am very ready to learn many new things today in class",GREETINGS,NEUTRAL,,13
+"Hello dear sister, please come and sit down with me under the big mango tree",GREETINGS,HAPPY,,13
+It has been such a very long time since I last saw your beautiful face around here,GREETINGS,NEUTRAL,,13
+"Peace be with you my dear friend, how is everything going at your home these days?",GREETINGS,NEUTRAL,,13
+"Welcome to our small village, please let me show you all around this beautiful place today",GREETINGS,HAPPY,,13
+"Good morning my kind neighbor, can you hear all the roosters crowing so loudly outside today?",GREETINGS,NEUTRAL,,13
+"How are all the children doing at home, are they all still healthy and growing strong?",GREETINGS,NEUTRAL,,13
+I am greeting you today on behalf of my whole family back at our village home,GREETINGS,NEUTRAL,,13
+"Please do come back again very soon, my door is always open wide for you anytime",GREETINGS,HAPPY,,13
+"Hello my dear, I brought something very small but nice for you from the market today",GREETINGS,HAPPY,,13
+"Safe journey my dear friend, may God always protect you well on your long road ahead",GREETINGS,NEUTRAL,,13
+"Good morning everybody sitting here in this room, let us please start our meeting right now",GREETINGS,NEUTRAL,,13
+"Hey my cousin, I just heard that you came back from visiting the village last week",GREETINGS,EXCITED,,13
+"Thank you so much for helping me out yesterday, you are truly a very kind and good person",GREETINGS,HAPPY,,13
+"Goodbye for now my friend, but I do promise that I will come back again very soon",GREETINGS,NEUTRAL,,13
+"How is your wife doing, please tell her I said hello and I am thinking about her",GREETINGS,NEUTRAL,,13
+I greet you all in the name of peace and I hope we can talk together well today,GREETINGS,NEUTRAL,,13
+"Hey old friend, I was just thinking about you yesterday when I was walking through the market",GREETINGS,HAPPY,,13
+"Good morning to the whole community, I am very glad to be standing here with all of you",GREETINGS,HAPPY,,13
+"Welcome home safe and sound, we have been waiting and praying for your return every single day",GREETINGS,HAPPY,,13
+"Hello there young man, where are you going in such a big hurry this early morning time?",GREETINGS,NEUTRAL,,13
+"Good afternoon everybody, I hope you all had something very good to eat for your lunch today",GREETINGS,NEUTRAL,,13
+It makes my heart so happy to see your face again after such a very long time apart,GREETINGS,HAPPY,,13
+"Please sit down and rest your tired feet, let me bring you some clean water to drink first",GREETINGS,NEUTRAL,,13
+"Good evening to you sir, I came to ask you something very important about tomorrow morning please",GREETINGS,NEUTRAL,,13
+I bring warm greetings from your uncle who lives far away in the other village across the river,GREETINGS,NEUTRAL,,13
+"Hey my good friend, I have some really exciting news that I want to share with you right now",GREETINGS,EXCITED,,13
+Thank you for always being so kind and generous to me and my family throughout all these years,GREETINGS,HAPPY,,13
+"Good morning class, today we are going to learn about something very interesting and new together as a group",GREETINGS,NEUTRAL,,13
+"Hello to all the women here today, I am happy that we can all meet together again this week",GREETINGS,HAPPY,,13
+Please tell your brother that I will come to visit him at his shop sometime next week for sure,GREETINGS,NEUTRAL,,13
+"Good night to you my child, close your eyes now and get some very good sleep until tomorrow morning",GREETINGS,NEUTRAL,,13
+I am so grateful that you took the time out of your busy day to come and see me here,GREETINGS,HAPPY,,13
+"Welcome to our church gathering today, we are very blessed to have so many good people here with us",GREETINGS,HAPPY,,13
+"Hey there, I was just on my way to the store and I thought I should stop by to greet you",GREETINGS,NEUTRAL,,13
+Good morning to the chief and all the elders who are sitting with us here at this important meeting,GREETINGS,NEUTRAL,,13
+I hope you and your whole family are all doing well and staying strong and healthy during this rainy season,GREETINGS,NEUTRAL,,13
+"Please accept my sincere apology for not coming to visit you sooner, I have been very busy with my work",GREETINGS,SAD,,13
+"Hello everyone gathered here, I want to thank you all for making the time to come out here today",GREETINGS,HAPPY,,13
+"Good afternoon doctor, I came here to see you because I have not been feeling very well since last week",GREETINGS,NEUTRAL,,13
+"May God bless you and your entire household with good health, peace and plenty of happiness for many years to come",GREETINGS,HAPPY,,13
+I was very happy to hear the good news about your daughter passing all her school exams with flying colors,GREETINGS,HAPPY,,13
+"Good evening neighbor, I can smell something very delicious cooking in your kitchen and it is making me so hungry",GREETINGS,HAPPY,,13
+"Please come and join us for dinner tonight at our house, my wife has cooked plenty of food for everyone",GREETINGS,HAPPY,,13
+"Hello brother, I need to talk to you about something very important when you have some free time later today",GREETINGS,NEUTRAL,,13
+"Good morning pastor, I wanted to ask you to please keep my family in your thoughts and prayers this whole week",GREETINGS,NEUTRAL,,13
+It warms my heart so much every time I come back to this place and see all these familiar faces again,GREETINGS,HAPPY,,13
+"Welcome to our market today, we have many fresh and beautiful things for you to look at and buy here",GREETINGS,HAPPY,,13
+"Hey friend, do you remember that time when we were young children playing together down by the riverside every afternoon?",GREETINGS,HAPPY,,13
+I came here today to personally thank you for everything that you did to help my mother when she was very sick,GREETINGS,HAPPY,,13
+"Good morning my people, let us all stand together and work hard so that our community becomes a better place for everyone",GREETINGS,NEUTRAL,,13
+"Hello madam, I am looking for the house of the teacher who lives somewhere on this street near the big cotton tree",GREETINGS,NEUTRAL,,13
+"Please do not forget about me when you travel far away, always remember that you have good friends waiting here at home",GREETINGS,SAD,,13
+I need to pay five thousand leones for the new bag of rice at the market today,NUMBERS_MONEY,NEUTRAL,,13
+The total cost of all the building materials came to about three hundred thousand leones altogether,NUMBERS_MONEY,NEUTRAL,,13
+She counted her money carefully three times before going inside the shop to buy the new fabric,NUMBERS_MONEY,NEUTRAL,,13
+We need at least twenty bags of cement to finish building the new wall around our compound,NUMBERS_MONEY,NEUTRAL,,13
+The taxi driver is asking for two thousand leones to take us all the way to the ferry terminal,NUMBERS_MONEY,NEUTRAL,,13
+I saved up fifteen thousand leones every single week for three whole months to buy this new phone,NUMBERS_MONEY,HAPPY,,13
+My rent costs four hundred thousand leones every single month and it keeps going up each year,NUMBERS_MONEY,SAD,,13
+The school fees this year went up by thirty percent and now many parents cannot afford to pay them,NUMBERS_MONEY,SAD,,13
+I borrowed fifty thousand leones from my neighbor last month and I still need to pay her back soon,NUMBERS_MONEY,NEUTRAL,,13
+There are exactly seven hundred and forty two students enrolled at our school this whole academic year,NUMBERS_MONEY,NEUTRAL,,13
+The fish seller at the wharf told me that one big basket of fish now costs about eight thousand leones,NUMBERS_MONEY,NEUTRAL,,13
+"I need to buy three notebooks, two pens and one ruler for my daughter to take to school tomorrow",NUMBERS_MONEY,NEUTRAL,,13
+My grandmother is celebrating her eightieth birthday next month and the whole family is planning a big party,NUMBERS_MONEY,HAPPY,,13
+The doctor said I need to take two tablets every single morning and one more tablet every night before sleeping,NUMBERS_MONEY,NEUTRAL,,13
+We collected about one million leones from all the donations at the church fundraiser event last Sunday morning,NUMBERS_MONEY,HAPPY,,13
+I worked for twelve straight hours yesterday at the construction site and I only earned twenty five thousand leones,NUMBERS_MONEY,SAD,,13
+The price of a gallon of petrol has gone up again to about fifteen thousand leones at the filling station,NUMBERS_MONEY,NEUTRAL,,13
+My phone credit finished already and I need to buy at least five thousand leones more airtime to make calls,NUMBERS_MONEY,NEUTRAL,,13
+There are thirty two children in my daughter class at school and only about fifteen desks for all of them,NUMBERS_MONEY,SAD,,13
+The bus fare from Freetown to Bo town is now about forty five thousand leones for each person traveling one way,NUMBERS_MONEY,NEUTRAL,,13
+I bought six bunches of very ripe plantains for about nine thousand leones at the market near the junction,NUMBERS_MONEY,NEUTRAL,,13
+My mother needs to take her blood pressure medicine every day and each month it costs about twenty thousand leones,NUMBERS_MONEY,NEUTRAL,,13
+We have about four hundred coconut palm trees on our family farmland that produce fruit all throughout the whole year,NUMBERS_MONEY,NEUTRAL,,13
+The carpenter said he needs seventy five thousand leones to fix both the broken door and the two damaged windows,NUMBERS_MONEY,NEUTRAL,,13
+I counted all the chairs in the meeting hall and there are exactly one hundred and fifty seats available for people,NUMBERS_MONEY,NEUTRAL,,13
+The phone repair man at the corner is charging me ten thousand leones just to replace the cracked glass screen,NUMBERS_MONEY,NEUTRAL,,13
+My family uses about three large bags of charcoal every single month for all of our cooking needs at home,NUMBERS_MONEY,NEUTRAL,,13
+She makes about two hundred thousand leones every month selling fried fish and cassava leaves at the market stall,NUMBERS_MONEY,NEUTRAL,,13
+The total population of our small village is now about nine hundred and sixty people according to the last count,NUMBERS_MONEY,NEUTRAL,,13
+I need to divide this money equally among my five children so each one gets exactly the same fair amount,NUMBERS_MONEY,NEUTRAL,,13
+The new well they are digging in our community will cost the village about two million leones when it is finished,NUMBERS_MONEY,NEUTRAL,,13
+I paid the tailor fourteen thousand leones to sew two matching shirts for me and my younger brother to wear,NUMBERS_MONEY,NEUTRAL,,13
+We harvested about sixty large bags of groundnuts from our farm this season which is much better than last year,NUMBERS_MONEY,HAPPY,,13
+The electricity bill for our small shop came to about thirty five thousand leones for just the last two months alone,NUMBERS_MONEY,NEUTRAL,,13
+My daughter scored ninety two percent on her final mathematics exam and the whole family is so very proud of her,NUMBERS_MONEY,HAPPY,,13
+I need exactly four meters of that nice blue fabric to make a proper dress for my wife to wear to church,NUMBERS_MONEY,NEUTRAL,,13
+The football team scored three goals in the first half and then two more goals in the second half of the game,NUMBERS_MONEY,EXCITED,,13
+We sell about fifty plates of food every single day at our small restaurant near the busy main road junction,NUMBERS_MONEY,NEUTRAL,,13
+The market woman said the tomatoes cost one thousand leones for a small pile and two thousand for the bigger pile,NUMBERS_MONEY,NEUTRAL,,13
+I have been teaching at this same school now for fifteen long years and I have seen many students come and go,NUMBERS_MONEY,NEUTRAL,,13
+The mechanic told me it would cost about sixty thousand leones to properly fix the engine problem in my old car,NUMBERS_MONEY,NEUTRAL,,13
+We need to collect at least five hundred signatures from community members before we can submit our formal petition letter,NUMBERS_MONEY,NEUTRAL,,13
+My husband sends me about one hundred dollars every single month from where he is working overseas to support our family,NUMBERS_MONEY,NEUTRAL,,13
+The price of one bag of onions has doubled since last month and now costs about twelve thousand leones at the market,NUMBERS_MONEY,SAD,,13
+I woke up at exactly five thirty this morning to prepare food for my children before they all go to school,NUMBERS_MONEY,NEUTRAL,,13
+The church building committee needs about eight million leones more to finish constructing the new roof on the church building,NUMBERS_MONEY,NEUTRAL,,13
+I planted two hundred cassava sticks on my small farm last month and most of them are already growing well and strong,NUMBERS_MONEY,HAPPY,,13
+The distance from my house to the nearest health clinic is about seven kilometers walking along the main dusty road,NUMBERS_MONEY,NEUTRAL,,13
+My sister birthday is on the twenty fifth of next month and she will be turning exactly thirty years old this time,NUMBERS_MONEY,NEUTRAL,,13
+I have been saving small small amounts every week and now I finally have enough money to buy a new cooking pot,NUMBERS_MONEY,HAPPY,,13
+The water truck comes to our area only about twice every single week and each barrel of water costs three thousand leones,NUMBERS_MONEY,NEUTRAL,,13
+My younger brother just started his first year of secondary school and the uniform alone cost about forty thousand leones,NUMBERS_MONEY,NEUTRAL,,13
+We need about ten bundles of zinc sheets to repair the damaged roof on our family house before the heavy rains come,NUMBERS_MONEY,NEUTRAL,,13
+The tailor in our neighborhood can sew about eight complete outfits in one single week if she has enough fabric and thread,NUMBERS_MONEY,NEUTRAL,,13
+I paid twenty thousand leones for a big bag of local palm oil to use for cooking at home this whole month,NUMBERS_MONEY,NEUTRAL,,13
+There are about one hundred and twenty market stalls in the main market area and almost all of them are occupied now,NUMBERS_MONEY,NEUTRAL,,13
+My son needs exactly three thousand five hundred leones to pay for his school exam registration fee before next Friday morning,NUMBERS_MONEY,NEUTRAL,,13
+The boat ride across the river takes about forty five minutes and costs each passenger two thousand leones for the trip,NUMBERS_MONEY,NEUTRAL,,13
+I bought a whole crate of soft drinks for about eighteen thousand leones to share at the naming ceremony this Saturday,NUMBERS_MONEY,NEUTRAL,,13
+The mason says he can finish laying all the blocks for our new kitchen extension in about three working days time,NUMBERS_MONEY,NEUTRAL,,13
+My grandmother kept chickens and at one time she had about thirty five hens all laying eggs every single day,NUMBERS_MONEY,NEUTRAL,,13
+We donated about two hundred and fifty exercise books to the primary school children in the village near our farmland,NUMBERS_MONEY,HAPPY,,13
+The bicycle repair man fixed my flat tire and tightened the chain and he charged me only five thousand leones total,NUMBERS_MONEY,NEUTRAL,,13
+I walked for about two and a half hours through the bush path to reach my uncle farm on the other side,NUMBERS_MONEY,NEUTRAL,,13
+The cost of living keeps going up every month and my salary has stayed the same exact amount for over two years,NUMBERS_MONEY,SAD,,13
+We sold about eighty bunches of fresh bananas at the roadside market yesterday and made a very good profit overall,NUMBERS_MONEY,HAPPY,,13
+My aunt is sending one hundred thousand leones to help pay for the funeral expenses of our late grandfather next week,NUMBERS_MONEY,SAD,,13
+Can you please tell me exactly where the nearest hospital is located from here so I can go there?,QUESTIONS,QUESTION,,13
+Do you know what time the last bus leaves from the main station to go to Waterloo this evening?,QUESTIONS,QUESTION,,13
+Why did they decide to close down the only school in our village without telling any of the parents first?,QUESTIONS,QUESTION,,13
+How much does it cost to send a large package by post from Freetown all the way to Makeni town?,QUESTIONS,QUESTION,,13
+When is the next community meeting going to be held so that we can all come together and discuss the issues?,QUESTIONS,QUESTION,,13
+Do you know if the doctor at the health center is available to see patients today or is he traveling?,QUESTIONS,QUESTION,,13
+Who is going to take over the leadership of our youth group now that the old chairman has finally stepped down?,QUESTIONS,QUESTION,,13
+What kind of seeds should I plant on my small farm this season if I want to get a really good harvest?,QUESTIONS,QUESTION,,13
+Have you heard any news about whether they are going to fix the broken bridge on the main road soon?,QUESTIONS,QUESTION,,13
+Can somebody please explain to me clearly how to fill out this government registration form in the right way?,QUESTIONS,QUESTION,,13
+Where can I find a good and reliable mechanic who can fix the engine problem in my car for a fair price?,QUESTIONS,QUESTION,,13
+Is it true that the price of rice has gone up again at all the shops and markets around town this week?,QUESTIONS,QUESTION,,13
+How long does it usually take to travel by road from Freetown all the way to Kenema during the dry season?,QUESTIONS,QUESTION,,13
+What time does the market in town usually open in the morning and what time does it close in the evening?,QUESTIONS,QUESTION,,13
+Do you happen to know which radio station plays the local news in our own Krio language every single morning?,QUESTIONS,QUESTION,,13
+Why are there so many potholes on this road when the government said they were going to fix it last year?,QUESTIONS,ANGRY,,13
+Can you help me understand what this letter from the court is saying because the language is very hard to read?,QUESTIONS,QUESTION,,13
+Have the teachers at the school been paid their full salaries yet or are they still waiting for their money?,QUESTIONS,QUESTION,,13
+Who is the best person in this community to talk to about getting a small business loan to start my own shop?,QUESTIONS,QUESTION,,13
+What did the chief say at the big meeting yesterday about the new land rules that everyone has been talking about?,QUESTIONS,QUESTION,,13
+Is there anyone here who knows how to properly fix a leaking zinc roof before the heavy rains start coming?,QUESTIONS,QUESTION,,13
+How often does the water supply come on in this area and is it safe enough to drink without boiling it first?,QUESTIONS,QUESTION,,13
+Do you think it is better to sell my goods at the weekly market or at a permanent stall on the main street?,QUESTIONS,QUESTION,,13
+Where exactly did they say the new health clinic is going to be built in our community area this coming year?,QUESTIONS,QUESTION,,13
+Can you please tell me which documents I need to bring with me to register my new baby at the government office?,QUESTIONS,QUESTION,,13
+Why does the electricity keep going off every single night when we are all paying our bills on time every month?,QUESTIONS,ANGRY,,13
+Has anyone in this village ever tried growing cocoa trees on their farm and did it work well for them or not?,QUESTIONS,QUESTION,,13
+How many people are expected to come to the big festival celebration that is happening in town this coming weekend?,QUESTIONS,QUESTION,,13
+What should I do if my child has a very high fever at night and the health clinic is already closed down?,QUESTIONS,URGENT,,13
+Is there a way to get clean drinking water in our community area without having to walk so far every single morning?,QUESTIONS,QUESTION,,13
+Do you remember what the weather was like last year around this same time because I need to plan my farming activities?,QUESTIONS,QUESTION,,13
+Who was the person that started the fire in the market last night and does anybody know how it actually happened?,QUESTIONS,QUESTION,,13
+When are they going to finish building the new road that connects our village to the main highway on the other side?,QUESTIONS,QUESTION,,13
+Can you lend me your phone for just a few minutes so I can call my mother and tell her I arrived here safely?,QUESTIONS,QUESTION,,13
+How did your family manage to build such a nice and strong house with the small amount of money that you had available?,QUESTIONS,QUESTION,,13
+What are the best types of fish to buy at the wharf market on Friday morning when the fishing boats first come in?,QUESTIONS,QUESTION,,13
+Is it still possible to register my children for school this term or has the deadline already passed for new students?,QUESTIONS,QUESTION,,13
+Why did the landlord increase the rent so much this year when he did not even fix any of the broken things in the house?,QUESTIONS,ANGRY,,13
+Do you know if there is a trained midwife living anywhere near our village who can help pregnant women with their deliveries?,QUESTIONS,QUESTION,,13
+How much money do I need to save up before I can realistically start my own small trading business at the market?,QUESTIONS,QUESTION,,13
+What is the proper traditional way to greet the elders when you are visiting a new village for the very first time?,QUESTIONS,QUESTION,,13
+Can someone please show me the correct way to tie this head wrap because I keep doing it wrong every single time?,QUESTIONS,QUESTION,,13
+Where do all the young people in our community go to find work after they finish their education at secondary school?,QUESTIONS,QUESTION,,13
+Is it safe enough to walk through the bush path alone at night or should I wait until the morning to travel there?,QUESTIONS,QUESTION,,13
+How do the farmers in this area usually protect their crops from the animals that come and eat everything at night?,QUESTIONS,QUESTION,,13
+What is the name of that very tall tree with the big round leaves that grows along the riverbank near the old bridge?,QUESTIONS,QUESTION,,13
+Did you hear what the president said on the radio last night about the new plans for improving education in the country?,QUESTIONS,QUESTION,,13
+Can you teach me how to cook a really good and tasty cassava leaf stew the traditional way like your grandmother used to make?,QUESTIONS,QUESTION,,13
+Why do some people in the village still not want to send their young daughters to school when education is so very important?,QUESTIONS,QUESTION,,13
+How many more years until the new dam project is finished so that we can finally have reliable electricity in our area?,QUESTIONS,QUESTION,,13
+What would you do if you found a large amount of money on the ground and nobody was around to claim it back?,QUESTIONS,QUESTION,,13
+Is the football match between the two rival teams still happening this Saturday afternoon at the big stadium near the market?,QUESTIONS,QUESTION,,13
+How do you manage to keep your vegetable garden looking so green and healthy during the long dry season every single year?,QUESTIONS,QUESTION,,13
+Do you think the new government policy on farming will actually help the small scale farmers in our rural communities this time?,QUESTIONS,QUESTION,,13
+Where can I buy good quality second hand clothes at a very reasonable and affordable price somewhere in the Freetown area?,QUESTIONS,QUESTION,,13
+What time should I wake up tomorrow morning if I want to catch the very first bus that leaves for Bo town?,QUESTIONS,QUESTION,,13
+How long have you been living in this community and what is the biggest change you have seen here over all those years?,QUESTIONS,QUESTION,,13
+Can you please recommend a good and affordable school for my young children that is somewhere close to where we live now?,QUESTIONS,QUESTION,,13
+Who taught you how to weave baskets so beautifully like that because I would really love to learn how to do it myself?,QUESTIONS,QUESTION,,13
+Is there any truth to what people are saying about the mining company planning to take over our farmland near the river?,QUESTIONS,QUESTION,,13
+What is the best home remedy for a bad cough and sore throat that actually works well without needing to go see a doctor?,QUESTIONS,QUESTION,,13
+Do you know the phone number of the ambulance service in case there is an emergency and someone gets very sick at night?,QUESTIONS,URGENT,,13
+How are the young mothers in our village supposed to feed their small babies when the price of food keeps going up?,QUESTIONS,SAD,,13
+Where exactly is the boundary line between our village land and the land that belongs to the other village across the hill?,QUESTIONS,QUESTION,,13
+Can you explain to me in simple words what my rights are as a tenant when the landlord wants to increase my rent?,QUESTIONS,QUESTION,,13
+What kind of business would you start if you had about five hundred thousand leones to invest in something new right now?,QUESTIONS,QUESTION,,13
+Is there anyone in this community who owns a vehicle and can drive a very sick person to the hospital in an emergency?,QUESTIONS,URGENT,,13
+How do I apply for the government assistance program that they were announcing on the radio for people who lost their homes?,QUESTIONS,QUESTION,,13
+Please close the door behind you because the wind is blowing very hard and dust is coming inside the house,COMMANDS_REQUESTS,NEUTRAL,,13
+Go to the market right now and buy me some fresh tomatoes and onions before all the good ones are taken,COMMANDS_REQUESTS,NEUTRAL,,13
+Stop making that loud noise right now because the baby is sleeping in the other room and you will wake her up,COMMANDS_REQUESTS,ANGRY,,13
+Please bring me a bucket of clean water from the well so that I can start cooking dinner for the family tonight,COMMANDS_REQUESTS,NEUTRAL,,13
+Tell your sister to come home right away because her mother is looking for her and wants to talk to her now,COMMANDS_REQUESTS,URGENT,,13
+Help me carry these heavy bags of rice inside the house before the rain starts falling and everything gets very wet,COMMANDS_REQUESTS,URGENT,,13
+Please turn off the light when you leave the room because we need to save electricity and not waste any power,COMMANDS_REQUESTS,NEUTRAL,,13
+Go and call the neighbor to come help us push this broken down car off the road before it blocks everyone,COMMANDS_REQUESTS,URGENT,,13
+Make sure you wash your hands very well with soap and clean water before you sit down to eat your food,COMMANDS_REQUESTS,NEUTRAL,,13
+Please tell the children to stop playing outside in the hot sun and come inside the house to drink some water,COMMANDS_REQUESTS,NEUTRAL,,13
+Bring the medicine from the small cupboard in the kitchen and give it to your grandmother before she goes to sleep tonight,COMMANDS_REQUESTS,NEUTRAL,,13
+Do not touch that broken wire on the ground because it might still have electricity running through it and it is dangerous,COMMANDS_REQUESTS,URGENT,,13
+Please sweep the whole compound clean before the important visitors arrive here this afternoon so the place looks very nice,COMMANDS_REQUESTS,NEUTRAL,,13
+Go and find out if the shop down the road is still open because I need to buy some kerosene for the lamp tonight,COMMANDS_REQUESTS,NEUTRAL,,13
+Tell everyone in the family to come to the living room right now because I have some very important news to share with them,COMMANDS_REQUESTS,NEUTRAL,,13
+Please watch the pot on the fire for me while I quickly run outside to get something that I forgot at the neighbors house,COMMANDS_REQUESTS,NEUTRAL,,13
+Lock all the doors and windows properly before you go to bed tonight because there have been some thieves around the area lately,COMMANDS_REQUESTS,NEUTRAL,,13
+Come and help me move this heavy table to the other side of the room so we have more space for the meeting,COMMANDS_REQUESTS,NEUTRAL,,13
+Please go to the health center early tomorrow morning and collect the medicine that the doctor prescribed for your father last week,COMMANDS_REQUESTS,NEUTRAL,,13
+Do not let the goats get into the vegetable garden again or they will eat everything that we have been growing this season,COMMANDS_REQUESTS,NEUTRAL,,13
+Hand me that big cooking pot from the top shelf please because I need to start preparing the soup for tonight dinner,COMMANDS_REQUESTS,NEUTRAL,,13
+Tell the driver to wait for me at the junction because I am almost ready and I will be there in just five minutes,COMMANDS_REQUESTS,NEUTRAL,,13
+Please remind me to call the electrician tomorrow morning because the wiring in the back room has been sparking and is not safe,COMMANDS_REQUESTS,NEUTRAL,,13
+Go and check if there is still water in the big drum outside because I need to do the laundry first thing in the morning,COMMANDS_REQUESTS,NEUTRAL,,13
+Please take this letter to the chief house and make sure you put it directly into his own hands and nobody else,COMMANDS_REQUESTS,NEUTRAL,,13
+Come quickly and see what is happening outside on the street because there is a big crowd of people gathering near the market,COMMANDS_REQUESTS,URGENT,,13
+Do not forget to feed the chickens before you leave for school this morning because nobody else will be home to do it,COMMANDS_REQUESTS,NEUTRAL,,13
+Please sit down quietly and listen carefully because I am going to explain something very important that affects all of us here today,COMMANDS_REQUESTS,NEUTRAL,,13
+Tell the carpenter to come and look at the broken door frame as soon as he has time this week to do the work,COMMANDS_REQUESTS,NEUTRAL,,13
+Wake up early tomorrow and prepare everything we need for the long journey to the village before the sun gets too hot,COMMANDS_REQUESTS,NEUTRAL,,13
+Please put all the dirty clothes in the washing basin and soak them with soap and water so I can wash them later today,COMMANDS_REQUESTS,NEUTRAL,,13
+Go back to the shop and tell the man he gave you the wrong change because this is less money than it should be,COMMANDS_REQUESTS,NEUTRAL,,13
+Please take care of your younger brother while I am away at the meeting and make sure he does all his homework tonight,COMMANDS_REQUESTS,NEUTRAL,,13
+Do not walk on that path near the river after dark because the ground is very slippery and you might fall and get hurt,COMMANDS_REQUESTS,NEUTRAL,,13
+Bring me the phone charger from the bedroom please because my phone battery is almost completely dead and I need to make a call,COMMANDS_REQUESTS,NEUTRAL,,13
+Please make sure the fire is completely out before you leave the cooking area because we do not want any accidents to happen,COMMANDS_REQUESTS,NEUTRAL,,13
+Tell the teacher that my son will not be in school today because he woke up this morning with a very bad stomach ache,COMMANDS_REQUESTS,NEUTRAL,,13
+Come and hold this wooden plank steady for me while I nail it into the wall so that it does not move around,COMMANDS_REQUESTS,NEUTRAL,,13
+Please count all the money in the box carefully and write down the exact total amount on this piece of paper for me,COMMANDS_REQUESTS,NEUTRAL,,13
+Go and tell the imam that we will be ready for the evening prayers in about thirty more minutes at the mosque,COMMANDS_REQUESTS,NEUTRAL,,13
+Make sure you boil all the drinking water properly before giving it to the small children because they can get sick very easily,COMMANDS_REQUESTS,NEUTRAL,,13
+Please pass me the salt and pepper from the other end of the table because this food needs some more seasoning on it,COMMANDS_REQUESTS,NEUTRAL,,13
+Do not argue with your elders like that because it is very disrespectful and we raised you much better than that behavior,COMMANDS_REQUESTS,ANGRY,,13
+Tell the boat man to wait for the other passengers to arrive because there are still about five more people who are coming,COMMANDS_REQUESTS,NEUTRAL,,13
+Please write down your full name and phone number on this paper so that we can contact you if we need anything later,COMMANDS_REQUESTS,NEUTRAL,,13
+Go outside and check if the clothes on the washing line are dry yet because it looks like rain clouds are coming this way,COMMANDS_REQUESTS,NEUTRAL,,13
+Help your mother carry the groceries from the car into the kitchen and then come back outside to help me with the firewood,COMMANDS_REQUESTS,NEUTRAL,,13
+Please do not pour dirty water into the gutter because it will block the drainage and cause flooding when the heavy rains come,COMMANDS_REQUESTS,NEUTRAL,,13
+Take this food to the old woman who lives alone at the end of the street because she has been sick and cannot cook,COMMANDS_REQUESTS,NEUTRAL,,13
+Please keep your voice down because the meeting in the next room is still going on and they need it to be very quiet,COMMANDS_REQUESTS,NEUTRAL,,13
+Go and buy two packets of candles from the shop before it gets dark in case the electricity goes off again tonight,COMMANDS_REQUESTS,NEUTRAL,,13
+Remind your father to take his blood pressure medicine before he eats breakfast tomorrow morning because he always forgets to take it,COMMANDS_REQUESTS,NEUTRAL,,13
+Please share the food equally among all the children so that nobody is left out and everyone gets the same fair portion to eat,COMMANDS_REQUESTS,NEUTRAL,,13
+Tell the driver to take the back road instead because the main highway has been blocked by a fallen tree since this morning,COMMANDS_REQUESTS,NEUTRAL,,13
+Do not leave the house without telling someone where you are going because we need to know where you are at all times,COMMANDS_REQUESTS,NEUTRAL,,13
+Please help me peel all these cassava before the sun goes down because I need to soak them in water overnight for processing,COMMANDS_REQUESTS,NEUTRAL,,13
+Come and sit next to me because I want to show you how to do this properly so you can do it by yourself next time,COMMANDS_REQUESTS,NEUTRAL,,13
+Go and borrow a ladder from our neighbor because I need to climb up and fix the hole in the roof before it rains,COMMANDS_REQUESTS,NEUTRAL,,13
+Make sure everybody signs the attendance list before they leave the meeting so that we have a proper record of who came today,COMMANDS_REQUESTS,NEUTRAL,,13
+Please be very careful when you cross that busy road because the cars and trucks drive very fast and do not always stop for people,COMMANDS_REQUESTS,NEUTRAL,,13
+Tell the children to come inside the house right now because it is getting very dark outside and dinner is almost ready to eat,COMMANDS_REQUESTS,NEUTRAL,,13
+Hang up the mosquito net over the bed before the children fall asleep tonight so that they do not get bitten by mosquitoes,COMMANDS_REQUESTS,NEUTRAL,,13
+Please give this message to the headmaster when you see him at school tomorrow morning and tell him it is very urgent,COMMANDS_REQUESTS,NEUTRAL,,13
+Stop wasting the clean water like that because we do not know when the water supply will come back on in our area,COMMANDS_REQUESTS,ANGRY,,13
+Take the empty gas cylinder to the filling station and get it refilled so that we can continue cooking our food at home,COMMANDS_REQUESTS,NEUTRAL,,13
+Please make a list of all the things we need to buy from the market this weekend so that we do not forget anything important,COMMANDS_REQUESTS,NEUTRAL,,13
+Come and taste this soup and tell me honestly if it needs more salt or pepper before I serve it to the whole family,COMMANDS_REQUESTS,NEUTRAL,,13
+I am so happy today because my daughter just passed all of her school exams with very good marks this year,EMOTIONS_HAPPY,HAPPY,,13
+This is the best day of my whole life and I cannot stop smiling because everything went exactly the way I wanted,EMOTIONS_HAPPY,HAPPY,,13
+My heart is so full of joy right now because my whole family is together again after such a very long time apart,EMOTIONS_HAPPY,HAPPY,,13
+I just got the very good news that I finally got the job I have been praying and hoping for all these months,EMOTIONS_HAPPY,HAPPY,,13
+The baby is walking for the first time all by herself and the whole family is clapping and cheering for her,EMOTIONS_HAPPY,EXCITED,,13
+I am so proud of my son because he worked very hard and became the first person in our family to finish university,EMOTIONS_HAPPY,HAPPY,,13
+We won the football match today and the whole village is celebrating because we have never beaten that team before ever,EMOTIONS_HAPPY,EXCITED,,13
+Thank God for this beautiful new day and for the good health that my whole family woke up with this morning,EMOTIONS_HAPPY,HAPPY,,13
+I cannot believe my eyes because the crops on our farm are growing so well and beautifully after all the hard work we did,EMOTIONS_HAPPY,HAPPY,,13
+The rain has finally come after such a long dry season and everybody in the village is dancing and singing with happiness,EMOTIONS_HAPPY,EXCITED,,13
+My mother is feeling so much better now after her long illness and the doctor says she is completely well and healthy again,EMOTIONS_HAPPY,HAPPY,,13
+I saved enough money to finally buy my own small piece of land where I can build a house for my family one day,EMOTIONS_HAPPY,HAPPY,,13
+The whole community came together to help rebuild our neighbor house after the big storm knocked it down last week and that made me very happy,EMOTIONS_HAPPY,HAPPY,,13
+My wife just told me that we are expecting another baby and I am so excited that I cannot even sit down still,EMOTIONS_HAPPY,EXCITED,,13
+I finished paying off all my debts today and it feels like a very heavy weight has been lifted off my tired shoulders,EMOTIONS_HAPPY,HAPPY,,13
+The children performed a beautiful song and dance at the school concert and all the parents were so very proud of them,EMOTIONS_HAPPY,HAPPY,,13
+I just received a surprise visit from my brother who I have not seen in over five very long years and I am so happy,EMOTIONS_HAPPY,HAPPY,,13
+God has really blessed us this harvest season because we got more crops than we have ever gotten in all the years before,EMOTIONS_HAPPY,HAPPY,,13
+I am smiling from ear to ear because I just found out that my application for the scholarship was approved and accepted,EMOTIONS_HAPPY,HAPPY,,13
+The electricity finally came on after being off for three whole days and everybody in the neighborhood started shouting and clapping with joy,EMOTIONS_HAPPY,EXCITED,,13
+My little girl said her very first word today and it was mama and I almost cried because I was so happy to hear it,EMOTIONS_HAPPY,HAPPY,,13
+We finally finished building our new house after three long years of very hard work and saving every single small coin we earned,EMOTIONS_HAPPY,HAPPY,,13
+I am so grateful to God because my family is alive and well and we have enough food on the table to eat today,EMOTIONS_HAPPY,HAPPY,,13
+The whole street came alive with music and dancing when the young couple got married at the church celebration last Saturday afternoon,EMOTIONS_HAPPY,HAPPY,,13
+I woke up this morning feeling so blessed and thankful for another beautiful chance to see a brand new day on this earth,EMOTIONS_HAPPY,HAPPY,,13
+My grandmother told me a very funny story about when she was young and I laughed so hard that my stomach started hurting,EMOTIONS_HAPPY,HAPPY,,13
+The team worked so hard all season long and when they finally won the trophy everyone was crying happy tears of pure joy,EMOTIONS_HAPPY,EXCITED,,13
+I planted a mango tree ten whole years ago and this year it gave fruit for the very first time and they taste so sweet,EMOTIONS_HAPPY,HAPPY,,13
+My friend surprised me with a birthday cake and a small party even though I told everyone not to make any fuss about it,EMOTIONS_HAPPY,HAPPY,,13
+The teacher told me that my child is the top student in her whole class and that she is very bright and hardworking,EMOTIONS_HAPPY,HAPPY,,13
+I feel so much joy and peace sitting here under this big tree with my family just talking and laughing together all day,EMOTIONS_HAPPY,HAPPY,,13
+The new water well in our village is finally working and now we do not have to walk so far for clean water anymore,EMOTIONS_HAPPY,HAPPY,,13
+Today my small business finally made enough profit to cover all the costs and I can see that my hard work is paying off,EMOTIONS_HAPPY,HAPPY,,13
+I caught the biggest fish in the whole river today and everyone on the bank was shouting and cheering for me with excitement,EMOTIONS_HAPPY,EXCITED,,13
+The doctor told us that the operation was very successful and my father is going to make a full and complete recovery from his illness,EMOTIONS_HAPPY,HAPPY,,13
+I am dancing in my heart right now because all the good things that I have been praying for are finally starting to happen,EMOTIONS_HAPPY,HAPPY,,13
+My neighbor brought me a big plate of food when I was feeling sick and that small act of kindness really made my whole day so much brighter,EMOTIONS_HAPPY,HAPPY,,13
+The sunset over the ocean tonight is the most beautiful thing I have ever seen and it fills my soul with deep peace and happiness,EMOTIONS_HAPPY,HAPPY,,13
+We received the letter saying our village has been chosen to get the new clinic and school building that we requested from the government,EMOTIONS_HAPPY,HAPPY,,13
+I just heard my favorite song playing on the radio and it brought back so many happy and wonderful memories from my younger days,EMOTIONS_HAPPY,HAPPY,,13
+My daughter drew a picture of our whole family holding hands together and it was the sweetest and most beautiful thing I have ever seen,EMOTIONS_HAPPY,HAPPY,,13
+"After many years of trying so hard, I finally learned how to ride a bicycle without falling off and I feel so very proud of myself",EMOTIONS_HAPPY,HAPPY,,13
+The whole village is celebrating because the football team that we all support together has won the big championship tournament this year,EMOTIONS_HAPPY,EXCITED,,13
+I found my lost wedding ring that I thought was gone forever and I am so relieved and happy that I could not stop smiling all day,EMOTIONS_HAPPY,HAPPY,,13
+My mother cooked my favorite meal today just because she knew that I was feeling sad and it really cheered me up right away,EMOTIONS_HAPPY,HAPPY,,13
+Seeing all these children going to school with their uniforms on and their books in hand gives me so much hope for the future of our country,EMOTIONS_HAPPY,HAPPY,,13
+The charity organization built ten new homes for the families who lost everything in the flood and seeing their faces full of joy was priceless,EMOTIONS_HAPPY,HAPPY,,13
+I passed my driving test on the very first try and now I can finally drive on my own without needing someone to help me,EMOTIONS_HAPPY,HAPPY,,13
+My family and I sat around the fire last night telling old stories and laughing together and it was a truly perfect and wonderful evening,EMOTIONS_HAPPY,HAPPY,,13
+The market was so lively and colorful today with all the fresh fruits and vegetables and the sound of happy people buying and selling all around,EMOTIONS_HAPPY,HAPPY,,13
+I just found out that my best friend is coming back home to visit from the city next week and I cannot wait to see her face,EMOTIONS_HAPPY,EXCITED,,13
+The children in the neighborhood organized a small concert and sang all the old traditional songs that their grandparents taught them years ago and it was beautiful,EMOTIONS_HAPPY,HAPPY,,13
+Every morning when I see the sun rise over the green hills around our village I feel so thankful to be alive in such a beautiful place,EMOTIONS_HAPPY,HAPPY,,13
+My son built me a beautiful new wooden bench to sit on outside the house and I am so proud of his carpentry skills and hard work,EMOTIONS_HAPPY,HAPPY,,13
+The community garden project that we all started together last year is finally producing food and everyone is sharing the harvest with big smiles on their faces,EMOTIONS_HAPPY,HAPPY,,13
+I miss my father so very much since he passed away and some days the sadness in my heart feels too heavy to carry,EMOTIONS_SAD,SAD,,13
+It hurts me deeply to see my children go to bed hungry because there was not enough food in the house for dinner tonight,EMOTIONS_SAD,SAD,,13
+The flood destroyed everything we owned and now we have to start all over again from nothing with absolutely no help from anyone,EMOTIONS_SAD,SAD,,13
+I worked so hard on my farm all year long but the drought killed almost every single one of my crops this dry season,EMOTIONS_SAD,SAD,,13
+My best friend moved far away to another country and I do not know when I will ever get to see her again,EMOTIONS_SAD,SAD,,13
+The doctor told us the medicine my mother needs is too expensive and we cannot afford to buy it for her treatment,EMOTIONS_SAD,SAD,,13
+I feel so alone sometimes because my whole family lives very far away and I have nobody here to talk to when times are hard,EMOTIONS_SAD,SAD,,13
+It breaks my heart to see so many young people leaving our beautiful village because there are no jobs or opportunities here for them,EMOTIONS_SAD,SAD,,13
+We buried our beloved grandmother last week and the whole house still feels so empty and quiet without her warm voice and loving presence,EMOTIONS_SAD,SAD,,13
+I studied very hard for the exam but I still did not pass and now I feel like all my effort was completely wasted,EMOTIONS_SAD,SAD,,13
+My small shop was robbed last night and they took everything I had been working so hard for over the past two whole years,EMOTIONS_SAD,SAD,,13
+The rain keeps falling through the holes in our broken roof and I do not have enough money to fix it before next season,EMOTIONS_SAD,SAD,,13
+I promised my daughter a new school uniform but I could not keep my word because I lost my job at the factory last month,EMOTIONS_SAD,SAD,,13
+Seeing the old school building crumbling and falling apart makes me so sad because that is where I learned to read and write as a child,EMOTIONS_SAD,SAD,,13
+My husband has been away working in the city for over a year now and my heart aches every single day that he is gone,EMOTIONS_SAD,SAD,,13
+The young man we all watched grow up in our community was killed in a terrible accident and the whole village is mourning his loss,EMOTIONS_SAD,SAD,,13
+I cry sometimes at night when I think about all the things my children are missing out on because we are so very poor,EMOTIONS_SAD,SAD,,13
+The fire burned down our family home and all the precious photographs and memories of our parents were lost in the flames forever,EMOTIONS_SAD,SAD,,13
+It pains me to see my aging mother struggle to walk by herself because there is no one at home to help take care of her,EMOTIONS_SAD,SAD,,13
+My father worked his whole life to build something good for our family but he never got to enjoy the fruits of all his hard labor,EMOTIONS_SAD,SAD,,13
+The school that served our community for thirty years was shut down and now the children have to walk very far just to get an education,EMOTIONS_SAD,SAD,,13
+I sold my last goat today to pay for my son hospital bill and I am not sure how we will eat next week without any income,EMOTIONS_SAD,SAD,,13
+My heart is heavy because I had to leave my young children with their grandmother while I go to the city to find work,EMOTIONS_SAD,SAD,,13
+The river that used to be so clean and full of fish when I was young is now dirty and polluted from all the mining activity,EMOTIONS_SAD,SAD,,13
+I wanted to be a teacher when I was growing up but my family could not afford to send me to school past the primary level,EMOTIONS_SAD,SAD,,13
+Watching my neighbor family get evicted from their home because they could not pay the rent was one of the saddest things I have ever seen,EMOTIONS_SAD,SAD,,13
+The beautiful old cotton tree that stood in the center of our village for over a hundred years was cut down yesterday for construction,EMOTIONS_SAD,SAD,,13
+I feel so tired and discouraged sometimes because no matter how hard I work things never seem to get any better for my family,EMOTIONS_SAD,SAD,,13
+My grandmother told me stories about how peaceful and prosperous our village once was and it makes me sad to see how much it has changed,EMOTIONS_SAD,SAD,,13
+The medicine that my child needs is not available anywhere in our area and the nearest pharmacy that has it is over fifty kilometers away,EMOTIONS_SAD,SAD,,13
+It rains inside our classroom through the damaged roof and the children have to sit in puddles of water while trying to study and learn,EMOTIONS_SAD,SAD,,13
+I had to drop out of school to help my family earn money and I always wonder what my life could have been like with more education,EMOTIONS_SAD,SAD,,13
+My mother cries every night because she misses my brother who went to sea on a fishing boat and never came back home to us,EMOTIONS_SAD,SAD,,13
+The landlord told us we have to leave by the end of this month and we have absolutely nowhere else to go with our children,EMOTIONS_SAD,SAD,,13
+Every time I pass by the empty market stall where my late wife used to sell her goods I feel a sharp pain in my heart,EMOTIONS_SAD,SAD,,13
+I am worried about my old father who lives alone in the village because there is nobody there to look after him when he gets sick,EMOTIONS_SAD,SAD,,13
+The young people in our village have lost hope because they cannot find any work even after finishing their education at school and college,EMOTIONS_SAD,SAD,,13
+It saddens me that the traditional way of life that our ancestors practiced for hundreds of years is slowly disappearing and being forgotten by everyone,EMOTIONS_SAD,SAD,,13
+I wake up every morning at five o clock to sweep the compound clean and fetch water before the children are ready for school,DAILY_LIFE,NEUTRAL,,13
+My wife cooks the most delicious cassava leaf stew with plenty of fish and palm oil that the whole family always enjoys eating together,DAILY_LIFE,NEUTRAL,,13
+Every Sunday after church service our whole family gathers at my grandmother house to eat a big meal together and share stories,DAILY_LIFE,NEUTRAL,,13
+I spend most of my afternoon sitting under the big mango tree repairing old shoes that people bring to me from all around the area,DAILY_LIFE,NEUTRAL,,13
+The children love to play football in the dusty field behind the school building every evening until it gets too dark outside to see,DAILY_LIFE,NEUTRAL,,13
+"My daily routine is to wake up early, cook breakfast for the children, clean the house, and then go to the market to trade",DAILY_LIFE,NEUTRAL,,13
+We use charcoal to cook all our meals because the price of cooking gas is just too expensive for our small family budget right now,DAILY_LIFE,NEUTRAL,,13
+I carry my baby on my back while I do all the housework because there is nobody else at home to help me watch her,DAILY_LIFE,NEUTRAL,,13
+The whole neighborhood gathers around the radio every evening to listen to the news broadcast and the popular drama show that comes on after,DAILY_LIFE,NEUTRAL,,13
+I walk about three kilometers every single morning just to get clean water from the well and then I carry it all the way back home,DAILY_LIFE,NEUTRAL,,13
+My grandmother always tells us the old traditional stories at night by the firelight while the children sit around her and listen very carefully,DAILY_LIFE,NEUTRAL,,13
+On Saturday mornings I take all my dirty clothes down to the stream and wash them by hand on the flat rocks in the water,DAILY_LIFE,NEUTRAL,,13
+I iron clothes for other people in the neighborhood to earn some extra money during the week when business at my shop is slow,DAILY_LIFE,NEUTRAL,,13
+Every evening before dinner our family sits together on the veranda and talks about everything that happened during the day at work and school,DAILY_LIFE,NEUTRAL,,13
+My mother makes the best groundnut soup in the whole village and everybody always asks her for the recipe but she keeps it a secret,DAILY_LIFE,NEUTRAL,,13
+I ride my old bicycle to work every day because the bus fare is too expensive and it saves me a lot of money each month,DAILY_LIFE,NEUTRAL,,13
+The women in our community take turns watching each other children so that everyone can get their work done during the busy daytime hours,DAILY_LIFE,NEUTRAL,,13
+I spend my evenings studying by lamplight because the electricity in our area only comes on for a few short hours each day,DAILY_LIFE,NEUTRAL,,13
+My father taught me how to weave fishing nets when I was still a young boy and I have been doing it ever since then,DAILY_LIFE,NEUTRAL,,13
+Every morning the rooster crows at exactly the same time and that is how I know it is time to get up and start my day,DAILY_LIFE,NEUTRAL,,13
+I prepare my children school lunch the night before because the mornings are always too busy and rushed to do everything that needs to be done,DAILY_LIFE,NEUTRAL,,13
+My neighbor and I share a water pump that we installed together between our two compounds and we take turns maintaining it every other month,DAILY_LIFE,NEUTRAL,,13
+The market is always busiest on Friday mornings because that is when the fresh fish and vegetables arrive from the farms and fishing villages nearby,DAILY_LIFE,NEUTRAL,,13
+I braid my daughter hair every Saturday morning while we sit outside in the shade and she tells me all about what happened at school,DAILY_LIFE,NEUTRAL,,13
+My old kerosene lamp gives just enough light for me to cook dinner in the kitchen when the electricity goes off at night time,DAILY_LIFE,NEUTRAL,,13
+We hang our clothes on the washing line outside and they dry very quickly in the hot afternoon sun during the dry season months,DAILY_LIFE,NEUTRAL,,13
+I always make sure to greet every person I pass on the road because that is the respectful and proper way to behave in our culture,DAILY_LIFE,NEUTRAL,,13
+The neighborhood children all walk to school together in a big group every morning for safety and they sing songs along the dusty road,DAILY_LIFE,NEUTRAL,,13
+I sell fried plantains and groundnuts at a small stand by the main road and my regular customers come every afternoon to buy some,DAILY_LIFE,NEUTRAL,,13
+My family eats rice and cassava almost every day for our main meals because those are the most affordable staple foods available around here,DAILY_LIFE,NEUTRAL,,13
+When the power goes out at night we all sit together outside under the stars and tell funny stories to pass the time until it returns,DAILY_LIFE,NEUTRAL,,13
+I patch and mend my children school uniforms every weekend because we cannot afford to buy new ones each time they get torn or damaged,DAILY_LIFE,NEUTRAL,,13
+The women in our village meet every Thursday afternoon to practice traditional songs and dances that we perform at community celebrations and festivals,DAILY_LIFE,NEUTRAL,,13
+I start the cooking fire at dawn every morning using dry sticks and palm kernel shells that I collect from around our compound area,DAILY_LIFE,NEUTRAL,,13
+"My small garden behind the house grows enough peppers, tomatoes and okra to feed my family and sometimes I even have extra to sell at market",DAILY_LIFE,NEUTRAL,,13
+Every month I put aside a small amount of money in the village savings group so that I can have some funds available for emergencies,DAILY_LIFE,NEUTRAL,,13
+The barber down the street cuts hair for all the men and boys in our area and his shop is always full and busy on weekends,DAILY_LIFE,NEUTRAL,,13
+I use a hand fan to keep the flies away from the food while I am cooking outside on the open fire in the yard,DAILY_LIFE,NEUTRAL,,13
+My children help me collect firewood from the bush after school and we stack it neatly under the overhang behind our kitchen for later use,DAILY_LIFE,NEUTRAL,,13
+The old men in our village sit under the big cotton tree every afternoon playing cards and checkers while they discuss the latest village news,DAILY_LIFE,NEUTRAL,,13
+How much are you selling these fresh tomatoes for today because the price seems much higher than it was at the market last week?,MARKET_SHOPPING,NEUTRAL,,13
+"I need to buy three cups of rice, a bottle of palm oil, and some fresh pepper for tonight dinner at our house",MARKET_SHOPPING,NEUTRAL,,13
+"The fish at this stall looks very fresh today, can you please give me two big pieces and wrap them up nicely for me?",MARKET_SHOPPING,NEUTRAL,,13
+I have been coming to this same market every single week for over ten years now and I know all the good sellers by name,MARKET_SHOPPING,NEUTRAL,,13
+Please give me a small discount on these shoes because I am buying two pairs at the same time for my children to wear,MARKET_SHOPPING,NEUTRAL,,13
+The woman who sells the best cassava leaves in the whole market is not here today so I will have to look elsewhere for them,MARKET_SHOPPING,NEUTRAL,,13
+I brought my biggest basket today because I need to buy enough food and supplies to last my whole family for the entire next week,MARKET_SHOPPING,NEUTRAL,,13
+Can you keep this fabric for me until next Friday when I get paid because I really want it but I do not have enough money today,MARKET_SHOPPING,NEUTRAL,,13
+The plantains at the entrance of the market are always cheaper and fresher than the ones they sell at the stalls deep inside,MARKET_SHOPPING,NEUTRAL,,13
+"My mother sent me to buy palm oil, salt, stock cubes and onions and she told me not to spend more than ten thousand leones",MARKET_SHOPPING,NEUTRAL,,13
+I always check the price at three different stalls before I buy anything at the market so that I get the very best deal possible,MARKET_SHOPPING,NEUTRAL,,13
+The market is so crowded and busy today because tomorrow is a big holiday and everybody is buying food to cook for the celebration feast,MARKET_SHOPPING,NEUTRAL,,13
+Please weigh these groundnuts properly on your scale because last time I felt like you did not give me the full correct amount,MARKET_SHOPPING,NEUTRAL,,13
+I want to buy a nice piece of fabric to make a new dress for my wife to wear to the wedding ceremony next Saturday,MARKET_SHOPPING,NEUTRAL,,13
+The secondhand clothes section of the market always has very good quality items if you take your time and search carefully through the piles,MARKET_SHOPPING,NEUTRAL,,13
+I need to find a good deal on school supplies for all three of my children before the new term starts next month at school,MARKET_SHOPPING,NEUTRAL,,13
+"This mango is not ripe enough yet, can you please pick out some better ones from the back of the pile for me instead?",MARKET_SHOPPING,NEUTRAL,,13
+I always buy my cooking pots and kitchen utensils from the same vendor because he gives good prices and his products last a very long time,MARKET_SHOPPING,NEUTRAL,,13
+The price of a bag of rice has gone up again this month and it is very hard for poor families to keep buying it now,MARKET_SHOPPING,SAD,,13
+I am looking for a good quality second hand phone that still works well and does not cost too much money to buy today,MARKET_SHOPPING,NEUTRAL,,13
+The market women organized themselves into a group and they take turns lending money to each other for buying new stock and supplies,MARKET_SHOPPING,NEUTRAL,,13
+Please cut this fish into smaller pieces for me so that I can share it equally between the different soups I am cooking this week,MARKET_SHOPPING,NEUTRAL,,13
+I came to the market very early this morning so that I could get the freshest vegetables before all the best ones are sold out,MARKET_SHOPPING,NEUTRAL,,13
+My daughter wants me to buy her a new backpack for school but all the good ones at the market are still too expensive for us,MARKET_SHOPPING,NEUTRAL,,13
+The cloth seller showed me a beautiful design with bright colors and I am thinking about buying enough to make outfits for the whole family,MARKET_SHOPPING,NEUTRAL,,13
+I bought a watermelon from the fruit seller at the corner and when I cut it open at home it was perfectly sweet and red inside,MARKET_SHOPPING,HAPPY,,13
+The charcoal seller at the market gives better prices if you buy a whole big bag instead of the small small portions each time,MARKET_SHOPPING,NEUTRAL,,13
+I need to buy some medicine from the pharmacy stall in the market but I want to make sure it is not expired or fake first,MARKET_SHOPPING,NEUTRAL,,13
+My neighbor asked me to pick up some fresh ginger and garlic from the spice section of the market while I am there shopping today,MARKET_SHOPPING,NEUTRAL,,13
+The shoe maker at the market can repair almost any broken shoe or sandal and he does very good work for a very fair price,MARKET_SHOPPING,NEUTRAL,,13
+I am saving my money so that I can buy a big new pot for cooking because the old one has a crack and leaks water everywhere,MARKET_SHOPPING,NEUTRAL,,13
+The women who sell cooked food at the market always have customers waiting in line because their food is so cheap and tasty and filling,MARKET_SHOPPING,NEUTRAL,,13
+Please tie this bag of onions very tightly because I have a long way to walk home and I do not want anything to fall out,MARKET_SHOPPING,NEUTRAL,,13
+I found a very nice pair of earrings at the jewelry stall and I am thinking of buying them as a gift for my sister birthday,MARKET_SHOPPING,NEUTRAL,,13
+The palm wine seller taps his wine fresh from the trees every single morning and it is always sweet and cold and very refreshing to drink,MARKET_SHOPPING,NEUTRAL,,13
+My wife told me to bargain hard at the market today and not to pay the first price that any of the sellers ask for,MARKET_SHOPPING,NEUTRAL,,13
+Walk straight down this road until you reach the big roundabout and then turn left at the petrol station near the market entrance,DIRECTIONS_PLACES,NEUTRAL,,13
+The hospital is on the other side of town past the football field and you will see the big blue gate from the main road,DIRECTIONS_PLACES,NEUTRAL,,13
+Take the first right turn after the bridge and then keep walking for about ten more minutes until you see the school compound ahead,DIRECTIONS_PLACES,NEUTRAL,,13
+My house is the third one on the left side of the street just after the mosque with the green painted roof on top,DIRECTIONS_PLACES,NEUTRAL,,13
+The market is in the center of town near the clock tower and it is very easy to find because you can hear the noise from far away,DIRECTIONS_PLACES,NEUTRAL,,13
+If you follow this path through the bush for about twenty minutes it will take you straight to the river crossing at the other end,DIRECTIONS_PLACES,NEUTRAL,,13
+The chief house is the biggest building in the whole village and it has a large mango tree standing right in front of the main door,DIRECTIONS_PLACES,NEUTRAL,,13
+You need to cross the bridge first and then go up the hill and the clinic will be right there on your left hand side,DIRECTIONS_PLACES,NEUTRAL,,13
+The pharmacy is right next to the bakery on the main street and you can smell the fresh bread from outside when you walk by,DIRECTIONS_PLACES,NEUTRAL,,13
+Turn right at the junction where the three roads all meet together and then walk straight for about five hundred meters past the church building,DIRECTIONS_PLACES,NEUTRAL,,13
+The best fishing spot on the whole river is about two kilometers upstream from where the old wooden bridge used to stand before it collapsed,DIRECTIONS_PLACES,NEUTRAL,,13
+My farm is behind the big hill on the north side of the village and you have to cross the small stream to get there,DIRECTIONS_PLACES,NEUTRAL,,13
+The police station is located on the same street as the post office just across from where the old cinema building used to be,DIRECTIONS_PLACES,NEUTRAL,,13
+You can find the tailor shop inside the small alley between the hardware store and the mobile phone repair booth near the market gate,DIRECTIONS_PLACES,NEUTRAL,,13
+If you take the bus from the main station it will drop you off right at the junction near the entrance to the village,DIRECTIONS_PLACES,NEUTRAL,,13
+The school is at the very top of the hill and the children have to climb up a steep path every single morning to get there,DIRECTIONS_PLACES,NEUTRAL,,13
+The new health clinic they just built is right behind the community center building next to the big open field where we play football,DIRECTIONS_PLACES,NEUTRAL,,13
+My mother village is about three hours drive from here along the highway going east towards the border with the neighboring country,DIRECTIONS_PLACES,NEUTRAL,,13
+The water well is in the middle of the village square right next to where the women usually sit and sell their goods every day,DIRECTIONS_PLACES,NEUTRAL,,13
+You cannot miss the church building because it has the tallest steeple in the whole area and you can see it from very far away,DIRECTIONS_PLACES,NEUTRAL,,13
+The ferry terminal is down by the waterfront and you need to get there before eight o clock in the morning to catch the first boat,DIRECTIONS_PLACES,NEUTRAL,,13
+If you get lost just ask anyone on the road for directions to the big cotton tree and everybody in this area knows where it is,DIRECTIONS_PLACES,NEUTRAL,,13
+The carpenter workshop is behind the mosque on the small side road that leads down to the stream where the women do their washing,DIRECTIONS_PLACES,NEUTRAL,,13
+My uncle farm is the one with the tall palm trees along the fence line and the red painted gate at the entrance on the north side,DIRECTIONS_PLACES,NEUTRAL,,13
+Walk along the beach heading south until you see the big rocks sticking out of the water and that is where the fishermen pull in their boats,DIRECTIONS_PLACES,NEUTRAL,,13
+The gas station is at the very edge of town right where the paved road ends and the dirt road begins going up into the hills,DIRECTIONS_PLACES,NEUTRAL,,13
+You will know you are getting close to the village when you start to see the smoke rising from the cooking fires in the evening air,DIRECTIONS_PLACES,NEUTRAL,,13
+The market has four main entrances and the one closest to the bus stop is the best one to use if you are coming from town,DIRECTIONS_PLACES,NEUTRAL,,13
+Follow the river downstream for about one kilometer and you will come to a clearing where the women usually go to wash clothes on the rocks,DIRECTIONS_PLACES,NEUTRAL,,13
+My grandmother is the strongest and wisest woman I have ever known in my life and she raised all twelve of her children by herself,FAMILY_PEOPLE,NEUTRAL,,13
+My older brother works as a fisherman down at the wharf and he goes out on the ocean in his boat very early every single morning,FAMILY_PEOPLE,NEUTRAL,,13
+I have four children and they are all in school right now getting a good education so they can have a better future ahead,FAMILY_PEOPLE,NEUTRAL,,13
+My mother taught me everything I know about cooking good food and now I am teaching my own daughter the same traditional recipes at home,FAMILY_PEOPLE,NEUTRAL,,13
+My husband is a very hardworking man who wakes up before sunrise every day to go to work and support our whole family here,FAMILY_PEOPLE,NEUTRAL,,13
+The youngest child in our family always makes everyone laugh with her funny jokes and silly dances that she learns from the television shows,FAMILY_PEOPLE,HAPPY,,13
+My father was a farmer his whole life and he taught all his sons and daughters how to work the land and grow good crops,FAMILY_PEOPLE,NEUTRAL,,13
+I am the oldest of six children in my family so I had to help my parents take care of all my younger brothers and sisters,FAMILY_PEOPLE,NEUTRAL,,13
+My aunt is a traditional midwife who has helped deliver more than three hundred babies in our village over the past thirty years,FAMILY_PEOPLE,NEUTRAL,,13
+My twin sons look exactly alike and even their own teacher at school sometimes cannot tell which one is which without asking them their names,FAMILY_PEOPLE,HAPPY,,13
+My wife runs a small business selling cooked food at the market and she is one of the most popular vendors in the whole area,FAMILY_PEOPLE,NEUTRAL,,13
+My grandfather fought in the war and he used to tell us stories about those difficult times that would make the whole room go very quiet,FAMILY_PEOPLE,NEUTRAL,,13
+I named my first born daughter after my mother because she was the most important person in my life and I wanted to honor her memory,FAMILY_PEOPLE,NEUTRAL,,13
+My cousin came from the village to live with us in the city so that she could go to a better school and get more opportunities,FAMILY_PEOPLE,NEUTRAL,,13
+The elders in our family always gather together to make important decisions and they discuss everything carefully before anyone takes any major action or step,FAMILY_PEOPLE,NEUTRAL,,13
+My sister in law is a nurse at the hospital and she works very long hours to help take care of all the sick patients there,FAMILY_PEOPLE,NEUTRAL,,13
+My late father always said that education is the one thing that nobody can ever take away from you once you have it in your mind,FAMILY_PEOPLE,NEUTRAL,,13
+My mother in law is a very kind and generous woman who treats me like her very own daughter and I am grateful for her love,FAMILY_PEOPLE,HAPPY,,13
+I want my children to have all the opportunities that I never had when I was growing up poor in the small village back then,FAMILY_PEOPLE,NEUTRAL,,13
+My uncle is the chief of our village and he has been leading the community with fairness and wisdom for over twenty long years now,FAMILY_PEOPLE,NEUTRAL,,13
+My daughter wants to become a doctor when she grows up and I am working very hard every day to save enough money for her schooling,FAMILY_PEOPLE,NEUTRAL,,13
+The whole family contributed money together to send our brightest young person to university in the capital city so she can study and learn more,FAMILY_PEOPLE,NEUTRAL,,13
+"My nephew is a very talented musician who can play the guitar, the drums, and sing beautifully all at the same time without any lessons",FAMILY_PEOPLE,NEUTRAL,,13
+I am raising my three grandchildren alone because their parents went to work in the city and they send money home to help every single month,FAMILY_PEOPLE,NEUTRAL,,13
+My brother and I are very close and we talk on the phone almost every day even though we now live in two different towns far apart,FAMILY_PEOPLE,NEUTRAL,,13
+The women in my family are all very strong and determined people who never give up no matter how difficult things get in their lives,FAMILY_PEOPLE,NEUTRAL,,13
+My father always made sure we all sat down together as a family to eat dinner every single night no matter how busy everyone was,FAMILY_PEOPLE,NEUTRAL,,13
+My youngest son just turned five years old last week and he is already asking me when he can start going to school like his big sister,FAMILY_PEOPLE,HAPPY,,13
+My grandmother tells me that our family has been living in this village for more than five generations and our roots here run very deep,FAMILY_PEOPLE,NEUTRAL,,13
+I am so proud of my niece because she finished her training as a teacher and now she is teaching children in her own village school,FAMILY_PEOPLE,HAPPY,,13
+My wife and I have been married for over twenty years now and through all the good times and hard times we have always stayed strong together,FAMILY_PEOPLE,NEUTRAL,,13
+I have been having a very bad headache for three days now and the pain medicine I took does not seem to be helping at all,HEALTH,NEUTRAL,,13
+The nurse at the clinic told me that I need to drink more clean water every day and eat plenty of fresh fruits and vegetables,HEALTH,NEUTRAL,,13
+My child has a high fever and has been vomiting since early this morning so I need to take her to the doctor right away,HEALTH,URGENT,,13
+The malaria medicine is very bitter and hard to swallow but you have to take the full course or the sickness will come right back,HEALTH,NEUTRAL,,13
+I went to the hospital today for my regular checkup and the doctor said my blood pressure is still a little bit too high,HEALTH,NEUTRAL,,13
+The closest health center to our village is about ten kilometers away and there is only one nurse working there most days by herself,HEALTH,SAD,,13
+Please wash your hands with soap and clean water every time before you eat food and after you use the toilet to stay healthy,HEALTH,NEUTRAL,,13
+My grandmother uses traditional herbal medicine made from roots and leaves to treat common ailments like stomach pains and colds and coughs,HEALTH,NEUTRAL,,13
+The pregnant women in our community walk very far to the clinic for their prenatal checkups because there is no closer health facility available,HEALTH,SAD,,13
+I need to take my medicine at the same exact time every single day or it will not work properly to control my condition,HEALTH,NEUTRAL,,13
+The doctor told me to rest at home for one whole week and not to do any heavy lifting or hard physical work during that time,HEALTH,NEUTRAL,,13
+My mother has diabetes and she has to be very careful about what kinds of foods she eats and how much sugar is in everything,HEALTH,NEUTRAL,,13
+Clean drinking water is the most important thing for keeping our families healthy but many communities in our area still do not have proper access to it,HEALTH,NEUTRAL,,13
+I took my son to get all his vaccinations at the health center and the nurses were very kind and gentle with him during the whole process,HEALTH,NEUTRAL,,13
+The mosquito nets that the health workers distributed to our community last month have really helped reduce the number of malaria cases in the village,HEALTH,NEUTRAL,,13
+My knee has been hurting very badly whenever I try to walk or climb the stairs and I think I might need to see a specialist doctor,HEALTH,NEUTRAL,,13
+The traditional healer in our village says that the bark of a certain tree can be boiled and used to treat fever and body pains,HEALTH,NEUTRAL,,13
+I have not been sleeping well at all for the past two weeks and I feel very tired and weak throughout the whole day now,HEALTH,SAD,,13
+The community health worker comes to our village every month to check on the pregnant women and make sure the small babies are growing well,HEALTH,NEUTRAL,,13
+My wife is expecting our baby in about two months and we have been saving money to make sure she can deliver safely at the hospital,HEALTH,NEUTRAL,,13
+I need to stop eating so much salt and oily food because the doctor said it is bad for my heart and my blood pressure,HEALTH,NEUTRAL,,13
+The cholera outbreak in the next village was caused by people drinking dirty water from the contaminated stream without boiling it first for safety,HEALTH,NEUTRAL,,13
+My father needs surgery on his eye but we cannot find enough money to pay for the operation at the hospital in the capital city,HEALTH,SAD,,13
+Every morning I do some light exercises and stretching to keep my body strong and flexible because the doctor said it is good for my health,HEALTH,NEUTRAL,,13
+The health clinic ran out of the basic medicines again and now sick people have to travel to the next town to get the treatment they need,HEALTH,SAD,,13
+I always make sure my children wash their hands before meals and brush their teeth at night because good hygiene habits start from a very young age,HEALTH,NEUTRAL,,13
+The midwife in our village has been helping women deliver their babies safely for over twenty five years and she is very experienced and respected,HEALTH,NEUTRAL,,13
+My son had an asthma attack last night and we had to rush him to the emergency room at the hospital in the middle of the night,HEALTH,URGENT,,13
+"The government health campaign is teaching people in rural areas about the importance of clean water, proper sanitation and regular hand washing every single day",HEALTH,NEUTRAL,,13
+I have a very bad toothache that has been keeping me awake all night and I need to find a dentist who can help me soon,HEALTH,NEUTRAL,,13
+The ambulance service in our area is very slow to respond and by the time it arrives at the village it is often already too late,HEALTH,SAD,,13
+My doctor told me that I should walk for at least thirty minutes every single day to help improve my overall health and lose some weight,HEALTH,NEUTRAL,,13
+The children in our school were given deworming medicine last week and the health workers also checked their eyes and measured their height and weight,HEALTH,NEUTRAL,,13
+I am worried about my mother because she has been coughing for a very long time now and she refuses to go and see the doctor about it,HEALTH,NEUTRAL,,13
+The rainy season is coming very soon and we need to fix the roof on our house before the heavy downpours start falling every day,WEATHER_TIME,NEUTRAL,,13
+It is so hot today that even the animals are hiding under the shade of the big trees to get away from the burning sun,WEATHER_TIME,NEUTRAL,,13
+The harmattan wind is blowing so hard this morning and the dust in the air is making it very difficult for everyone to see properly,WEATHER_TIME,NEUTRAL,,13
+I think it is going to rain very heavily later this afternoon because the sky is getting very dark and the clouds are moving in fast,WEATHER_TIME,NEUTRAL,,13
+The dry season this year has been much longer than usual and all the wells and streams in our area are starting to run completely dry,WEATHER_TIME,NEUTRAL,,13
+We need to plant our crops before the end of this month so that they can get enough rain to grow properly during the wet season,WEATHER_TIME,NEUTRAL,,13
+The sun sets at about six thirty in the evening during this time of the year and after that it gets dark outside very quickly,WEATHER_TIME,NEUTRAL,,13
+I always carry my umbrella with me during the rainy season because the weather here can change from sunny to heavy rain in just a few minutes,WEATHER_TIME,NEUTRAL,,13
+The thunder last night was so loud and frightening that it woke up all the children and they came running to our bed crying in fear,WEATHER_TIME,NEUTRAL,,13
+It has not rained in our area for over three whole months now and the farmers are very worried about their crops dying in the dry fields,WEATHER_TIME,SAD,,13
+The morning fog is so thick and heavy today that I can barely see the road in front of me as I walk to work this morning,WEATHER_TIME,NEUTRAL,,13
+We need to harvest all the rice from the fields before the next big rain comes or we could lose the entire crop to water damage,WEATHER_TIME,URGENT,,13
+The sea breeze that comes in from the ocean every evening makes the temperature much cooler and more comfortable for everyone living near the coast here,WEATHER_TIME,NEUTRAL,,13
+Last night the storm was so violent and powerful that it blew the zinc sheets right off the roof of three houses in our neighborhood,WEATHER_TIME,NEUTRAL,,13
+The weather has been so unpredictable lately that it is very hard for the farmers to know exactly when to plant their seeds in the ground,WEATHER_TIME,NEUTRAL,,13
+I love sitting outside on the veranda in the cool evening air and watching the beautiful sunset paint the whole sky orange and pink and purple,WEATHER_TIME,HAPPY,,13
+The flood waters rose so high and fast last week that many families had to leave their homes and move to higher ground for safety,WEATHER_TIME,SAD,,13
+It gets dark very early during the rainy season months and the children have to come home from playing outside much sooner than they would like,WEATHER_TIME,NEUTRAL,,13
+The heat during the middle of the day is almost unbearable and most people try to stay inside or find shade until the afternoon breeze comes,WEATHER_TIME,NEUTRAL,,13
+We check the sky every morning before going to the farm because the color and pattern of the clouds can tell you a lot about the weather,WEATHER_TIME,NEUTRAL,,13
+The wind changed direction suddenly this afternoon and now it feels much cooler outside than it was earlier when the sun was blazing down on us,WEATHER_TIME,NEUTRAL,,13
+The first big rain of the season always brings such a beautiful fresh smell to the earth and everything in nature seems to come alive again,WEATHER_TIME,HAPPY,,13
+My grandmother can predict the weather just by looking at the behavior of the birds and insects around the village and she is usually right,WEATHER_TIME,NEUTRAL,,13
+We woke up very early at four o clock this morning to start our journey before the heat of the sun became too strong for walking,WEATHER_TIME,NEUTRAL,,13
+The river behind our village always floods during the heavy rains and sometimes the water comes up so high that it reaches the doorsteps of our houses,WEATHER_TIME,NEUTRAL,,13
+It has been raining steadily for three whole days and nights without stopping and the ground is so wet and soft that it is hard to walk anywhere,WEATHER_TIME,NEUTRAL,,13
+The stars are so bright and clear tonight that you can see the entire Milky Way stretching across the dark sky above our village like a river,WEATHER_TIME,NEUTRAL,,13
+The cold harmattan wind makes my skin feel very dry and cracked and I have to use shea butter every day to keep it soft and smooth,WEATHER_TIME,NEUTRAL,,13
+We pray for good weather and enough rainfall this year so that the harvest will be plentiful and nobody in our community will go hungry this season,WEATHER_TIME,NEUTRAL,,13
+The fishermen at the wharf are pulling in their nets and today catch looks very big and fresh with plenty of different types of fish,LOCAL_SCENARIOS,NEUTRAL,,13
+Our village well dried up last week and now everybody has to walk to the river which is almost two kilometers away to collect water every day,LOCAL_SCENARIOS,SAD,,13
+The community organized a big cleanup day to clear all the rubbish and dirty water from the gutters before the heavy rainy season starts again,LOCAL_SCENARIOS,NEUTRAL,,13
+The palm wine tapper climbed up the very tall palm tree this early morning to collect the sweet fresh sap before the hot sun spoils it,LOCAL_SCENARIOS,NEUTRAL,,13
+There is a big football match this Saturday between our village team and the team from the next town and everyone is very excited about it,LOCAL_SCENARIOS,EXCITED,,13
+The women group in our community started a new soap making business together and they are selling their products at the local market every single week,LOCAL_SCENARIOS,NEUTRAL,,13
+The taxi drivers at the junction are always arguing about whose turn it is to take the next passenger going towards the market in town,LOCAL_SCENARIOS,NEUTRAL,,13
+The old bridge over the river needs serious repairs because the wooden planks are rotting and it is becoming very dangerous for people to cross it safely,LOCAL_SCENARIOS,NEUTRAL,,13
+Our chief called a meeting for all the young people to discuss how we can bring more development projects and opportunities to our village this year,LOCAL_SCENARIOS,NEUTRAL,,13
+The market women blocked the main road today because they are protesting against the new tax that the local council is trying to force on them,LOCAL_SCENARIOS,ANGRY,,13
+My grandmother makes the most beautiful country cloth on her traditional loom and people come from very far away just to buy her work,LOCAL_SCENARIOS,NEUTRAL,,13
+The generator at the community center broke down again last night and now there is no electricity for the evening adult literacy classes this whole week,LOCAL_SCENARIOS,SAD,,13
+The okada riders drive so fast through the narrow village streets that it is becoming very dangerous for children and old people walking on the road,LOCAL_SCENARIOS,NEUTRAL,,13
+We held a naming ceremony for the new baby last weekend and the whole community came out to celebrate and welcome the child into our family,LOCAL_SCENARIOS,HAPPY,,13
+The boat that carries passengers across the river is very old and overcrowded and many people are worried that it is not safe to ride on anymore,LOCAL_SCENARIOS,NEUTRAL,,13
+The young men in the village formed a group to guard the community at night because there have been reports of strangers coming around after dark,LOCAL_SCENARIOS,NEUTRAL,,13
+The women carry huge bundles of firewood on their heads for miles and miles every week just so they can cook meals for their families at home,LOCAL_SCENARIOS,NEUTRAL,,13
+The teacher at the village school teaches all six different grades by himself in one single classroom because there are not enough teachers to go around,LOCAL_SCENARIOS,SAD,,13
+The local football field gets completely flooded during the rainy season and the children have to wait several months before they can play there again,LOCAL_SCENARIOS,NEUTRAL,,13
+The community radio station plays local music and announces important news and events every day and almost everyone in our area listens to it regularly,LOCAL_SCENARIOS,NEUTRAL,,13
+My mother sells gari and cassava at the market and she has been doing this same trade for over twenty long years now without stopping,LOCAL_SCENARIOS,NEUTRAL,,13
+The young girls in our village learn to braid hair from their mothers and aunties and some of them become very skilled professional hairdressers later on,LOCAL_SCENARIOS,NEUTRAL,,13
+The church choir practiced all week for the special Sunday service and their singing was so beautiful that some people in the congregation were moved to tears,LOCAL_SCENARIOS,HAPPY,,13
+The local blacksmith makes farming tools and cooking pots by hand using traditional methods that have been passed down through many generations in his family,LOCAL_SCENARIOS,NEUTRAL,,13
+We collect rainwater from the roof during the wet season and store it in big drums for use during the long dry months when water becomes scarce,LOCAL_SCENARIOS,NEUTRAL,,13
+The annual masquerade festival brings people from all over the country to our village and it is the biggest and most colorful event of the whole year,LOCAL_SCENARIOS,HAPPY,,13
+The motorcycle taxis are the fastest way to travel on the bumpy dirt roads in our area but many people are too scared to ride on them,LOCAL_SCENARIOS,NEUTRAL,,13
+The women in our savings group each contribute a small amount of money every month and then one person receives the whole collected amount on a rotating basis,LOCAL_SCENARIOS,NEUTRAL,,13
+The road to our village becomes almost impossible to drive on during the heavy rains because the mud gets so deep that even trucks get completely stuck,LOCAL_SCENARIOS,NEUTRAL,,13
+The local carpenter built all the desks and benches in our village school using wood that he cut himself from the trees growing on his own farmland,LOCAL_SCENARIOS,NEUTRAL,,13
+The dried fish market near the waterfront always has a very strong smell but the quality of the fish sold there is always very good and fresh,LOCAL_SCENARIOS,NEUTRAL,,13
+The village elders meet under the big tree every month to resolve disputes and make important decisions about land and community matters that affect everyone here,LOCAL_SCENARIOS,NEUTRAL,,13
+The palm oil processing takes several days of very hard work but it is one of the main sources of income for many women in our rural area,LOCAL_SCENARIOS,NEUTRAL,,13
+My uncle drives a poda poda bus between our town and the city and the road is so rough and bumpy that the trip always takes very long,LOCAL_SCENARIOS,NEUTRAL,,13
+The children collect empty plastic bottles and sell them to the recycling man who comes through our village with his truck every other week on Tuesdays,LOCAL_SCENARIOS,NEUTRAL,,13
+The thick brown rope that hangs from the wooden beam in the barn is strong enough to hold the heavy weight of the water bucket,PHONETIC_COVERAGE,NEUTRAL,,13
+She whispered softly through the thin curtain that blows gently in the breeze coming from the open window of the bedroom facing the river,PHONETIC_COVERAGE,WHISPER,,13
+The children jumped over the shallow puddles singing cheerful songs about the bright sunshine that came after the long period of heavy rainfall last week,PHONETIC_COVERAGE,HAPPY,,13
+Please bring the three clean white plates from the kitchen shelf and set them neatly on the round wooden table for our evening dinner tonight,PHONETIC_COVERAGE,NEUTRAL,,13
+The old grey cat stretched lazily across the smooth warm tiles in the sunlight that poured through the glass window every afternoon around three o clock,PHONETIC_COVERAGE,NEUTRAL,,13
+My grandmother showed me how to properly thread a very thin needle using the bright lamplight to see the tiny eye hole more clearly at night,PHONETIC_COVERAGE,NEUTRAL,,13
+The sharp thorn bush growing along the narrow footpath scratched my arm and leg badly when I was walking through it in the dark last evening,PHONETIC_COVERAGE,NEUTRAL,,13
+The fisherman threw his wide circular net into the calm blue sea with one smooth strong motion of both his muscular brown arms at the same time,PHONETIC_COVERAGE,NEUTRAL,,13
+A strange buzzing sound came from the thick bush growing behind the broken wall of the old abandoned building at the far edge of the village,PHONETIC_COVERAGE,NEUTRAL,,13
+The fresh sweet mangoes that grow on the tall tree in our yard always attract many colorful birds and noisy fruit bats during the ripening season,PHONETIC_COVERAGE,NEUTRAL,,13
+She carefully wrapped the fragile glass bottle in several layers of soft cloth before placing it gently into the bottom of her large traveling bag,PHONETIC_COVERAGE,NEUTRAL,,13
+The bright orange flames of the cooking fire danced and flickered wildly in the strong night wind that blew through the open kitchen doorway outside,PHONETIC_COVERAGE,NEUTRAL,,13
+He squeezed through the narrow gap between the two rough stone walls and emerged on the other side covered in grey dust and small cobwebs,PHONETIC_COVERAGE,NEUTRAL,,13
+The slow rhythmic drumming from the village square could be heard clearly from very far away echoing through the quiet valleys and green rolling hills,PHONETIC_COVERAGE,NEUTRAL,,13
+The woman balanced a large heavy clay pot full of cool water perfectly on her head as she walked gracefully down the steep rocky path home,PHONETIC_COVERAGE,NEUTRAL,,13
+The young boy clutched the smooth round pebble tightly in his small fist before throwing it with all his strength across the wide still river surface,PHONETIC_COVERAGE,NEUTRAL,,13
+The thick dark smoke from the burning charcoal filled the small kitchen room and made everybody cough and rush outside for some fresh clean air to breathe,PHONETIC_COVERAGE,NEUTRAL,,13
+She sang a beautiful traditional lullaby in a soft low voice while gently rocking the sleeping baby back and forth in her tired arms by the fire,PHONETIC_COVERAGE,NEUTRAL,,13
+The heavy wooden door creaked loudly on its rusty old iron hinges every single time somebody pushed it open or pulled it shut during the day,PHONETIC_COVERAGE,NEUTRAL,,13
+The cool morning breeze carried the pleasant sweet smell of blooming flowers and ripe fruit all the way from the garden to our front veranda this morning,PHONETIC_COVERAGE,NEUTRAL,,13
+He dug a deep narrow hole in the soft red earth with his worn out metal shovel to plant the young seedling in the ground before the rain,PHONETIC_COVERAGE,NEUTRAL,,13
+The bright yellow and green fabric that she chose for her new dress was the most beautiful piece of cloth in the entire market stall today,PHONETIC_COVERAGE,NEUTRAL,,13
+The thunder crashed loudly and the lightning flashed brightly across the dark purple sky as the children ran screaming with fear towards the safety of the house,PHONETIC_COVERAGE,NEUTRAL,,13
+The old man shuffled slowly along the dusty path with his carved wooden walking stick tapping rhythmically on the dry hard ground with every careful step he took,PHONETIC_COVERAGE,NEUTRAL,,13
+She ground the dried red peppers and fresh garlic together on the rough flat stone until they became a smooth thick paste for the evening stew tonight,PHONETIC_COVERAGE,NEUTRAL,,13
+The crooked zinc roof of the small shop rattled and shook violently every time a strong gust of wind blew through the narrow market alley outside,PHONETIC_COVERAGE,NEUTRAL,,13
+He swam strongly through the choppy brown river water carrying the thick coiled rope between his teeth to tie around the large fallen tree on the other bank,PHONETIC_COVERAGE,NEUTRAL,,13
+The sweet thick palm oil bubbled and popped loudly in the big black iron pot as she stirred the rich golden stew slowly with a long wooden spoon,PHONETIC_COVERAGE,NEUTRAL,,13
+The tall thin man stretched his long arms up high to reach the clusters of ripe yellow bananas hanging from the very top of the leaning tree,PHONETIC_COVERAGE,NEUTRAL,,13
+A large group of small brown sparrows chirped noisily in the dense green bushes near the stream where the village children go to swim every hot afternoon,PHONETIC_COVERAGE,NEUTRAL,,13
+The woven grass mat felt rough and scratchy under my bare feet as I walked slowly across the floor of the dimly lit hut towards the doorway,PHONETIC_COVERAGE,NEUTRAL,,13
+She pressed the smooth flat iron firmly against the damp white cotton shirt moving it back and forth with slow steady strokes until every wrinkle disappeared completely,PHONETIC_COVERAGE,NEUTRAL,,13
+The sour green oranges that grew on the small tree behind the kitchen were squeezed fresh every morning into a tall glass of cold clean drinking water,PHONETIC_COVERAGE,NEUTRAL,,13
+I was talking to my neighbor yesterday and she told me that the price of everything at the market has gone up again this month,CONVERSATIONS,NEUTRAL,,13
+Let me tell you what happened to me on my way home from work last night because it was such a strange and surprising experience,CONVERSATIONS,NEUTRAL,,13
+My friend asked me for advice about whether she should sell her shop or keep running it and I told her what I honestly thought,CONVERSATIONS,NEUTRAL,,13
+I heard from somebody at the market that they are going to build a new school in our area sometime before the end of next year,CONVERSATIONS,NEUTRAL,,13
+So I said to him that he should not worry too much because everything is going to work out fine in the end with God help,CONVERSATIONS,NEUTRAL,,13
+My mother always tells me that if you work hard and are honest with people then good things will eventually come your way in this life,CONVERSATIONS,NEUTRAL,,13
+The old man sitting next to me on the bus started telling me about his life growing up in the village many years ago before the war,CONVERSATIONS,NEUTRAL,,13
+I tried to explain to my landlord that I need just a few more days to get all the rent money together but he did not listen,CONVERSATIONS,SAD,,13
+My wife said we should start saving more money for the children education because school fees keep getting more and more expensive every single year now,CONVERSATIONS,NEUTRAL,,13
+The women at the water point were all talking about the new health program that the government announced on the radio last night after the news,CONVERSATIONS,NEUTRAL,,13
+My brother called me on the phone this morning and told me that our father is not feeling well and we should go visit him soon,CONVERSATIONS,NEUTRAL,,13
+I met an old school friend at the market today and we spent almost an hour catching up on everything that happened since we last saw each other,CONVERSATIONS,HAPPY,,13
+The teacher told the parents at the meeting that the children need more books and learning materials if they are going to pass their exams this year,CONVERSATIONS,NEUTRAL,,13
+My neighbor came over to borrow some sugar and we ended up talking for two whole hours about everything that has been happening in the community lately,CONVERSATIONS,NEUTRAL,,13
+She told me that the secret to making good cassava bread is to press out all the water properly before you start to bake it on the fire,CONVERSATIONS,NEUTRAL,,13
+I was listening to the radio program where people call in to share their problems and one woman story really touched my heart and made me think deeply,CONVERSATIONS,NEUTRAL,,13
+The chief told everyone at the meeting that we need to work together as one community if we want to see real positive change happen around here,CONVERSATIONS,NEUTRAL,,13
+My daughter came home from school today very excited because her teacher praised her in front of the whole class for getting all her answers right,CONVERSATIONS,HAPPY,,13
+The taxi driver was telling me about how business has been so slow lately because the price of fuel keeps going up and fewer people can afford to ride,CONVERSATIONS,NEUTRAL,,13
+I promised my mother that I would come and visit her in the village next weekend but I am not sure if I can get the time off work,CONVERSATIONS,NEUTRAL,,13
+The man at the phone repair shop told me that my old phone cannot be fixed anymore and I need to buy a completely new one to replace it,CONVERSATIONS,SAD,,13
+My friend and I were debating about which football team is the best in the country and we could not agree with each other at all,CONVERSATIONS,NEUTRAL,,13
+She warned me to be very careful with that money lender because she heard that he charges people very high interest rates that are hard to pay back,CONVERSATIONS,NEUTRAL,,13
+The pastor said in his sermon that we should always help those who are less fortunate than us because that is what God expects from all good people,CONVERSATIONS,NEUTRAL,,13
+I told my children the story of how their grandfather built this house with his own two hands many years ago when he was still a young man,CONVERSATIONS,NEUTRAL,,13
+My colleague at work suggested that we should start a small business together on the side to earn some extra income to support both of our families,CONVERSATIONS,NEUTRAL,,13
+The health worker explained to us very clearly why it is so important to use mosquito nets every night especially for young children and pregnant women,CONVERSATIONS,NEUTRAL,,13
+I was discussing with my husband about whether we should move to the city or stay in the village where our families and friends all live,CONVERSATIONS,NEUTRAL,,13
+The market woman told me she would give me a better price if I come back early tomorrow morning before all the other customers arrive to buy,CONVERSATIONS,NEUTRAL,,13
+My sister called me crying on the phone because she lost her job today and now she does not know how she is going to pay her bills,CONVERSATIONS,SAD,,13
+The elder told us young people that patience is the most important quality in life and that rushing things always leads to mistakes and regret in the end,CONVERSATIONS,NEUTRAL,,13
+I was explaining to my son why he needs to study hard in school because education is the only sure way to build a better future for himself,CONVERSATIONS,NEUTRAL,,13
+She confided in me that she has been feeling very lonely since her husband passed away and she misses having someone to talk to in the evenings at home,CONVERSATIONS,SAD,,13
+The farmer told me that he plants his cassava when the moon is full because his grandfather taught him that it makes the roots grow much bigger and stronger,CONVERSATIONS,NEUTRAL,,13
+I told him clearly that I did not agree with his plan at all and I carefully explained to him every single one of my reasons why,CONVERSATIONS,NEUTRAL,,13
+The women in our church organized a big fundraiser to help all the families who were badly affected by the recent flooding in the low areas,CONVERSATIONS,NEUTRAL,,13
+My aunt was telling me about the time when she was young and used to walk barefoot for miles to sell oranges at the big market in town,CONVERSATIONS,NEUTRAL,,13
+I asked the herbalist if he had any natural remedy for my constant back pain and he told me to try rubbing warm shea butter on it every night,CONVERSATIONS,NEUTRAL,,13
+The young man at the barber shop was bragging about how he scored the winning goal in the football match last Sunday afternoon and everyone was laughing at him,CONVERSATIONS,HAPPY,,13
+My neighbor asked me if I could watch her children for a few hours while she goes to the hospital to check on her sick mother today,CONVERSATIONS,NEUTRAL,,13
+We were sitting under the tree discussing what to do about the broken water pump when the chief himself came and joined our conversation unexpectedly,CONVERSATIONS,NEUTRAL,,13
+The fisherman told us about the time he caught such a big fish that it nearly pulled him out of his small canoe and into the deep water,CONVERSATIONS,NEUTRAL,,13
+My grandmother always says that a person who does not greet other people properly in the morning will not receive blessings throughout the rest of the day,CONVERSATIONS,NEUTRAL,,13
+I overheard two women at the market arguing about who has the best recipe for palm butter stew and they both sounded very confident about their cooking skills,CONVERSATIONS,NEUTRAL,,13
+The mechanic explained to me in simple words exactly what is wrong with my car engine and how much it would cost me to get it all fixed properly,CONVERSATIONS,NEUTRAL,,13
+She told me that she dreams of one day opening her own restaurant where she can serve all the traditional dishes that her late mother taught her how to cook,CONVERSATIONS,NEUTRAL,,13
+I was chatting with the security guard at the bank and he told me that he walks over ten kilometers every single day just to get to work on time,CONVERSATIONS,NEUTRAL,,13
+My cousin called me from overseas to say that life abroad is very hard and lonely and that he misses home and his family every single day and night,CONVERSATIONS,SAD,,13
+The old woman next door told me that when she was young this whole area used to be nothing but thick forest and farmland as far as you could see,CONVERSATIONS,NEUTRAL,,13
+I met the headmaster on the road and he asked me if I would be willing to volunteer to teach the adult literacy classes that they hold every Thursday evening,CONVERSATIONS,NEUTRAL,,13
+My friend was complaining that her husband never helps with any of the cooking or housework and she has to do everything by herself every single day after work,CONVERSATIONS,NEUTRAL,,13
+The bus driver told me that the road to the next town is blocked because a big truck carrying building materials broke down right in the middle of the bridge,CONVERSATIONS,NEUTRAL,,13
+My father used to say that the best time to plant a tree was twenty years ago and the second best time to plant one is right now today,CONVERSATIONS,NEUTRAL,,13
+She asked me if I thought it was a good idea to borrow money from the savings group to expand her small tailoring business before the holiday season comes,CONVERSATIONS,NEUTRAL,,13
+The children were telling each other scary stories about the old abandoned house at the edge of the village and none of them were brave enough to go near it,CONVERSATIONS,NEUTRAL,,13
+I was explaining to my young nephew that respect for elders is one of the most important values in our culture and he should always remember that wherever he goes,CONVERSATIONS,NEUTRAL,,13
+The nurse told my mother that she needs to come back to the clinic every two weeks for her checkup until the doctor says that she is fully recovered,CONVERSATIONS,NEUTRAL,,13
+My coworker was telling me about his plan to start raising chickens at his house so that he can sell the eggs for some extra income on the weekends,CONVERSATIONS,NEUTRAL,,13
+The teacher asked the children to share what they want to be when they grow up and the answers they gave were so creative and wonderful to hear from them,CONVERSATIONS,HAPPY,,13
+I told my sister that she should not be afraid to speak up for herself at work because her ideas and opinions are just as important as anyone else there,CONVERSATIONS,NEUTRAL,,13
+The old fisherman was explaining to the young boys how to read the patterns in the ocean waves and clouds to know when it is safe to go out fishing,CONVERSATIONS,NEUTRAL,,13
+My wife said that we should invite the whole neighborhood for a meal this Sunday because it has been a very long time since we all sat down and ate together,CONVERSATIONS,NEUTRAL,,13
+The man at the electronics shop tried to convince me that this phone was better than the other one but I could clearly see that he just wanted to sell the expensive model,CONVERSATIONS,NEUTRAL,,13
+She whispered to me that she is planning a surprise birthday party for her husband next Saturday and she asked me to help her keep it a secret from him,CONVERSATIONS,HAPPY,,13
+I was discussing with the farmer about the best methods for growing vegetables during the dry season and he shared some very useful traditional techniques that his family has always used,CONVERSATIONS,NEUTRAL,,13
+The landlady told us that she is raising the rent next month because the cost of maintaining the building has gone up significantly due to the rising price of materials,CONVERSATIONS,NEUTRAL,,13
+My brother and I had a long conversation about whether it is better to stay in the village and farm or move to the city to look for a different kind of job,CONVERSATIONS,NEUTRAL,,13
+I usually finish all my housework by noon so that I have the whole afternoon free to go to the market and do my shopping before it gets too late,DAILY_LIFE,NEUTRAL,,13
+The children line up every morning at the water tap with their small buckets to collect water before going to school because there is no water at the school building,DAILY_LIFE,NEUTRAL,,13
+Every Friday afternoon the women gather at the community center to learn new skills like soap making and tie dye fabric printing from the volunteer teachers who come from town,DAILY_LIFE,NEUTRAL,,13
+My daily breakfast is usually a cup of strong tea with bread and some groundnut paste which gives me enough energy to work hard until lunchtime in the afternoon,DAILY_LIFE,NEUTRAL,,13
+I always make sure the cooking fire is properly out before I go to sleep at night because we had a bad fire incident in our area last dry season,DAILY_LIFE,NEUTRAL,,13
+The tailor in our neighborhood is always busy sewing school uniforms at the beginning of every new term and she works late into the night to finish all the orders,DAILY_LIFE,NEUTRAL,,13
+I collect the eggs from our chickens every morning and we either eat them for breakfast or I sell them to the neighbors who always want to buy fresh ones,DAILY_LIFE,NEUTRAL,,13
+The young boys in our area earn money by washing cars at the big intersection and they can make enough in one day to buy food for their families,DAILY_LIFE,NEUTRAL,,13
+My mother starts preparing the evening meal right after lunch because cooking with firewood takes a very long time and everything needs to be ready before dark outside,DAILY_LIFE,NEUTRAL,,13
+We keep all our important documents in a metal box under the bed because the humidity and insects in our area can destroy paper very quickly if not protected,DAILY_LIFE,NEUTRAL,,13
+I spend every Saturday morning at the hairdresser getting my hair braided while we talk and laugh and share all the latest gossip from around the neighborhood together,DAILY_LIFE,NEUTRAL,,13
+The sound of women pounding fufu in their big wooden mortars echoes through the village every evening and you can hear the rhythmic thumping from very far away,DAILY_LIFE,NEUTRAL,,13
+I always keep a jerry can of clean water by the front door in case the water supply suddenly stops running during the day while I am cooking meals,DAILY_LIFE,NEUTRAL,,13
+The old men play checkers and cards under the shade of the big tree every afternoon while the younger men listen to football matches on the radio nearby,DAILY_LIFE,NEUTRAL,,13
+My daughter helps me sort and pick through the rice every evening to remove all the small stones and dirt before I cook it for the family dinner,DAILY_LIFE,NEUTRAL,,13
+I carry my mobile phone everywhere I go and I charge it at the small solar charging station near the market because we do not have electricity at home yet,DAILY_LIFE,NEUTRAL,,13
+Every morning before sunrise you can hear the call to prayer from the mosque echoing across the quiet village and it is the signal for everyone to start their day,DAILY_LIFE,NEUTRAL,,13
+"I keep a small vegetable garden by the side of the house where I grow okra, pepper and tomatoes for our daily cooking and sometimes extra to sell to neighbors",DAILY_LIFE,NEUTRAL,,13
+The neighborhood children all play together in the open field every evening after finishing their homework and their happy shouting and laughter fills the air until darkness comes,DAILY_LIFE,NEUTRAL,,13
+I mend and patch my children clothes by hand because buying new ones every time they tear is too expensive for our small budget right now at this time,DAILY_LIFE,NEUTRAL,,13
+Every wet season I make sure to clear all the drainage channels around our house so that the rain water can flow freely and does not flood into the rooms,DAILY_LIFE,NEUTRAL,,13
+The smell of freshly baked bread from the small bakery on our street wakes up the whole neighborhood every early morning and makes everybody feel very hungry right away,DAILY_LIFE,NEUTRAL,,13
+I always soak my beans overnight in water before cooking them the next day because it makes them softer and they cook much faster and use less charcoal for fuel,DAILY_LIFE,NEUTRAL,,13
+We share a small television with our neighbors and every evening we all crowd together in their living room to watch the popular drama series that everybody is talking about,DAILY_LIFE,NEUTRAL,,13
+"My morning routine includes feeding the goats, sweeping the yard, fetching water from the well, and preparing breakfast all before the children wake up and need to get ready for school",DAILY_LIFE,NEUTRAL,,13
+I store all our dried fish and smoked meat on a high shelf in the kitchen to keep it away from the rats and cats that come sneaking around at night,DAILY_LIFE,NEUTRAL,,13
+The community tap water only runs for about three hours in the early morning so everybody rushes to fill their containers before it stops flowing for the rest of the day,DAILY_LIFE,NEUTRAL,,13
+The shortcut through the bush behind the school saves you about fifteen minutes of walking but the path is very narrow and overgrown with tall grass and thorny bushes,DIRECTIONS_PLACES,NEUTRAL,,13
+Once you pass the big church with the white walls and blue roof you will see a small path on your right that leads down to the river bank,DIRECTIONS_PLACES,NEUTRAL,,13
+The taxi stand is directly across the street from the old post office building that has the faded yellow paint and the broken clock tower on the very top,DIRECTIONS_PLACES,NEUTRAL,,13
+Keep walking along the railroad tracks for about ten minutes and then you will come to a small village where you can ask anyone for further directions from there,DIRECTIONS_PLACES,NEUTRAL,,13
+The new road they built last year goes straight from the highway all the way to the beach and it is much smoother and faster than the old bumpy route,DIRECTIONS_PLACES,NEUTRAL,,13
+You will find the blacksmith workshop right at the bottom of the hill just before you reach the small bridge that crosses over the stream near the old rubber plantation,DIRECTIONS_PLACES,NEUTRAL,,13
+My mother village is located between two rivers and the only way to get there during the rainy season is by crossing the water using a small wooden canoe boat,DIRECTIONS_PLACES,NEUTRAL,,13
+The football field is behind the secondary school and you can reach it by taking the narrow path that runs alongside the fence wall on the left side of the building,DIRECTIONS_PLACES,NEUTRAL,,13
+If you stand at the top of that hill and look towards the east you can see the ocean shining in the distance on a clear and sunny morning day,DIRECTIONS_PLACES,NEUTRAL,,13
+The best route to take during the rainy season is the main paved road even though it is longer because the dirt shortcut becomes too muddy and dangerous for travel,DIRECTIONS_PLACES,NEUTRAL,,13
+You need to pass through three small villages before you reach the market town and each village has a checkpoint where they might ask you where you are going,DIRECTIONS_PLACES,NEUTRAL,,13
+The cemetery is on the quiet hill overlooking the town and you can see it clearly from the main bridge because of all the white and grey headstones standing there,DIRECTIONS_PLACES,NEUTRAL,,13
+Take the path that goes behind the big mango tree and follow it along the fence until you reach the clearing where the women usually sell their vegetables every morning,DIRECTIONS_PLACES,NEUTRAL,,13
+The road forks into two directions at the edge of town and you need to take the left fork which goes uphill towards the mountain pass and the villages beyond,DIRECTIONS_PLACES,NEUTRAL,,13
+You will know you have reached the right place when you see the three tall coconut palm trees standing together in a row right at the entrance gate of the compound,DIRECTIONS_PLACES,NEUTRAL,,13
+The harbor is on the western side of the city and you can reach it by taking any of the buses that go down to the waterfront area from the station,DIRECTIONS_PLACES,NEUTRAL,,13
+If you follow the footpath along the edge of the rice paddy field it will eventually bring you to the main road where you can catch a bus or taxi,DIRECTIONS_PLACES,NEUTRAL,,13
+The mosque is the building with the tall green minaret that you can see rising above all the other rooftops in the center of the town from almost anywhere,DIRECTIONS_PLACES,NEUTRAL,,13
+My uncle farm is the last one at the very end of the dirt road before the forest begins and there is a big wooden sign with his name on it,DIRECTIONS_PLACES,NEUTRAL,,13
+The clinic is located right next to the primary school in the middle of the village and both buildings share the same compound and water well between them,DIRECTIONS_PLACES,NEUTRAL,,13
+You have to cross the river at the shallow point where you can see the large flat rocks sticking up out of the water because there is no bridge there,DIRECTIONS_PLACES,NEUTRAL,,13
+The market entrance on the northern side is the least crowded one to use and it is closer to where the fresh fruit and vegetable sellers usually set up their stalls,DIRECTIONS_PLACES,NEUTRAL,,13
+Follow this road all the way until you reach the roundabout with the big monument in the center and then take the second exit heading towards the airport direction,DIRECTIONS_PLACES,NEUTRAL,,13
+The path splits at the baobab tree and the right side goes to the fishing village while the left side takes you up to the hilltop where the old fort stands,DIRECTIONS_PLACES,NEUTRAL,,13
+You can see the smoke from the charcoal kilns rising up from behind those trees and that is exactly where you need to turn right to find the workshop there,DIRECTIONS_PLACES,NEUTRAL,,13
+The house you are looking for has a bright red gate and a large satellite dish on the roof and it is the only one on that street with both of those things,DIRECTIONS_PLACES,NEUTRAL,,13
+Walk past the row of small shops selling phone credit and provisions and then turn left at the corner where the big billboard advertisement stands near the drainage ditch,DIRECTIONS_PLACES,NEUTRAL,,13
+The bus will drop you at a junction with a big mango tree and from there you need to walk about five hundred meters straight ahead to reach our village gate,DIRECTIONS_PLACES,NEUTRAL,,13
+The community center is the large hall with the corrugated zinc roof right behind the police post and it has a big open field in front where events are usually held,DIRECTIONS_PLACES,NEUTRAL,,13
+If you get confused at any point just look for the mobile phone tower because it is the tallest structure in the area and our village is right at the base of it,DIRECTIONS_PLACES,NEUTRAL,,13
+The well is about two hundred meters from the main road and you need to follow the small footpath through the cassava field to reach the spot where people draw water,DIRECTIONS_PLACES,NEUTRAL,,13
+Take the narrow lane between the hardware store and the tailoring shop and it will lead you straight to the backyard where the community meeting area and benches are located,DIRECTIONS_PLACES,NEUTRAL,,13
+The fish market is at the bottom of the slope near the water edge and you will hear the noise and smell the fish long before you can actually see the place,DIRECTIONS_PLACES,NEUTRAL,,13
+Our village is the one where the road makes a sharp bend to the left and you will see a cluster of mango and coconut trees right at the curve,DIRECTIONS_PLACES,NEUTRAL,,13
+The bakery is three doors down from the pharmacy on the same side of the street and you can usually smell the fresh bread baking from about a block away,DIRECTIONS_PLACES,NEUTRAL,,13
+My sister house is behind the church building and you can get there by walking through the small alley that runs between the pastor house and the Sunday school room,DIRECTIONS_PLACES,NEUTRAL,,13
+Head south along the coast until you pass the lighthouse and then turn inland at the small fishing harbor where the wooden boats are pulled up on the sandy beach,DIRECTIONS_PLACES,NEUTRAL,,13
+The primary school is the yellow building with the green doors and you can find it by following the noise of the children playing and singing during their break time,DIRECTIONS_PLACES,NEUTRAL,,13
+My father always said that a family that eats together and prays together will always stay strong and united no matter what challenges or difficulties come their way in life,FAMILY_PEOPLE,NEUTRAL,,13
+My youngest sister is the artist of the family and she can draw the most amazing pictures of people and animals using just a simple pencil and a piece of paper,FAMILY_PEOPLE,NEUTRAL,,13
+My mother wakes up earlier than everyone else in the house every single morning to make sure that breakfast is ready before the children have to leave for school,FAMILY_PEOPLE,NEUTRAL,,13
+The elders in our family always remind us young people that we must respect our traditions and pass them on to the next generation so they are never forgotten,FAMILY_PEOPLE,NEUTRAL,,13
+My uncle served in the army for twenty years and now he spends his retirement growing vegetables on his small farm and telling stories to his grandchildren every evening,FAMILY_PEOPLE,NEUTRAL,,13
+"My wife is the backbone of our household because she manages all the money, takes care of the children, and still finds time to run her small trading business",FAMILY_PEOPLE,NEUTRAL,,13
+I have three brothers and two sisters and even though we all live in different towns now we still talk on the phone every week and visit each other when we can,FAMILY_PEOPLE,NEUTRAL,,13
+My grandmother can remember every single family member birthday by heart without writing them down and she always makes sure to send a special blessing on their special day,FAMILY_PEOPLE,NEUTRAL,,13
+Our family reunion happens every December and people travel from all over the country and even from overseas just to be together for a few precious days of celebration,FAMILY_PEOPLE,HAPPY,,13
+My oldest daughter has taken after her mother in so many ways especially in her kindness and patience with other people and her amazing talent for cooking delicious traditional food,FAMILY_PEOPLE,NEUTRAL,,13
+My cousin works as a boat captain on the river ferry and he makes sure that all the passengers arrive safely at their destination every single day rain or shine,FAMILY_PEOPLE,NEUTRAL,,13
+The children in our family are taught from a very young age to always show respect to older people by greeting them properly and helping them whenever they need assistance,FAMILY_PEOPLE,NEUTRAL,,13
+My late grandfather built the house where our family still lives today using his own bare hands and materials that he gathered from the surrounding forest over many hard years,FAMILY_PEOPLE,NEUTRAL,,13
+My brother wife is an excellent seamstress who can create the most beautiful traditional outfits from scratch and her work is known and admired throughout the whole village area,FAMILY_PEOPLE,NEUTRAL,,13
+I am teaching my son all the farming skills that my own father passed down to me so that he can carry on the family tradition of working the land,FAMILY_PEOPLE,NEUTRAL,,13
+My mother in law treats all her grandchildren exactly the same way with equal love and attention and she never shows any favoritism towards any particular one of them,FAMILY_PEOPLE,NEUTRAL,,13
+My sister moved to the capital city five years ago to find better work opportunities and she has been sending money home every month to help support our aging parents,FAMILY_PEOPLE,NEUTRAL,,13
+We named our newborn son after his great grandfather who was a well known and respected elder in our village community before he passed away peacefully at the age of ninety two,FAMILY_PEOPLE,NEUTRAL,,13
+My wife and I work as a team in everything we do from running our small business together to making decisions about our children education and future plans for the family,FAMILY_PEOPLE,NEUTRAL,,13
+My aunt is known throughout the whole region for her traditional healing knowledge which was passed down to her by her own mother who learned it from her grandmother before her,FAMILY_PEOPLE,NEUTRAL,,13
+My father could not read or write but he made sure that every single one of his seven children got the best education that he could possibly afford to give them,FAMILY_PEOPLE,NEUTRAL,,13
+The whole family gathered together last month to celebrate my parents thirtieth wedding anniversary and it was a beautiful and joyful occasion that everyone will remember for a very long time,FAMILY_PEOPLE,HAPPY,,13
+My youngest brother is always making everyone in the family laugh with his funny impressions of the characters from the popular radio drama that we all listen to every evening,FAMILY_PEOPLE,HAPPY,,13
+I worry about my aging mother who lives alone in the village because her health is not as good as it used to be and she is too proud to ask for help,FAMILY_PEOPLE,NEUTRAL,,13
+My daughter wants to study medicine at the university so she can come back to our village and help the people who do not have easy access to proper healthcare services,FAMILY_PEOPLE,NEUTRAL,,13
+The family gathers around the dinner table every evening and we share stories from our day and discuss important matters while enjoying the meal that was cooked with so much love,FAMILY_PEOPLE,NEUTRAL,,13
+My grandmother keeps a big photograph of the whole family hanging on the wall of her living room and every time a new baby is born she adds their picture to it,FAMILY_PEOPLE,NEUTRAL,,13
+My uncle is the person everyone in the family turns to when there is a dispute or disagreement because he always listens to both sides calmly and gives fair and wise advice,FAMILY_PEOPLE,NEUTRAL,,13
+I tell my children every night before they go to sleep that I am proud of them and that I love them no matter what happens in this world around us,FAMILY_PEOPLE,NEUTRAL,,13
+My nephew just graduated from vocational training school as a certified electrician and now he is the only qualified person in our whole village who can properly fix electrical problems,FAMILY_PEOPLE,HAPPY,,13
+"My family has been farming the same piece of land for four generations now and we know every hill, every tree, and every stream on it like the back of our hands",FAMILY_PEOPLE,NEUTRAL,,13
+My grandmother prayers every morning are so heartfelt and powerful that the whole household stops what they are doing to listen quietly and say amen together at the very end,FAMILY_PEOPLE,NEUTRAL,,13
+My mother always reminds me that no matter how far I go in life or how much success I achieve I should never forget where I came from and who raised me,FAMILY_PEOPLE,NEUTRAL,,13
+The women in my family have a tradition of making matching outfits from the same fabric for every major celebration and holiday so that everyone knows we belong together as one unit,FAMILY_PEOPLE,NEUTRAL,,13
+My father worked three different jobs at the same time just to make sure all his children could stay in school and have the chance to build a better life for themselves,FAMILY_PEOPLE,NEUTRAL,,13
+I am the proudest father in the world because all four of my children have grown up to be kind respectful and hardworking people who contribute positively to their communities every day,FAMILY_PEOPLE,HAPPY,,13
+The traditional birth attendant told the pregnant woman to eat plenty of dark green leafy vegetables and beans so that both she and the baby can be strong and healthy,HEALTH,NEUTRAL,,13
+"I keep a small first aid kit at home with bandages, antiseptic cream and painkillers so that we can treat minor injuries and cuts quickly without having to rush to the hospital",HEALTH,NEUTRAL,,13
+The community health volunteer goes from house to house in our village every month to check on newborn babies and their mothers and make sure they are both doing well,HEALTH,NEUTRAL,,13
+My grandmother always boils water with lemongrass and ginger for us to drink when we have a cold because she says it clears the chest and throat and helps you breathe better,HEALTH,NEUTRAL,,13
+The children at school were taught about the importance of washing their hands with soap for at least twenty seconds to kill all the germs and prevent the spread of disease,HEALTH,NEUTRAL,,13
+I have to take my blood pressure medicine every single morning with breakfast and the doctor told me to also cut down on salt and fatty foods in my diet,HEALTH,NEUTRAL,,13
+The malaria testing kits that the health workers distributed to our community have made it much easier for people to find out quickly if they have the disease or not,HEALTH,NEUTRAL,,13
+My wife uses aloe vera from our garden to treat skin rashes and minor burns on the children and it always works very well and helps them heal quickly without any scarring,HEALTH,NEUTRAL,,13
+The nearest dentist is in the big town over forty kilometers away from our village and most people here have never had their teeth properly checked or cleaned by a professional,HEALTH,SAD,,13
+"I make sure my children eat a balanced meal every day with rice or cassava for energy, fish or beans for protein, and vegetables for vitamins to keep them healthy and strong",HEALTH,NEUTRAL,,13
+"The clinic nurse told me that I should bring my baby for vaccinations at exactly two months, four months and six months old to protect her from dangerous childhood diseases",HEALTH,NEUTRAL,,13
+My father has arthritis in his knees and hands and the pain gets much worse during the cold harmattan season when the dry wind blows hard for weeks without stopping,HEALTH,NEUTRAL,,13
+The government health campaign taught us that sleeping under treated mosquito nets every night is one of the most effective ways to prevent malaria especially for young children and pregnant women,HEALTH,NEUTRAL,,13
+I keep a jar of raw honey at home because my grandmother taught me that a spoonful of honey mixed with warm water and lemon is the best remedy for a sore throat,HEALTH,NEUTRAL,,13
+The eye doctor who visited our village last month found that many of the older people need reading glasses but most of them cannot afford to buy a proper pair for themselves,HEALTH,SAD,,13
+My mother makes a special healing tea from boiled neem tree leaves that she gives to anyone in the family who has a fever or stomach upset and it usually helps a lot,HEALTH,NEUTRAL,,13
+The health workers set up a temporary vaccination station at the market so that more people could easily get their shots without having to travel far from their homes or workplaces,HEALTH,NEUTRAL,,13
+I try to walk for at least thirty minutes every morning before the sun gets too hot because the doctor said regular exercise is important for keeping my heart and body healthy,HEALTH,NEUTRAL,,13
+My daughter learned in school that brushing your teeth twice a day and eating less sugar can prevent cavities and keep your mouth healthy for your whole entire life and I believe her,HEALTH,NEUTRAL,,13
+The village midwife has been helping women in our community safely deliver their babies for over thirty years and she has earned the deep trust and respect of everyone here,HEALTH,NEUTRAL,,13
+We boil all our drinking water at home because the clinic nurse warned us that untreated water from the stream can contain harmful bacteria that cause diarrhea and other serious illnesses,HEALTH,NEUTRAL,,13
+My brother was bitten by a snake on his foot while working on the farm and we had to carry him quickly to the health center to get the antivenom treatment,HEALTH,URGENT,,13
+The mental health counselor who visits our community every two weeks has been helping many young people deal with stress and anxiety and giving them someone safe to talk to about their feelings,HEALTH,NEUTRAL,,13
+I always tell my children to wear their slippers or shoes when walking outside because hookworms and other parasites can enter your body through the bare skin on the bottoms of your feet,HEALTH,NEUTRAL,,13
+The pharmacy near the market has a qualified pharmacist who can advise you on which over the counter medicines are safe to take for common illnesses without needing to see a doctor first,HEALTH,NEUTRAL,,13
+"My grandfather lived to be ninety eight years old and he always said the secret to a long healthy life is eating natural food, staying active, and keeping a happy and peaceful mind",HEALTH,NEUTRAL,,13
+The new solar powered refrigerator at the health center means that vaccines and medicines can now be properly stored at the right temperature which is very important for them to work correctly,HEALTH,NEUTRAL,,13
+I noticed that my child has been scratching her head a lot and the teacher told me it might be lice so I need to buy the special shampoo to treat it properly,HEALTH,NEUTRAL,,13
+The women health group in our village meets every Wednesday to discuss family planning nutrition and child care and they share useful information that helps all the mothers in the community,HEALTH,NEUTRAL,,13
+My mother insists on adding bitter leaf and other green vegetables to almost every soup she makes because she believes they clean the blood and keep the whole body strong and healthy,HEALTH,NEUTRAL,,13
+The ambulance driver told us that many lives could be saved if people called for help sooner instead of waiting until the sick person condition has already become very serious and critical,HEALTH,NEUTRAL,,13
+I always carry a small bottle of hand sanitizer in my bag for times when there is no clean water and soap available to properly wash my hands before eating food,HEALTH,NEUTRAL,,13
+The village health committee organized a free medical screening day where doctors from the city came and checked over two hundred people for high blood pressure diabetes and eye problems,HEALTH,NEUTRAL,,13
+The secondhand shoe seller at the market always has a big crowd around his stall because he gets good quality shoes from overseas and sells them at very affordable low prices,MARKET_SHOPPING,NEUTRAL,,13
+I need to buy a new set of cooking pots because the old ones are so worn out and scratched that the food keeps sticking to the bottom when I try to cook,MARKET_SHOPPING,NEUTRAL,,13
+The fruit seller arranged her oranges and bananas in beautiful neat piles that looked so colorful and attractive that every person walking by wanted to stop and buy some from her,MARKET_SHOPPING,NEUTRAL,,13
+My wife always sends me to the market with a very detailed list because she knows that if she does not I will forget half the things and buy wrong items instead,MARKET_SHOPPING,NEUTRAL,,13
+The butcher at the far end of the market has the freshest goat meat because he slaughters his animals very early in the morning before the market even opens for business,MARKET_SHOPPING,NEUTRAL,,13
+I waited in line at the rice shop for almost one whole hour because there was a special sale and everybody in the neighborhood came at the same time to buy some,MARKET_SHOPPING,NEUTRAL,,13
+The market women have been complaining to the council about the poor drainage in the market area because whenever it rains the whole place floods and they cannot sell their goods,MARKET_SHOPPING,NEUTRAL,,13
+I prefer to buy my vegetables directly from the farmers who come to the market because the produce is fresher and cheaper than what you get from the middlemen who resell it,MARKET_SHOPPING,NEUTRAL,,13
+The basket weaver at the market makes the most beautiful and sturdy baskets that last for many years and she uses traditional techniques that were passed down from her grandmother,MARKET_SHOPPING,NEUTRAL,,13
+My daughter loves going to the market with me on Saturday mornings because I always buy her a small treat like roasted groundnuts or a piece of fresh sugarcane to chew on,MARKET_SHOPPING,HAPPY,,13
+The fabric section of the market is my favorite part to visit because there are so many beautiful colors and patterns to choose from and the sellers are always friendly and helpful,MARKET_SHOPPING,NEUTRAL,,13
+I always check the expiry date on any packaged food or medicine before I buy it at the market because some sellers try to sell expired products to customers who are not careful,MARKET_SHOPPING,NEUTRAL,,13
+The woman who sells palm oil in the market measures it out using an old tin can and she always gives you a little extra on top as a sign of goodwill,MARKET_SHOPPING,NEUTRAL,,13
+My mother taught me how to bargain properly at the market and the most important rule is to always start by offering about half of whatever price the seller first asks you for,MARKET_SHOPPING,NEUTRAL,,13
+The dried fish section of the market is always very busy in the morning and you have to get there early if you want to get the best quality fish at good prices,MARKET_SHOPPING,NEUTRAL,,13
+I bought a new thermos flask from the household goods seller at the market and it keeps my tea hot for the whole day which is very useful when I am working outside,MARKET_SHOPPING,NEUTRAL,,13
+The soap and cosmetics seller told me that the locally made black soap is much better for your skin than the imported brands and it costs a lot less money too,MARKET_SHOPPING,NEUTRAL,,13
+The market has a special section for traditional medicines and herbs where the herbalists sit and mix different plants and roots according to what ailment or health problem you describe to them,MARKET_SHOPPING,NEUTRAL,,13
+I always bring my own bag to the market because the thin plastic bags they give you tear very easily and you end up dropping your goods on the ground walking home,MARKET_SHOPPING,NEUTRAL,,13
+"The tailoring supplies section of the market has everything you could ever need including thread in every color, buttons, zippers, elastic bands, and every type of needle you can imagine",MARKET_SHOPPING,NEUTRAL,,13
+My favorite thing to buy at the market is the freshly roasted corn that the old woman grills over charcoal near the entrance because it smells absolutely wonderful and tastes even better,MARKET_SHOPPING,HAPPY,,13
+The market association chairman announced that all vendors must keep their stall areas clean and dispose of waste properly or they will face fines and possible loss of their selling spot,MARKET_SHOPPING,NEUTRAL,,13
+I found a beautiful handmade necklace at one of the jewelry stalls that would be the perfect anniversary gift for my wife and the price was very reasonable for such fine work,MARKET_SHOPPING,NEUTRAL,,13
+The young boys who carry heavy bags and boxes for customers at the market charge about one thousand leones per trip and they work very hard from morning until evening every day,MARKET_SHOPPING,NEUTRAL,,13
+The cassava seller at the market grates fresh cassava on the spot for customers and she can process a whole large basket of cassava tubers in less than an hour using her machine,MARKET_SHOPPING,NEUTRAL,,13
+My neighbor asked me to buy her some dried crayfish and stock cubes from the market because she was too busy cooking at home to come out and shop for herself today,MARKET_SHOPPING,NEUTRAL,,13
+The electronics section of the market is where you can buy everything from cheap phone chargers and earphones to refurbished televisions and radio sets at prices much lower than the formal shops,MARKET_SHOPPING,NEUTRAL,,13
+I love the energy and excitement of the market on busy days when hundreds of people are buying and selling and you can hear voices calling out prices and deals from every direction,MARKET_SHOPPING,NEUTRAL,,13
+The bread seller always saves me two fresh loaves from the morning batch because she knows that I come to buy from her every single day on my way home from work,MARKET_SHOPPING,NEUTRAL,,13
+The spice seller at the corner of the market grinds her peppers and seasonings fresh every morning and the delicious smell attracts customers from all the way across the market to her stall,MARKET_SHOPPING,NEUTRAL,,13
+"My grandmother sends me to the market every week to buy her special ingredients for her traditional medicines including dried bark, certain leaves, and specific roots that only she knows how to use",MARKET_SHOPPING,NEUTRAL,,13
+The heavy rain last night flooded the main road through our village and now cars and trucks cannot pass until the water goes down and the mud is cleared away properly,WEATHER_TIME,NEUTRAL,,13
+I love the smell of the earth right after the first rain falls because it is so fresh and clean and it reminds me of my childhood growing up in the village,WEATHER_TIME,HAPPY,,13
+The harmattan season brings very dry and dusty air from the Sahara desert that makes people skin crack and lips peel if they do not use some kind of moisturizing cream or butter,WEATHER_TIME,NEUTRAL,,13
+We had to postpone the outdoor church service until next weekend because the heavy rain this morning made the ground too wet and muddy for people to sit on their chairs outside,WEATHER_TIME,NEUTRAL,,13
+The children love playing in the rain puddles after a big downpour and their happy laughter and screaming fills the whole neighborhood with so much joy and energy every time it happens,WEATHER_TIME,HAPPY,,13
+My grandmother says she can tell when a big storm is coming just by the way the ants behave and the direction the wind blows the leaves on the palm trees outside,WEATHER_TIME,NEUTRAL,,13
+The farmers plant their cassava at the beginning of the rainy season in April or May and then harvest it about eight to twelve months later depending on the variety they chose,WEATHER_TIME,NEUTRAL,,13
+I always keep extra candles and matches in the house because when there is a big thunderstorm the electricity usually goes out and we need some light to see in the darkness,WEATHER_TIME,NEUTRAL,,13
+"The sunrise this morning was so incredibly beautiful with streaks of bright orange, pink, and gold spreading across the entire sky that I just stood there watching it for several minutes",WEATHER_TIME,HAPPY,,13
+The wind was blowing so strongly last night that it knocked down two big mango trees in our compound and scattered their branches and leaves all over the yard and road,WEATHER_TIME,NEUTRAL,,13
+During the peak of the rainy season it can rain heavily every single day for weeks and the rivers overflow and wash away parts of the roads and footpaths in our area,WEATHER_TIME,NEUTRAL,,13
+I check the sky carefully every morning before deciding whether to hang my washed clothes outside on the line because I do not want them to get wet again if it rains,WEATHER_TIME,NEUTRAL,,13
+The cool breeze that comes off the river in the early morning is the best time to do physical work outside before the heat of the midday sun becomes too intense to bear,WEATHER_TIME,NEUTRAL,,13
+The dry season is the best time for building houses and making mud bricks because the rain will not wash away the wet materials before they have a chance to dry and set properly,WEATHER_TIME,NEUTRAL,,13
+The lightning struck a big tree in the village last week and split it right in half from top to bottom which frightened everybody who saw and heard the tremendous crash it made,WEATHER_TIME,NEUTRAL,,13
+We pray for rain every year during the planting season because without enough water falling from the sky our crops will not grow and our families will not have enough food to eat,WEATHER_TIME,NEUTRAL,,13
+The temperature drops noticeably in the evening during the harmattan months and you can see your own breath in the cool air early in the morning before the sun warms things up,WEATHER_TIME,NEUTRAL,,13
+I remember the big flood from ten years ago when the water rose so high that people had to climb onto their rooftops and wait for rescue boats to come and save them,WEATHER_TIME,NEUTRAL,,13
+The coconut palm trees bend and sway dramatically during strong winds but they almost never break because their trunks are flexible enough to move with the force of the storm without snapping,WEATHER_TIME,NEUTRAL,,13
+We keep all our important papers and documents wrapped in plastic bags during the rainy season because the humidity and dampness in the air can cause them to become moldy and damaged,WEATHER_TIME,NEUTRAL,,13
+The full moon tonight makes the whole village look so peaceful and silver and you can walk around outside without needing any flashlight or lamp because there is so much natural light,WEATHER_TIME,NEUTRAL,,13
+The road to the next village becomes a slippery mud track during the rains and even the most experienced drivers have trouble keeping their vehicles from sliding off into the ditches on either side,WEATHER_TIME,NEUTRAL,,13
+We dry our harvested rice on big flat mats in the hot sun and we have to keep turning it over throughout the day so that every grain dries evenly and completely,WEATHER_TIME,NEUTRAL,,13
+The fog that settles in the valleys early in the morning during the cool season makes the whole landscape look mysterious and dreamlike before the warm sun burns it all away by midmorning,WEATHER_TIME,NEUTRAL,,13
+I always tell the children not to stand under a tree during a thunderstorm because lightning can strike tall objects and it is much safer to stay inside the house until it passes,WEATHER_TIME,NEUTRAL,,13
+The dry hot wind that blows across the savannah during March and April can make the temperature feel unbearable and most people try to rest in the shade during the hottest hours,WEATHER_TIME,NEUTRAL,,13
+The rainbow that appeared in the sky after the rain stopped this afternoon was one of the brightest and most complete ones I have ever seen with all its beautiful colors on display,WEATHER_TIME,HAPPY,,13
+We mark the beginning and end of the rainy season by the behavior of certain insects and frogs that come out in large numbers when the moisture in the air changes significantly,WEATHER_TIME,NEUTRAL,,13
+The fishing boats cannot go out to sea when the waves are too rough and high so the fishermen have to wait on the shore until the weather calms down enough for safe travel,WEATHER_TIME,NEUTRAL,,13
+My father taught me to read the clouds and he said that when you see dark flat bottomed clouds building up in the afternoon it means heavy rain is coming very soon,WEATHER_TIME,NEUTRAL,,13
+The intense midday heat during the dry season makes the air shimmer and dance above the ground creating a mirage effect that looks like water on the road but is not actually there,WEATHER_TIME,NEUTRAL,,13
+We plant special fast growing trees around our compound to act as windbreaks that protect our house and garden from the strong seasonal winds that can damage crops and blow off zinc roofs,WEATHER_TIME,NEUTRAL,,13
+The tide comes in very high during certain times of the month and the fishermen know exactly when to set their nets based on the position and phase of the moon in the sky,WEATHER_TIME,NEUTRAL,,13
+After three months without any rain the landscape looks brown and dry and exhausted but as soon as the first showers fall everything turns green again almost overnight like magic happening before your eyes,WEATHER_TIME,NEUTRAL,,13
+"The evening thunderstorms during the wet season are often short but extremely powerful with heavy rain, loud thunder, bright lightning, and strong gusty winds that shake the whole house and rattle the windows",WEATHER_TIME,NEUTRAL,,13
+We collect the morning dew from large leaves to water our seedlings during the dry season when there is no rain and the wells are too low to provide enough water for farming,WEATHER_TIME,NEUTRAL,,13
+The old baobab tree in the center of our village has survived hundreds of storms over hundreds of years and the elders say it will still be standing long after all of us are gone,WEATHER_TIME,NEUTRAL,,13
+The weather forecaster on the radio said that this year rainy season will start earlier than usual which is good news for the farmers but means we need to prepare our fields right away,WEATHER_TIME,NEUTRAL,,13
+The traditional dancers performed at the chief installation ceremony and their colorful costumes and powerful movements had the whole crowd watching in complete amazement and clapping along with the drums,LOCAL_SCENARIOS,HAPPY,,13
+The poyo bar at the edge of the village is where the men gather every evening to drink fresh palm wine and discuss the latest news and politics happening in the country,LOCAL_SCENARIOS,NEUTRAL,,13
+The women cooperative in our community bought a cassava processing machine that has made the work of producing gari much easier and faster and has increased their income significantly this past year,LOCAL_SCENARIOS,NEUTRAL,,13
+The youth group organized a football tournament between six different villages and the winning team received a trophy and a cash prize donated by the local business owners in the area,LOCAL_SCENARIOS,NEUTRAL,,13
+The village headman settles most of the small disputes between neighbors without needing to involve the police or the courts which saves everyone time and money and keeps the peace in the community,LOCAL_SCENARIOS,NEUTRAL,,13
+The women who smoke fish over hot coals at the beach start their work before dawn and you can see the orange glow of their fires dotting the shoreline in the early darkness,LOCAL_SCENARIOS,NEUTRAL,,13
+Our community built a new bridge over the stream using locally sourced timber and everyone contributed their labor for free because we all understood that it would benefit the whole village equally,LOCAL_SCENARIOS,NEUTRAL,,13
+The rice farmers in our area still use the traditional method of planting seedlings by hand in flooded paddy fields which is very hard back breaking work but produces good quality grain,LOCAL_SCENARIOS,NEUTRAL,,13
+The motorcycle taxi drivers have formed an association that sets fair standard prices for rides to different destinations so that passengers are not overcharged and drivers earn a reasonable living wage,LOCAL_SCENARIOS,NEUTRAL,,13
+"The storyteller who comes to our village during festivals can hold an audience captive for hours with his tales of ancient warriors, clever animals, and powerful spirits from the old traditional legends",LOCAL_SCENARIOS,NEUTRAL,,13
+The women dye cloth using traditional indigo paste that they make from local plants and the deep blue color they achieve is so rich and beautiful that it never fades even after many washes,LOCAL_SCENARIOS,NEUTRAL,,13
+The community volunteers cleared the blocked drainage channels before the rainy season started and because of their hard work the flooding that usually affects our area was much less severe this year,LOCAL_SCENARIOS,NEUTRAL,,13
+"The local radio station broadcasts community announcements, death notices, and event information every morning and it is the main way that people in the surrounding villages stay informed about what is happening",LOCAL_SCENARIOS,NEUTRAL,,13
+"The palm kernel oil processing is done by the women in a cooperative group and the oil is used for cooking, making soap, and as a traditional medicine for various skin conditions and ailments",LOCAL_SCENARIOS,NEUTRAL,,13
+The boat builders in our coastal village construct strong and beautiful wooden canoes using traditional hand tools and techniques that have been perfected over many generations of skilled craftsmen in the same families,LOCAL_SCENARIOS,NEUTRAL,,13
+"The weekly market day brings people from all the surrounding villages together and it is not just about buying and selling but also about meeting friends, sharing news, and maintaining important social connections",LOCAL_SCENARIOS,NEUTRAL,,13
+The community well that was dug by a charity organization three years ago has transformed life in our village because women and children no longer have to walk miles every day for clean water,LOCAL_SCENARIOS,NEUTRAL,,13
+The palm wine tappers compete with each other to see who can collect the most and sweetest wine and the best ones are known and respected throughout the whole region for their special skill,LOCAL_SCENARIOS,NEUTRAL,,13
+The children catch small fish and crabs in the shallow parts of the river after school and sometimes they bring home enough for their mothers to cook a small meal for the whole family,LOCAL_SCENARIOS,NEUTRAL,,13
+The village soccer team practices every afternoon on the dusty field near the school and their dedication and teamwork has made them one of the strongest teams in our entire district this season,LOCAL_SCENARIOS,NEUTRAL,,13
+The traditional birth attendants in our community receive regular training updates from the health ministry so that they can continue to help women deliver their babies safely using both modern and traditional methods,LOCAL_SCENARIOS,NEUTRAL,,13
+The charcoal makers spend weeks in the forest carefully preparing and burning wood in special covered mounds to produce the high quality charcoal that most families in our area depend on for cooking,LOCAL_SCENARIOS,NEUTRAL,,13
+The old cinema building in town has been converted into a church and on Sunday mornings you can hear the powerful singing and praise music from the congregation echoing through the entire neighborhood around it,LOCAL_SCENARIOS,NEUTRAL,,13
+"The women who sell cooked food by the roadside serve hungry travelers and workers with plates of rice, cassava, fish stew and other local dishes that taste as good as any proper restaurant meal",LOCAL_SCENARIOS,NEUTRAL,,13
+The village savings and loan association has helped many women start their own small businesses by providing small loans with very low interest rates that they pay back gradually over several months time,LOCAL_SCENARIOS,NEUTRAL,,13
+The traditional healers in our community still play an important role because many people trust their plant based remedies and spiritual treatments especially for conditions that they believe modern medicine cannot properly address,LOCAL_SCENARIOS,NEUTRAL,,13
+The fishermen sing traditional work songs as they pull in their heavy nets together and the rhythm of the songs helps them coordinate their pulling so that everyone applies their strength at exactly the same time,LOCAL_SCENARIOS,NEUTRAL,,13
+"The monthly community cleanup brings everyone together young and old to sweep the streets, clear the gutters, and collect rubbish from public areas which keeps our village clean and prevents disease from spreading",LOCAL_SCENARIOS,NEUTRAL,,13
+The local tailors get extremely busy during the holiday seasons when everyone wants new matching family outfits sewn and ready in time for the celebrations and church services and public gatherings,LOCAL_SCENARIOS,NEUTRAL,,13
+"The cassava farmers peel, soak, and dry their harvest in the sun before grinding it into flour which is then used to make the thick porridge that is a staple food in our community",LOCAL_SCENARIOS,NEUTRAL,,13
+The young people in our village have started using social media to promote local businesses and tourism and it has brought much more attention and visitors to our area than we ever expected before,LOCAL_SCENARIOS,NEUTRAL,,13
+The sound of the blacksmith hammer ringing against his iron anvil echoes through the village every morning as he shapes farming tools and cooking implements that people from many surrounding communities come to buy,LOCAL_SCENARIOS,NEUTRAL,,13
+The rough wooden bench outside the shop has been weathered by years of sun and rain until its surface became smooth and grey and full of deep cracks along the grain lines,PHONETIC_COVERAGE,NEUTRAL,,13
+She carefully threaded the bright colored beads one by one onto the strong thin string to make a beautiful necklace for her daughter to wear to the celebration this coming weekend,PHONETIC_COVERAGE,NEUTRAL,,13
+The heavy iron gate screeched and groaned as the old man pushed it open with both hands using all the strength left in his tired and aching body after the long walk,PHONETIC_COVERAGE,NEUTRAL,,13
+The warm golden sunlight filtered through the thick green canopy of leaves above us creating beautiful dancing patterns of light and shadow on the soft forest floor all around where we sat,PHONETIC_COVERAGE,NEUTRAL,,13
+He climbed the rough bark of the tall coconut palm tree using only his bare feet and hands gripping tightly as he reached higher and higher towards the clusters of green nuts at top,PHONETIC_COVERAGE,NEUTRAL,,13
+The thin blue smoke curled upward slowly from the small cooking fire and drifted gently through the thatched roof disappearing into the cool grey morning air above the quiet sleeping village around us,PHONETIC_COVERAGE,NEUTRAL,,13
+She wrapped the soft white cloth around her head in one smooth practiced motion that she had learned from watching her mother and grandmother do it the same way every single day,PHONETIC_COVERAGE,NEUTRAL,,13
+The sharp crack of thunder split the heavy dark sky and was followed almost immediately by a blinding flash of white hot lightning that lit up the whole landscape for one brief second,PHONETIC_COVERAGE,NEUTRAL,,13
+The old wooden fishing boat rocked back and forth on the gentle ocean waves while the tired fisherman sat quietly mending his torn net with a thick curved needle and strong thread,PHONETIC_COVERAGE,NEUTRAL,,13
+He mixed the thick grey cement powder with sand and water in a shallow metal tray using a flat trowel until the mixture reached the right smooth consistency for laying the brick wall,PHONETIC_COVERAGE,NEUTRAL,,13
+The young girl braided her mother long black hair into tight neat rows while humming a soft melody that she had heard on the radio earlier that same warm lazy afternoon,PHONETIC_COVERAGE,NEUTRAL,,13
+The deep rich sound of the wooden drum being beaten with both palms echoed through the clearing and could be felt as a vibration in the ground beneath our bare standing feet,PHONETIC_COVERAGE,NEUTRAL,,13
+She peeled the thick brown skin off the ripe sweet potato with a short sharp knife and then sliced the bright orange flesh into thin round pieces for frying in the hot oil,PHONETIC_COVERAGE,NEUTRAL,,13
+The cold clear water from the mountain spring tasted so fresh and pure and clean that it was like drinking liquid crystal straight from the rock face where it bubbled up naturally,PHONETIC_COVERAGE,NEUTRAL,,13
+He sharpened the long curved blade of his machete against the flat grey stone with slow steady strokes until the edge gleamed bright silver in the strong afternoon sunlight streaming through the trees,PHONETIC_COVERAGE,NEUTRAL,,13
+The plump brown hen clucked loudly and puffed out her feathers as she settled down firmly over her clutch of six small warm speckled eggs nestled in the straw lined wooden box,PHONETIC_COVERAGE,NEUTRAL,,13
+She pounded the white cassava in the deep wooden mortar with strong rhythmic strokes of the heavy pestle and the thud thud thud sound could be heard three houses away from hers,PHONETIC_COVERAGE,NEUTRAL,,13
+The bright green gecko clung to the smooth white wall with its tiny padded feet and watched us with its large golden eyes that never seemed to blink even once the whole time,PHONETIC_COVERAGE,NEUTRAL,,13
+He folded the crisp brown paper bag carefully along each crease and tucked the pointed end neatly under the flap before handing the package across the worn wooden counter to the customer,PHONETIC_COVERAGE,NEUTRAL,,13
+The sweet sticky juice from the ripe pineapple ran down her chin and dripped onto the front of her clean white shirt as she bit into the thick golden slice with obvious delight,PHONETIC_COVERAGE,NEUTRAL,,13
+The large black crow perched on the highest branch of the dead grey tree and called out in its harsh rough voice that echoed across the empty brown field stretching below the hilltop,PHONETIC_COVERAGE,NEUTRAL,,13
+She sprinkled the fine white flour over the smooth wooden board and then pressed the soft yellow dough flat with her strong palms before rolling it out thin with a round glass bottle,PHONETIC_COVERAGE,NEUTRAL,,13
+The rusty old tin roof expanded with a series of loud pops and creaks every morning as the rising sun heated the metal and contracted again every evening as the temperature slowly dropped,PHONETIC_COVERAGE,NEUTRAL,,13
+He split the thick dry bamboo pole cleanly in half with one powerful downward swing of his heavy machete and the two pieces fell apart neatly onto the dusty ground below his feet,PHONETIC_COVERAGE,NEUTRAL,,13
+The smooth round river stones felt cool and pleasant under my bare feet as I waded slowly through the shallow crystal clear water that flowed gently over the sandy bottom of the stream,PHONETIC_COVERAGE,NEUTRAL,,13
+She stirred the bubbling brown stew in the large black cast iron pot with a long wooden spoon tasting it occasionally and adding a pinch of salt or a dash of pepper as needed,PHONETIC_COVERAGE,NEUTRAL,,13
+The bright yellow butterflies danced around the purple wild flowers growing along the edge of the dusty footpath creating a beautiful natural display of color and movement that was lovely to watch,PHONETIC_COVERAGE,NEUTRAL,,13
+He squeezed the thick white sap from the freshly cut rubber tree bark into a small tin cup watching as the milky liquid dripped slowly down the groove he had carved into the trunk,PHONETIC_COVERAGE,NEUTRAL,,13
+The dried palm fronds crackled and popped loudly in the hot fire sending tiny bright orange sparks floating upward into the dark night sky like miniature stars being born and dying in seconds,PHONETIC_COVERAGE,NEUTRAL,,13
+She balanced three large round clay water pots stacked one on top of the other on her head and walked gracefully and steadily along the narrow winding path without spilling even one single drop,PHONETIC_COVERAGE,NEUTRAL,,13
+The wild pig crashed loudly through the thick tangled undergrowth of the forest floor scattering dry leaves and broken twigs in every direction as it ran from the approaching sound of barking dogs,PHONETIC_COVERAGE,NEUTRAL,,13
+He wove the long flexible green palm leaves tightly together in an overlapping pattern to create a waterproof roof panel that would keep the rain out of their temporary shelter during the storm,PHONETIC_COVERAGE,NEUTRAL,,13
+The fresh ginger root had a sharp spicy smell that stung my nose as I grated it finely over the hot steaming bowl of fish broth that was simmering quietly on the stove top,PHONETIC_COVERAGE,NEUTRAL,,13
+She scraped the burnt black residue from the bottom of the cooking pot with a rough piece of coconut shell husk until the metal underneath started to shine again almost like it was new,PHONETIC_COVERAGE,NEUTRAL,,13
+My heart swelled with such pride and joy when I watched my daughter walk across the stage to receive her graduation certificate in front of the whole cheering audience of family and friends,EMOTIONS_HAPPY,HAPPY,,13
+I could not believe it when the announcement came over the radio that our village had been selected to receive the clean water project we had been requesting for so many years,EMOTIONS_HAPPY,HAPPY,,13
+The look of pure surprise and delight on my mother face when we brought out the birthday cake we had secretly prepared for her was the most precious and beautiful thing I have ever witnessed,EMOTIONS_HAPPY,HAPPY,,13
+I danced all night long at my cousin wedding because the music was so good and the food was delicious and being surrounded by my whole family made my heart overflow with happiness,EMOTIONS_HAPPY,HAPPY,,13
+When the test results came back negative and the doctor told me I was completely healthy I felt like the biggest burden had been lifted from my shoulders and I could breathe freely again,EMOTIONS_HAPPY,HAPPY,,13
+I am so thankful that my neighbor helped me rebuild my market stall after the fire without asking for anything in return because true kindness like that is very rare and precious in this world,EMOTIONS_HAPPY,HAPPY,,13
+The smile on my son face when he opened his birthday present and saw the football he had been wanting for months was worth every single leone that I had saved up to buy it,EMOTIONS_HAPPY,HAPPY,,13
+I ran all the way home to tell my wife the incredible news that the bank had approved our loan application and we could finally start building our dream house on our own land,EMOTIONS_HAPPY,EXCITED,,13
+The whole village erupted in cheers and celebration when the electricity was turned on for the very first time and people could finally see the bright lights shining from inside their own homes,EMOTIONS_HAPPY,EXCITED,,13
+My grandmother hugged me so tightly when I told her I was accepted into the nursing program and she said she always knew I would do something meaningful and important to help other people,EMOTIONS_HAPPY,HAPPY,,13
+After struggling for five long years to grow my small business it finally became profitable enough this month for me to hire my first employee and that achievement feels absolutely wonderful and deeply satisfying,EMOTIONS_HAPPY,HAPPY,,13
+I was moved to tears of happiness when the whole community came together to surprise us with a welcome home party after we had been away in the city for over three very long years,EMOTIONS_HAPPY,HAPPY,,13
+The old playground where I used to play as a child has been torn down to build a parking lot and seeing the empty space where it once stood fills me with such deep sadness,EMOTIONS_SAD,SAD,,13
+I received the news that my scholarship application was rejected and all my hopes and dreams of going to university came crashing down around me in that one terrible and heartbreaking moment,EMOTIONS_SAD,SAD,,13
+My mother sold her only gold earrings the ones my father gave her on their wedding day just so she could pay for my school fees and it breaks my heart to think about it,EMOTIONS_SAD,SAD,,13
+The little girl sitting alone in the corner of the classroom had no lunch to eat while all the other children shared their food and laughed together and I wished I could help her,EMOTIONS_SAD,SAD,,13
+Every time I walk past the house where my late grandfather used to live I can almost hear his voice calling me inside for a cup of tea and a warm conversation like before,EMOTIONS_SAD,SAD,,13
+The fishermen came back to shore with almost nothing in their nets for the third day in a row and the worry on their faces showed how desperate their situation was becoming,EMOTIONS_SAD,SAD,,13
+I stayed awake all night thinking about how I was going to tell my children that we have to move out of our home because I could not afford the rent anymore,EMOTIONS_SAD,SAD,,13
+The clinic was full of sick children with no medicine to give them and the nurse looked so tired and helpless and frustrated because her hands were tied and she could not do more,EMOTIONS_SAD,SAD,,13
+My brother dream of becoming an engineer died when he had to drop out of school to work and support the family after our father suddenly passed away and left us with nothing,EMOTIONS_SAD,SAD,,13
+The beautiful coral reef that used to be full of colorful fish and sea life has turned white and lifeless because of the pollution and overfishing that has been happening for many years now,EMOTIONS_SAD,SAD,,13
+I cried when I saw my old school friend who used to be so full of energy and life now looking thin and weak from the illness that has been slowly taking over her body,EMOTIONS_SAD,SAD,,13
+The drought has been so severe this year that even the oldest villagers say they have never seen the land look this dry and barren in all their many years of living here,EMOTIONS_SAD,SAD,,13
+My daughter asked me why we could not go to the festival like the other families and I did not know what to say to her because the truth was we had no money,EMOTIONS_SAD,SAD,,13
+The old man sat alone on the bench outside the hospital waiting room every day for a week until his wife finally passed away peacefully and then he just sat there in silence for hours,EMOTIONS_SAD,SAD,,13
+I had to choose between buying medicine for my sick child or buying food for the rest of the family and that is a decision that no parent should ever have to make in their life,EMOTIONS_SAD,SAD,,13
+The flood washed away the only bridge connecting our village to the main road and now we are completely cut off from the rest of the world with no way to get help or supplies,EMOTIONS_SAD,SAD,,13
+I wrote a long letter to my son who lives overseas telling him how much we miss him and asking him to please come home for a visit but I know the ticket is too expensive,EMOTIONS_SAD,SAD,,13
+The schoolteacher cried in front of the class today because she found out that five of her best students would not be coming back next term due to their families inability to pay the fees,EMOTIONS_SAD,SAD,,13
+My mother hands are rough and cracked from years of hard physical work washing clothes and farming in the fields and yet she never once complained about her life or asked for anything for herself,EMOTIONS_SAD,SAD,,13
+The young widow with three small children to feed was turned away from the market because she owed money to several vendors and nobody was willing to give her any more credit until she paid,EMOTIONS_SAD,SAD,,13
+Seeing the abandoned fishing boats rotting on the beach reminds me of how this village used to thrive when the fishing was good and everyone had enough work and food and hope for the future,EMOTIONS_SAD,SAD,,13
+I lost my wallet with all my money for the whole month inside it somewhere between the market and my house and even though I retraced my steps many times I could not find it anywhere,EMOTIONS_SAD,SAD,,13
+The community garden that we all worked so hard to build and maintain was vandalized during the night and all the vegetables that were almost ready for harvesting were stolen or destroyed completely,EMOTIONS_SAD,SAD,,13
+My father funeral was a quiet and simple affair because we could not afford the kind of proper ceremony that a man who worked so hard his whole life truly deserved to receive,EMOTIONS_SAD,SAD,,13
+The teacher tried her best to comfort the crying child whose parents could not come to the school concert and the little boy kept looking at the door hoping they would walk in eventually,EMOTIONS_SAD,SAD,,13
+It hurts me to see my grandmother struggling to remember the names of her own grandchildren because her memory is getting worse every month and there is nothing we can do to stop it from fading,EMOTIONS_SAD,SAD,,13
+The sound of the hammer demolishing the old community center where so many important meetings and celebrations were held for decades was the saddest sound I have heard in a very long time,EMOTIONS_SAD,SAD,,13
+I spent two years carefully building a beautiful collection of rare local seeds for planting but the mice got into the storage room and destroyed almost everything I had worked so hard to gather,EMOTIONS_SAD,SAD,,13
+The young boy carried his broken bicycle home on his shoulders because it was his only way to get to school and he could not afford to have it repaired at the shop in town,EMOTIONS_SAD,SAD,,13
