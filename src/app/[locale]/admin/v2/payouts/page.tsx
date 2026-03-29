@@ -13,6 +13,7 @@ interface Speaker {
   pendingDurationSec: number;
   milestoneHit: boolean;
   payoutLe: number;
+  estimatedPayoutLe: number;
   paid: boolean;
   paymentId?: string;
 }
@@ -42,12 +43,27 @@ function shiftWeek(weekStart: string, delta: number): string {
   return d.toISOString().slice(0, 10);
 }
 
+/** Generate all Monday dates from fromWeek to toWeek inclusive (stepping by 7 days). */
+function weeksBetween(fromWeek: string, toWeek: string): string[] {
+  const weeks: string[] = [];
+  let cur = new Date(fromWeek + "T00:00:00Z");
+  const end = new Date(toWeek + "T00:00:00Z");
+  while (cur <= end) {
+    weeks.push(cur.toISOString().slice(0, 10));
+    cur.setUTCDate(cur.getUTCDate() + 7);
+  }
+  return weeks;
+}
+
 export default function WeeklyPayoutsPage() {
   const t = useTranslations();
   const [weekStart, setWeekStart] = useState<string>("");
   const [data, setData] = useState<WeekData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [paying, setPaying] = useState<string | null>(null); // speakerId or "all"
+  const [paying, setPaying] = useState<string | null>(null);
+  const [exportFrom, setExportFrom] = useState<string>("");
+  const [exportTo, setExportTo] = useState<string>("");
+  const [exporting, setExporting] = useState(false);
 
   const fetchData = useCallback(async (ws?: string) => {
     setLoading(true);
@@ -57,7 +73,11 @@ export default function WeeklyPayoutsPage() {
         `/api/v2/admin/payouts/weekly${params}`
       );
       setData(res);
-      if (!ws) setWeekStart(res.week.start);
+      if (!ws) {
+        setWeekStart(res.week.start);
+        setExportFrom(res.week.start);
+        setExportTo(res.week.start);
+      }
     } finally {
       setLoading(false);
     }
@@ -110,6 +130,51 @@ export default function WeeklyPayoutsPage() {
   const unpaidCount = data
     ? data.speakers.filter((s) => !s.paid).length
     : 0;
+
+  const exportCsv = async () => {
+    if (!exportFrom || !exportTo) return;
+    setExporting(true);
+    try {
+      const weeks = weeksBetween(exportFrom, exportTo);
+      const allRows: string[][] = [];
+      const headers = [
+        "Week", "Name", "Email", "Approved Hours", "Pending Hours",
+        "Milestone", "Payout (Le)", "Estimated (Le)", "Status",
+      ];
+
+      for (const ws of weeks) {
+        const res = await apiFetch<WeekData>(
+          `/api/v2/admin/payouts/weekly?weekStart=${ws}`
+        );
+        for (const s of res.speakers) {
+          allRows.push([
+            `${res.week.start} – ${res.week.end}`,
+            s.displayName || "",
+            s.email,
+            fmtHours(s.approvedDurationSec),
+            fmtHours(s.pendingDurationSec),
+            s.milestoneHit ? "Yes" : "No",
+            s.payoutLe.toFixed(2),
+            s.estimatedPayoutLe.toFixed(2),
+            s.paid ? "Paid" : "Unpaid",
+          ]);
+        }
+      }
+
+      const csv = [headers, ...allRows]
+        .map((row) => row.map((v) => `"${v.replace(/"/g, '""')}"`).join(","))
+        .join("\n");
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `payouts-${exportFrom}-to-${exportTo}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setExporting(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -178,9 +243,39 @@ export default function WeeklyPayoutsPage() {
             </div>
           </div>
 
-          {/* Bulk Action */}
-          {unpaidCount > 0 && (
-            <div className="flex justify-end">
+          {/* Actions */}
+          <div className="flex items-end justify-between gap-4 flex-wrap">
+            {/* Export with week range */}
+            <div className="flex items-end gap-2">
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">From week</label>
+                <input
+                  type="date"
+                  value={exportFrom}
+                  onChange={(e) => setExportFrom(e.target.value)}
+                  className="px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">To week</label>
+                <input
+                  type="date"
+                  value={exportTo}
+                  onChange={(e) => setExportTo(e.target.value)}
+                  className="px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                />
+              </div>
+              <button
+                onClick={exportCsv}
+                disabled={exporting || !exportFrom || !exportTo}
+                className="px-4 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 disabled:opacity-50"
+              >
+                {exporting ? "Exporting..." : "Export CSV"}
+              </button>
+            </div>
+
+            {/* Pay All */}
+            {unpaidCount > 0 && (
               <button
                 onClick={handlePayAll}
                 disabled={paying !== null}
@@ -190,8 +285,8 @@ export default function WeeklyPayoutsPage() {
                   ? t("admin.processing")
                   : t("admin.payAllUnpaid", { count: unpaidCount })}
               </button>
-            </div>
-          )}
+            )}
+          </div>
 
           {/* Speaker Table */}
           {data.speakers.length === 0 ? (
@@ -217,6 +312,9 @@ export default function WeeklyPayoutsPage() {
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       {t("admin.payout")}
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Estimated
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       {t("admin.status")}
@@ -251,7 +349,7 @@ export default function WeeklyPayoutsPage() {
                             {fmtHours(speaker.pendingDurationSec)}
                           </span>
                         ) : (
-                          <span className="text-gray-400">—</span>
+                          <span className="text-gray-400">&mdash;</span>
                         )}
                       </td>
                       <td className="px-4 py-3">
@@ -260,11 +358,20 @@ export default function WeeklyPayoutsPage() {
                             {t("admin.milestoneHit")}
                           </span>
                         ) : (
-                          <span className="text-xs text-gray-400">—</span>
+                          <span className="text-xs text-gray-400">&mdash;</span>
                         )}
                       </td>
                       <td className="px-4 py-3 text-sm font-medium">
                         Le{speaker.payoutLe.toFixed(2)}
+                      </td>
+                      <td className="px-4 py-3 text-sm">
+                        {speaker.estimatedPayoutLe > speaker.payoutLe ? (
+                          <span className="text-blue-600 font-medium">
+                            ~Le{speaker.estimatedPayoutLe.toFixed(2)}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400">&mdash;</span>
+                        )}
                       </td>
                       <td className="px-4 py-3">
                         {speaker.paid ? (

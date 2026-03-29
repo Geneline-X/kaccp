@@ -47,6 +47,7 @@ export async function GET(req: NextRequest) {
         select: {
           speakerId: true,
           durationSec: true,
+          language: { select: { speakerRatePerMinute: true } },
         },
       }),
     ]);
@@ -68,9 +69,12 @@ export async function GET(req: NextRequest) {
     }
 
     // Group pending recordings by speaker
-    const pendingMap = new Map<string, number>();
+    const pendingMap = new Map<string, { totalSec: number; perMinuteTotal: number }>();
     for (const rec of pendingRecordings) {
-      pendingMap.set(rec.speakerId, (pendingMap.get(rec.speakerId) || 0) + rec.durationSec);
+      const entry = pendingMap.get(rec.speakerId) || { totalSec: 0, perMinuteTotal: 0 };
+      entry.totalSec += rec.durationSec;
+      entry.perMinuteTotal += (rec.durationSec / 60) * (rec.language.speakerRatePerMinute ?? 2.5);
+      pendingMap.set(rec.speakerId, entry);
     }
 
     if (speakerMap.size === 0 && pendingMap.size === 0) {
@@ -106,11 +110,30 @@ export async function GET(req: NextRequest) {
 
     const speakerRows = speakers.map((s) => {
       const data = speakerMap.get(s.id) || { totalSec: 0, perMinuteTotal: 0 };
+      const pending = pendingMap.get(s.id) || { totalSec: 0, perMinuteTotal: 0 };
       const approvedMinutes = data.totalSec / 60;
       const milestoneHit = approvedMinutes >= MILESTONE_MINUTES;
-      const payoutLe = milestoneHit
-        ? Math.max(data.perMinuteTotal, MILESTONE_PAYOUT_LE)
-        : data.perMinuteTotal;
+      let payoutLe: number;
+      if (milestoneHit) {
+        const extraMinutes = approvedMinutes - MILESTONE_MINUTES;
+        const avgRate = approvedMinutes > 0 ? data.perMinuteTotal / approvedMinutes : 2.5;
+        payoutLe = MILESTONE_PAYOUT_LE + extraMinutes * avgRate;
+      } else {
+        payoutLe = data.perMinuteTotal;
+      }
+
+      // Estimated payout if all pending recordings were also approved
+      const totalMinutes = approvedMinutes + pending.totalSec / 60;
+      const totalPerMinute = data.perMinuteTotal + pending.perMinuteTotal;
+      const estMilestoneHit = totalMinutes >= MILESTONE_MINUTES;
+      let estimatedPayoutLe: number;
+      if (estMilestoneHit) {
+        const extraMinutes = totalMinutes - MILESTONE_MINUTES;
+        const avgRate = totalMinutes > 0 ? totalPerMinute / totalMinutes : 2.5;
+        estimatedPayoutLe = MILESTONE_PAYOUT_LE + extraMinutes * avgRate;
+      } else {
+        estimatedPayoutLe = totalPerMinute;
+      }
 
       return {
         id: s.id,
@@ -118,9 +141,10 @@ export async function GET(req: NextRequest) {
         email: s.email,
         approvedDurationSec: data.totalSec,
         approvedMinutes: Math.round(approvedMinutes * 100) / 100,
-        pendingDurationSec: pendingMap.get(s.id) || 0,
+        pendingDurationSec: pending.totalSec,
         milestoneHit,
         payoutLe: Math.round(payoutLe * 100) / 100,
+        estimatedPayoutLe: Math.round(estimatedPayoutLe * 100) / 100,
         paid: paidMap.has(s.id),
         paymentId: paidMap.get(s.id) || undefined,
       };
@@ -234,9 +258,14 @@ export async function POST(req: NextRequest) {
 
       const approvedMinutes = data.totalSec / 60;
       const milestoneHit = approvedMinutes >= MILESTONE_MINUTES;
-      const payoutLe = milestoneHit
-        ? Math.max(data.perMinuteTotal, MILESTONE_PAYOUT_LE)
-        : data.perMinuteTotal;
+      let payoutLe: number;
+      if (milestoneHit) {
+        const extraMinutes = approvedMinutes - MILESTONE_MINUTES;
+        const avgRate = approvedMinutes > 0 ? data.perMinuteTotal / approvedMinutes : 2.5;
+        payoutLe = MILESTONE_PAYOUT_LE + extraMinutes * avgRate;
+      } else {
+        payoutLe = data.perMinuteTotal;
+      }
       const amountCents = Math.round(payoutLe * 100);
 
       if (amountCents <= 0) {

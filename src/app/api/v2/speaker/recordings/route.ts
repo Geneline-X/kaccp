@@ -117,9 +117,14 @@ export async function GET(req: NextRequest) {
       return sum + (r.durationSec / 60) * (r.language.speakerRatePerMinute ?? 2.5);
     }, 0);
     const milestoneHit = weeklyApprovedMin >= MILESTONE_MINUTES;
-    const weeklyPayout = milestoneHit
-      ? Math.max(weeklyPerMinuteTotal, MILESTONE_PAYOUT_LE)
-      : weeklyPerMinuteTotal;
+    let weeklyPayout: number;
+    if (milestoneHit) {
+      const extraMinutes = weeklyApprovedMin - MILESTONE_MINUTES;
+      const avgRate = weeklyApprovedMin > 0 ? weeklyPerMinuteTotal / weeklyApprovedMin : 2.5;
+      weeklyPayout = MILESTONE_PAYOUT_LE + extraMinutes * avgRate;
+    } else {
+      weeklyPayout = weeklyPerMinuteTotal;
+    }
 
     // Total submitted this week (excluding rejected)
     const weeklySubmittedSec = weeklyAllRecordings.reduce((sum, r) => sum + r.durationSec, 0);
