@@ -16,6 +16,8 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const languageId = searchParams.get("languageId");
     const category = searchParams.get("category");
+    const isFreeFormParam = searchParams.get("isFreeForm");
+    const isFreeForm = isFreeFormParam === "true";
     const limit = parseInt(searchParams.get("limit") || "10");
     const uiLocaleParam = searchParams.get("uiLocale") || defaultLocale;
     const uiLocale = locales.includes(uiLocaleParam as any) ? uiLocaleParam : defaultLocale;
@@ -61,6 +63,7 @@ export async function GET(req: NextRequest) {
           }
         ),
         ...(category && { category: category as any }),
+        isFreeForm,
         // Exclude prompts this speaker has already recorded or skipped
         NOT: {
           OR: [

@@ -40,7 +40,7 @@
             },
             "payment": {
                 "title": "Payment and Compensation",
-                "content": "Payment for your transcription work is based solely on the amount of work that is reviewed and approved by the KACCP Platform. The current rate is specified on the Platform and is subject to change at our discretion. Payment will be made through an agreed-upon method as specified in the Platform\u0027s payment policy."
+                "content": "Payment for your transcription work is based solely on the amount of work that is reviewed and approved by the KACCP Platform. The current rate is specified on the Platform and is subject to change at our discretion. Payment will be made through an agreed-upon method as specified in the Platform's payment policy."
             },
             "disclaimer": {
                 "title": "Disclaimers and Limitation of Liability",
@@ -100,7 +100,7 @@
                 }
             }
         },
-        "footer": "Questions? Visit \u003clink\u003egeneline-x.net\u003c/link\u003e."
+        "footer": "Questions? Visit <link>geneline-x.net</link>."
     },
     "notifications": {
         "title": "Notifications",
@@ -116,25 +116,25 @@
         "description": "Aidez Ã  prÃ©server et numÃ©riser les langues africaines en contribuant avec votre voix ou vos compÃ©tences de transcription. DÃ©veloppÃ© par Geneline-X pour la collecte de donnÃ©es TTS de haute qualitÃ©.",
         "viewLeaderboard": "Voir le Classement",
         "howContribute": "Comment souhaitez-vous contribuer ?",
-        "chooseRole": "Choisissez votre rÃ´le selon vos compÃ©tences. Les locuteurs enregistrent leur voix, les transcripteurs Ã©crivent ce qu\u0027ils entendent.",
+        "chooseRole": "Choisissez votre rÃ´le selon vos compÃ©tences. Les locuteurs enregistrent leur voix, les transcripteurs Ã©crivent ce qu'ils entendent.",
         "speaker": {
             "title": "Locuteur",
             "description": "Enregistrez votre voix dans votre langue maternelle. Lisez les instructions en anglais et parlez la traduction naturellement.",
             "benefit1": "Enregistrez des clips audio courts (max 10 secondes)",
-            "benefit2": "Traduisez les instructions de l\u0027anglais vers votre langue",
-            "benefit3": "Gagnez par minute d\u0027audio approuvÃ©",
-            "benefit4": "Travaillez de n\u0027importe oÃ¹ avec un tÃ©lÃ©phone",
-            "registerBtn": "S\u0027inscrire comme Locuteur",
+            "benefit2": "Traduisez les instructions de l'anglais vers votre langue",
+            "benefit3": "Gagnez par minute d'audio approuvÃ©",
+            "benefit4": "Travaillez de n'importe oÃ¹ avec un tÃ©lÃ©phone",
+            "registerBtn": "S'inscrire comme Locuteur",
             "loginBtn": "Connexion Locuteur"
         },
         "transcriber": {
             "title": "Transcripteur",
-            "description": "Ã‰coutez les enregistrements et Ã©crivez exactement ce que vous entendez. Aidez Ã  crÃ©er un texte prÃ©cis pour l\u0027entraÃ®nement de l\u0027IA.",
+            "description": "Ã‰coutez les enregistrements et Ã©crivez exactement ce que vous entendez. Aidez Ã  crÃ©er un texte prÃ©cis pour l'entraÃ®nement de l'IA.",
             "benefit1": "Ã‰coutez des enregistrements audio courts",
             "benefit2": "Ã‰crivez les transcriptions dans la langue originale",
             "benefit3": "Signalez les enregistrements de mauvaise qualitÃ©",
             "benefit4": "Gagnez par transcription approuvÃ©e",
-            "registerBtn": "S\u0027inscrire comme Transcripteur",
+            "registerBtn": "S'inscrire comme Transcripteur",
             "loginBtn": "Connexion Transcripteur"
         },
         "howItWorks": {
@@ -142,12 +142,12 @@
             "step1Title": "Inscrivez-vous et SÃ©lectionnez les Langues",
             "step1Desc": "CrÃ©ez un compte et choisissez les langues que vous parlez ou pouvez transcrire.",
             "step2Title": "Enregistrez ou Transcrivez",
-            "step2Desc": "Les locuteurs enregistrent des clips vocaux. Les transcripteurs Ã©coutent et Ã©crivent ce qu\u0027ils entendent.",
+            "step2Desc": "Les locuteurs enregistrent des clips vocaux. Les transcripteurs Ã©coutent et Ã©crivent ce qu'ils entendent.",
             "step3Title": "Recevez Votre Paiement",
-            "step3Desc": "Gagnez de l\u0027argent pour chaque enregistrement ou transcription approuvÃ© via Orange Money."
+            "step3Desc": "Gagnez de l'argent pour chaque enregistrement ou transcription approuvÃ© via Orange Money."
         },
         "stats": {
-            "title": "Construire l\u0027IA pour les Langues Africaines",
+            "title": "Construire l'IA pour les Langues Africaines",
             "languages": "Langues",
             "targetPerLanguage": "Objectif par Langue",
             "countries": "Pays",
@@ -155,7 +155,7 @@
         },
         "payout": {
             "title": "Gagnez avec Orange Money",
-            "speakerRate": "Locuteurs : Gagnez par minute d\u0027enregistrements approuvÃ©s",
+            "speakerRate": "Locuteurs : Gagnez par minute d'enregistrements approuvÃ©s",
             "transcriberRate": "Transcripteurs : Gagnez par minute de transcriptions approuvÃ©es",
             "noBank": "Paiements via Orange Money - pas de compte bancaire nÃ©cessaire",
             "weekly": "Cycles de paiement hebdomadaires"
@@ -180,18 +180,18 @@
         "adminLogin": "Connexion Administrateur",
         "signingIn": "Connexion en cours...",
         "signIn": "Se Connecter",
-        "dontHaveAccount": "Vous n\u0027avez pas de compte ?",
+        "dontHaveAccount": "Vous n'avez pas de compte ?",
         "registerHere": "Inscrivez-vous ici",
         "alreadyHaveAccount": "Vous avez dÃ©jÃ  un compte ?",
         "signInHere": "Connectez-vous ici",
         "areYouTranscriber": "ÃŠtes-vous transcripteur ? Connectez-vous ici â†’",
         "areYouSpeaker": "ÃŠtes-vous locuteur ? Connectez-vous ici â†’",
         "loginFailed": "Ã‰chec de la connexion",
-        "errorOccurred": "Une erreur s\u0027est produite. Veuillez rÃ©essayer.",
-        "registerAsSpeaker": "S\u0027inscrire comme Locuteur",
-        "registerAsTranscriber": "S\u0027inscrire comme Transcripteur",
+        "errorOccurred": "Une erreur s'est produite. Veuillez rÃ©essayer.",
+        "registerAsSpeaker": "S'inscrire comme Locuteur",
+        "registerAsTranscriber": "S'inscrire comme Transcripteur",
         "helpPreserve": "Aidez Ã  prÃ©server les langues africaines en contribuant avec votre voix",
-        "displayName": "Nom d\u0027Affichage",
+        "displayName": "Nom d'Affichage",
         "phoneNumber": "NumÃ©ro de TÃ©lÃ©phone",
         "yourName": "Votre nom",
         "languagesYouSpeak": "Langues que Vous Parlez Nativement",
@@ -200,20 +200,21 @@
         "passwordsNoMatch": "Les mots de passe ne correspondent pas",
         "selectOneLanguage": "Veuillez sÃ©lectionner au moins une langue que vous parlez",
         "agreeToTerms": "Veuillez accepter les conditions et le consentement",
-        "consentText": "J\u0027accepte de contribuer mes enregistrements vocaux sous la licence CC0 Domaine Public. Je comprends que mes enregistrements seront utilisÃ©s pour entraÃ®ner des modÃ¨les d\u0027IA pour les langues africaines et seront librement disponibles pour la recherche et le dÃ©veloppement.",
+        "consentText": "J'accepte de contribuer mes enregistrements vocaux sous la licence CC0 Domaine Public. Je comprends que mes enregistrements seront utilisÃ©s pour entraÃ®ner des modÃ¨les d'IA pour les langues africaines et seront librement disponibles pour la recherche et le dÃ©veloppement.",
         "creatingAccount": "CrÃ©ation du Compte...",
         "createAccount": "CrÃ©er un Compte",
-        "registrationFailed": "Ã‰chec de l\u0027inscription",
-        "helpTranscribe": "Aidez Ã  crÃ©er un texte prÃ©cis pour l\u0027entraÃ®nement de l\u0027IA en transcrivant l\u0027audio",
+        "registrationFailed": "Ã‰chec de l'inscription",
+        "helpTranscribe": "Aidez Ã  crÃ©er un texte prÃ©cis pour l'entraÃ®nement de l'IA en transcrivant l'audio",
         "selectOneLanguageTranscribe": "Veuillez sÃ©lectionner au moins une langue que vous pouvez Ã©crire",
         "languagesYouTranscribe": "Langues que vous transcrivez",
         "selectLanguagesWrite": "SÃ©lectionnez toutes les langues que vous pouvez Ã©crire couramment",
-        "transcriberConsentText": "J\u0027accepte de contribuer mes transcriptions sous la licence CC0 Domaine Public. Je comprends que mes transcriptions seront utilisÃ©es pour entraÃ®ner des modÃ¨les d\u0027IA pour les langues africaines et seront librement disponibles pour la recherche et le dÃ©veloppement.",
-        "wantToBeSpeaker": "Vous voulez Ãªtre locuteur Ã  la place ? Inscrivez-vous ici"
+        "transcriberConsentText": "J'accepte de contribuer mes transcriptions sous la licence CC0 Domaine Public. Je comprends que mes transcriptions seront utilisÃ©es pour entraÃ®ner des modÃ¨les d'IA pour les langues africaines et seront librement disponibles pour la recherche et le dÃ©veloppement.",
+        "wantToBeSpeaker": "Vous voulez Ãªtre locuteur Ã  la place ? Inscrivez-vous ici",
+        "accessDeniedReviewer": "Votre compte n'a pas l'accès réviseur. Veuillez contacter un administrateur."
     },
     "common": {
         "loading": "Chargement...",
-        "error": "Une erreur s\u0027est produite",
+        "error": "Une erreur s'est produite",
         "retry": "RÃ©essayer",
         "back": "Retour",
         "next": "Suivant",
@@ -226,7 +227,7 @@
         "close": "Fermer",
         "login": "Connexion",
         "logout": "DÃ©connexion",
-        "register": "S\u0027inscrire",
+        "register": "S'inscrire",
         "email": "E-mail",
         "password": "Mot de passe",
         "confirmPassword": "Confirmer le mot de passe",

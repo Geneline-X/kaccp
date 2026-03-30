@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { setToken } from "@/lib/infra/client/client";
+import { setToken, getToken } from "@/lib/infra/client/client";
 import { useTranslations } from "next-intl";
 
 export default function ReviewerLoginClient({ locale }: { locale: string }) {
@@ -14,16 +14,37 @@ export default function ReviewerLoginClient({ locale }: { locale: string }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Redirect if already logged in with reviewer/admin role
+  useEffect(() => {
+    const token = getToken();
+    if (!token) return;
+    fetch("/api/auth/me", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.user) {
+          const roles: string[] = data.user.roles ?? [data.user.role];
+          if (roles.includes("REVIEWER") || roles.includes("ADMIN")) {
+            router.push(`/${locale}/reviewer`);
+          }
+        }
+      })
+      .catch(() => {});
+  }, [router, locale]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
+    const trimmedEmail = email.trim().toLowerCase();
+
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: trimmedEmail, password }),
       });
 
       const data = await res.json();
@@ -74,8 +95,9 @@ export default function ReviewerLoginClient({ locale }: { locale: string }) {
               <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value.trim().toLowerCase())}
                 required
+                autoComplete="email"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 placeholder="your@email.com"
               />
@@ -90,9 +112,15 @@ export default function ReviewerLoginClient({ locale }: { locale: string }) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                autoComplete="current-password"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 placeholder="••••••••"
               />
+              <div className="mt-1 text-right">
+                <Link href={`/${locale}/speaker/login/forgot`} className="text-xs text-purple-600 hover:underline">
+                  {t('common.forgotPassword')}
+                </Link>
+              </div>
             </div>
 
             <button

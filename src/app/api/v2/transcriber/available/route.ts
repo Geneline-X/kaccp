@@ -67,6 +67,7 @@ export async function GET(req: NextRequest) {
             englishText: true,
             category: true,
             emotion: true,
+            isFreeForm: true,
           },
         },
         language: {

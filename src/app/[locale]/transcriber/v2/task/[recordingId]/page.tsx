@@ -18,6 +18,7 @@ interface Recording {
     category: string;
     emotion: string;
     instruction?: string;
+    isFreeForm?: boolean;
   };
   language: {
     code: string;
@@ -243,18 +244,32 @@ export default function TranscriptionTaskPage() {
         {/* Prompt Info */}
         <div className="bg-gray-800 rounded-2xl p-8 mb-8">
           <div className="flex items-center gap-2 mb-4">
+            {recording.prompt.isFreeForm && (
+              <span className="px-3 py-1 bg-green-600/20 text-green-400 rounded-full text-sm">
+                {t('transcriber.freeSpeech')}
+              </span>
+            )}
             <span className="px-3 py-1 bg-blue-600/20 text-blue-400 rounded-full text-sm">
               {recording.prompt.category.replace(/_/g, " ")}
             </span>
-            <span className="px-3 py-1 bg-purple-600/20 text-purple-400 rounded-full text-sm">
-              {recording.prompt.emotion}
-            </span>
+            {!recording.prompt.isFreeForm && (
+              <span className="px-3 py-1 bg-purple-600/20 text-purple-400 rounded-full text-sm">
+                {recording.prompt.emotion}
+              </span>
+            )}
           </div>
 
-          <p className="text-sm text-gray-400 mb-2">{t('transcriber.originalEnglishPrompt')}:</p>
+          <p className="text-sm text-gray-400 mb-2">
+            {recording.prompt.isFreeForm ? t('transcriber.topicPrompt') : t('transcriber.originalEnglishPrompt')}:
+          </p>
           <h2 className="text-2xl font-bold mb-4">{recording.prompt.englishText}</h2>
 
-          {recording.prompt.instruction && (
+          {recording.prompt.isFreeForm && (
+            <p className="text-sm text-yellow-400 italic">
+              {t('transcriber.freeSpeechNote')}
+            </p>
+          )}
+          {!recording.prompt.isFreeForm && recording.prompt.instruction && (
             <p className="text-sm text-yellow-400 italic">
               💡 {recording.prompt.instruction}
             </p>

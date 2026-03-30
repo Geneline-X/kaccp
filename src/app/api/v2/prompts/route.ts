@@ -12,6 +12,7 @@ export async function GET(req: NextRequest) {
     const category = searchParams.get("category") as PromptCategory | null;
     const emotion = searchParams.get("emotion") as PromptEmotion | null;
     const activeOnly = searchParams.get("activeOnly") !== "false";
+    const isFreeFormParam = searchParams.get("isFreeForm");
     const search = searchParams.get("search");
     const page = parseInt(searchParams.get("page") || "1");
     // Limit -1 means fetch all (or max safe)
@@ -24,6 +25,7 @@ export async function GET(req: NextRequest) {
       ...(category && { category }),
       ...(emotion && { emotion }),
       ...(activeOnly && { isActive: true }),
+      ...(isFreeFormParam !== null && { isFreeForm: isFreeFormParam === "true" }),
     };
 
     // Handle language filtering
@@ -114,6 +116,7 @@ export async function POST(req: NextRequest) {
       emotion = "NEUTRAL",
       instruction,
       targetDurationSec = 5,
+      isFreeForm = false,
     } = body;
 
     if (!languageId || !englishText || !category) {
@@ -165,6 +168,7 @@ export async function POST(req: NextRequest) {
         emotion,
         instruction,
         targetDurationSec,
+        isFreeForm,
       },
       include: {
         language: true,
