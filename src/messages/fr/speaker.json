@@ -75,6 +75,17 @@
         "statusApproved": "Approuvé",
         "statusRejected": "Rejeté",
         "startRecording": "Commencer l'Enregistrement",
-        "noLanguagesAssigned": "Aucune langue assignée à votre compte pour le moment."
+        "noLanguagesAssigned": "Aucune langue assignée à votre compte pour le moment.",
+        "viewEarningsHistory": "Voir l'historique des gains →",
+        "earningsHistory": "Historique des Gains",
+        "earningsHistoryDesc": "Détail hebdomadaire de vos gains",
+        "totalEarned": "Total Gagné",
+        "totalPaid": "Total Payé",
+        "awaitingPayment": "En Attente de Paiement",
+        "noEarningsYet": "Pas encore de gains. Commencez à enregistrer pour gagner !",
+        "recordings": "enregistrements",
+        "paid": "Payé",
+        "unpaid": "Non payé",
+        "ifAllApproved": "si tout est approuvé"
     }
 }
