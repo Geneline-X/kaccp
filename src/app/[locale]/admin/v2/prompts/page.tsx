@@ -21,6 +21,7 @@ interface Prompt {
   category: string;
   emotion: string;
   instruction?: string;
+  isFreeForm?: boolean;
   isActive: boolean;
   timesRecorded: number;
   language: Language;
@@ -88,7 +89,17 @@ export default function AdminPromptsPage() {
     emotion: "NEUTRAL",
     instruction: "",
     languageId: "",
+    isFreeForm: false,
   });
+
+  // Generate Topics modal
+  const [showGenerateTopics, setShowGenerateTopics] = useState(false);
+  const [generateCategories, setGenerateCategories] = useState<string[]>(["DAILY_LIFE"]);
+  const [generateCount, setGenerateCount] = useState(20);
+  const [generateLanguageId, setGenerateLanguageId] = useState("");
+  const [generatedTopics, setGeneratedTopics] = useState<{ text: string; category: string }[]>([]);
+  const [generating, setGenerating] = useState(false);
+  const [savingTopics, setSavingTopics] = useState(false);
 
   // Separate state for bulk import language (so it doesn't mutate the main filter)
   const [importLanguageId, setImportLanguageId] = useState("ALL");
@@ -172,6 +183,7 @@ export default function AdminPromptsPage() {
           category: newPrompt.category,
           emotion: newPrompt.emotion,
           instruction: newPrompt.instruction,
+          isFreeForm: newPrompt.isFreeForm,
         }),
       });
 
@@ -189,6 +201,7 @@ export default function AdminPromptsPage() {
         emotion: "NEUTRAL",
         instruction: "",
         languageId: "",
+        isFreeForm: false,
       });
     } catch {
       alert("Failed to create prompt");
@@ -529,6 +542,20 @@ export default function AdminPromptsPage() {
               </button>
               <button
                 onClick={() => {
+                  setGenerateLanguageId(
+                    (selectedLanguage && selectedLanguage !== "UNIVERSAL") ? selectedLanguage : ""
+                  );
+                  setGenerateCategories(["DAILY_LIFE"]);
+                  setGenerateCount(20);
+                  setGeneratedTopics([]);
+                  setShowGenerateTopics(true);
+                }}
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+              >
+                Generate Topics
+              </button>
+              <button
+                onClick={() => {
                   setNewPrompt({
                     englishText: "",
                     category: "GREETINGS",
@@ -536,6 +563,7 @@ export default function AdminPromptsPage() {
                     instruction: "",
                     // Pre-fill from current filter, but only if it's a real language ID
                     languageId: (selectedLanguage && selectedLanguage !== "UNIVERSAL") ? selectedLanguage : "",
+                    isFreeForm: false,
                   });
                   setShowNewForm(true);
                 }}
@@ -695,8 +723,15 @@ export default function AdminPromptsPage() {
                           />
                         </td>
                         <td className="px-6 py-4">
-                          <div className="text-sm text-gray-900 max-w-md truncate">
-                            {prompt.englishText}
+                          <div className="flex items-center gap-2">
+                            <div className="text-sm text-gray-900 max-w-md truncate">
+                              {prompt.englishText}
+                            </div>
+                            {prompt.isFreeForm && (
+                              <span className="px-1.5 py-0.5 text-[10px] bg-green-100 text-green-700 rounded-full whitespace-nowrap flex-shrink-0">
+                                Free Speech
+                              </span>
+                            )}
                           </div>
                           {prompt.instruction && (
                             <div className="text-xs text-gray-500 italic">
@@ -859,6 +894,21 @@ export default function AdminPromptsPage() {
                     placeholder={t('admin.promptsPage.instructionPlaceholder')}
                   />
                 </div>
+                <div>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={newPrompt.isFreeForm}
+                      onChange={(e) =>
+                        setNewPrompt({ ...newPrompt, isFreeForm: e.target.checked })
+                      }
+                      className="rounded border-gray-300"
+                    />
+                    <span className="text-sm font-medium text-gray-700">
+                      Free Speech (topic-based, no exact text to read)
+                    </span>
+                  </label>
+                </div>
                 <div className="flex justify-end gap-2">
                   <button
                     type="button"
@@ -1014,6 +1064,208 @@ export default function AdminPromptsPage() {
           </div>
         )
       }
+      {/* Generate Topics Modal */}
+      {showGenerateTopics && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <h2 className="text-xl font-bold mb-4">Generate Free Speech Topics</h2>
+            <p className="text-sm text-gray-500 mb-4">
+              Use AI to generate narrow, specific scenario prompts that speakers can talk about in 5-10 seconds.
+            </p>
+
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Language</label>
+                <select
+                  value={generateLanguageId}
+                  onChange={(e) => setGenerateLanguageId(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                >
+                  <option value="">Universal</option>
+                  {languages.map((lang) => (
+                    <option key={lang.id} value={lang.id}>
+                      {lang.name} ({lang.code})
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Count per category</label>
+                <input
+                  type="number"
+                  value={generateCount}
+                  onChange={(e) => setGenerateCount(Math.min(200, Math.max(1, parseInt(e.target.value) || 1)))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  min={1}
+                  max={200}
+                />
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Categories ({generateCategories.length} selected)
+                <button
+                  type="button"
+                  onClick={() => setGenerateCategories(generateCategories.length === CATEGORIES.length ? [] : [...CATEGORIES])}
+                  className="ml-2 text-xs text-purple-600 hover:text-purple-800"
+                >
+                  {generateCategories.length === CATEGORIES.length ? "Deselect all" : "Select all"}
+                </button>
+              </label>
+              <div className="grid grid-cols-3 gap-1 max-h-48 overflow-y-auto border border-gray-200 rounded-lg p-3">
+                {CATEGORIES.map((cat) => (
+                  <label key={cat} className="flex items-center gap-1.5 text-xs cursor-pointer hover:bg-gray-50 rounded px-1 py-0.5">
+                    <input
+                      type="checkbox"
+                      checked={generateCategories.includes(cat)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setGenerateCategories([...generateCategories, cat]);
+                        } else {
+                          setGenerateCategories(generateCategories.filter((c) => c !== cat));
+                        }
+                      }}
+                      className="rounded border-gray-300"
+                    />
+                    <span className="truncate">{cat.replace(/_/g, " ")}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <button
+              onClick={async () => {
+                if (generateCategories.length === 0) {
+                  alert("Select at least one category");
+                  return;
+                }
+                setGenerating(true);
+                setGeneratedTopics([]);
+                try {
+                  const allTopics: { text: string; category: string }[] = [];
+                  for (const cat of generateCategories) {
+                    const res = await fetch("/api/v2/prompts/generate", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                      },
+                      body: JSON.stringify({ category: cat, count: generateCount }),
+                    });
+                    const data = await res.json();
+                    if (data.topics) {
+                      allTopics.push(...data.topics.map((t: string) => ({ text: t, category: cat })));
+                    }
+                  }
+                  if (allTopics.length > 0) {
+                    setGeneratedTopics(allTopics);
+                  } else {
+                    alert("Failed to generate topics");
+                  }
+                } catch {
+                  alert("Failed to generate topics");
+                } finally {
+                  setGenerating(false);
+                }
+              }}
+              disabled={generating || generateCategories.length === 0}
+              className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 mb-4"
+            >
+              {generating ? `Generating (${generateCategories.length} categories)...` : `Generate Topics (${generateCategories.length} × ${generateCount})`}
+            </button>
+
+            {generatedTopics.length > 0 && (
+              <>
+                <div className="mb-4">
+                  <p className="text-sm font-medium text-gray-700 mb-2">
+                    {generatedTopics.length} topics generated — review and edit before saving:
+                  </p>
+                  <div className="space-y-2 max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-3">
+                    {generatedTopics.map((topic, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <span className="text-xs text-gray-400 w-6 flex-shrink-0">{i + 1}.</span>
+                        <span className="text-[10px] text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded flex-shrink-0">
+                          {topic.category.replace(/_/g, " ")}
+                        </span>
+                        <input
+                          type="text"
+                          value={topic.text}
+                          onChange={(e) => {
+                            const updated = [...generatedTopics];
+                            updated[i] = { ...updated[i], text: e.target.value };
+                            setGeneratedTopics(updated);
+                          }}
+                          className="flex-1 px-2 py-1 text-sm border border-gray-200 rounded"
+                        />
+                        <button
+                          onClick={() => setGeneratedTopics(generatedTopics.filter((_, idx) => idx !== i))}
+                          className="text-red-400 hover:text-red-600 text-xs flex-shrink-0"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  onClick={async () => {
+                    setSavingTopics(true);
+                    try {
+                      const res = await fetch("/api/v2/prompts/bulk", {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                          Authorization: `Bearer ${token}`,
+                        },
+                        body: JSON.stringify({
+                          languageId: generateLanguageId || "ALL",
+                          prompts: generatedTopics.filter(t => t.text.trim()).map((topic) => ({
+                            english_text: topic.text,
+                            category: topic.category,
+                            emotion: "NEUTRAL",
+                            is_free_form: "true",
+                          })),
+                        }),
+                      });
+                      const data = await res.json();
+                      if (data.success) {
+                        alert(`Saved ${data.imported} free speech topics!`);
+                        setShowGenerateTopics(false);
+                        setGeneratedTopics([]);
+                        setRefreshKey((k) => k + 1);
+                      } else {
+                        alert(data.error || "Failed to save topics");
+                      }
+                    } catch {
+                      alert("Failed to save topics");
+                    } finally {
+                      setSavingTopics(false);
+                    }
+                  }}
+                  disabled={savingTopics || generatedTopics.length === 0}
+                  className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+                >
+                  {savingTopics ? "Saving..." : `Save ${generatedTopics.length} Topics as Free Speech Prompts`}
+                </button>
+              </>
+            )}
+
+            <div className="flex justify-end mt-4">
+              <button
+                onClick={() => {
+                  setShowGenerateTopics(false);
+                  setGeneratedTopics([]);
+                }}
+                className="px-4 py-2 text-gray-600 hover:text-gray-900"
+              >
+                {t('common.close')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div >
   );
 }

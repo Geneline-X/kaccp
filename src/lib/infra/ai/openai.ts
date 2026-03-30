@@ -14,7 +14,7 @@ export async function generatePromptHint(englishText: string): Promise<string | 
             messages: [
                 {
                     role: 'system',
-                    content: `You help West African speakers (Krio, Fula, Mandingo) understand English prompts.
+                    content: `You help West African speakers (Krio, Fula, Mandingo, temne, etc) understand English prompts.
 Write a single short hint (max 12 words) that explains the IDEA of the sentence in the simplest possible English — like you are explaining it to someone who speaks very little English.
 Do NOT translate. Just say what the person should talk about.
 Examples:
@@ -31,6 +31,67 @@ Return only the hint text, nothing else.`
         return response.choices[0].message.content?.trim() || null
     } catch {
         return null
+    }
+}
+
+// Generate narrow, specific free-form topic prompts for a given category
+export async function generateFreeFormTopics(category: string, count: number = 20): Promise<string[]> {
+    if (!process.env.OPENAI_API_KEY) return []
+
+    const SYSTEM_PROMPT = `You generate short, specific scenario prompts for a speech recording platform.
+Each prompt should describe a very specific situation that a speaker can talk about naturally in 5-10 seconds.
+
+Rules:
+- Each prompt must be a narrow, concrete scenario — NOT an open-ended topic
+- The speaker should be able to respond in 1-3 sentences
+- Use simple English (will be spoken by West African speakers in their own language)
+- Frame as instructions: "Tell someone...", "Explain how...", "Warn a child...", "Ask a friend...", "Describe..."
+- Make them culturally relevant to West Africa (markets, family, farming, cooking, travel, health, faith, etc.)
+- No duplicates or near-duplicates
+
+Good examples:
+- "Tell someone what you had for breakfast today"
+- "Warn a child not to play near the road"
+- "Ask a market seller how much the tomatoes cost"
+- "Explain to a visitor how to get to the mosque"
+
+Bad examples (too vague):
+- "Talk about your life"
+- "Describe food"
+- "Tell a story"
+
+Return a JSON object with a "topics" key containing an array of strings.`
+
+    // Batch into chunks of 50 to avoid quality degradation on large requests
+    const BATCH_SIZE = 50
+    const allTopics: string[] = []
+
+    try {
+        for (let remaining = count; remaining > 0; remaining -= BATCH_SIZE) {
+            const batchCount = Math.min(remaining, BATCH_SIZE)
+            const response = await openai.chat.completions.create({
+                model: 'gpt-4o-mini',
+                messages: [
+                    { role: 'system', content: SYSTEM_PROMPT },
+                    {
+                        role: 'user',
+                        content: `Generate ${batchCount} scenario prompts for the category: ${category.replace(/_/g, ' ')}${allTopics.length > 0 ? `\n\nAvoid these already-generated prompts:\n${allTopics.slice(-20).map(t => `- ${t}`).join('\n')}` : ''}`
+                    }
+                ],
+                max_tokens: batchCount <= 50 ? 2000 : 4000,
+                temperature: 0.9,
+                response_format: { type: 'json_object' },
+            })
+            const content = response.choices[0].message.content
+            if (!content) continue
+            const parsed = JSON.parse(content)
+            const topics = Array.isArray(parsed) ? parsed : (parsed.topics || parsed.prompts || parsed.scenarios || [])
+            allTopics.push(...topics.filter((t: any) => typeof t === 'string'))
+        }
+        return allTopics.slice(0, count)
+    } catch (e) {
+        console.error('Failed to generate free-form topics:', e)
+        return allTopics // Return whatever we got so far
     }
 }
 
