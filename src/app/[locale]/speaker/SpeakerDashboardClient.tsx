@@ -184,6 +184,12 @@ export default function SpeakerDashboardClient({ locale }: { locale: string }) {
               <p className="text-xs text-green-200 mt-1">
                 {t('speaker.totalAllTime')}: Le{(stats?.estimatedEarnings || 0).toFixed(2)}
               </p>
+              <Link
+                href={`/${locale}/speaker/earnings`}
+                className="inline-block mt-2 text-xs text-green-100 underline hover:text-white"
+              >
+                {t('speaker.viewEarningsHistory')}
+              </Link>
             </div>
             <div className="text-right space-y-2">
               <div className="bg-white/20 rounded-lg px-4 py-2">

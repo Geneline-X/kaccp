@@ -74,6 +74,17 @@
         "statusApproved": "Approved",
         "statusRejected": "Rejected",
         "startRecording": "Start Recording",
-        "noLanguagesAssigned": "No languages assigned to your account yet."
+        "noLanguagesAssigned": "No languages assigned to your account yet.",
+        "viewEarningsHistory": "View earnings history →",
+        "earningsHistory": "Earnings History",
+        "earningsHistoryDesc": "Your weekly earnings breakdown",
+        "totalEarned": "Total Earned",
+        "totalPaid": "Total Paid",
+        "awaitingPayment": "Awaiting Payment",
+        "noEarningsYet": "No earnings yet. Start recording to earn!",
+        "recordings": "recordings",
+        "paid": "Paid",
+        "unpaid": "Unpaid",
+        "ifAllApproved": "if all approved"
     }
 }
