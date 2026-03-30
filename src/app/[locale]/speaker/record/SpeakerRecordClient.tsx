@@ -14,6 +14,7 @@ interface Prompt {
   emotion: string;
   instruction?: string;
   hint?: string;
+  isFreeForm?: boolean;
   targetDurationSec: number;
   language: {
     code: string;
@@ -95,6 +96,7 @@ function RecordContent({ locale }: { locale: string }) {
   const t = useTranslations();
   const searchParams = useSearchParams();
   const languageId = searchParams.get("languageId");
+  const isFreeForm = searchParams.get("mode") === "freeform";
 
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
@@ -205,7 +207,7 @@ function RecordContent({ locale }: { locale: string }) {
       return;
     }
 
-    fetch(`/api/v2/speaker/prompts?languageId=${languageId}&limit=20&uiLocale=${locale}`, {
+    fetch(`/api/v2/speaker/prompts?languageId=${languageId}&limit=20&uiLocale=${locale}${isFreeForm ? '&isFreeForm=true' : ''}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -471,9 +473,9 @@ function RecordContent({ locale }: { locale: string }) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center text-white">
-          <h2 className="text-2xl font-bold mb-4">{t('speaker.noPromptsAvailable')}</h2>
+          <h2 className="text-2xl font-bold mb-4">{isFreeForm ? t('speaker.noTopicsAvailable') : t('speaker.noPromptsAvailable')}</h2>
           <p className="text-gray-400 mb-6">
-            {t('speaker.noPromptsForLanguage')}
+            {isFreeForm ? t('speaker.noTopicsForLanguage') : t('speaker.noPromptsForLanguage')}
           </p>
           <button
             onClick={() => router.push(`/${locale}/speaker`)}
@@ -564,19 +566,28 @@ function RecordContent({ locale }: { locale: string }) {
           {/* Prompt section */}
           <div className="mb-3">
             <div className="flex items-center gap-2 mb-2">
+              {isFreeForm && (
+                <span className="px-2 py-0.5 bg-green-600/20 text-green-400 rounded-full text-xs">
+                  {t('speaker.freeSpeech')}
+                </span>
+              )}
               <span className="px-2 py-0.5 bg-blue-600/20 text-blue-400 rounded-full text-xs">
                 {currentPrompt?.category.replace(/_/g, " ")}
               </span>
-              <span className="px-2 py-0.5 bg-purple-600/20 text-purple-400 rounded-full text-xs">
-                {currentPrompt?.emotion}
-              </span>
+              {!isFreeForm && (
+                <span className="px-2 py-0.5 bg-purple-600/20 text-purple-400 rounded-full text-xs">
+                  {currentPrompt?.emotion}
+                </span>
+              )}
             </div>
 
-            <p className="text-xs text-gray-400 mb-1">{t('speaker.sayThisInYourLanguage')}:</p>
+            <p className="text-xs text-gray-400 mb-1">
+              {isFreeForm ? t('speaker.talkAboutThisTopic') : t('speaker.sayThisInYourLanguage')}:
+            </p>
             <h2 className="text-xl md:text-2xl font-bold leading-snug">{currentPrompt?.englishText}</h2>
 
-            {/* Hint — helps speakers who struggle to translate */}
-            {currentPrompt?.hint?.trim() && (
+            {/* Hint — helps speakers who struggle to translate (not shown for free-form) */}
+            {!isFreeForm && currentPrompt?.hint?.trim() && (
               <div className="mt-2 px-3 py-2 bg-blue-900/30 border border-blue-700/40 rounded-lg">
                 <p className="text-xs text-blue-300">💡 {currentPrompt.hint}</p>
               </div>

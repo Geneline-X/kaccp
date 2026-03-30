@@ -86,6 +86,12 @@
         "recordings": "enregistrements",
         "paid": "Payé",
         "unpaid": "Non payé",
-        "ifAllApproved": "si tout est approuvé"
+        "ifAllApproved": "si tout est approuvé",
+        "modePrompts": "Textes",
+        "modeTopics": "Sujets",
+        "freeSpeech": "Parole libre",
+        "talkAboutThisTopic": "Parlez de ce sujet dans votre langue",
+        "noTopicsAvailable": "Aucun Sujet Disponible",
+        "noTopicsForLanguage": "Il n'y a pas encore de sujets disponibles pour cette langue."
     }
 }

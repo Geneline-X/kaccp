@@ -235,6 +235,7 @@
         "newPassword": "New Password",
         "hide": "Hide",
         "show": "Show",
+        "accessDeniedReviewer": "Your account does not have reviewer access. Please contact an admin.",
         "noAdminAccess": "Not an admin account",
         "signInToManagement": "Sign in to management platform",
         "backToPlatformLogin": "Back to platform login"

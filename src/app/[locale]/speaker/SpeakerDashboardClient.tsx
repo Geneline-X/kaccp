@@ -56,6 +56,7 @@ export default function SpeakerDashboardClient({ locale }: { locale: string }) {
   const [stats, setStats] = useState<Stats | null>(null);
   const [recentRecordings, setRecentRecordings] = useState<Recording[]>([]);
   const [loading, setLoading] = useState(true);
+  const [recordMode, setRecordMode] = useState<"prompts" | "topics">("prompts");
 
   useEffect(() => {
     const token = getToken();
@@ -346,32 +347,61 @@ export default function SpeakerDashboardClient({ locale }: { locale: string }) {
           );
         })()}
 
-        {/* My Languages */}
+        {/* Mode Toggle + My Languages */}
         {(() => {
           const userCodes = user?.speaksLanguages || [];
           const myLanguages = languages.filter((l) => userCodes.includes(l.code));
           return myLanguages.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-              {myLanguages.map((lang) => (
-                <div key={lang.id} className="bg-white rounded-lg shadow p-5 flex items-center justify-between">
-                  <div>
-                    <h3 className="font-semibold text-gray-900">{lang.name}</h3>
-                    {lang.nativeName && (
-                      <p className="text-sm text-gray-500">{lang.nativeName}</p>
-                    )}
-                    <p className="text-xs text-green-600 mt-1">
-                      Le{lang.speakerRatePerMinute?.toFixed(2) || "0.00"}/{t('common.min')}
-                    </p>
+            <>
+              {/* Prompts / Topics toggle */}
+              <div className="flex items-center gap-1 mb-4 bg-gray-200 rounded-lg p-1 w-fit">
+                <button
+                  onClick={() => setRecordMode("prompts")}
+                  className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                    recordMode === "prompts"
+                      ? "bg-white text-gray-900 shadow-sm"
+                      : "text-gray-500 hover:text-gray-700"
+                  }`}
+                >
+                  {t('speaker.modePrompts')}
+                </button>
+                <button
+                  onClick={() => setRecordMode("topics")}
+                  className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                    recordMode === "topics"
+                      ? "bg-white text-gray-900 shadow-sm"
+                      : "text-gray-500 hover:text-gray-700"
+                  }`}
+                >
+                  {t('speaker.modeTopics')}
+                </button>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+                {myLanguages.map((lang) => (
+                  <div key={lang.id} className="bg-white rounded-lg shadow p-5 flex items-center justify-between">
+                    <div>
+                      <h3 className="font-semibold text-gray-900">{lang.name}</h3>
+                      {lang.nativeName && (
+                        <p className="text-sm text-gray-500">{lang.nativeName}</p>
+                      )}
+                      <p className="text-xs text-green-600 mt-1">
+                        Le{lang.speakerRatePerMinute?.toFixed(2) || "0.00"}/{t('common.min')}
+                      </p>
+                    </div>
+                    <Link
+                      href={`/${locale}/speaker/record?languageId=${lang.id}${recordMode === "topics" ? "&mode=freeform" : ""}`}
+                      className={`px-4 py-2 text-white text-sm font-medium rounded-lg transition-colors ${
+                        recordMode === "topics"
+                          ? "bg-green-600 hover:bg-green-700"
+                          : "bg-blue-600 hover:bg-blue-700"
+                      }`}
+                    >
+                      {t('speaker.startRecording')}
+                    </Link>
                   </div>
-                  <Link
-                    href={`/${locale}/speaker/record?languageId=${lang.id}`}
-                    className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    {t('speaker.startRecording')}
-                  </Link>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </>
           ) : (
             <div className="bg-white rounded-lg shadow p-6 mb-8 text-center text-gray-500">
               {t('speaker.noLanguagesAssigned')}

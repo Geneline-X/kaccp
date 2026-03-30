@@ -42,6 +42,7 @@ export async function GET(req: NextRequest) {
                 englishText: true,
                 category: true,
                 emotion: true,
+                isFreeForm: true,
               },
             },
             language: {
@@ -75,6 +76,7 @@ export async function GET(req: NextRequest) {
               select: {
                 englishText: true,
                 category: true,
+                isFreeForm: true,
               },
             },
             language: {

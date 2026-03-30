@@ -137,6 +137,7 @@ model Prompt {
 
   targetDurationSec Int            @default(5)   // Expected: 3-10 seconds
   hint              String?        // Simple plain-language explanation to help speakers understand what to say
+  isFreeForm        Boolean        @default(false) // Topic/scenario mode: speaker talks freely
   isActive          Boolean        @default(true)
   timesRecorded     Int            @default(0)
 

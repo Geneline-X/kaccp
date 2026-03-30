@@ -69,7 +69,7 @@ export default function ReviewerDashboardClient({ locale }: { locale: string }) 
   // Fetch user and check role
   useEffect(() => {
     if (!token) {
-      router.push("/reviewer/login");
+      router.push(`/${locale}/reviewer/login`);
       return;
     }
 
@@ -83,13 +83,17 @@ export default function ReviewerDashboardClient({ locale }: { locale: string }) 
           return;
         }
         // Only ADMIN and REVIEWER can access this page
-        if (data.user.role !== "ADMIN" && data.user.role !== "REVIEWER") {
+        const roles: string[] = data.user.roles ?? [data.user.role];
+        if (!roles.includes("ADMIN") && !roles.includes("REVIEWER")) {
           router.push(`/${locale}/`);
           return;
         }
         setUser(data.user);
+      })
+      .catch(() => {
+        router.push(`/${locale}/reviewer/login`);
       });
-  }, [token, router]);
+  }, [token, router, locale]);
 
   // Fetch transcriptions pending review
   useEffect(() => {

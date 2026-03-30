@@ -85,6 +85,12 @@
         "recordings": "recordings",
         "paid": "Paid",
         "unpaid": "Unpaid",
-        "ifAllApproved": "if all approved"
+        "ifAllApproved": "if all approved",
+        "modePrompts": "Prompts",
+        "modeTopics": "Topics",
+        "freeSpeech": "Free Speech",
+        "talkAboutThisTopic": "Talk about this topic in your language",
+        "noTopicsAvailable": "No Topics Available",
+        "noTopicsForLanguage": "There are no topics available for this language yet."
     }
 }
