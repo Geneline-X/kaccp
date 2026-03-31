@@ -180,6 +180,14 @@ export default function ReviewerDashboardClient({ locale }: { locale: string }) 
       setEditedText(newList[0]?.text || "");
       setReviewNotes("");
       setSignedAudioUrl(null);
+
+      // Auto-fetch next batch when current page is empty
+      if (newList.length === 0 && pagination.totalPages > pagination.page) {
+        setPagination((prev) => ({ ...prev, page: prev.page + 1 }));
+      } else if (newList.length === 0 && pagination.page > 1) {
+        // Re-fetch current page (items may have shifted)
+        setPagination((prev) => ({ ...prev, page: 1 }));
+      }
     } catch {
       alert(t('reviewer.failedToSubmitReview'));
     } finally {
