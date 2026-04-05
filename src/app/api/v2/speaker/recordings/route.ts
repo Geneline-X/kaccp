@@ -116,12 +116,13 @@ export async function GET(req: NextRequest) {
     const weeklyPerMinuteTotal = weeklyRecordings.reduce((sum, r) => {
       return sum + (r.durationSec / 60) * (r.language.speakerRatePerMinute ?? 2.5);
     }, 0);
-    const milestoneHit = weeklyApprovedMin >= MILESTONE_MINUTES;
+    const milestonesReached = Math.floor(weeklyApprovedMin / MILESTONE_MINUTES);
+    const milestoneHit = milestonesReached >= 1;
     let weeklyPayout: number;
     if (milestoneHit) {
-      const extraMinutes = weeklyApprovedMin - MILESTONE_MINUTES;
+      const remainderMinutes = weeklyApprovedMin - milestonesReached * MILESTONE_MINUTES;
       const avgRate = weeklyApprovedMin > 0 ? weeklyPerMinuteTotal / weeklyApprovedMin : 2.5;
-      weeklyPayout = MILESTONE_PAYOUT_LE + extraMinutes * avgRate;
+      weeklyPayout = milestonesReached * MILESTONE_PAYOUT_LE + remainderMinutes * avgRate;
     } else {
       weeklyPayout = weeklyPerMinuteTotal;
     }

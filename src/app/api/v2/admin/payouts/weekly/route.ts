@@ -112,12 +112,13 @@ export async function GET(req: NextRequest) {
       const data = speakerMap.get(s.id) || { totalSec: 0, perMinuteTotal: 0 };
       const pending = pendingMap.get(s.id) || { totalSec: 0, perMinuteTotal: 0 };
       const approvedMinutes = data.totalSec / 60;
-      const milestoneHit = approvedMinutes >= MILESTONE_MINUTES;
+      const milestonesReached = Math.floor(approvedMinutes / MILESTONE_MINUTES);
+      const milestoneHit = milestonesReached >= 1;
       let payoutLe: number;
       if (milestoneHit) {
-        const extraMinutes = approvedMinutes - MILESTONE_MINUTES;
+        const remainderMinutes = approvedMinutes - milestonesReached * MILESTONE_MINUTES;
         const avgRate = approvedMinutes > 0 ? data.perMinuteTotal / approvedMinutes : 2.5;
-        payoutLe = MILESTONE_PAYOUT_LE + extraMinutes * avgRate;
+        payoutLe = milestonesReached * MILESTONE_PAYOUT_LE + remainderMinutes * avgRate;
       } else {
         payoutLe = data.perMinuteTotal;
       }
@@ -125,12 +126,13 @@ export async function GET(req: NextRequest) {
       // Estimated payout if all pending recordings were also approved
       const totalMinutes = approvedMinutes + pending.totalSec / 60;
       const totalPerMinute = data.perMinuteTotal + pending.perMinuteTotal;
-      const estMilestoneHit = totalMinutes >= MILESTONE_MINUTES;
+      const estMilestonesReached = Math.floor(totalMinutes / MILESTONE_MINUTES);
+      const estMilestoneHit = estMilestonesReached >= 1;
       let estimatedPayoutLe: number;
       if (estMilestoneHit) {
-        const extraMinutes = totalMinutes - MILESTONE_MINUTES;
+        const remainderMinutes = totalMinutes - estMilestonesReached * MILESTONE_MINUTES;
         const avgRate = totalMinutes > 0 ? totalPerMinute / totalMinutes : 2.5;
-        estimatedPayoutLe = MILESTONE_PAYOUT_LE + extraMinutes * avgRate;
+        estimatedPayoutLe = estMilestonesReached * MILESTONE_PAYOUT_LE + remainderMinutes * avgRate;
       } else {
         estimatedPayoutLe = totalPerMinute;
       }
@@ -257,12 +259,13 @@ export async function POST(req: NextRequest) {
       }
 
       const approvedMinutes = data.totalSec / 60;
-      const milestoneHit = approvedMinutes >= MILESTONE_MINUTES;
+      const milestonesReached = Math.floor(approvedMinutes / MILESTONE_MINUTES);
+      const milestoneHit = milestonesReached >= 1;
       let payoutLe: number;
       if (milestoneHit) {
-        const extraMinutes = approvedMinutes - MILESTONE_MINUTES;
+        const remainderMinutes = approvedMinutes - milestonesReached * MILESTONE_MINUTES;
         const avgRate = approvedMinutes > 0 ? data.perMinuteTotal / approvedMinutes : 2.5;
-        payoutLe = MILESTONE_PAYOUT_LE + extraMinutes * avgRate;
+        payoutLe = milestonesReached * MILESTONE_PAYOUT_LE + remainderMinutes * avgRate;
       } else {
         payoutLe = data.perMinuteTotal;
       }
