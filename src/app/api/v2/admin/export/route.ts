@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/infra/db/prisma";
 import { getAuthUser } from "@/lib/infra/auth/auth";
-import { getSignedUrl } from "@/lib/infra/gcs";
 
-// GET /api/v2/admin/export - Export approved data in LJSpeech format
+// GET /api/v2/admin/export - Export reviewed recordings in LJSpeech format
 export async function GET(req: NextRequest) {
   try {
     const user = await getAuthUser(req);
@@ -16,10 +15,7 @@ export async function GET(req: NextRequest) {
     const speakerId = searchParams.get("speakerId");
     const includeTranscriptions = searchParams.get("includeTranscriptions") !== "false";
     const format = searchParams.get("format") || "json"; // json or csv
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "500");
-    const skip = (page - 1) * limit;
-    const signUrls = searchParams.get("signUrls") !== "false";
+    const previewOnly = searchParams.get("preview") === "true";
 
     if (!languageId) {
       return NextResponse.json(
@@ -31,9 +27,7 @@ export async function GET(req: NextRequest) {
     // Get language info
     const language = await prisma.language.findUnique({
       where: { id: languageId },
-      include: {
-        country: true,
-      },
+      include: { country: true },
     });
 
     if (!language) {
@@ -43,101 +37,92 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Build where clause based on filters
+    // Audio-reviewed recordings are in PENDING_TRANSCRIPTION, TRANSCRIBED, or APPROVED status
     const where: any = {
       languageId,
-      status: "APPROVED",
+      status: { in: ["PENDING_TRANSCRIPTION", "TRANSCRIBED", "APPROVED"] },
     };
     if (speakerId) where.speakerId = speakerId;
     if (includeTranscriptions) where.transcription = { status: "APPROVED" };
 
-    // Fetch distinct speakers for this language (for filter dropdown)
-    const [recordings, total, distinctSpeakers] = await Promise.all([
+    // Fetch recordings, count, total duration, and distinct speakers
+    const [recordings, total, durationAgg, distinctSpeakers] = await Promise.all([
       prisma.recording.findMany({
         where,
         include: {
           transcription: true,
           speaker: {
-            select: {
-              id: true,
-              displayName: true,
-            },
+            select: { id: true, displayName: true, speakerLabel: true },
           },
           prompt: {
-            select: {
-              englishText: true,
-              category: true,
-            },
+            select: { englishText: true, category: true },
           },
         },
         orderBy: { createdAt: "asc" },
-        skip,
-        take: limit,
+        // For preview, only fetch first 10; for download, fetch everything
+        ...(previewOnly ? { take: 10 } : {}),
       }),
       prisma.recording.count({ where }),
+      prisma.recording.aggregate({
+        where,
+        _sum: { durationSec: true },
+        _count: { speakerId: true },
+      }),
       prisma.recording.findMany({
-        where: { languageId, status: "APPROVED" },
-        select: { speaker: { select: { id: true, displayName: true } } },
+        where: { languageId },
+        select: { speaker: { select: { id: true, displayName: true, speakerLabel: true } } },
         distinct: ["speakerId"],
       }),
     ]);
 
-    if (recordings.length === 0 && page === 1) {
-      return NextResponse.json({
-        language: { code: language.code, name: language.name, country: language.country.name },
-        stats: { totalRecordings: 0, totalDurationSec: 0, totalDurationHours: 0, uniqueSpeakers: 0 },
-        pagination: { page, limit, total: 0, totalPages: 0 },
-        speakers: distinctSpeakers.map((r) => r.speaker).filter(Boolean),
-        data: [],
-        exportedAt: new Date().toISOString(),
-      });
-    }
+    const totalDurationSec = durationAgg._sum.durationSec || 0;
 
-    // Format data for LJSpeech-style export
-    const exportData = await Promise.all(
-      recordings.map(async (rec, index) => {
-        // Generate LJSpeech-style ID: LANG_SPEAKER_INDEX
-        const speakerShort = rec.speaker.id.slice(-6);
-        const ljId = `${language.code.toUpperCase()}_${speakerShort}_${String(skip + index + 1).padStart(5, "0")}`;
+    // Track per-speaker recording index for LJSpeech IDs
+    const speakerCounters = new Map<string, number>();
 
-        let audioFile = rec.audioUrl;
-        if (signUrls && rec.audioUrl.startsWith("gs://")) {
-          try {
-            audioFile = await getSignedUrl(rec.audioUrl, 7 * 24 * 3600); // 7-day signed URL
-          } catch {
-            // fallback to gs:// if signing fails
-          }
-        }
+    const exportData = recordings.map((rec) => {
+      const count = (speakerCounters.get(rec.speakerId) || 0) + 1;
+      speakerCounters.set(rec.speakerId, count);
 
-        const base: any = {
-          id: ljId,
-          audio_file: audioFile,
-          english_prompt: rec.prompt.englishText,
-          category: rec.prompt.category,
-          duration_sec: rec.durationSec,
-          speaker_id: rec.speakerId,
-          speaker_name: rec.speaker.displayName || rec.speakerId,
-          recording_id: rec.id,
-        };
-        if (includeTranscriptions) {
-          base.transcription = rec.transcription?.text || "";
-        }
-        return base;
-      })
-    );
+      const ljId = `${language.code.toUpperCase()}_${rec.speakerId}_${String(count).padStart(5, "0")}`;
 
+      const base: any = {
+        id: ljId,
+        audio_file: rec.audioUrl,
+        english_prompt: rec.prompt.englishText,
+        category: rec.prompt.category,
+        duration_sec: rec.durationSec,
+        speaker_id: rec.speakerId,
+        speaker_name: rec.speaker.displayName || rec.speakerId,
+        recording_id: rec.id,
+      };
+      if (includeTranscriptions) {
+        base.transcription = rec.transcription?.text || "";
+      }
+      return base;
+    });
+
+    // LJSpeech CSV: id|audio_path|text (3 columns)
+    // Without transcriptions: id|audio_path|english_prompt|duration_sec|speaker_id|speaker_name|category
     if (format === "csv") {
-      const csvHeader = includeTranscriptions
-        ? "id|audio_path|transcription|english_prompt|duration_sec|speaker_id|speaker_name|category"
-        : "id|audio_path|english_prompt|duration_sec|speaker_id|speaker_name|category";
-      const csvRows = exportData.map((row) =>
-        includeTranscriptions
-          ? `${row.id}|${row.audio_file}|${row.transcription}|${row.english_prompt}|${row.duration_sec}|${row.speaker_id}|${row.speaker_name}|${row.category}`
-          : `${row.id}|${row.audio_file}|${row.english_prompt}|${row.duration_sec}|${row.speaker_id}|${row.speaker_name}|${row.category}`
-      );
-      const csvContent = [csvHeader, ...csvRows].join("\n");
+      let csvContent: string;
 
-      // Filename includes language code and country
+      if (includeTranscriptions) {
+        // True LJSpeech format: id|audio_path|transcription
+        const csvHeader = "id|audio_path|transcription";
+        const csvRows = exportData.map((row) =>
+          `${row.id}|${row.audio_file}|${row.transcription}`
+        );
+        csvContent = [csvHeader, ...csvRows].join("\n");
+      } else {
+        // Full metadata format when no transcriptions
+        const csvHeader = "id|audio_path|english_prompt|duration_sec|speaker_id|speaker_name|category";
+        const csvRows = exportData.map((row) =>
+          `${row.id}|${row.audio_file}|${row.english_prompt}|${row.duration_sec}|${row.speaker_id}|${row.speaker_name}|${row.category}`
+        );
+        csvContent = [csvHeader, ...csvRows].join("\n");
+      }
+
       const filename = `${language.country.code.toLowerCase()}_${language.code}_metadata.csv`;
 
       return new NextResponse(csvContent, {
@@ -148,16 +133,21 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // Return JSON with full data
+    // Count unique speakers from the full dataset via a separate query
+    const uniqueSpeakerCount = await prisma.recording.findMany({
+      where,
+      select: { speakerId: true },
+      distinct: ["speakerId"],
+    });
+
     return NextResponse.json({
       language: { code: language.code, name: language.name, country: language.country.name },
       stats: {
         totalRecordings: total,
-        totalDurationSec: recordings.reduce((sum, r) => sum + r.durationSec, 0),
-        totalDurationHours: Math.round((recordings.reduce((sum, r) => sum + r.durationSec, 0) / 3600) * 100) / 100,
-        uniqueSpeakers: new Set(recordings.map((r) => r.speakerId)).size,
+        totalDurationSec,
+        totalDurationHours: Math.round((totalDurationSec / 3600) * 100) / 100,
+        uniqueSpeakers: uniqueSpeakerCount.length,
       },
-      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
       speakers: distinctSpeakers.map((r) => r.speaker).filter(Boolean),
       data: exportData,
       exportedAt: new Date().toISOString(),
@@ -189,7 +179,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Get language
     const language = await prisma.language.findUnique({
       where: { id: languageId },
     });
@@ -201,15 +190,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Get approved recordings not yet exported
+    // Get reviewed recordings not yet exported
     const recordings = await prisma.recording.findMany({
       where: {
         languageId,
-        status: "APPROVED",
-        transcription: {
-          status: "APPROVED",
-        },
-        // Not already in export records
+        status: { in: ["PENDING_TRANSCRIPTION", "TRANSCRIBED", "APPROVED"] },
         NOT: {
           id: {
             in: (
@@ -233,7 +218,6 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Create export records
     const exportRecords = await prisma.exportRecord.createMany({
       data: recordings.map((rec) => ({
         languageId,
