@@ -21,10 +21,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Run prompt lookup, speaker count, and recording count in parallel
+    // Run prompt lookup and recording count in parallel
     const targetLanguageIdHint = languageId; // used if prompt is universal
 
-    const [prompt, speakerCount, recordingCount] = await Promise.all([
+    const [prompt, recordingCount] = await Promise.all([
       prisma.prompt.findUnique({
         where: { id: promptId },
         include: {
@@ -35,14 +35,7 @@ export async function POST(req: NextRequest) {
           },
         },
       }),
-      // Speaker number for labeling (e.g., speaker_0001)
-      prisma.user.count({
-        where: {
-          role: "SPEAKER",
-          createdAt: { lte: user.createdAt },
-        },
-      }),
-      // Recording count for this speaker (resolved after prompt lookup if needed)
+      // Recording count for this speaker
       prisma.recording.count({
         where: {
           speakerId: user.id,
@@ -58,7 +51,23 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const speakerLabel = `speaker_${String(speakerCount).padStart(4, "0")}`;
+    // Get or assign a permanent speaker label (stored on User, never changes)
+    let speakerLabel = (user as any).speakerLabel as string | null;
+    if (!speakerLabel) {
+      const maxSpeaker = await prisma.user.findFirst({
+        where: { speakerLabel: { not: null } },
+        orderBy: { speakerLabel: "desc" },
+        select: { speakerLabel: true },
+      });
+      const nextNum = maxSpeaker?.speakerLabel
+        ? parseInt(maxSpeaker.speakerLabel.replace("speaker_", ""), 10) + 1
+        : 1;
+      speakerLabel = `speaker_${String(nextNum).padStart(4, "0")}`;
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { speakerLabel },
+      });
+    }
     const recordingNumber = String(recordingCount + 1).padStart(5, "0");
 
     // For universal prompts (no language), use a default structure

@@ -11,6 +11,7 @@ interface Language {
   code: string;
   name: string;
   approvedMinutes: number;
+  reviewedHours: number;
   country: {
     name: string;
   };
@@ -74,19 +75,35 @@ export default function AdminExportPage() {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
-      .then((data) => {
-        setLanguages(data.languages || []);
-        if (data.languages?.length > 0) {
-          setSelectedLanguage(data.languages[0].id);
+      .then(async (data) => {
+        const langs: Language[] = data.languages || [];
+        // Fetch reviewed hours per language from export stats
+        const withStats = await Promise.all(
+          langs.map(async (lang) => {
+            try {
+              const res = await fetch(
+                `/api/v2/admin/export?languageId=${lang.id}&format=json&preview=true&includeTranscriptions=false`,
+                { headers: { Authorization: `Bearer ${token}` } }
+              );
+              const d = await res.json();
+              return { ...lang, reviewedHours: d.stats?.totalDurationHours || 0 };
+            } catch {
+              return { ...lang, reviewedHours: 0 };
+            }
+          })
+        );
+        setLanguages(withStats);
+        if (withStats.length > 0) {
+          setSelectedLanguage(withStats[0].id);
         }
         setLoading(false);
       });
   }, [token, router]);
 
-  // Fetch speakers for the selected language (always without transcription filter so all approved speakers show)
+  // Fetch speakers for the selected language
   useEffect(() => {
     if (!token || !selectedLanguage) return;
-    fetch(`/api/v2/admin/export?languageId=${selectedLanguage}&format=json&limit=1&includeTranscriptions=false`, {
+    fetch(`/api/v2/admin/export?languageId=${selectedLanguage}&format=json&preview=true&includeTranscriptions=false`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -96,10 +113,11 @@ export default function AdminExportPage() {
       .catch(() => {});
   }, [token, selectedLanguage]);
 
-  const buildParams = (format: string) => {
+  const buildParams = (format: string, { preview = false } = {}) => {
     const params = new URLSearchParams({ languageId: selectedLanguage, format });
     if (selectedSpeaker) params.set("speakerId", selectedSpeaker);
     if (!includeTranscriptions) params.set("includeTranscriptions", "false");
+    if (preview) params.set("preview", "true");
     return params.toString();
   };
 
@@ -112,7 +130,7 @@ export default function AdminExportPage() {
 
     try {
       const res = await fetch(
-        `/api/v2/admin/export?${buildParams("json")}`,
+        `/api/v2/admin/export?${buildParams("json", { preview: true })}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -135,6 +153,8 @@ export default function AdminExportPage() {
 
   const handleDownloadCSV = async () => {
     if (!selectedLanguage) return;
+    setExporting(true);
+    setError("");
     try {
       const res = await fetch(`/api/v2/admin/export?${buildParams("csv")}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -153,21 +173,39 @@ export default function AdminExportPage() {
       URL.revokeObjectURL(url);
     } catch {
       setError("Failed to download CSV");
+    } finally {
+      setExporting(false);
     }
   };
 
-  const handleDownloadJSON = () => {
-    if (!exportData) return;
-
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${exportData.language.code}_export.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+  const handleDownloadJSON = async () => {
+    if (!selectedLanguage) return;
+    setExporting(true);
+    setError("");
+    try {
+      const res = await fetch(
+        `/api/v2/admin/export?${buildParams("json")}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const data = await res.json();
+      if (data.error) {
+        setError(data.error);
+        return;
+      }
+      const blob = new Blob([JSON.stringify(data, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${data.language.code}_export.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      setError("Failed to download JSON");
+    } finally {
+      setExporting(false);
+    }
   };
 
   if (loading) {
@@ -219,7 +257,7 @@ export default function AdminExportPage() {
               >
                 {languages.map((lang) => (
                   <option key={lang.id} value={lang.id}>
-                    {lang.name} ({lang.code}) - {Math.round(lang.approvedMinutes / 60)}h approved
+                    {lang.name} ({lang.code}) - {lang.reviewedHours}h reviewed
                   </option>
                 ))}
               </select>
@@ -407,7 +445,7 @@ export default function AdminExportPage() {
               </p>
               <code className="block bg-blue-100 p-3 rounded text-sm text-blue-900 overflow-x-auto">
                 {includeTranscriptions
-                  ? "id|audio_path|transcription|english_prompt|duration_sec|speaker_id|speaker_name|category"
+                  ? "id|audio_path|transcription"
                   : "id|audio_path|english_prompt|duration_sec|speaker_id|speaker_name|category"}
               </code>
               <div className="mt-4 text-sm text-blue-700">

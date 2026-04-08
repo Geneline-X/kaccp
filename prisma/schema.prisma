@@ -57,6 +57,9 @@ model User {
   avatarUrl    String?
   bio          String?
 
+  // Speaker label (assigned once, never changes) e.g. "speaker_0017"
+  speakerLabel String?   @unique
+
   // Language capabilities
   speaksLanguages String[] // Language codes they can speak (e.g., ["kri", "men"])
   writesLanguages String[] // Language codes they can write/transcribe
