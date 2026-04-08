@@ -5,6 +5,8 @@ import { downloadBuffer, uploadBuffer } from "@/lib/infra/gcs";
 import { trimTrailingSilence } from "@/lib/infra/audio/trim-silence";
 import { RecordingStatus } from "@prisma/client";
 
+export const maxDuration = 300;
+
 function isAdmin(user: any) {
   return user && (((user as any).roles || []).includes("ADMIN") || user.role === "ADMIN");
 }
@@ -51,8 +53,78 @@ type ResultEntry = {
   reason?: string;
 };
 
+// Process a single recording for trim analysis/application
+async function processRecording(
+  rec: { id: string; audioUrl: string; durationSec: number; speakerId: string; languageId: string; speaker: { displayName: string | null; email: string }; prompt: { englishText: string } },
+  dryRun: boolean
+): Promise<{ result: ResultEntry; outcome: "trimmed" | "unchanged" | "skipped" | "error" }> {
+  const base: Pick<ResultEntry, "id" | "audioUrl" | "speakerId" | "speakerName" | "promptText"> = {
+    id: rec.id,
+    audioUrl: rec.audioUrl,
+    speakerId: rec.speakerId,
+    speakerName: rec.speaker.displayName || rec.speaker.email,
+    promptText: rec.prompt.englishText,
+  };
+
+  const isWav =
+    !rec.audioUrl.includes(".webm") &&
+    !rec.audioUrl.includes(".mp4") &&
+    !rec.audioUrl.includes(".ogg");
+
+  if (!isWav) {
+    return { result: { ...base, result: "skipped", reason: "not a WAV file" }, outcome: "skipped" };
+  }
+
+  try {
+    const wavBuf = await downloadBuffer(rec.audioUrl);
+    const trimResult = trimTrailingSilence(wavBuf);
+
+    if (!trimResult.wasModified) {
+      return {
+        result: { ...base, result: "unchanged", originalDurationSec: trimResult.originalDurationSec },
+        outcome: "unchanged",
+      };
+    }
+
+    if (!dryRun) {
+      const removedMinutes = trimResult.removedSec / 60;
+      await Promise.all([
+        uploadBuffer(rec.audioUrl, trimResult.buffer, "audio/wav"),
+        prisma.recording.update({
+          where: { id: rec.id },
+          data: { durationSec: trimResult.trimmedDurationSec },
+        }),
+        prisma.language.update({
+          where: { id: rec.languageId },
+          data: { collectedMinutes: { decrement: removedMinutes } },
+        }),
+        prisma.user.update({
+          where: { id: rec.speakerId },
+          data: { totalRecordingsSec: { decrement: trimResult.removedSec } },
+        }),
+      ]);
+    }
+
+    return {
+      result: {
+        ...base,
+        result: "trimmed",
+        originalDurationSec: trimResult.originalDurationSec,
+        newDurationSec: trimResult.trimmedDurationSec,
+        removedSec: Math.round(trimResult.removedSec * 100) / 100,
+      },
+      outcome: "trimmed",
+    };
+  } catch (err: any) {
+    return { result: { ...base, result: "error", reason: err?.message ?? "unknown error" }, outcome: "error" };
+  }
+}
+
+const CONCURRENCY = 5;
+const DEFAULT_BATCH_SIZE = 50;
+
 // POST /api/v2/admin/recordings/trim-silence
-// Body: { recordingIds?, status?, languageId?, speakerId?, dryRun? }
+// Body: { recordingIds?, status?, languageId?, speakerId?, dryRun?, batchSize?, offset? }
 export async function POST(req: NextRequest) {
   try {
     const user = await getAuthUser(req);
@@ -65,6 +137,8 @@ export async function POST(req: NextRequest) {
       languageId,
       speakerId,
       dryRun = false,
+      batchSize = DEFAULT_BATCH_SIZE,
+      offset = 0,
     } = body;
 
     const where: any = recordingIds?.length
@@ -76,18 +150,24 @@ export async function POST(req: NextRequest) {
       if (speakerId) where.speakerId = speakerId;
     }
 
-    const recordings = await prisma.recording.findMany({
-      where,
-      select: {
-        id: true,
-        audioUrl: true,
-        durationSec: true,
-        speakerId: true,
-        languageId: true,
-        speaker: { select: { displayName: true, email: true } },
-        prompt: { select: { englishText: true } },
-      },
-    });
+    const [recordings, totalMatching] = await Promise.all([
+      prisma.recording.findMany({
+        where,
+        select: {
+          id: true,
+          audioUrl: true,
+          durationSec: true,
+          speakerId: true,
+          languageId: true,
+          speaker: { select: { displayName: true, email: true } },
+          prompt: { select: { englishText: true } },
+        },
+        orderBy: { createdAt: "asc" },
+        skip: offset,
+        take: Math.min(batchSize, 200),
+      }),
+      prisma.recording.count({ where }),
+    ]);
 
     const results: ResultEntry[] = [];
     let trimmedCount = 0;
@@ -95,70 +175,19 @@ export async function POST(req: NextRequest) {
     let skippedCount = 0;
     let errorCount = 0;
 
-    for (const rec of recordings) {
-      const isWav =
-        !rec.audioUrl.includes(".webm") &&
-        !rec.audioUrl.includes(".mp4") &&
-        !rec.audioUrl.includes(".ogg");
+    // Process in parallel batches of CONCURRENCY
+    for (let i = 0; i < recordings.length; i += CONCURRENCY) {
+      const batch = recordings.slice(i, i + CONCURRENCY);
+      const batchResults = await Promise.all(
+        batch.map((rec) => processRecording(rec, dryRun))
+      );
 
-      const base: Pick<ResultEntry, "id" | "audioUrl" | "speakerId" | "speakerName" | "promptText"> = {
-        id: rec.id,
-        audioUrl: rec.audioUrl,
-        speakerId: rec.speakerId,
-        speakerName: rec.speaker.displayName || rec.speaker.email,
-        promptText: rec.prompt.englishText,
-      };
-
-      if (!isWav) {
-        results.push({ ...base, result: "skipped", reason: "not a WAV file" });
-        skippedCount++;
-        continue;
-      }
-
-      try {
-        const wavBuf = await downloadBuffer(rec.audioUrl);
-        const trimResult = trimTrailingSilence(wavBuf);
-
-        if (!trimResult.wasModified) {
-          results.push({
-            ...base,
-            result: "unchanged",
-            originalDurationSec: trimResult.originalDurationSec,
-          });
-          unchangedCount++;
-          continue;
-        }
-
-        if (!dryRun) {
-          const removedMinutes = trimResult.removedSec / 60;
-          await Promise.all([
-            uploadBuffer(rec.audioUrl, trimResult.buffer, "audio/wav"),
-            prisma.recording.update({
-              where: { id: rec.id },
-              data: { durationSec: trimResult.trimmedDurationSec },
-            }),
-            prisma.language.update({
-              where: { id: rec.languageId },
-              data: { collectedMinutes: { decrement: removedMinutes } },
-            }),
-            prisma.user.update({
-              where: { id: rec.speakerId },
-              data: { totalRecordingsSec: { decrement: trimResult.removedSec } },
-            }),
-          ]);
-        }
-
-        results.push({
-          ...base,
-          result: "trimmed",
-          originalDurationSec: trimResult.originalDurationSec,
-          newDurationSec: trimResult.trimmedDurationSec,
-          removedSec: Math.round(trimResult.removedSec * 100) / 100,
-        });
-        trimmedCount++;
-      } catch (err: any) {
-        results.push({ ...base, result: "error", reason: err?.message ?? "unknown error" });
-        errorCount++;
+      for (const { result, outcome } of batchResults) {
+        results.push(result);
+        if (outcome === "trimmed") trimmedCount++;
+        else if (outcome === "unchanged") unchangedCount++;
+        else if (outcome === "skipped") skippedCount++;
+        else errorCount++;
       }
     }
 
@@ -169,6 +198,9 @@ export async function POST(req: NextRequest) {
       unchanged: unchangedCount,
       skipped: skippedCount,
       errors: errorCount,
+      totalMatching,
+      offset,
+      hasMore: offset + recordings.length < totalMatching,
       results,
     });
   } catch (error: any) {

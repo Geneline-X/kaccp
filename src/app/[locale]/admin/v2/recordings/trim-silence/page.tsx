@@ -98,26 +98,48 @@ export default function TrimSilencePage() {
     setApplied(false);
 
     try {
-      const body: any = { status, dryRun: true };
-      if (languageId) body.languageId = languageId;
-      if (speakerId) body.speakerId = speakerId;
+      const allResults: AnalyzeResult[] = [];
+      let totalProcessed = 0, totalTrimmed = 0, totalUnchanged = 0, totalSkipped = 0, totalErrors = 0;
+      let offset = 0;
+      let hasMore = true;
 
-      const res = await fetch("/api/v2/admin/recordings/trim-silence", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Analysis failed");
+      while (hasMore) {
+        const body: any = { status, dryRun: true, batchSize: 20, offset };
+        if (languageId) body.languageId = languageId;
+        if (speakerId) body.speakerId = speakerId;
 
-      setResults(data.results);
-      setSummary({
-        processed: data.processed,
-        trimmed: data.trimmed,
-        unchanged: data.unchanged,
-        skipped: data.skipped,
-        errors: data.errors,
-      });
+        const res = await fetch("/api/v2/admin/recordings/trim-silence", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(text.slice(0, 200) || `Request failed (${res.status})`);
+        }
+
+        const data = await res.json();
+
+        allResults.push(...data.results);
+        totalProcessed += data.processed;
+        totalTrimmed += data.trimmed;
+        totalUnchanged += data.unchanged;
+        totalSkipped += data.skipped;
+        totalErrors += data.errors;
+        hasMore = data.hasMore;
+        offset += data.processed;
+
+        // Update UI progressively
+        setResults([...allResults]);
+        setSummary({
+          processed: totalProcessed,
+          trimmed: totalTrimmed,
+          unchanged: totalUnchanged,
+          skipped: totalSkipped,
+          errors: totalErrors,
+        });
+      }
     } catch (err: any) {
       alert(`Error: ${err?.message}`);
     } finally {
@@ -132,27 +154,41 @@ export default function TrimSilencePage() {
 
     setApplying(true);
     try {
-      const body: any = {
-        recordingIds: toTrim.map((r) => r.id),
-        dryRun: false,
-      };
+      let totalProcessed = 0, totalTrimmed = 0, totalUnchanged = 0, totalSkipped = 0, totalErrors = 0;
+      const ids = toTrim.map((r) => r.id);
 
-      const res = await fetch("/api/v2/admin/recordings/trim-silence", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Apply failed");
+      // Process in batches of 20 to avoid timeouts
+      for (let i = 0; i < ids.length; i += 20) {
+        const batch = ids.slice(i, i + 20);
+        const res = await fetch("/api/v2/admin/recordings/trim-silence", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+          body: JSON.stringify({ recordingIds: batch, dryRun: false }),
+        });
+
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(text.slice(0, 200) || `Request failed (${res.status})`);
+        }
+
+        const data = await res.json();
+
+        totalProcessed += data.processed;
+        totalTrimmed += data.trimmed;
+        totalUnchanged += data.unchanged;
+        totalSkipped += data.skipped;
+        totalErrors += data.errors;
+
+        setSummary({
+          processed: totalProcessed,
+          trimmed: totalTrimmed,
+          unchanged: totalUnchanged,
+          skipped: totalSkipped,
+          errors: totalErrors,
+        });
+      }
 
       setApplied(true);
-      setSummary({
-        processed: data.processed,
-        trimmed: data.trimmed,
-        unchanged: data.unchanged,
-        skipped: data.skipped,
-        errors: data.errors,
-      });
     } catch (err: any) {
       alert(`Error: ${err?.message}`);
     } finally {
