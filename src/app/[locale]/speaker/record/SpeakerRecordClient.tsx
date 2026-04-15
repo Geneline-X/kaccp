@@ -238,7 +238,7 @@ function RecordContent({ locale }: { locale: string }) {
       // Fetch more prompts
       const token = getToken();
       setLoading(true);
-      fetch(`/api/v2/speaker/prompts?languageId=${languageId}&limit=20&uiLocale=${locale}`, {
+      fetch(`/api/v2/speaker/prompts?languageId=${languageId}&limit=20&uiLocale=${locale}${isFreeForm ? '&isFreeForm=true' : ''}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => res.json())
