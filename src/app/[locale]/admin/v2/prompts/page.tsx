@@ -1144,6 +1144,7 @@ export default function AdminPromptsPage() {
                 setGeneratedTopics([]);
                 try {
                   const allTopics: { text: string; category: string }[] = [];
+                  let totalDupsRemoved = 0;
                   for (const cat of generateCategories) {
                     const res = await fetch("/api/v2/prompts/generate", {
                       method: "POST",
@@ -1157,11 +1158,17 @@ export default function AdminPromptsPage() {
                     if (data.topics) {
                       allTopics.push(...data.topics.map((t: string) => ({ text: t, category: cat })));
                     }
+                    if (data.duplicatesRemoved) {
+                      totalDupsRemoved += data.duplicatesRemoved;
+                    }
                   }
                   if (allTopics.length > 0) {
                     setGeneratedTopics(allTopics);
+                    if (totalDupsRemoved > 0) {
+                      alert(`${totalDupsRemoved} duplicate topics (already in DB) were removed.`);
+                    }
                   } else {
-                    alert("Failed to generate topics");
+                    alert(totalDupsRemoved > 0 ? `All generated topics already exist in the database (${totalDupsRemoved} duplicates removed).` : "Failed to generate topics");
                   }
                 } catch {
                   alert("Failed to generate topics");
