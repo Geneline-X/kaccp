@@ -2,9 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/infra/db/prisma";
 import { getAuthUser } from "@/lib/infra/auth/auth";
 import { getWriteSignedUrl } from "@/lib/infra/gcs";
+import { rateLimit, RATE_LIMITS } from "@/lib/infra/rate-limit";
 
 // POST /api/v2/speaker/upload-url - Get a signed URL for uploading recording
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(req, RATE_LIMITS.upload);
+  if (limited) return limited;
   try {
     const user = await getAuthUser(req);
     if (!user) {
