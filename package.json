@@ -2,6 +2,8 @@
   "name": "kaccp-app",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
+  "author": "Geneline-X <contact@geneline-x.net> (https://geneline-x.net)",
   "scripts": {
     "dev": "next dev",
     "dev:webpack": "next dev --webpack",
