@@ -54,36 +54,45 @@
 
 ```plaintext
 .
-├── app/                     # Application code
-│   ├── api/                 # API routes
-│   ├── components/          # React components
-│   ├── lib/                 # Library code
-│   ├── middleware/          # Middleware functions
-│   ├── pages/               # Next.js pages
-│   ├── prisma/              # Prisma schema and client
-│   └── public/              # Public assets
-├── scripts/                 # Scripts for development and maintenance
-├── .env                      # Environment variables
-├── .gitignore                # Ignored files in Git
-├── next.config.js           # Next.js configuration
-├── package.json             # NPM package configuration
-└── tsconfig.json            # TypeScript configuration
+├── prisma/                  # Prisma schema, migrations, seed scripts
+├── public/                  # Static assets (images, icons)
+├── scripts/                 # Dev/ops scripts (seed, admin setup)
+├── src/
+│   ├── app/
+│   │   ├── [locale]/        # Localised Next.js app routes (en, kri, …)
+│   │   │   ├── (admin)/     # Admin dashboard pages
+│   │   │   ├── (speaker)/   # Speaker recording pages
+│   │   │   ├── (transcriber)/ # Transcriber pages
+│   │   │   └── legal/       # Terms, privacy pages
+│   │   └── api/             # API route handlers
+│   │       ├── auth/        # login, register, forgot-password
+│   │       └── v2/          # Versioned API (speaker, transcriber, admin, reviewer)
+│   ├── components/          # Shared React components (UI, layout, forms)
+│   ├── lib/
+│   │   └── infra/           # Infrastructure: db, auth, storage, email, payments
+│   │       └── storage/     # Pluggable storage providers (GCS, local)
+│   └── middleware.ts         # Next.js middleware (i18n routing)
+├── .env.example             # Environment variable template
+├── .github/workflows/ci.yml # CI pipeline (lint, test, build)
+├── CONTRIBUTING.md
+├── CODE_OF_CONDUCT.md
+├── LICENSE
+├── MAINTAINERS.md
+├── PRIVACY.md
+└── SECURITY.md
 ```
-
-- **`app/`**: Contains all the application-specific code, including API routes, React components, and Prisma setup.
-- **`prisma/`**: Holds the Prisma schema file (`schema.prisma`) and the generated Prisma client. This is where the data model is defined, and the database connection is configured.
-- **`public/`**: Static files like images, fonts, and other assets that are served directly.
-- **`scripts/`**: Contains scripts for tasks like seeding the database, migrating Prisma schema changes, or other development utilities.
-- **`.env`**: Environment variables for configuring the application, such as database connection strings and API keys.
-- **`next.config.js`**: Configuration file for Next.js, where you can customize the framework's behavior.
-- **`package.json`**: Manages project dependencies, scripts, and metadata.
-- **`tsconfig.json`**: TypeScript configuration file, specifying the compiler options and file inclusions.
 
 ---
 
 ## Installation
 
-To get started with KACCP, follow these steps:
+### Prerequisites
+
+- Node.js 20+
+- PostgreSQL 15+
+- Google Cloud Storage bucket **or** set `STORAGE_PROVIDER=local` for local dev
+
+### Steps
 
 1. **Clone the repository:**
 
@@ -100,13 +109,22 @@ To get started with KACCP, follow these steps:
 
 3. **Set up environment variables:**
 
-   Copy the `.env.example` file to `.env` and update the values as needed.
-
    ```bash
    cp .env.example .env
+   # Edit .env — at minimum set DATABASE_URL and JWT_SECRET
    ```
 
-4. **Run the development server:**
+   See `.env.example` for full documentation of all variables.
+
+4. **Run database migrations:**
+
+   ```bash
+   npx prisma migrate dev
+   # Optional: seed demo data
+   npm run seed:v2
+   ```
+
+5. **Run the development server:**
 
    ```bash
    npm run dev
@@ -114,15 +132,11 @@ To get started with KACCP, follow these steps:
 
    The application will be available at `http://localhost:3000`.
 
-5. **Access the Prisma Studio:**
-
-   To view and manage your database records, you can use the Prisma Studio. Start it with the following command:
+6. **Access Prisma Studio (optional):**
 
    ```bash
    npx prisma studio
    ```
-
-   This will open a new browser window with the Prisma Studio interface.
 
 ---
 
@@ -150,15 +164,7 @@ KACCP is built using Next.js, a React framework for server-rendered applications
 
 ## Contributing
 
-We welcome contributions to KACCP! To get involved:
-
-1. **Fork the repository**
-2. **Create a new branch** for your feature or bug fix
-3. **Make your changes** and commit them with clear messages
-4. **Push your branch** to your forked repository
-5. **Open a pull request** describing your changes
-
-Please ensure your code follows the existing style and conventions used in the project. Additionally, update any relevant documentation or tests to reflect your changes.
+We welcome contributions to KACCP! See [CONTRIBUTING.md](CONTRIBUTING.md) for setup instructions, coding conventions, and the pull request process. All contributors must follow our [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ---
 
@@ -174,4 +180,4 @@ KACCP is developed and maintained by [Geneline-X](https://geneline-x.net). We ac
 
 ---
 ## Support
-For questions or support, contact [Geneline-X](mailto:contact@geneline-x.net)
+For questions or support, contact [Geneline-X](mailto:info@geneline-x.net)
