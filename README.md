@@ -180,4 +180,4 @@ KACCP is developed and maintained by [Geneline-X](https://geneline-x.net). We ac
 
 ---
 ## Support
-For questions or support, contact [Geneline-X](mailto:contact@geneline-x.net)
+For questions or support, contact [Geneline-X](mailto:info@geneline-x.net)

@@ -8,28 +8,57 @@ export async function DELETE(req: NextRequest) {
   const user = await getAuthUser(req);
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
+  const userId = user.id;
+
   try {
-    // Collect all GCS audio URIs before deleting DB records
+    // Collect all storage URIs before deleting DB records
     const recordings = await prisma.recording.findMany({
-      where: { speakerId: user.id },
+      where: { speakerId: userId },
       select: { id: true, audioUrl: true },
     });
 
-    // Delete voice recordings from storage
-    const deleteOps = recordings
-      .filter(r => r.audioUrl?.startsWith('gs://') || r.audioUrl?.startsWith('local://'))
-      .map(r => deleteObject(r.audioUrl!).catch(() => {}));
-    await Promise.allSettled(deleteOps);
+    // Delete voice recordings from storage (non-blocking — don't fail the deletion if storage fails)
+    await Promise.allSettled(
+      recordings
+        .filter(r => r.audioUrl && (r.audioUrl.startsWith('gs://') || r.audioUrl.startsWith('local://')))
+        .map(r => deleteObject(r.audioUrl!).catch(() => {}))
+    );
 
-    // Delete all user data in dependency order
     const recordingIds = recordings.map(r => r.id);
+
+    // Delete in FK-safe order within a single transaction.
+    // User is referenced by: Session, Notification, SkippedPrompt,
+    // TranscriptionAssignment, Transcription (transcriberId + reviewerId),
+    // Recording, WalletTransaction, Payment.
     await prisma.$transaction([
+      // No outbound FKs — safe to delete first
+      prisma.session.deleteMany({ where: { userId } }),
+      prisma.notification.deleteMany({ where: { userId } }),
+      prisma.skippedPrompt.deleteMany({ where: { userId } }),
+
+      // Nullify nullable reviewer FK before user is gone
+      prisma.transcription.updateMany({
+        where: { reviewerId: userId },
+        data: { reviewerId: null },
+      }),
+
+      // Transcriptions this user submitted as a transcriber (on OTHER speakers' recordings)
+      prisma.transcription.deleteMany({ where: { transcriberId: userId } }),
+
+      // Transcriptions on THIS user's own recordings (made by other transcribers)
       prisma.transcription.deleteMany({ where: { recordingId: { in: recordingIds } } }),
-      prisma.transcriptionAssignment.deleteMany({ where: { userId: user.id } }),
-      prisma.recording.deleteMany({ where: { speakerId: user.id } }),
-      prisma.walletTransaction.deleteMany({ where: { userId: user.id } }),
-      prisma.payment.deleteMany({ where: { userId: user.id } }),
-      prisma.user.delete({ where: { id: user.id } }),
+
+      // Assignments claimed by this user (TranscriptionAssignment has onDelete:Cascade
+      // from Recording, but we still need this for the User FK)
+      prisma.transcriptionAssignment.deleteMany({ where: { userId } }),
+
+      // Recordings — ExportRecord + remaining TranscriptionAssignments cascade via onDelete:Cascade
+      prisma.recording.deleteMany({ where: { speakerId: userId } }),
+
+      prisma.walletTransaction.deleteMany({ where: { userId } }),
+      prisma.payment.deleteMany({ where: { userId } }),
+
+      prisma.user.delete({ where: { id: userId } }),
     ]);
 
     return NextResponse.json({ message: 'Account and all personal data deleted.' });
