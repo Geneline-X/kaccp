@@ -4,7 +4,7 @@
 
 **Geneline-X**
 - Website: https://geneline-x.net
-- Email: contact@geneline-x.net
+- Email: info@geneline-x.net
 - GitHub: https://github.com/Geneline-X
 
 ## Project Lead

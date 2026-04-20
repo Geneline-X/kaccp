@@ -21,7 +21,7 @@ We pledge to make participation in KACCP a harassment-free experience for everyo
 
 ## Enforcement
 
-Instances of abusive or unacceptable behaviour may be reported to the project maintainers at **contact@geneline-x.net**. All complaints will be reviewed and investigated and will result in a response appropriate to the circumstances. Maintainers are obligated to maintain confidentiality regarding reporters.
+Instances of abusive or unacceptable behaviour may be reported to the project maintainers at **info@geneline-x.net**. All complaints will be reviewed and investigated and will result in a response appropriate to the circumstances. Maintainers are obligated to maintain confidentiality regarding reporters.
 
 ## Attribution
 

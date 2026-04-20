@@ -10,7 +10,7 @@
 
 **Do not open a public GitHub issue for security vulnerabilities.**
 
-Report security issues by emailing **contact@geneline-x.net** with:
+Report security issues by emailing **info@geneline-x.net** with:
 
 - Description of the vulnerability
 - Steps to reproduce

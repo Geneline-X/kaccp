@@ -1,7 +1,7 @@
 # Privacy Policy
 
 **Effective date:** 15 April 2026
-**Data controller:** Geneline-X (contact@geneline-x.net)
+**Data controller:** Geneline-X (info@geneline-x.net)
 
 ---
 
@@ -60,7 +60,7 @@ You have the right to:
 
 ### Deleting Your Account
 
-You can delete your account and all personal data (recordings, transcriptions, payment history) via **Settings → Account → Delete Account** in the platform, or by emailing contact@geneline-x.net.
+You can delete your account and all personal data (recordings, transcriptions, payment history) via **Settings → Account → Delete Account** in the platform, or by emailing info@geneline-x.net.
 
 Note: payment records may be retained for 7 years for legal compliance even after account deletion.
 
@@ -83,7 +83,7 @@ See [SECURITY.md](SECURITY.md) for our vulnerability disclosure policy.
 
 ## 9. Contact
 
-For privacy requests or concerns: **contact@geneline-x.net**
+For privacy requests or concerns: **info@geneline-x.net**
 
 For data deletion requests that cannot be completed in-app, email us with subject line: **"Data Deletion Request"**.
 
