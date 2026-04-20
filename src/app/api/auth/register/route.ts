@@ -2,8 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/infra/db/prisma'
 import { hashPassword, signJwt } from '@/lib/infra/auth/auth'
 import { UserRole } from '@prisma/client'
+import { rateLimit, RATE_LIMITS } from '@/lib/infra/rate-limit'
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(req, RATE_LIMITS.auth);
+  if (limited) return limited;
   try {
     const { 
       email, 
