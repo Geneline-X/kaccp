@@ -1,18 +1,14 @@
 import type { StorageProvider } from './provider';
+import { GCSStorageProvider } from './providers/gcs-provider';
+import { LocalStorageProvider } from './providers/local-provider';
 
 let _provider: StorageProvider | null = null;
 
 export function getStorageProvider(): StorageProvider {
   if (_provider) return _provider;
   const providerName = process.env.STORAGE_PROVIDER || 'gcs';
-  if (providerName === 'local') {
-    const { LocalStorageProvider } = require('./providers/local-provider');
-    _provider = new LocalStorageProvider();
-  } else {
-    const { GCSStorageProvider } = require('./providers/gcs-provider');
-    _provider = new GCSStorageProvider();
-  }
-  return _provider!;
+  _provider = providerName === 'local' ? new LocalStorageProvider() : new GCSStorageProvider();
+  return _provider;
 }
 
 export function getWriteSignedUrl(uri: string, contentType: string, expiresInSeconds?: number): Promise<string> {
