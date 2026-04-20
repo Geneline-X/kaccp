@@ -55,7 +55,7 @@ You have the right to:
 - **Access** — request a copy of your personal data
 - **Rectification** — correct inaccurate data
 - **Erasure** — delete your account and all associated data (see below)
-- **Data portability** — export your recordings and transcriptions
+- **Data portability** — export all your personal data (profile, recordings, transcriptions, wallet history, payments) via **Settings → Account → Download My Data** or `GET /api/v2/account/export`
 - **Withdraw consent** — stop participating at any time
 
 ### Deleting Your Account
