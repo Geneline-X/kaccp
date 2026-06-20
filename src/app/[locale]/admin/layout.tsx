@@ -34,6 +34,10 @@ export default function AdminLayout({ children }: PropsWithChildren) {
     { href: '/admin/v2/export', label: t('admin.export') },
     { href: '/admin/users', label: t('admin.users') },
     { href: '/admin/v2/payouts', label: t('admin.payouts') },
+    { href: '/admin/v2/pipeline/review', label: 'Pipeline Review' },
+    { href: '/admin/v2/pipeline/datasets', label: 'Datasets' },
+    { href: '/admin/v2/pipeline/annotation-rules', label: 'Annotation Rules' },
+    { href: '/admin/v2/pipeline/api-keys', label: 'API Keys' },
   ]
 
   function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {

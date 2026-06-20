@@ -82,6 +82,10 @@ model User {
   reviewerWork             Transcription[]           @relation("ReviewerWork")
   transcriptionAssignments TranscriptionAssignment[]
   skippedPrompts           SkippedPrompt[]
+
+  // Pipeline Relations
+  reviewedQueueItems     ReviewQueue[]           @relation("ReviewerQueueItems")
+  secondReviewedItems    ReviewQueue[]           @relation("SecondReviewer")
 }
 
 // ============================================================================
@@ -414,5 +418,170 @@ model Translation {
   @@unique([entityType, entityId, fieldName, targetLanguage])
   @@index([entityType, entityId])
   @@index([targetLanguage])
+}
+
+// ============================================================================
+// API Keys for service-to-service auth
+// ============================================================================
+
+model ApiKey {
+  id        String   @id @default(cuid())
+  name      String   @unique // e.g. "flot-prod", "flot-staging"
+  keyHash   String   @unique // sha256 of the raw key
+  prefix    String   // e.g. "kaccp_sk_a1b2..." — first 12 chars for identification
+  isActive  Boolean  @default(true)
+  lastUsedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive])
+}
+
+// ============================================================================
+// FLOT PIPELINE: Audio Sessions, Review Queue, Dataset Versioning, Rules
+// ============================================================================
+
+// Every voice interaction on Flot is captured here
+model AudioSession {
+  id              String   @id @default(cuid())
+  sessionId       String   @unique // External session ID from Flot
+  userIdHash      String   // Anonymized — never store raw identifiers
+  timestamp       DateTime @default(now())
+
+  // Audio
+  audioPath       String   // GCS path to raw audio
+  audioDurationS  Float
+
+  // ASR output
+  asrTranscript   String   @db.Text
+  asrConfidence   Float?
+
+  // Intent & extracted fields
+  detectedIntent  String?
+  extractedFields Json?    // Amount, recipient, channel, etc.
+
+  // Outcome
+  outcome         String?  // success, retry, abandoned, agent_escalation
+
+  // TTS (for future TTS quality loop)
+  ttsAudioPath    String?
+
+  // Metadata
+  deviceInfo      String?
+  metadata        Json?
+
+  // Relations
+  reviewQueueItems ReviewQueue[]
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userIdHash])
+  @@index([timestamp])
+  @@index([outcome])
+}
+
+// Triage → KACCP review items
+model ReviewQueue {
+  id                 String   @id @default(cuid())
+  audioSessionId     String?
+  audioSession       AudioSession? @relation(fields: [audioSessionId], references: [id], onDelete: Cascade)
+
+  // Existing KACCP recording integration (for originally-recorded training data)
+  recordingId        String?
+
+  source             String   @default("pilot") // "pilot" | "kaccp_recording"
+
+  priorityTier       Int      @default(3) // 1=Critical 2=Standard 3=Sample 4=Disagreement
+  status             String   @default("pending") // pending | in_review | corrected | approved | rejected
+
+  // Context for reviewer
+  asrTranscript      String?  @db.Text
+  audioPath          String   // GCS path
+  extractedFields    Json?    // Transaction context for critical items
+
+  // Correction
+  correctedTranscript String? @db.Text
+  reviewerId         String?
+  reviewer           User?    @relation("ReviewerQueueItems", fields: [reviewerId], references: [id])
+
+  // Double verification
+  secondReviewerId   String?
+  secondReviewer     User?    @relation("SecondReviewer", fields: [secondReviewerId], references: [id])
+  secondTranscript   String?  @db.Text
+  disagreementFlag   Boolean  @default(false)
+
+  // Version tracking
+  datasetVersionId   String?
+  datasetVersion     DatasetVersion? @relation(fields: [datasetVersionId], references: [id])
+  mergedAt           DateTime?
+
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([status])
+  @@index([priorityTier])
+  @@index([audioSessionId])
+  @@index([datasetVersionId])
+}
+
+// Versioned training snapshots with full lineage
+model DatasetVersion {
+  id                String   @id @default(cuid())
+  versionId         String   @unique // e.g. "krio_asr_v3"
+  description       String?
+
+  // Source tracking
+  sourceReviewIds   Json?    // List of review_queue entry IDs merged in
+  totalHours        Float    @default(0)
+  totalSessions     Int      @default(0)
+
+  // Separation by data source
+  pilotHours        Float    @default(0)
+  kaccpHours        Float    @default(0)
+
+  // Evaluation
+  evalWer           Float?
+  evalDate          DateTime?
+
+  // Artifact (GCS path to trained model checkpoint)
+  modelArtifactPath String?
+
+  // Training metadata
+  trainingConfig    Json?
+  trainingStartedAt DateTime?
+  trainingCompletedAt DateTime?
+
+  // Export artifact (GCS path to LJSpeech-format export)
+  exportPath        String?
+
+  status            String   @default("draft") // draft | training | evaluated | promoted | archived
+
+  // Relations
+  reviewQueueItems  ReviewQueue[]
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([status])
+  @@index([versionId])
+}
+
+// Living annotation standard — API-queryable for KACCP reviewers
+model AnnotationRule {
+  id          String   @id @default(cuid())
+  ruleId      String   @unique
+  title       String
+  description String   @db.Text
+  examples    Json?    // Approved vs not-approved pairs
+  category    String?  // spelling | numbers | fillers | code_switching | etc.
+  isActive    Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([isActive])
 }
 
