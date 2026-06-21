@@ -34,10 +34,19 @@ interface Stats {
   transcriptionsByStatus: { status: string; _count: number }[];
 }
 
+interface PipelineStats {
+  pendingReviews: number;
+  totalSessions: number;
+  latestVersion: string | null;
+  latestVersionHours: number | null;
+  datasetCount: number;
+}
+
 export default function AdminV2DashboardClient({ locale }: { locale: string }) {
   const router = useRouter();
   const t = useTranslations();
   const [stats, setStats] = useState<Stats | null>(null);
+  const [pipelineStats, setPipelineStats] = useState<PipelineStats | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -47,18 +56,37 @@ export default function AdminV2DashboardClient({ locale }: { locale: string }) {
       return;
     }
 
-    fetch("/api/v2/admin/stats", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.error) {
-          if (data.error === "Unauthorized") {
+    Promise.all([
+      fetch("/api/v2/admin/stats", {
+        headers: { Authorization: `Bearer ${token}` },
+      }).then(r => r.json()),
+      fetch("/api/v2/pipeline/review-queue?status=pending&limit=1", {
+        headers: { Authorization: `Bearer ${token}` },
+      }).then(r => r.json()),
+      fetch("/api/v2/pipeline/datasets?limit=5", {
+        headers: { Authorization: `Bearer ${token}` },
+      }).then(r => r.json()),
+      fetch("/api/v2/pipeline/sessions?limit=1", {
+        headers: { Authorization: `Bearer ${token}` },
+      }).then(r => r.json()),
+    ])
+      .then(([statsData, reviewData, datasetsData, sessionsData]) => {
+        if (statsData.error) {
+          if (statsData.error === "Unauthorized") {
             router.push(`/${locale}/admin/login`);
           }
           return;
         }
-        setStats(data);
+        setStats(statsData);
+        const versions = datasetsData.versions || [];
+        const latest = versions.length > 0 ? versions[0] : null;
+        setPipelineStats({
+          pendingReviews: reviewData.pagination?.total || 0,
+          totalSessions: sessionsData.pagination?.total || 0,
+          latestVersion: latest?.versionId || null,
+          latestVersionHours: latest?.totalHours || null,
+          datasetCount: versions.length,
+        });
         setLoading(false);
       })
       .catch(() => {
@@ -148,6 +176,44 @@ export default function AdminV2DashboardClient({ locale }: { locale: string }) {
           </div>
         </div>
 
+        {/* Pipeline Stats */}
+        {pipelineStats && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div className="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">
+              <h3 className="text-sm font-medium text-gray-500 mb-1">Pipeline Reviews</h3>
+              <div className="flex items-end justify-between">
+                <p className="text-3xl font-bold text-gray-900">{pipelineStats.pendingReviews}</p>
+                <Link href="/admin/v2/pipeline/review" className="text-xs text-blue-600 hover:underline">Review →</Link>
+              </div>
+              <p className="text-xs text-gray-400 mt-1">Pending correction</p>
+            </div>
+            <div className="bg-white rounded-lg shadow p-6 border-l-4 border-green-500">
+              <h3 className="text-sm font-medium text-gray-500 mb-1">Flot Sessions</h3>
+              <div className="flex items-end justify-between">
+                <p className="text-3xl font-bold text-gray-900">{pipelineStats.totalSessions}</p>
+              </div>
+              <p className="text-xs text-gray-400 mt-1">Total captured</p>
+            </div>
+            <div className="bg-white rounded-lg shadow p-6 border-l-4 border-purple-500">
+              <h3 className="text-sm font-medium text-gray-500 mb-1">Dataset Versions</h3>
+              <div className="flex items-end justify-between">
+                <p className="text-3xl font-bold text-gray-900">{pipelineStats.datasetCount}</p>
+                <Link href="/admin/v2/pipeline/datasets" className="text-xs text-blue-600 hover:underline">View →</Link>
+              </div>
+              <p className="text-xs text-gray-400 mt-1">{pipelineStats.latestVersion || "No versions yet"}</p>
+            </div>
+            <div className="bg-white rounded-lg shadow p-6 border-l-4 border-amber-500">
+              <h3 className="text-sm font-medium text-gray-500 mb-1">Latest Dataset</h3>
+              <div className="flex items-end justify-between">
+                <p className="text-3xl font-bold text-gray-900">
+                  {pipelineStats.latestVersionHours ? `${pipelineStats.latestVersionHours.toFixed(1)}h` : "—"}
+                </p>
+              </div>
+              <p className="text-xs text-gray-400 mt-1">{pipelineStats.latestVersionHours ? `${pipelineStats.latestVersionHours.toFixed(1)} hours of labeled audio` : "Merge reviews to create"}</p>
+            </div>
+          </div>
+        )}
+
         {/* Quick Actions */}
         <div className="bg-white rounded-lg shadow mb-8">
           <div className="px-6 py-4 border-b border-gray-200">
@@ -195,6 +261,20 @@ export default function AdminV2DashboardClient({ locale }: { locale: string }) {
             >
               <div className="text-2xl mb-2">🎤</div>
               <div className="font-medium text-gray-900">{t('admin.allRecordings')}</div>
+            </Link>
+            <Link
+              href="/admin/v2/pipeline/review"
+              className="p-4 bg-indigo-50 rounded-lg text-center hover:bg-indigo-100 transition-colors"
+            >
+              <div className="text-2xl mb-2">🔊</div>
+              <div className="font-medium text-gray-900">Pipeline Review</div>
+            </Link>
+            <Link
+              href="/admin/v2/pipeline/datasets"
+              className="p-4 bg-teal-50 rounded-lg text-center hover:bg-teal-100 transition-colors"
+            >
+              <div className="text-2xl mb-2">📊</div>
+              <div className="font-medium text-gray-900">Datasets</div>
             </Link>
           </div>
         </div>
