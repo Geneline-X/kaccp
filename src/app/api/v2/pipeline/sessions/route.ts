@@ -11,7 +11,7 @@ function isReviewer(user: any) {
     || user.role === "ADMIN" || user.role === "REVIEWER" || user.role === "TRANSCRIBER";
 }
 
-// GET /api/v2/pipeline/sessions — List audio sessions (admin/reviewer/transcriber)
+// GET /api/v2/pipeline/sessions — List audio sessions
 export async function GET(req: NextRequest) {
   try {
     const user = await getAuthUser(req);

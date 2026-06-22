@@ -74,7 +74,7 @@ export default function PipelineReviewPage() {
     fetch("/api/auth/me", { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.json())
       .then(d => {
-        if (d.error || (d.user?.role !== "ADMIN" && d.user?.role !== "REVIEWER" && d.user?.role !== "TRANSCRIBER")) {
+        if (d.error || (d.user?.role !== "ADMIN" && d.user?.role !== "REVIEWER")) {
           router.push("/admin/login");
           return;
         }

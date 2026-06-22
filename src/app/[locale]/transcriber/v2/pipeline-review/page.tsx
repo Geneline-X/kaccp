@@ -61,7 +61,8 @@ export default function TranscriberPipelineReviewPage({ locale }: { locale: stri
     fetch("/api/auth/me", { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.json())
       .then(d => {
-        if (d.error || d.user?.role !== "TRANSCRIBER") {
+        const myRoles = d.user?.roles || [d.user?.role].filter(Boolean);
+        if (d.error || (!myRoles.includes("TRANSCRIBER") && !myRoles.includes("ADMIN") && !myRoles.includes("REVIEWER"))) {
           router.push(`/${locale}/transcriber/login`);
           return;
         }
