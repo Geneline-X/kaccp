@@ -55,12 +55,12 @@ export default function TranscriberPipelineReviewPage() {
   const [filterTier, setFilterTier] = useState<string>("");
   const [filterSource, setFilterSource] = useState<string>("");
   const [message, setMessage] = useState<string | null>(null);
-
-  const token = typeof window !== "undefined" ? getToken() : null;
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!token) { router.push(`/${locale}/transcriber/login`); return; }
-    fetch("/api/auth/me", { headers: { Authorization: `Bearer ${token}` } })
+    const t = getToken();
+    if (!t) { router.push(`/${locale}/transcriber/login`); return; }
+    fetch("/api/auth/me", { headers: { Authorization: `Bearer ${t}` } })
       .then(r => r.json())
       .then(d => {
         const myRoles = d.user?.roles || [d.user?.role].filter(Boolean);
@@ -68,8 +68,9 @@ export default function TranscriberPipelineReviewPage() {
           router.push(`/${locale}/transcriber/login`);
           return;
         }
+        setToken(t);
       });
-  }, [token, router, locale]);
+  }, [router, locale]);
 
   useEffect(() => {
     if (!token) return;
