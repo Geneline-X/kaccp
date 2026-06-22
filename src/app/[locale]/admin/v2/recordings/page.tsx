@@ -51,6 +51,7 @@ export default function AdminRecordingsPage() {
     const [limit, setLimit] = useState(50);
     const [playedRecordings, setPlayedRecordings] = useState<Set<string>>(new Set());
     const [transcribingRecordings, setTranscribingRecordings] = useState<Set<string>>(new Set());
+    const [batchTranscribing, setBatchTranscribing] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
 
     const token = typeof window !== "undefined" ? getToken() : null;
@@ -117,7 +118,6 @@ export default function AdminRecordingsPage() {
                     ? `\nConfidence: ${(data.confidence * 100).toFixed(0)}%`
                     : '';
                 alert(`Transcription successful!\nKrio: ${data.transcript}${confidenceText}`);
-                // Refresh to show new transcript
                 setRefreshKey(k => k + 1);
             } else {
                 alert(`Transcription failed: ${data.message || data.error}`);
@@ -130,6 +130,28 @@ export default function AdminRecordingsPage() {
                 newSet.delete(recordingId);
                 return newSet;
             });
+        }
+    };
+
+    const handleBatchTranscribe = async () => {
+        if (!confirm("Transcribe ALL pending Krio recordings via Kay X ASR?")) return;
+        setBatchTranscribing(true);
+        try {
+            const res = await fetch(`/api/v2/admin/recordings/batch-transcribe`, {
+                method: "POST",
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const data = await res.json();
+            if (res.ok) {
+                alert(data.message);
+            } else {
+                alert(`Batch transcribe failed: ${data.error}`);
+            }
+        } catch (err) {
+            alert("Error during batch transcribe");
+        } finally {
+            setBatchTranscribing(false);
+            setRefreshKey(k => k + 1);
         }
     };
 
@@ -154,12 +176,21 @@ export default function AdminRecordingsPage() {
                                 {t('admin.allRecordings')}
                             </h1>
                         </div>
-                        <Link
-                            href="/admin/v2/recordings/trim-silence"
-                            className="px-4 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center gap-2"
-                        >
-                            ✂ Trim Silence
-                        </Link>
+                        <div className="flex gap-2">
+                            <button
+                                onClick={handleBatchTranscribe}
+                                disabled={batchTranscribing}
+                                className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
+                            >
+                                {batchTranscribing ? "⏳ Transcribing..." : "🤖 Batch Transcribe Krio"}
+                            </button>
+                            <Link
+                                href="/admin/v2/recordings/trim-silence"
+                                className="px-4 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center gap-2"
+                            >
+                                ✂ Trim Silence
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </header>

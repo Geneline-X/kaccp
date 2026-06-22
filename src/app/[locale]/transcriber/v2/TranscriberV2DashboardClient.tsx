@@ -182,7 +182,7 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
             <div className="flex items-center gap-3">
               {/* Pipeline Review */}
               <Link
-                href={`/${locale}/admin/v2/pipeline/review`}
+                href={`/${locale}/transcriber/v2/pipeline-review`}
                 className="px-4 py-2 text-sm bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors"
               >
                 {t('transcriber.pipelineReview')}
