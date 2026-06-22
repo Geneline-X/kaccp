@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getToken, clearToken } from "@/lib/infra/client/client";
@@ -39,9 +39,44 @@ interface Stats {
   byStatus: { status: string; _count: number }[];
 }
 
+interface ReviewItem {
+  id: string;
+  source: string;
+  priorityTier: number;
+  status: string;
+  asrTranscript: string | null;
+  correctedTranscript: string | null;
+  secondTranscript: string | null;
+  audioPath: string;
+  extractedFields: any;
+  disagreementFlag: boolean;
+  audioSession: {
+    audioDurationS: number;
+    timestamp: string;
+    detectedIntent: string | null;
+    outcome: string | null;
+  } | null;
+  createdAt: string;
+}
+
+const TIER_LABELS: Record<number, string> = { 1: "Critical", 2: "Standard", 3: "Sample", 4: "Disagreement" };
+const TIER_COLORS: Record<number, string> = {
+  1: "bg-red-100 text-red-800", 2: "bg-yellow-100 text-yellow-800",
+  3: "bg-gray-100 text-gray-600", 4: "bg-purple-100 text-purple-800",
+};
+const SOURCE_LABELS: Record<string, string> = {
+  pilot: "Flot",
+  kaccp_recording: "KACCP",
+};
+const SOURCE_COLORS: Record<string, string> = {
+  pilot: "bg-green-100 text-green-700",
+  kaccp_recording: "bg-blue-100 text-blue-700",
+};
+
 export default function TranscriberV2DashboardClient({ locale }: { locale: string }) {
   const router = useRouter();
   const t = useTranslations();
+  const audioRef = useRef<HTMLAudioElement>(null);
   const [user, setUser] = useState<any>(null);
   const [activeAssignments, setActiveAssignments] = useState<Assignment[]>([]);
   const [availableRecordings, setAvailableRecordings] = useState<Recording[]>([]);
@@ -53,6 +88,16 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
   const [totalAvailable, setTotalAvailable] = useState(0);
   const limit = 10;
 
+  const [pipelineItems, setPipelineItems] = useState<ReviewItem[]>([]);
+  const [pipelineSelected, setPipelineSelected] = useState<ReviewItem | null>(null);
+  const [pipelineEditedText, setPipelineEditedText] = useState("");
+  const [pipelineSubmitting, setPipelineSubmitting] = useState(false);
+  const [pipelineLoading, setPipelineLoading] = useState(true);
+  const [pipelineFilterSource, setPipelineFilterSource] = useState("");
+  const [pipelineSignedAudioUrl, setPipelineSignedAudioUrl] = useState<string | null>(null);
+  const [pipelineMessage, setPipelineMessage] = useState<string | null>(null);
+  const [pipelineExpanded, setPipelineExpanded] = useState(true);
+
   const token = typeof window !== "undefined" ? getToken() : null;
 
   const loadData = () => {
@@ -61,7 +106,6 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
       return;
     }
 
-    // Fetch user
     fetch("/api/auth/me", {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -74,7 +118,6 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
         setUser(data.user);
       });
 
-    // Fetch my work (active assignments + stats)
     fetch("/api/v2/transcriber/my-work", {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -84,7 +127,6 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
         setStats(data.stats || null);
       });
 
-    // Fetch available recordings with pagination
     fetch(`/api/v2/transcriber/available?limit=${limit}&offset=${(page - 1) * limit}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -96,12 +138,38 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
       });
   };
 
+  const loadPipelineData = () => {
+    if (!token) return;
+    const params = new URLSearchParams({ status: "pending", limit: "50" });
+    if (pipelineFilterSource) params.set("source", pipelineFilterSource);
+    fetch(`/api/v2/pipeline/review-queue?${params}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(r => r.json())
+      .then(d => {
+        setPipelineItems(d.items || []);
+        setPipelineLoading(false);
+      })
+      .catch(() => setPipelineLoading(false));
+  };
+
   useEffect(() => {
     loadData();
+    loadPipelineData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, page]);
+  }, [token, page, pipelineFilterSource]);
 
-  // Release an assignment
+  useEffect(() => {
+    if (!pipelineSelected || !token || !pipelineSelected.audioPath) return;
+    setPipelineSignedAudioUrl(null);
+    fetch(`/api/v2/pipeline/audio?path=${encodeURIComponent(pipelineSelected.audioPath)}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(r => r.json())
+      .then(d => { if (d.signedUrl) setPipelineSignedAudioUrl(d.signedUrl); })
+      .catch(() => {});
+  }, [pipelineSelected, token]);
+
   const releaseAssignment = async (recordingId: string) => {
     setReleasingId(recordingId);
     try {
@@ -120,7 +188,6 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
         return;
       }
 
-      // Reload data
       loadData();
     } catch {
       alert(t('transcriber.failedToRelease'));
@@ -129,7 +196,6 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
     }
   };
 
-  // Claim a recording
   const claimRecording = async (recordingId: string) => {
     setClaimingId(recordingId);
     try {
@@ -148,13 +214,40 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
         return;
       }
 
-      // Navigate to transcription page
       router.push(`/${locale}/transcriber/v2/task/${recordingId}`);
     } catch {
       alert(t('transcriber.failedToClaim'));
     } finally {
       setClaimingId(null);
     }
+  };
+
+  const selectPipelineItem = (item: ReviewItem) => {
+    setPipelineSelected(item);
+    setPipelineEditedText(item.correctedTranscript || item.asrTranscript || "");
+    setPipelineMessage(null);
+  };
+
+  const submitPipelineCorrection = async () => {
+    if (!pipelineSelected || !pipelineEditedText.trim()) return;
+    setPipelineSubmitting(true);
+    setPipelineMessage(null);
+    const isSecondPass = pipelineSelected.correctedTranscript !== null && pipelineSelected.secondTranscript === null;
+    try {
+      const res = await fetch(`/api/v2/pipeline/review-queue/${pipelineSelected.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ correctedTranscript: pipelineEditedText.trim() }),
+      });
+      const data = await res.json();
+      if (data.error) { setPipelineMessage(`Error: ${data.error}`); return; }
+      const newList = pipelineItems.filter(i => i.id !== pipelineSelected.id);
+      setPipelineItems(newList);
+      setPipelineSelected(newList[0] || null);
+      setPipelineEditedText(newList[0]?.correctedTranscript || newList[0]?.asrTranscript || "");
+      setPipelineMessage(isSecondPass ? "Double verification submitted" : "Correction submitted");
+    } catch { setPipelineMessage("Failed to submit"); }
+    finally { setPipelineSubmitting(false); }
   };
 
   if (loading) {
@@ -180,14 +273,6 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
               </p>
             </div>
             <div className="flex items-center gap-3">
-              {/* Pipeline Review */}
-              <Link
-                href={`/${locale}/transcriber/v2/pipeline-review`}
-                className="px-4 py-2 text-sm bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors"
-              >
-                {t('transcriber.pipelineReview')}
-              </Link>
-              {/* Role Switcher - Show if user has SPEAKER role */}
               {user?.roles?.includes("SPEAKER") && (
                 <Link
                   href={`/${locale}/speaker`}
@@ -233,6 +318,7 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
             </div>
           </div>
         </div>
+
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow p-6">
@@ -306,6 +392,172 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
             </div>
           </div>
         )}
+
+        {/* Pipeline Review Section */}
+        <div className="bg-white rounded-lg shadow mb-8">
+          <button
+            onClick={() => setPipelineExpanded(!pipelineExpanded)}
+            className="w-full px-6 py-4 border-b border-gray-200 flex items-center justify-between hover:bg-gray-50 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <h2 className="text-lg font-semibold text-gray-900">Pipeline Review</h2>
+              {!pipelineLoading && (
+                <span className={`px-2 py-0.5 text-xs rounded font-medium ${pipelineItems.length > 0 ? "bg-purple-100 text-purple-700" : "bg-gray-100 text-gray-500"}`}>
+                  {pipelineItems.length} pending
+                </span>
+              )}
+            </div>
+            <svg className={`w-5 h-5 text-gray-400 transition-transform ${pipelineExpanded ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          {pipelineExpanded && (
+            <div className="p-6">
+              {/* Filter */}
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-sm text-gray-500">Correct ASR transcripts from voice interactions</p>
+                <select
+                  value={pipelineFilterSource}
+                  onChange={e => setPipelineFilterSource(e.target.value)}
+                  className="px-3 py-1.5 border rounded-md text-sm"
+                >
+                  <option value="">All Sources</option>
+                  <option value="pilot">Flot</option>
+                  <option value="kaccp_recording">KACCP</option>
+                </select>
+              </div>
+
+              {pipelineMessage && (
+                <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">{pipelineMessage}</div>
+              )}
+
+              {pipelineLoading ? (
+                <div className="flex items-center justify-center h-32">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                </div>
+              ) : pipelineItems.length === 0 ? (
+                <div className="bg-gray-50 rounded-lg p-12 text-center">
+                  <div className="text-4xl mb-3">✅</div>
+                  <h3 className="text-lg font-bold mb-1">All caught up</h3>
+                  <p className="text-sm text-gray-500">No pending pipeline review items.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {/* Queue List */}
+                  <div className="lg:col-span-1 bg-gray-50 rounded-lg border overflow-hidden">
+                    <div className="px-4 py-3 bg-gray-100 border-b">
+                      <h3 className="font-semibold text-sm">Review Queue</h3>
+                    </div>
+                    <div className="divide-y max-h-80 overflow-y-auto">
+                      {pipelineItems.map(item => (
+                        <button
+                          key={item.id}
+                          onClick={() => selectPipelineItem(item)}
+                          className={`w-full text-left p-3 hover:bg-gray-100 transition-colors ${pipelineSelected?.id === item.id ? "bg-blue-50" : ""}`}
+                        >
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className={`px-1.5 py-0.5 text-xs rounded font-medium ${TIER_COLORS[item.priorityTier]}`}>T{item.priorityTier}</span>
+                            <span className={`px-1.5 py-0.5 text-xs rounded font-medium ${SOURCE_COLORS[item.source] || "bg-gray-100 text-gray-600"}`}>
+                              {SOURCE_LABELS[item.source] || item.source}
+                            </span>
+                            {item.audioSession?.detectedIntent && (
+                              <span className="text-xs text-gray-500 truncate">{item.audioSession.detectedIntent}</span>
+                            )}
+                          </div>
+                          <div className="text-sm text-gray-900 truncate">{item.asrTranscript || "(no transcript)"}</div>
+                          <div className="text-xs text-gray-400 mt-1">
+                            {item.audioSession?.audioDurationS.toFixed(1)}s
+                            {item.audioSession?.outcome && ` • ${item.audioSession.outcome}`}
+                            {item.disagreementFlag && " • ⚠️ Disagreement"}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Review Panel */}
+                  <div className="lg:col-span-2">
+                    {pipelineSelected ? (
+                      <div className="bg-white rounded-lg border">
+                        <div className="p-4 border-b">
+                          <div className="flex items-center gap-2 mb-2 flex-wrap">
+                            <span className={`px-2 py-0.5 text-xs rounded font-medium ${TIER_COLORS[pipelineSelected.priorityTier]}`}>
+                              Tier {pipelineSelected.priorityTier} — {TIER_LABELS[pipelineSelected.priorityTier]}
+                            </span>
+                            <span className={`px-2 py-0.5 text-xs rounded font-medium ${SOURCE_COLORS[pipelineSelected.source] || "bg-gray-100"}`}>
+                              Source: {SOURCE_LABELS[pipelineSelected.source] || pipelineSelected.source}
+                            </span>
+                            {pipelineSelected.audioSession?.detectedIntent && (
+                              <span className="px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded">{pipelineSelected.audioSession.detectedIntent}</span>
+                            )}
+                          </div>
+                          {pipelineSelected.extractedFields && (
+                            <div className="text-xs text-gray-500">
+                              {Object.entries(pipelineSelected.extractedFields).map(([k, v]) => (
+                                <span key={k} className="mr-3">{k}: {String(v)}</span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="p-4 border-b bg-gray-50">
+                          <label className="block text-sm font-medium mb-2">Audio ({pipelineSelected.audioSession?.audioDurationS.toFixed(1)}s)</label>
+                          {pipelineSignedAudioUrl ? (
+                            <audio ref={audioRef} controls className="w-full" src={pipelineSignedAudioUrl} key={pipelineSignedAudioUrl} />
+                          ) : (
+                            <div className="flex items-center justify-center h-12 bg-gray-200 rounded-lg">
+                              <span className="text-sm text-gray-500">Loading audio...</span>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="p-4 border-b">
+                          {pipelineSelected.asrTranscript && (
+                            <div className="mb-4 p-3 bg-gray-50 rounded-lg border">
+                              <div className="text-xs font-medium text-gray-500 mb-1">ASR Transcript (auto-generated)</div>
+                              <div className="text-sm text-gray-900">{pipelineSelected.asrTranscript}</div>
+                            </div>
+                          )}
+
+                          <label className="block text-sm font-medium mb-2">
+                            {!pipelineSelected.correctedTranscript ? "Correction (first pass)" : "Verification (second pass)"}
+                          </label>
+                          <textarea
+                            value={pipelineEditedText}
+                            onChange={e => setPipelineEditedText(e.target.value)}
+                            rows={3}
+                            className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                            placeholder="Type corrected transcript..."
+                          />
+                          {pipelineSelected.correctedTranscript && !pipelineSelected.secondTranscript && (
+                            <p className="text-xs text-orange-600 mt-1">
+                              First correction exists. Your submission will be the second pass (double verification).
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="p-4 flex justify-end gap-3">
+                          <button
+                            onClick={submitPipelineCorrection}
+                            disabled={pipelineSubmitting || !pipelineEditedText.trim()}
+                            className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 text-sm font-medium"
+                          >
+                            {pipelineSubmitting ? "Submitting..." : !pipelineSelected.correctedTranscript ? "Submit Correction" : "Submit Verification"}
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="bg-gray-50 rounded-lg border p-12 text-center">
+                        <p className="text-gray-500">Select an item from the queue to review</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
 
         {/* Available Recordings */}
         <div className="bg-white rounded-lg shadow">

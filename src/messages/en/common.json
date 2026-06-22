@@ -213,6 +213,7 @@
         "selectLanguagesWrite": "Select all languages you can write fluently",
         "transcriberConsentText": "I agree to contribute my transcriptions under the CC0 Public Domain license. I understand that my transcriptions will be used to train AI models for African languages and will be freely available for research and development.",
         "wantToBeSpeaker": "Want to be a speaker instead? Register here",
+        "emailOrPhone": "Email or Phone Number",
         "emailOrPhonePlaceholder": "email@example.com or +232...",
         "phoneFormatExample": "+232 XX XXX XXXX",
         "confirmNewPassword": "Confirm New Password",
