@@ -31,13 +31,32 @@ All under `/api/v2/pipeline/`.
 
 Requires API key: `Authorization: Bearer kaccp_sk_<hex>`.
 
+Your Go gateway builds the audio path, uploads audio to GCS, then sends the session.
+
+**GCS audio path template:**
+
+```
+gs://{bucket}/pipeline/{service}/{date}/{sessionId}.wav
+```
+
+`{service}` identifies the source — use whatever client name you want:
+
+| Service | Example path |
+|---|---|
+| Flot production | `gs://bucket/pipeline/flot/2026-06-21/550e8400.wav` |
+| E2E testing | `gs://bucket/pipeline/e2e-test/2026-06-21/550e8401.wav` |
+| Manual test | `gs://bucket/pipeline/manual/2026-06-21/550e8402.wav` |
+| Third-party client | `gs://bucket/pipeline/acme-corpo/2026-06-21/550e8403.wav` |
+
+Your Go service uploads the raw audio there first, then sends the full `gs://` URI as `audioPath`.
+
 Flot calls this on every voice-note interaction:
 
 ```json
 {
   "sessionId": "flot-uuid-123",
   "userIdHash": "sha256-of-phone-number",
-  "audioPath": "gs://bucket/pilot/audio/abc.wav",
+  "audioPath": "gs://bucket/pipeline/flot/2026-06-21/550e8400.wav",
   "audioDurationS": 4.2,
   "asrTranscript": "A wan send 500 leones",
   "asrConfidence": 0.72,
