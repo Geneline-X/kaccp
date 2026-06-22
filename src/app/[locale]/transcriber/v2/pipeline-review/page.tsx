@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams, usePathname } from "next/navigation";
 import { getToken } from "@/lib/client";
 
 interface ReviewItem {
@@ -39,8 +39,10 @@ const SOURCE_COLORS: Record<string, string> = {
   kaccp_recording: "bg-blue-100 text-blue-700",
 };
 
-export default function TranscriberPipelineReviewPage({ locale }: { locale: string }) {
+export default function TranscriberPipelineReviewPage() {
   const router = useRouter();
+  const pathname = usePathname();
+  const locale = pathname?.split("/")[1] || "en";
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const [items, setItems] = useState<ReviewItem[]>([]);
