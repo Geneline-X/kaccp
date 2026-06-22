@@ -180,6 +180,13 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
               </p>
             </div>
             <div className="flex items-center gap-3">
+              {/* Pipeline Review */}
+              <Link
+                href={`/${locale}/admin/v2/pipeline/review`}
+                className="px-4 py-2 text-sm bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors"
+              >
+                {t('transcriber.pipelineReview')}
+              </Link>
               {/* Role Switcher - Show if user has SPEAKER role */}
               {user?.roles?.includes("SPEAKER") && (
                 <Link

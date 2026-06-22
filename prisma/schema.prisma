@@ -86,6 +86,7 @@ model User {
   // Pipeline Relations
   reviewedQueueItems     ReviewQueue[]           @relation("ReviewerQueueItems")
   secondReviewedItems    ReviewQueue[]           @relation("SecondReviewer")
+  languageLeadReviews    ReviewQueue[]           @relation("LanguageLeadReviews")
 }
 
 // ============================================================================
@@ -511,6 +512,12 @@ model ReviewQueue {
   secondReviewer     User?    @relation("SecondReviewer", fields: [secondReviewerId], references: [id])
   secondTranscript   String?  @db.Text
   disagreementFlag   Boolean  @default(false)
+
+  // Language Lead (admin) final verification
+  languageLeadId        String?
+  languageLead          User?    @relation("LanguageLeadReviews", fields: [languageLeadId], references: [id])
+  languageLeadNotes     String?  @db.Text
+  languageLeadApprovedAt DateTime?
 
   // Version tracking
   datasetVersionId   String?

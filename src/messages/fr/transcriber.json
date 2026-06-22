@@ -27,7 +27,8 @@
     "transcriber":  {
                         "dashboard":  "Tableau de Bord Transcripteur",
                         "welcomeBack":  "Bienvenue,",
-                        "switchToSpeaker":  "Passer au Locuteur â†’",
+                         "pipelineReview":  "Révision Pipeline",
+                         "switchToSpeaker":  "Passer au Locuteur â†’",
                         "totalEarnings":  "Gains Totaux",
                         "fromApproved":  "De {count} transcriptions approuvÃ©es",
                         "pendingReview":  "En Attente de RÃ©vision",

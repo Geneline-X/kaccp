@@ -4,17 +4,18 @@ import { getAuthUser } from "@/lib/infra/auth/auth";
 import { verifyApiKey } from "@/lib/infra/auth/api-keys";
 import { triageSession } from "@/lib/domain/pipeline";
 
-function isAdminOrReviewer(user: any) {
+function isReviewer(user: any) {
   if (!user) return false;
   const roles = (user as any).roles || [];
-  return roles.includes("ADMIN") || roles.includes("REVIEWER") || user.role === "ADMIN" || user.role === "REVIEWER";
+  return roles.includes("ADMIN") || roles.includes("REVIEWER") || roles.includes("TRANSCRIBER")
+    || user.role === "ADMIN" || user.role === "REVIEWER" || user.role === "TRANSCRIBER";
 }
 
-// GET /api/v2/pipeline/sessions — List audio sessions (admin/reviewer only)
+// GET /api/v2/pipeline/sessions — List audio sessions (admin/reviewer/transcriber)
 export async function GET(req: NextRequest) {
   try {
     const user = await getAuthUser(req);
-    if (!user || !isAdminOrReviewer(user)) {
+    if (!user || !isReviewer(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

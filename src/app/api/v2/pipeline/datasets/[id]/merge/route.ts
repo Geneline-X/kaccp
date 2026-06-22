@@ -30,14 +30,15 @@ export async function POST(
 
     const approvedItems = await prisma.reviewQueue.findMany({
       where: {
-        status: "corrected",
+        status: "approved",
         datasetVersionId: null,
+        languageLeadApprovedAt: { not: null },
         correctedTranscript: { not: null },
       },
     });
 
     if (approvedItems.length === 0) {
-      return NextResponse.json({ error: "No approved reviews to merge" }, { status: 400 });
+      return NextResponse.json({ error: "No language-lead-approved reviews to merge" }, { status: 400 });
     }
 
     let totalDurationS = 0;

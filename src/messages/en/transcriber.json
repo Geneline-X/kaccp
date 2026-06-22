@@ -31,6 +31,7 @@
     "transcriber": {
         "dashboard": "Transcriber Dashboard",
         "welcomeBack": "Welcome back,",
+        "pipelineReview": "Pipeline Review",
         "switchToSpeaker": "Switch to Speaker →",
         "totalEarnings": "Total Earnings",
         "fromApproved": "From {count} approved transcriptions",
