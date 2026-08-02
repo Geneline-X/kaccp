@@ -51,9 +51,29 @@ export async function POST(req: NextRequest) {
     // Check if recording exists and is available
     const recording = await prisma.recording.findUnique({
       where: { id: recordingId },
-      include: {
-        prompt: true,
-        language: true,
+      select: {
+        id: true,
+        audioUrl: true,
+        durationSec: true,
+        transcript: true,
+        transcriptConfidence: true,
+        autoTranscriptionStatus: true,
+        status: true,
+        prompt: {
+          select: {
+            englishText: true,
+            category: true,
+            emotion: true,
+            isFreeForm: true,
+            instruction: true,
+          },
+        },
+        language: {
+          select: {
+            code: true,
+            name: true,
+          },
+        },
       },
     });
 

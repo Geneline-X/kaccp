@@ -36,13 +36,21 @@ export async function GET(req: NextRequest) {
       activeAssignments.map(async (assignment) => {
         const recording = await prisma.recording.findUnique({
           where: { id: assignment.recordingId },
-          include: {
+          select: {
+            id: true,
+            audioUrl: true,
+            durationSec: true,
+            transcript: true,
+            transcriptConfidence: true,
+            autoTranscriptionStatus: true,
+            status: true,
             prompt: {
               select: {
                 englishText: true,
                 category: true,
                 emotion: true,
                 isFreeForm: true,
+                instruction: true,
               },
             },
             language: {
@@ -71,12 +79,21 @@ export async function GET(req: NextRequest) {
       },
       include: {
         recording: {
-          include: {
+          select: {
+            id: true,
+            audioUrl: true,
+            durationSec: true,
+            transcript: true,
+            transcriptConfidence: true,
+            autoTranscriptionStatus: true,
+            status: true,
             prompt: {
               select: {
                 englishText: true,
                 category: true,
+                emotion: true,
                 isFreeForm: true,
+                instruction: true,
               },
             },
             language: {

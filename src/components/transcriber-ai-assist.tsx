@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Edit3, AlertCircle } from "lucide-react";
+import { Edit3, AlertCircle, RotateCcw } from "lucide-react";
 
 interface TranscriberAIAssistProps {
   recording: {
@@ -16,8 +16,6 @@ interface TranscriberAIAssistProps {
 
 import { useTranslations } from "next-intl";
 
-// ... existing code ...
-
 export function TranscriberAIAssist({
   recording,
   promptText,
@@ -27,7 +25,19 @@ export function TranscriberAIAssist({
 }: TranscriberAIAssistProps) {
   const t = useTranslations('transcriber.aiAssist');
 
-  // ... useEffects ...
+  // Pre-fill the editor with the AI transcript when the component first loads
+  // and the textarea is currently empty. This lets the transcriber correct the AI
+  // output instead of typing from scratch.
+  useEffect(() => {
+    if (!value && recording.transcript && recording.autoTranscriptionStatus === "COMPLETED") {
+      onSaveTranscription(recording.transcript);
+    }
+  }, [recording.id, recording.transcript, recording.autoTranscriptionStatus]);
+
+  const hasTranscript = recording.autoTranscriptionStatus === "COMPLETED" && recording.transcript;
+  const confidencePercent = recording.transcriptConfidence
+    ? Math.round(recording.transcriptConfidence * 100)
+    : null;
 
   return (
     <div className="space-y-4">
@@ -38,6 +48,35 @@ export function TranscriberAIAssist({
             <p className="text-sm font-medium text-red-900">{t('failed')}</p>
             <p className="text-xs text-red-700">{t('manual')}</p>
           </div>
+        </div>
+      )}
+
+      {/* AI Transcript (read-only reference) */}
+      {hasTranscript && (
+        <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
+          <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium text-blue-900">AI Transcript (Krio)</span>
+              {confidencePercent !== null && (
+                <span className="px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded">
+                  {confidencePercent}% confidence
+                </span>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={() => onSaveTranscription(recording.transcript!)}
+              className="flex items-center gap-1 text-xs text-blue-700 hover:text-blue-900 font-medium"
+              title="Reset editor to the AI transcript"
+            >
+              <RotateCcw className="h-3 w-3" />
+              Use AI transcript
+            </button>
+          </div>
+          <p className="text-sm text-gray-900">{recording.transcript}</p>
+          <p className="text-xs text-blue-700 mt-1">
+            Listen carefully and correct the text above. Keep the Krio spelling exactly as spoken.
+          </p>
         </div>
       )}
 
