@@ -21,7 +21,7 @@ export async function POST(
                 durationSec: true,
                 languageId: true,
                 promptId: true,
-                language: { select: { collectedMinutes: true } },
+                language: { select: { collectedMinutes: true, approvedMinutes: true } },
                 prompt: { select: { timesRecorded: true } },
             },
         });
@@ -31,6 +31,7 @@ export async function POST(
         }
 
         const alreadyRejected = recording.status === "REJECTED";
+        const wasApproved = recording.status === "APPROVED";
 
         // Update recording status to REJECTED
         await prisma.recording.update({
@@ -51,6 +52,17 @@ export async function POST(
                           data: {
                               collectedMinutes: {
                                   decrement: Math.min(durationMin, recording.language.collectedMinutes),
+                              },
+                          },
+                      })
+                    : Promise.resolve(),
+                // Decrement approvedMinutes if recording was approved
+                wasApproved
+                    ? prisma.language.update({
+                          where: { id: recording.languageId },
+                          data: {
+                              approvedMinutes: {
+                                  decrement: Math.min(durationMin, recording.language.approvedMinutes || 0),
                               },
                           },
                       })

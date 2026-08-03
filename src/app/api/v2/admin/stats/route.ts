@@ -41,6 +41,8 @@ export async function GET(req: NextRequest) {
     });
 
     // Get language progress
+    // Calculate approved minutes from actual APPROVED recordings (not just counter)
+    // This ensures consistency with export which requires transcription approval
     const languages = await prisma.language.findMany({
       where: { isActive: true },
       select: {
@@ -49,7 +51,6 @@ export async function GET(req: NextRequest) {
         name: true,
         targetMinutes: true,
         collectedMinutes: true,
-        approvedMinutes: true,
         _count: {
           select: {
             prompts: true,
@@ -60,23 +61,40 @@ export async function GET(req: NextRequest) {
       orderBy: { name: "asc" },
     });
 
-    const languageProgress = languages.map((lang) => ({
-      ...lang,
-      progressPercent: lang.targetMinutes > 0
-        ? Math.round((lang.approvedMinutes / lang.targetMinutes) * 100)
-        : 0,
-      collectedHours: Math.round((lang.collectedMinutes / 60) * 10) / 10,
-      approvedHours: Math.round((lang.approvedMinutes / 60) * 10) / 10,
-      targetHours: Math.round((lang.targetMinutes / 60) * 10) / 10,
-    }));
+    // Calculate approved minutes from actual APPROVED recordings
+    const approvedMinutesByLanguage = await prisma.recording.groupBy({
+      by: ["languageId"],
+      where: { status: "APPROVED" },
+      _sum: { durationSec: true },
+    });
+
+    const approvedMinutesMap = new Map(
+      approvedMinutesByLanguage.map((l) => [
+        l.languageId,
+        (l._sum.durationSec || 0) / 60,
+      ])
+    );
+
+    const languageProgress = languages.map((lang) => {
+      const actualApprovedMinutes = approvedMinutesMap.get(lang.id) || 0;
+      return {
+        ...lang,
+        progressPercent: lang.targetMinutes > 0
+          ? Math.round((actualApprovedMinutes / lang.targetMinutes) * 100)
+          : 0,
+        collectedHours: Math.round((lang.collectedMinutes / 60) * 10) / 10,
+        approvedHours: Math.round((actualApprovedMinutes / 60) * 10) / 10,
+        targetHours: Math.round((lang.targetMinutes / 60) * 10) / 10,
+      };
+    });
 
     // Calculate totals
     const totalCollectedMinutes = languages.reduce(
       (sum, l) => sum + l.collectedMinutes,
       0
     );
-    const totalApprovedMinutes = languages.reduce(
-      (sum, l) => sum + l.approvedMinutes,
+    const totalApprovedMinutes = Array.from(approvedMinutesMap.values()).reduce(
+      (sum, minutes) => sum + minutes,
       0
     );
 

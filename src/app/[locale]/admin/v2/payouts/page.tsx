@@ -18,9 +18,28 @@ interface Speaker {
   paymentId?: string;
 }
 
+interface Transcriber {
+  id: string;
+  displayName: string | null;
+  email: string;
+  approvedDurationSec: number;
+  approvedMinutes: number;
+  pendingDurationSec: number;
+  payoutLe: number;
+  estimatedPayoutLe: number;
+  paid: boolean;
+  paymentId?: string;
+}
+
 interface Summary {
   totalSpeakers: number;
   milestoneSpeakers: number;
+  totalPayoutLe: number;
+  paidCount: number;
+}
+
+interface TranscriberSummary {
+  totalTranscribers: number;
   totalPayoutLe: number;
   paidCount: number;
 }
@@ -29,7 +48,11 @@ interface WeekData {
   week: { start: string; end: string };
   speakers: Speaker[];
   summary: Summary;
+  transcribers: Transcriber[];
+  transcriberSummary: TranscriberSummary;
 }
+
+type View = "speakers" | "transcribers";
 
 function fmtHours(sec: number): string {
   const h = Math.floor(sec / 3600);
@@ -64,6 +87,7 @@ export default function WeeklyPayoutsPage() {
   const [exportFrom, setExportFrom] = useState<string>("");
   const [exportTo, setExportTo] = useState<string>("");
   const [exporting, setExporting] = useState(false);
+  const [view, setView] = useState<View>("speakers");
 
   const fetchData = useCallback(async (ws?: string) => {
     setLoading(true);
@@ -87,16 +111,21 @@ export default function WeeklyPayoutsPage() {
     fetchData();
   }, [fetchData]);
 
-  const handlePay = async (speakerId: string) => {
+  const handlePay = async (id: string, role: View) => {
     if (!data) return;
-    setPaying(speakerId);
+    setPaying(id);
     try {
       await apiFetch("/api/v2/admin/payouts/weekly", {
         method: "POST",
-        body: JSON.stringify({
-          weekStart: data.week.start,
-          speakerIds: [speakerId],
-        }),
+        body: JSON.stringify(
+          role === "transcriber"
+            ? {
+                weekStart: data.week.start,
+                transcriberIds: [id],
+                role: "transcriber",
+              }
+            : { weekStart: data.week.start, speakerIds: [id] }
+        ),
       });
       await fetchData(data.week.start);
     } finally {
@@ -104,16 +133,17 @@ export default function WeeklyPayoutsPage() {
     }
   };
 
-  const handlePayAll = async () => {
+  const handlePayAll = async (role: View) => {
     if (!data) return;
     setPaying("all");
     try {
       await apiFetch("/api/v2/admin/payouts/weekly", {
         method: "POST",
-        body: JSON.stringify({
-          weekStart: data.week.start,
-          payAll: true,
-        }),
+        body: JSON.stringify(
+          role === "transcriber"
+            ? { weekStart: data.week.start, payAll: true, role: "transcriber" }
+            : { weekStart: data.week.start, payAll: true }
+        ),
       });
       await fetchData(data.week.start);
     } finally {
@@ -127,8 +157,9 @@ export default function WeeklyPayoutsPage() {
     fetchData(next);
   };
 
-  const unpaidCount = data
-    ? data.speakers.filter((s) => !s.paid).length
+  const speakerUnpaid = data ? data.speakers.filter((s) => !s.paid).length : 0;
+  const transcriberUnpaid = data
+    ? data.transcribers.filter((tr) => !tr.paid).length
     : 0;
 
   const exportCsv = async () => {
@@ -211,13 +242,37 @@ export default function WeeklyPayoutsPage() {
         </button>
       </div>
 
+      {/* Speaker / Transcriber tabs */}
+      <div className="flex gap-2 border-b border-gray-200">
+        {(["speakers", "transcribers"] as View[]).map((v) => (
+          <button
+            key={v}
+            onClick={() => setView(v)}
+            className={`px-4 py-2 text-sm font-medium -mb-px border-b-2 transition-colors ${
+              view === v
+                ? "border-purple-600 text-purple-700"
+                : "border-transparent text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            {v === "speakers" ? "Speakers" : "Transcribers"}
+            {data && (
+              <span className="ml-2 text-xs text-gray-400">
+                {v === "speakers"
+                  ? data.speakers.length
+                  : data.transcribers.length}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
+
       {loading ? (
         <div className="flex justify-center py-12">
           <div className="animate-spin h-8 w-8 border-b-2 border-purple-600 rounded-full" />
         </div>
-      ) : data ? (
+      ) : data && view === "speakers" ? (
         <>
-          {/* Summary Cards */}
+          {/* Speaker Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="bg-white rounded-lg shadow p-4">
               <p className="text-xs text-gray-500">{t("admin.totalSpeakers")}</p>
@@ -275,15 +330,15 @@ export default function WeeklyPayoutsPage() {
             </div>
 
             {/* Pay All */}
-            {unpaidCount > 0 && (
+            {speakerUnpaid > 0 && (
               <button
-                onClick={handlePayAll}
+                onClick={() => handlePayAll("speakers")}
                 disabled={paying !== null}
                 className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
               >
                 {paying === "all"
                   ? t("admin.processing")
-                  : t("admin.payAllUnpaid", { count: unpaidCount })}
+                  : t("admin.payAllUnpaid", { count: speakerUnpaid })}
               </button>
             )}
           </div>
@@ -387,11 +442,150 @@ export default function WeeklyPayoutsPage() {
                       <td className="px-4 py-3 text-right">
                         {!speaker.paid && (
                           <button
-                            onClick={() => handlePay(speaker.id)}
+                            onClick={() => handlePay(speaker.id, "speakers")}
                             disabled={paying !== null}
                             className="px-3 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
                           >
                             {paying === speaker.id
+                              ? t("admin.processing")
+                              : t("admin.pay")}
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
+      ) : data && view === "transcribers" ? (
+        <>
+          {/* Transcriber Summary Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-white rounded-lg shadow p-4">
+              <p className="text-xs text-gray-500">Transcribers</p>
+              <p className="text-2xl font-bold">
+                {data.transcriberSummary.totalTranscribers}
+              </p>
+            </div>
+            <div className="bg-white rounded-lg shadow p-4">
+              <p className="text-xs text-gray-500">{t("admin.totalPayout")}</p>
+              <p className="text-2xl font-bold text-green-600">
+                Le{data.transcriberSummary.totalPayoutLe.toFixed(2)}
+              </p>
+            </div>
+            <div className="bg-white rounded-lg shadow p-4">
+              <p className="text-xs text-gray-500">Paid</p>
+              <p className="text-2xl font-bold">
+                {data.transcriberSummary.paidCount} /{" "}
+                {data.transcriberSummary.totalTranscribers}
+              </p>
+            </div>
+          </div>
+
+          {/* Pay All */}
+          {transcriberUnpaid > 0 && (
+            <div className="flex justify-end">
+              <button
+                onClick={() => handlePayAll("transcribers")}
+                disabled={paying !== null}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+              >
+                {paying === "all"
+                  ? t("admin.processing")
+                  : t("admin.payAllUnpaid", { count: transcriberUnpaid })}
+              </button>
+            </div>
+          )}
+
+          {/* Transcriber Table */}
+          {data.transcribers.length === 0 ? (
+            <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
+              No approved transcriptions this week.
+            </div>
+          ) : (
+            <div className="bg-white rounded-lg shadow overflow-hidden">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Transcriber
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Approved (min)
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Pending Review
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      {t("admin.payout")}
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Estimated
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      {t("admin.status")}
+                    </th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                      {t("admin.action")}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {data.transcribers.map((tr) => (
+                    <tr key={tr.id} className={tr.paid ? "bg-gray-50" : ""}>
+                      <td className="px-4 py-3">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">
+                            {tr.displayName || tr.email}
+                          </p>
+                          <p className="text-xs text-gray-500">{tr.email}</p>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-sm">
+                        {tr.approvedMinutes.toFixed(2)}
+                      </td>
+                      <td className="px-4 py-3 text-sm">
+                        {tr.pendingDurationSec > 0 ? (
+                          <span className="text-orange-600 font-medium">
+                            {(tr.pendingDurationSec / 60).toFixed(2)} min
+                          </span>
+                        ) : (
+                          <span className="text-gray-400">&mdash;</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-sm font-medium">
+                        Le{tr.payoutLe.toFixed(2)}
+                      </td>
+                      <td className="px-4 py-3 text-sm">
+                        {tr.estimatedPayoutLe > tr.payoutLe ? (
+                          <span className="text-blue-600 font-medium">
+                            ~Le{tr.estimatedPayoutLe.toFixed(2)}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400">&mdash;</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        {tr.paid ? (
+                          <span className="inline-flex px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                            {t("admin.paid")}
+                          </span>
+                        ) : (
+                          <span className="inline-flex px-2 py-0.5 text-xs font-medium bg-orange-100 text-orange-800 rounded-full">
+                            {t("admin.unpaid")}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        {!tr.paid && (
+                          <button
+                            onClick={() => handlePay(tr.id, "transcribers")}
+                            disabled={paying !== null}
+                            className="px-3 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
+                          >
+                            {paying === tr.id
                               ? t("admin.processing")
                               : t("admin.pay")}
                           </button>

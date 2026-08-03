@@ -55,7 +55,7 @@ type ResultEntry = {
 
 // Process a single recording for trim analysis/application
 async function processRecording(
-  rec: { id: string; audioUrl: string; durationSec: number; speakerId: string; languageId: string; speaker: { displayName: string | null; email: string }; prompt: { englishText: string } },
+  rec: { id: string; audioUrl: string; durationSec: number; speakerId: string; languageId: string; status: RecordingStatus; speaker: { displayName: string | null; email: string }; prompt: { englishText: string } },
   dryRun: boolean
 ): Promise<{ result: ResultEntry; outcome: "trimmed" | "unchanged" | "skipped" | "error" }> {
   const base: Pick<ResultEntry, "id" | "audioUrl" | "speakerId" | "speakerName" | "promptText"> = {
@@ -88,6 +88,12 @@ async function processRecording(
 
     if (!dryRun) {
       const removedMinutes = trimResult.removedSec / 60;
+      const wasApproved = rec.status === "APPROVED";
+      // Fetch language stats to cap decrements
+      const language = await prisma.language.findUnique({
+        where: { id: rec.languageId },
+        select: { collectedMinutes: true, approvedMinutes: true },
+      });
       await Promise.all([
         uploadBuffer(rec.audioUrl, trimResult.buffer, "audio/wav"),
         prisma.recording.update({
@@ -96,8 +102,15 @@ async function processRecording(
         }),
         prisma.language.update({
           where: { id: rec.languageId },
-          data: { collectedMinutes: { decrement: removedMinutes } },
+          data: { collectedMinutes: { decrement: Math.min(removedMinutes, language?.collectedMinutes || 0) } },
         }),
+        // Decrement approvedMinutes if recording was approved
+        wasApproved
+          ? prisma.language.update({
+              where: { id: rec.languageId },
+              data: { approvedMinutes: { decrement: Math.min(removedMinutes, language?.approvedMinutes || 0) } },
+            })
+          : Promise.resolve(),
         prisma.user.update({
           where: { id: rec.speakerId },
           data: { totalRecordingsSec: { decrement: trimResult.removedSec } },
@@ -159,6 +172,7 @@ export async function POST(req: NextRequest) {
           durationSec: true,
           speakerId: true,
           languageId: true,
+          status: true,
           speaker: { select: { displayName: true, email: true } },
           prompt: { select: { englishText: true } },
         },

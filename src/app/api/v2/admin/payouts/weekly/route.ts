@@ -77,22 +77,6 @@ export async function GET(req: NextRequest) {
       pendingMap.set(rec.speakerId, entry);
     }
 
-    if (speakerMap.size === 0 && pendingMap.size === 0) {
-      return NextResponse.json({
-        week: {
-          start: start.toISOString().slice(0, 10),
-          end: end.toISOString().slice(0, 10),
-        },
-        speakers: [],
-        summary: {
-          totalSpeakers: 0,
-          milestoneSpeakers: 0,
-          totalPayoutLe: 0,
-          paidCount: 0,
-        },
-      });
-    }
-
     // Fetch speaker details (include speakers with only pending recordings too)
     const speakerIds = Array.from(new Set([...speakerMap.keys(), ...pendingMap.keys()]));
     const [speakers, existingPayments] = await Promise.all([
@@ -167,6 +151,97 @@ export async function GET(req: NextRequest) {
       paidCount: speakerRows.filter((s) => s.paid).length,
     };
 
+    // ---- Transcribers: approved transcriptions in this week, grouped by transcriber ----
+    // Approved work is bucketed by reviewedAt (when it became payable); pending
+    // (submitted, awaiting review) is bucketed by submittedAt for the estimate.
+    const txWeekRef = `weekly-transcriber:${start.toISOString().slice(0, 10)}`;
+    const txSelect = {
+      transcriberId: true,
+      recording: {
+        select: {
+          durationSec: true,
+          language: { select: { transcriberRatePerMin: true } },
+        },
+      },
+    } as const;
+    const [approvedTx, pendingTx] = await Promise.all([
+      prisma.transcription.findMany({
+        where: { status: "APPROVED", reviewedAt: { gte: start, lte: end } },
+        select: txSelect,
+      }),
+      prisma.transcription.findMany({
+        where: { status: "PENDING_REVIEW", submittedAt: { gte: start, lte: end } },
+        select: txSelect,
+      }),
+    ]);
+
+    const accumulate = (
+      list: typeof approvedTx,
+    ): Map<string, { totalSec: number; perMinuteTotal: number }> => {
+      const map = new Map<string, { totalSec: number; perMinuteTotal: number }>();
+      for (const t of list) {
+        const entry = map.get(t.transcriberId) || { totalSec: 0, perMinuteTotal: 0 };
+        entry.totalSec += t.recording.durationSec;
+        entry.perMinuteTotal +=
+          (t.recording.durationSec / 60) *
+          (t.recording.language.transcriberRatePerMin ?? 1.5);
+        map.set(t.transcriberId, entry);
+      }
+      return map;
+    };
+
+    const txMap = accumulate(approvedTx);
+    const txPendingMap = accumulate(pendingTx);
+
+    const transcriberIds = Array.from(
+      new Set([...txMap.keys(), ...txPendingMap.keys()])
+    );
+    const [transcriberUsers, existingTxPayments] = await Promise.all([
+      prisma.user.findMany({
+        where: { id: { in: transcriberIds } },
+        select: { id: true, displayName: true, email: true },
+      }),
+      prisma.payment.findMany({
+        where: { userId: { in: transcriberIds }, reference: txWeekRef },
+        select: { id: true, userId: true },
+      }),
+    ]);
+    const txPaidMap = new Map(existingTxPayments.map((p) => [p.userId, p.id]));
+
+    const transcriberRows = transcriberUsers.map((u) => {
+      const data = txMap.get(u.id) || { totalSec: 0, perMinuteTotal: 0 };
+      const pending = txPendingMap.get(u.id) || { totalSec: 0, perMinuteTotal: 0 };
+      const approvedMinutes = data.totalSec / 60;
+      // Straight per-minute payout at each recording's transcriber rate (no milestone).
+      return {
+        id: u.id,
+        displayName: u.displayName,
+        email: u.email,
+        approvedDurationSec: data.totalSec,
+        approvedMinutes: Math.round(approvedMinutes * 100) / 100,
+        pendingDurationSec: pending.totalSec,
+        payoutLe: Math.round(data.perMinuteTotal * 100) / 100,
+        estimatedPayoutLe:
+          Math.round((data.perMinuteTotal + pending.perMinuteTotal) * 100) / 100,
+        paid: txPaidMap.has(u.id),
+        paymentId: txPaidMap.get(u.id) || undefined,
+      };
+    });
+
+    transcriberRows.sort((a, b) => {
+      if (a.paid !== b.paid) return a.paid ? 1 : -1;
+      return b.approvedDurationSec - a.approvedDurationSec;
+    });
+
+    const transcriberSummary = {
+      totalTranscribers: transcriberRows.length,
+      totalPayoutLe:
+        Math.round(
+          transcriberRows.reduce((sum, r) => sum + r.payoutLe, 0) * 100
+        ) / 100,
+      paidCount: transcriberRows.filter((r) => r.paid).length,
+    };
+
     return NextResponse.json({
       week: {
         start: start.toISOString().slice(0, 10),
@@ -174,6 +249,8 @@ export async function GET(req: NextRequest) {
       },
       speakers: speakerRows,
       summary,
+      transcribers: transcriberRows,
+      transcriberSummary,
     });
   } catch (error) {
     console.error("Error fetching weekly payouts:", error);
@@ -195,7 +272,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { weekStart, speakerIds, payAll } = body;
+    const { weekStart, speakerIds, transcriberIds, payAll, role } = body;
 
     if (!weekStart) {
       return NextResponse.json(
@@ -205,6 +282,84 @@ export async function POST(req: NextRequest) {
     }
 
     const { start, end } = getWeekRange(weekStart);
+
+    // ---- Transcriber payouts (separate ledger reference from speakers) ----
+    if (role === "transcriber") {
+      const txWeekRef = `weekly-transcriber:${start.toISOString().slice(0, 10)}`;
+
+      // Recalculate from DB (don't trust client amounts)
+      const approvedTx = await prisma.transcription.findMany({
+        where: { status: "APPROVED", reviewedAt: { gte: start, lte: end } },
+        select: {
+          transcriberId: true,
+          recording: {
+            select: {
+              durationSec: true,
+              language: { select: { transcriberRatePerMin: true } },
+            },
+          },
+        },
+      });
+
+      const txMap = new Map<string, { perMinuteTotal: number }>();
+      for (const t of approvedTx) {
+        const entry = txMap.get(t.transcriberId) || { perMinuteTotal: 0 };
+        entry.perMinuteTotal +=
+          (t.recording.durationSec / 60) *
+          (t.recording.language.transcriberRatePerMin ?? 1.5);
+        txMap.set(t.transcriberId, entry);
+      }
+
+      let targetIds: string[];
+      if (payAll) {
+        targetIds = Array.from(txMap.keys());
+      } else if (transcriberIds && transcriberIds.length > 0) {
+        targetIds = transcriberIds;
+      } else {
+        return NextResponse.json(
+          { error: "transcriberIds or payAll is required" },
+          { status: 400 }
+        );
+      }
+
+      const created: string[] = [];
+      const skipped: string[] = [];
+
+      for (const id of targetIds) {
+        const data = txMap.get(id);
+        if (!data) {
+          skipped.push(id);
+          continue;
+        }
+        const amountCents = Math.round(data.perMinuteTotal * 100);
+        if (amountCents <= 0) {
+          skipped.push(id);
+          continue;
+        }
+        try {
+          const payment = await prisma.payment.create({
+            data: {
+              userId: id,
+              amountCents,
+              currency: "SLE",
+              status: "PAID",
+              reference: txWeekRef,
+              notes: "Transcriber per-minute",
+            },
+          });
+          created.push(payment.id);
+        } catch (err: any) {
+          if (err?.code === "P2002") {
+            skipped.push(id);
+          } else {
+            throw err;
+          }
+        }
+      }
+
+      return NextResponse.json({ success: true, created, skipped });
+    }
+
     const weekRef = `weekly:${start.toISOString().slice(0, 10)}`;
 
     // Recalculate from DB (don't trust client amounts)
