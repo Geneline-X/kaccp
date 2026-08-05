@@ -120,12 +120,31 @@ export async function GET(req: NextRequest) {
       where: { transcriberId: user.id },
     });
 
+    // Pipeline review work (ReviewQueue) — counted alongside classic transcriptions.
+    // A user "contributed" to an item if they did the first-pass correction or the
+    // second-pass verification.
+    const pipelineContributor = {
+      OR: [{ reviewerId: user.id }, { secondReviewerId: user.id }],
+    };
+    const [pipelineTotal, pipelineApproved, pipelinePending] = await Promise.all([
+      prisma.reviewQueue.count({ where: pipelineContributor }),
+      prisma.reviewQueue.count({ where: { status: "approved", ...pipelineContributor } }),
+      prisma.reviewQueue.count({
+        where: { status: { in: ["pending", "corrected", "in_review"] }, ...pipelineContributor },
+      }),
+    ]);
+
     return NextResponse.json({
       activeAssignments: activeRecordings.filter((r) => r.recording),
       recentTranscriptions,
       stats: {
         byStatus: stats,
         total: totalTranscriptions,
+        pipeline: {
+          total: pipelineTotal,
+          approved: pipelineApproved,
+          pending: pipelinePending,
+        },
       },
     });
   } catch (error) {

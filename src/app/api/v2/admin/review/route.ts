@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/infra/db/prisma";
 import { getAuthUser } from "@/lib/infra/auth/auth";
+import { transcriberCents } from "@/lib/domain/payments";
 
 // GET /api/v2/admin/review - Get transcriptions pending review
 export async function GET(req: NextRequest) {
@@ -205,8 +206,7 @@ export async function POST(req: NextRequest) {
     // Pay transcriber (only on first approval)
     if (!recordingAlreadyApproved) {
       const ratePerMin = transcription.recording.language.transcriberRatePerMin || 0.03;
-      const durationMin = Math.max(0.1, transcription.recording.durationSec / 60);
-      const amountCents = Math.round(durationMin * ratePerMin * 100);
+      const amountCents = transcriberCents(transcription.recording.durationSec, ratePerMin);
 
       if (amountCents > 0) {
         await prisma.walletTransaction.create({

@@ -1,12 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/infra/db/prisma";
 import { getAuthUser } from "@/lib/infra/auth/auth";
+import { transcriberCents } from "@/lib/domain/payments";
 
 function isReviewer(user: any) {
   if (!user) return false;
   const roles = (user as any).roles || [];
   return roles.includes("ADMIN") || roles.includes("REVIEWER") || roles.includes("TRANSCRIBER")
     || user.role === "ADMIN" || user.role === "REVIEWER" || user.role === "TRANSCRIBER";
+}
+
+// Pipeline items are pilot (Flot) audio sessions or linked KACCP recordings.
+// Resolve the clip length from whichever source the item points at.
+async function resolvePipelineDurationSec(item: {
+  audioSessionId: string | null;
+  recordingId: string | null;
+}): Promise<number> {
+  if (item.audioSessionId) {
+    const s = await prisma.audioSession.findUnique({
+      where: { id: item.audioSessionId },
+      select: { audioDurationS: true },
+    });
+    if (s?.audioDurationS) return s.audioDurationS;
+  }
+  if (item.recordingId) {
+    const r = await prisma.recording.findUnique({
+      where: { id: item.recordingId },
+      select: { durationSec: true },
+    });
+    if (r?.durationSec) return r.durationSec;
+  }
+  return 0;
 }
 
 // PATCH /api/v2/pipeline/review-queue/[id] — Update review (submit correction, double-verify)
@@ -30,12 +54,14 @@ export async function PATCH(
     const { correctedTranscript, status } = body;
 
     const updateData: any = {};
+    let creditPass: "first" | "second" | null = null;
 
     // First correction
     if (correctedTranscript && !existing.correctedTranscript) {
       updateData.correctedTranscript = correctedTranscript;
       updateData.reviewerId = user.id;
       updateData.status = status ?? "corrected";
+      creditPass = "first";
     }
     // Second correction (double verification)
     else if (correctedTranscript && existing.correctedTranscript && !existing.secondTranscript) {
@@ -43,6 +69,7 @@ export async function PATCH(
       updateData.secondReviewerId = user.id;
       updateData.disagreementFlag = correctedTranscript !== existing.correctedTranscript;
       updateData.status = updateData.disagreementFlag ? "pending" : (status ?? "approved");
+      creditPass = "second";
     }
     // Status-only update (admin override, language lead escalation)
     else if (status) {
@@ -56,7 +83,33 @@ export async function PATCH(
       data: updateData,
     });
 
-    return NextResponse.json({ item: updated });
+    // Pay the contributor for the pass they just completed (per corrected/verified item).
+    // The branch conditions above guarantee each pass credits at most once.
+    let earnedCents = 0;
+    if (creditPass) {
+      const durationSec = await resolvePipelineDurationSec(existing);
+      const krio = await prisma.language.findFirst({
+        where: { code: "kri" },
+        select: { transcriberRatePerMin: true },
+      });
+      const ratePerMin = krio?.transcriberRatePerMin || 3;
+      earnedCents = transcriberCents(durationSec, ratePerMin);
+      if (earnedCents > 0) {
+        await prisma.walletTransaction.create({
+          data: {
+            userId: user.id,
+            deltaCents: earnedCents,
+            description: `Pipeline ${creditPass}-pass correction for review item ${id}`,
+          },
+        });
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { totalEarningsCents: { increment: earnedCents } },
+        });
+      }
+    }
+
+    return NextResponse.json({ item: updated, earnedCents });
   } catch (error) {
     console.error("Error updating review item:", error);
     return NextResponse.json({ error: "Failed to update review item" }, { status: 500 });

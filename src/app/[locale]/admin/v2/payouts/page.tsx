@@ -118,7 +118,7 @@ export default function WeeklyPayoutsPage() {
       await apiFetch("/api/v2/admin/payouts/weekly", {
         method: "POST",
         body: JSON.stringify(
-          role === "transcriber"
+          role === "transcribers"
             ? {
                 weekStart: data.week.start,
                 transcriberIds: [id],
@@ -140,7 +140,7 @@ export default function WeeklyPayoutsPage() {
       await apiFetch("/api/v2/admin/payouts/weekly", {
         method: "POST",
         body: JSON.stringify(
-          role === "transcriber"
+          role === "transcribers"
             ? { weekStart: data.week.start, payAll: true, role: "transcriber" }
             : { weekStart: data.week.start, payAll: true }
         ),

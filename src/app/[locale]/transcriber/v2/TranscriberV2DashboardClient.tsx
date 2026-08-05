@@ -37,6 +37,7 @@ interface Assignment {
 interface Stats {
   total: number;
   byStatus: { status: string; _count: number }[];
+  pipeline?: { total: number; approved: number; pending: number };
 }
 
 interface ReviewItem {
@@ -246,6 +247,8 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
       setPipelineSelected(newList[0] || null);
       setPipelineEditedText(newList[0]?.correctedTranscript || newList[0]?.asrTranscript || "");
       setPipelineMessage(isSecondPass ? "Double verification submitted" : "Correction submitted");
+      // Refresh stats + earnings so the cards reflect the credit for this pass.
+      loadData();
     } catch { setPipelineMessage("Failed to submit"); }
     finally { setPipelineSubmitting(false); }
   };
@@ -257,6 +260,13 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
       </div>
     );
   }
+
+  // Cards combine classic claim-flow transcriptions with pipeline review work.
+  const classicApproved = stats?.byStatus.find((s) => s.status === "APPROVED")?._count || 0;
+  const classicPending = stats?.byStatus.find((s) => s.status === "PENDING_REVIEW")?._count || 0;
+  const totalTranscriptionsCount = (stats?.total || 0) + (stats?.pipeline?.total || 0);
+  const approvedCount = classicApproved + (stats?.pipeline?.approved || 0);
+  const pendingCount = classicPending + (stats?.pipeline?.pending || 0);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -305,14 +315,14 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
                 Le{((user?.totalEarningsCents || 0) / 100).toFixed(2)}
               </p>
               <p className="text-sm text-blue-100 mt-2">
-                {t('transcriber.fromApproved', { count: stats?.byStatus.find((s) => s.status === "APPROVED")?._count || 0 })}
+                {t('transcriber.fromApproved', { count: approvedCount })}
               </p>
             </div>
             <div className="text-right">
               <div className="bg-white/20 rounded-lg px-4 py-2">
                 <p className="text-xs text-blue-100">{t('transcriber.pendingReview')}</p>
                 <p className="text-lg font-semibold">
-                  {stats?.byStatus.find((s) => s.status === "PENDING_REVIEW")?._count || 0}
+                  {pendingCount}
                 </p>
               </div>
             </div>
@@ -326,19 +336,19 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
               {t('transcriber.totalTranscriptions')}
             </h3>
             <p className="text-3xl font-bold text-gray-900">
-              {stats?.total || 0}
+              {totalTranscriptionsCount}
             </p>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-sm font-medium text-gray-500">{t('transcriber.approved')}</h3>
             <p className="text-3xl font-bold text-green-600">
-              {stats?.byStatus.find((s) => s.status === "APPROVED")?._count || 0}
+              {approvedCount}
             </p>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-sm font-medium text-gray-500">{t('transcriber.pendingReview')}</h3>
             <p className="text-3xl font-bold text-yellow-600">
-              {stats?.byStatus.find((s) => s.status === "PENDING_REVIEW")?._count || 0}
+              {pendingCount}
             </p>
           </div>
         </div>
