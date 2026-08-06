@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getToken } from "@/lib/client";
+import { AudioLines } from "lucide-react";
 
 interface ReviewItem {
   id: string;
@@ -28,6 +29,54 @@ interface ReviewItem {
   secondReviewer: { id: string; displayName: string } | null;
   languageLead: { id: string; displayName: string } | null;
   createdAt: string;
+}
+
+function AudioPlayer({ audioPath, durationS }: { audioPath: string; durationS?: number }) {
+  const [signedUrl, setSignedUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const token = typeof window !== "undefined" ? getToken() : null;
+
+  const loadAudio = async () => {
+    if (!token || !audioPath) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/v2/pipeline/audio?path=${encodeURIComponent(audioPath)}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.signedUrl) {
+        setSignedUrl(data.signedUrl);
+      } else {
+        setError(data.error || "Failed to load audio");
+      }
+    } catch {
+      setError("Failed to load audio");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!signedUrl) {
+    return (
+      <button
+        onClick={loadAudio}
+        disabled={loading}
+        className="flex items-center gap-2 px-3 py-1.5 text-sm bg-blue-50 text-blue-700 border border-blue-200 rounded hover:bg-blue-100 disabled:opacity-50"
+      >
+        <AudioLines className="h-4 w-4" />
+        {loading ? "Loading audio..." : durationS ? `Play audio (${durationS.toFixed(1)}s)` : "Play audio"}
+      </button>
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      <audio controls className="w-full" src={signedUrl} key={signedUrl} />
+      {error && <p className="text-xs text-red-600">{error}</p>}
+    </div>
+  );
 }
 
 export default function LanguageLeadPage() {
@@ -220,6 +269,12 @@ export default function LanguageLeadPage() {
                   </p>
                 </div>
               )}
+
+              {/* Audio Player */}
+              <div className="mb-4 p-3 bg-gray-50 rounded-lg border">
+                <p className="text-xs font-medium text-muted-foreground mb-2">Audio Recording</p>
+                <AudioPlayer audioPath={item.audioPath} durationS={item.audioSession?.audioDurationS} />
+              </div>
 
               {/* Action buttons for awaiting review */}
               {selectedTab === "corrected" && (
