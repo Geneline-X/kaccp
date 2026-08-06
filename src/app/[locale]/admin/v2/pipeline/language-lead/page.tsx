@@ -6,7 +6,9 @@ import { getToken } from "@/lib/client";
 import { AudioLines } from "lucide-react";
 
 interface ReviewItem {
+  kind: "reviewQueue" | "transcription";
   id: string;
+  transcriptionId?: string;
   source: string;
   priorityTier: number;
   status: string;
@@ -28,6 +30,28 @@ interface ReviewItem {
   reviewer: { id: string; displayName: string } | null;
   secondReviewer: { id: string; displayName: string } | null;
   languageLead: { id: string; displayName: string } | null;
+  transcriber: { id: string; displayName: string } | null;
+  recording: {
+    id: string;
+    audioUrl: string;
+    durationSec: number;
+    transcript?: string | null;
+    transcriptConfidence?: number | null;
+    autoTranscriptionStatus?: string;
+    prompt: {
+      englishText: string;
+      category: string;
+      emotion: string;
+    };
+    language: {
+      code: string;
+      name: string;
+    };
+    speaker: {
+      id: string;
+      displayName: string;
+    };
+  } | null;
   createdAt: string;
 }
 
@@ -117,8 +141,31 @@ export default function LanguageLeadPage() {
     loadItems();
   }, [token, selectedTab, page]);
 
-  const handleAction = async (id: string, action: "approve" | "reject", notes?: string) => {
-    const res = await fetch(`/api/v2/pipeline/language-lead/${id}`, {
+  const handleAction = async (item: ReviewItem, action: "approve" | "reject", notes?: string) => {
+    if (item.kind === "transcription") {
+      // KACCP transcription corrections go through the admin review API
+      const res = await fetch(`/api/v2/admin/review`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          transcriptionId: item.transcriptionId,
+          decision: action === "approve" ? "APPROVED" : "REJECTED",
+          reviewNotes: notes,
+        }),
+      });
+      const data = await res.json();
+      if (data.error) {
+        alert(data.error);
+        return;
+      }
+      loadItems();
+      return;
+    }
+
+    const res = await fetch(`/api/v2/pipeline/language-lead/${item.id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -197,124 +244,151 @@ export default function LanguageLeadPage() {
               key={item.id}
               className="border rounded-lg p-4 bg-card"
             >
-              <div className="flex items-start justify-between gap-4 mb-3">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className={`px-2 py-0.5 text-xs rounded font-medium ${
-                      item.priorityTier === 1
-                        ? "bg-red-100 text-red-700"
-                        : item.priorityTier === 2
-                        ? "bg-yellow-100 text-yellow-700"
-                        : "bg-gray-100 text-gray-600"
-                    }`}>
-                      Tier {item.priorityTier}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {item.source}
-                    </span>
-                    {item.disagreementFlag && (
-                      <span className="px-2 py-0.5 text-xs bg-orange-100 text-orange-700 rounded font-medium">
-                        Disagreement
-                      </span>
-                    )}
-                    {item.audioSession?.outcome && (
+                <div className="flex items-start justify-between gap-4 mb-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      {item.kind === "reviewQueue" ? (
+                        <span className={`px-2 py-0.5 text-xs rounded font-medium ${
+                          item.priorityTier === 1
+                            ? "bg-red-100 text-red-700"
+                            : item.priorityTier === 2
+                            ? "bg-yellow-100 text-yellow-700"
+                            : "bg-gray-100 text-gray-600"
+                        }`}>
+                          Tier {item.priorityTier}
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 text-xs rounded font-medium bg-indigo-100 text-indigo-700">
+                          Krio Transcription
+                        </span>
+                      )}
                       <span className="text-xs text-muted-foreground">
-                        {item.audioSession.outcome}
+                        {item.kind === "transcription" && item.recording
+                          ? `${item.recording.language.name} • ${item.recording.durationSec?.toFixed(1)}s`
+                          : item.source}
                       </span>
+                      {item.disagreementFlag && (
+                        <span className="px-2 py-0.5 text-xs bg-orange-100 text-orange-700 rounded font-medium">
+                          Disagreement
+                        </span>
+                      )}
+                      {item.audioSession?.outcome && (
+                        <span className="text-xs text-muted-foreground">
+                          {item.audioSession.outcome}
+                        </span>
+                      )}
+                    </div>
+                    {item.audioSession?.detectedIntent && (
+                      <p className="text-xs text-muted-foreground mb-1">
+                        Intent: {item.audioSession.detectedIntent}
+                      </p>
+                    )}
+                    {item.kind === "transcription" && item.recording?.prompt?.englishText && (
+                      <p className="text-xs text-muted-foreground mb-1">
+                        Prompt: {item.recording.prompt.englishText}
+                      </p>
+                    )}
+                    {item.kind === "transcription" && item.recording?.speaker?.displayName && (
+                      <p className="text-xs text-muted-foreground mb-1">
+                        Speaker: {item.recording.speaker.displayName}
+                      </p>
                     )}
                   </div>
-                  {item.audioSession?.detectedIntent && (
-                    <p className="text-xs text-muted-foreground mb-1">
-                      Intent: {item.audioSession.detectedIntent}
+                  <div className="text-xs text-muted-foreground shrink-0 text-right">
+                    <div>{formatDate(item.createdAt)}</div>
+                    {item.audioSession ? (
+                      <div>{item.audioSession.audioDurationS ? formatDuration(item.audioSession.audioDurationS) : ""}</div>
+                    ) : item.recording?.durationSec ? (
+                      <div>{formatDuration(item.recording.durationSec)}</div>
+                    ) : null}
+                  </div>
+                </div>
+
+                {/* Transcripts */}
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground mb-1">
+                      {item.kind === "transcription" ? "Kay X AI Transcript" : "ASR Transcript"}
                     </p>
-                  )}
+                    <p className="text-sm bg-muted rounded p-2">{item.asrTranscript || "(none)"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground mb-1">
+                      Corrected Transcript
+                      {(item.kind === "transcription" ? item.transcriber : item.reviewer)?.displayName && (
+                        <span className="ml-1">
+                          by {(item.kind === "transcription" ? item.transcriber : item.reviewer)?.displayName}
+                        </span>
+                      )}
+                    </p>
+                    <p className="text-sm bg-green-50 rounded p-2 border border-green-200">
+                      {item.correctedTranscript || "(none)"}
+                    </p>
+                  </div>
                 </div>
-                <div className="text-xs text-muted-foreground shrink-0 text-right">
-                  <div>{formatDate(item.createdAt)}</div>
-                  {item.audioSession && (
-                    <div>{item.audioSession.audioDurationS ? formatDuration(item.audioSession.audioDurationS) : ""}</div>
-                  )}
-                </div>
-              </div>
 
-              {/* Transcripts */}
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                  <p className="text-xs font-medium text-muted-foreground mb-1">ASR Transcript</p>
-                  <p className="text-sm bg-muted rounded p-2">{item.asrTranscript || "(none)"}</p>
-                </div>
-                <div>
-                  <p className="text-xs font-medium text-muted-foreground mb-1">
-                    Corrected Transcript
-                    {item.reviewer && (
-                      <span className="ml-1">by {item.reviewer.displayName}</span>
-                    )}
-                  </p>
-                  <p className="text-sm bg-green-50 rounded p-2 border border-green-200">
-                    {item.correctedTranscript || "(none)"}
-                  </p>
-                </div>
-              </div>
+                {item.secondTranscript && (
+                  <div className="mb-4">
+                    <p className="text-xs font-medium text-muted-foreground mb-1">
+                      Second Correction
+                      {item.secondReviewer && (
+                        <span className="ml-1">by {item.secondReviewer.displayName}</span>
+                      )}
+                    </p>
+                    <p className="text-sm bg-blue-50 rounded p-2 border border-blue-200">
+                      {item.secondTranscript}
+                    </p>
+                  </div>
+                )}
 
-              {item.secondTranscript && (
-                <div className="mb-4">
-                  <p className="text-xs font-medium text-muted-foreground mb-1">
-                    Second Correction
-                    {item.secondReviewer && (
-                      <span className="ml-1">by {item.secondReviewer.displayName}</span>
-                    )}
-                  </p>
-                  <p className="text-sm bg-blue-50 rounded p-2 border border-blue-200">
-                    {item.secondTranscript}
-                  </p>
-                </div>
-              )}
-
-              {/* Audio Player */}
-              <div className="mb-4 p-3 bg-gray-50 rounded-lg border">
-                <p className="text-xs font-medium text-muted-foreground mb-2">Audio Recording</p>
-                <AudioPlayer audioPath={item.audioPath} durationS={item.audioSession?.audioDurationS} />
-              </div>
-
-              {/* Action buttons for awaiting review */}
-              {selectedTab === "corrected" && (
-                <div className="flex items-center gap-3 pt-3 border-t">
-                  <input
-                    type="text"
-                    placeholder="Notes (optional)..."
-                    id={`notes-${item.id}`}
-                    className="flex-1 text-sm border rounded px-3 py-1.5 bg-background"
+                {/* Audio Player */}
+                <div className="mb-4 p-3 bg-gray-50 rounded-lg border">
+                  <p className="text-xs font-medium text-muted-foreground mb-2">Audio Recording</p>
+                  <AudioPlayer
+                    audioPath={item.audioPath}
+                    durationS={item.audioSession?.audioDurationS ?? item.recording?.durationSec}
                   />
-                  <button
-                    onClick={() => {
-                      const notes = (document.getElementById(`notes-${item.id}`) as HTMLInputElement)?.value;
-                      handleAction(item.id, "approve", notes || undefined);
-                    }}
-                    className="px-4 py-1.5 text-sm bg-green-600 text-white rounded hover:bg-green-700"
-                  >
-                    Approve
-                  </button>
-                  <button
-                    onClick={() => {
-                      const notes = (document.getElementById(`notes-${item.id}`) as HTMLInputElement)?.value;
-                      handleAction(item.id, "reject", notes || undefined);
-                    }}
-                    className="px-4 py-1.5 text-sm bg-red-600 text-white rounded hover:bg-red-700"
-                  >
-                    Reject
-                  </button>
                 </div>
-              )}
 
-              {/* Show outcome + lead info for approved/rejected */}
-              {selectedTab !== "corrected" && item.languageLead && (
-                <div className="pt-3 border-t text-xs text-muted-foreground">
-                  Reviewed by {item.languageLead.displayName}
-                  {item.languageLeadNotes && (
-                    <span className="ml-2">· Notes: {item.languageLeadNotes}</span>
-                  )}
-                </div>
-              )}
+                {/* Action buttons for awaiting review */}
+                {selectedTab === "corrected" && (
+                  <div className="flex items-center gap-3 pt-3 border-t">
+                    <input
+                      type="text"
+                      placeholder="Notes (optional)..."
+                      id={`notes-${item.id}`}
+                      className="flex-1 text-sm border rounded px-3 py-1.5 bg-background"
+                    />
+                    <button
+                      onClick={() => {
+                        const notes = (document.getElementById(`notes-${item.id}`) as HTMLInputElement)?.value;
+                        handleAction(item, "approve", notes || undefined);
+                      }}
+                      className="px-4 py-1.5 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+                    >
+                      Approve
+                    </button>
+                    <button
+                      onClick={() => {
+                        const notes = (document.getElementById(`notes-${item.id}`) as HTMLInputElement)?.value;
+                        handleAction(item, "reject", notes || undefined);
+                      }}
+                      className="px-4 py-1.5 text-sm bg-red-600 text-white rounded hover:bg-red-700"
+                    >
+                      Reject
+                    </button>
+                  </div>
+                )}
+
+                {/* Show outcome + lead info for approved/rejected */}
+                {selectedTab !== "corrected" && item.languageLead && (
+                  <div className="pt-3 border-t text-xs text-muted-foreground">
+                    Reviewed by {item.languageLead.displayName}
+                    {item.languageLeadNotes && (
+                      <span className="ml-2">· Notes: {item.languageLeadNotes}</span>
+                    )}
+                  </div>
+                )}
             </div>
           ))}
         </div>
