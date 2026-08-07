@@ -32,22 +32,6 @@ export async function POST(req: NextRequest) {
 
     const now = new Date();
 
-    // Check if user has too many active assignments
-    const activeAssignments = await prisma.transcriptionAssignment.count({
-      where: {
-        userId: user.id,
-        expiresAt: { gt: now },
-        releasedAt: null,
-      },
-    });
-
-    if (activeAssignments >= MAX_ACTIVE_ASSIGNMENTS) {
-      return NextResponse.json(
-        { error: `You already have ${MAX_ACTIVE_ASSIGNMENTS} active assignment(s)` },
-        { status: 400 }
-      );
-    }
-
     // Check if recording exists and is available
     const recording = await prisma.recording.findUnique({
       where: { id: recordingId },
@@ -91,7 +75,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Check if recording is already assigned to someone else
+    // Check if recording is already assigned
     const existingAssignment = await prisma.transcriptionAssignment.findFirst({
       where: {
         recordingId,
@@ -100,9 +84,56 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    // Load feedback from a previous rejection (if any) so the transcriber can
+    // see why an earlier submission was rejected.
+    const previousTranscription = await prisma.transcription.findUnique({
+      where: { recordingId },
+      select: {
+        id: true,
+        status: true,
+        text: true,
+        reviewNotes: true,
+        reviewedAt: true,
+        reviewer: { select: { displayName: true } },
+      },
+    });
+
     if (existingAssignment) {
+      // Re-claiming the same recording (idempotent re-entry) — return the
+      // existing assignment and the rejection feedback instead of erroring.
+      if (existingAssignment.userId === user.id) {
+        return NextResponse.json({
+          assignment: existingAssignment,
+          recording,
+          expiresAt: existingAssignment.expiresAt,
+          minutesRemaining: Math.max(
+            0,
+            Math.floor((existingAssignment.expiresAt.getTime() - now.getTime()) / 60000)
+          ),
+          previousTranscription:
+            previousTranscription && previousTranscription.status === "REJECTED"
+              ? previousTranscription
+              : null,
+        });
+      }
       return NextResponse.json(
         { error: "Recording is already assigned to another transcriber" },
+        { status: 400 }
+      );
+    }
+
+    // Check if user has too many active assignments
+    const activeAssignments = await prisma.transcriptionAssignment.count({
+      where: {
+        userId: user.id,
+        expiresAt: { gt: now },
+        releasedAt: null,
+      },
+    });
+
+    if (activeAssignments >= MAX_ACTIVE_ASSIGNMENTS) {
+      return NextResponse.json(
+        { error: `You already have ${MAX_ACTIVE_ASSIGNMENTS} active assignment(s)` },
         { status: 400 }
       );
     }
@@ -123,6 +154,10 @@ export async function POST(req: NextRequest) {
       recording,
       expiresAt,
       minutesRemaining: ASSIGNMENT_MINUTES,
+      previousTranscription:
+        previousTranscription && previousTranscription.status === "REJECTED"
+          ? previousTranscription
+          : null,
     });
   } catch (error) {
     console.error("Error claiming recording:", error);

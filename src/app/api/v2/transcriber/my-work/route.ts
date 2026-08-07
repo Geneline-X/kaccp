@@ -120,6 +120,55 @@ export async function GET(req: NextRequest) {
       where: { transcriberId: user.id },
     });
 
+    // Rejection feedback keyed to this transcriber, stored on the recording's
+    // transcriptMetadata. This persists even if another transcriber later claims
+    // and resubmits the same recording (which overwrites the Transcription row).
+    const feedbackRecordings = await prisma.recording.findMany({
+      where: {
+        transcriptMetadata: {
+          path: ["rejectionFeedback"],
+          array_contains: [{ transcriberId: user.id }],
+        },
+      },
+      select: {
+        id: true,
+        audioUrl: true,
+        durationSec: true,
+        transcriptMetadata: true,
+        prompt: { select: { englishText: true } },
+        language: { select: { name: true } },
+      },
+      orderBy: { updatedAt: "desc" },
+      take: 50,
+    });
+
+    const feedback: any[] = [];
+    for (const r of feedbackRecordings) {
+      const meta = r.transcriptMetadata as any;
+      const entries = Array.isArray(meta?.rejectionFeedback)
+        ? meta.rejectionFeedback
+        : [];
+      for (const e of entries) {
+        if (e.transcriberId !== user.id) continue;
+        feedback.push({
+          id: `${r.id}:${e.reviewedAt}`,
+          text: e.text,
+          status: "REJECTED",
+          reviewNotes: e.reviewNotes || null,
+          reviewedAt: e.reviewedAt || null,
+          submittedAt: e.reviewedAt || null,
+          recording: {
+            id: r.id,
+            audioUrl: r.audioUrl,
+            durationSec: r.durationSec,
+            prompt: { englishText: r.prompt?.englishText || "" },
+            language: { name: r.language?.name || "" },
+          },
+        });
+      }
+    }
+    feedback.sort((a, b) => String(b.reviewedAt || "").localeCompare(String(a.reviewedAt || "")));
+
     // Pipeline review work (ReviewQueue) — counted alongside classic transcriptions.
     // A user "contributed" to an item if they did the first-pass correction or the
     // second-pass verification.
@@ -137,6 +186,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       activeAssignments: activeRecordings.filter((r) => r.recording),
       recentTranscriptions,
+      feedback,
       stats: {
         byStatus: stats,
         total: totalTranscriptions,

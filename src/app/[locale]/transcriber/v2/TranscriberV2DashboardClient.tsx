@@ -40,6 +40,22 @@ interface Stats {
   pipeline?: { total: number; approved: number; pending: number };
 }
 
+interface RecentTranscription {
+  id: string;
+  text: string;
+  status: string;
+  reviewNotes: string | null;
+  reviewedAt: string | null;
+  submittedAt: string;
+  recording: {
+    id: string;
+    audioUrl: string;
+    durationSec: number;
+    prompt: { englishText: string };
+    language: { name: string };
+  };
+}
+
 interface ReviewItem {
   id: string;
   source: string;
@@ -82,6 +98,10 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
   const [activeAssignments, setActiveAssignments] = useState<Assignment[]>([]);
   const [availableRecordings, setAvailableRecordings] = useState<Recording[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
+  const [feedbackItems, setFeedbackItems] = useState<RecentTranscription[]>([]);
+  const [selectedFeedback, setSelectedFeedback] = useState<RecentTranscription | null>(null);
+  const [feedbackAudioUrl, setFeedbackAudioUrl] = useState<string | null>(null);
+  const [feedbackAudioLoading, setFeedbackAudioLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [claimingId, setClaimingId] = useState<string | null>(null);
   const [releasingId, setReleasingId] = useState<string | null>(null);
@@ -126,6 +146,7 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
       .then((data) => {
         setActiveAssignments(data.activeAssignments || []);
         setStats(data.stats || null);
+        setFeedbackItems(data.feedback || []);
       });
 
     fetch(`/api/v2/transcriber/available?limit=${limit}&offset=${(page - 1) * limit}`, {
@@ -229,6 +250,26 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
     setPipelineMessage(null);
   };
 
+  const selectFeedbackItem = async (tr: RecentTranscription) => {
+    setSelectedFeedback(tr);
+    setFeedbackAudioUrl(null);
+    if (!token) return;
+    setFeedbackAudioLoading(true);
+    try {
+      const res = await fetch(`/api/v2/audio/${tr.recording.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.signedUrl || data.url) {
+        setFeedbackAudioUrl(data.signedUrl || data.url);
+      }
+    } catch {
+      // ignore audio load errors — notes still shown
+    } finally {
+      setFeedbackAudioLoading(false);
+    }
+  };
+
   const submitPipelineCorrection = async () => {
     if (!pipelineSelected || !pipelineEditedText.trim()) return;
     setPipelineSubmitting(true);
@@ -267,6 +308,8 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
   const totalTranscriptionsCount = (stats?.total || 0) + (stats?.pipeline?.total || 0);
   const approvedCount = classicApproved + (stats?.pipeline?.approved || 0);
   const pendingCount = classicPending + (stats?.pipeline?.pending || 0);
+
+  const rejectedFeedbacks = feedbackItems;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -352,6 +395,122 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
             </p>
           </div>
         </div>
+
+        {/* Feedback notifications from language lead */}
+        {rejectedFeedbacks.length > 0 && (
+          <div className="bg-white rounded-lg shadow mb-8">
+            <div className="px-6 py-4 border-b border-gray-200 bg-orange-50 flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  {t('transcriber.feedbackNotifications')}
+                </h2>
+                <p className="text-sm text-gray-500">
+                  {t('transcriber.reviewerFeedbackNote')}
+                </p>
+              </div>
+              <span className="px-3 py-1 text-sm bg-orange-100 text-orange-800 rounded-full font-medium">
+                {rejectedFeedbacks.length} {t('transcriber.rejected')}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3">
+              {/* List of rejected items */}
+              <div className="lg:col-span-1 border-r border-gray-200 max-h-[420px] overflow-y-auto">
+                {rejectedFeedbacks.map((tr) => (
+                  <button
+                    key={tr.id}
+                    onClick={() => selectFeedbackItem(tr)}
+                    className={`w-full text-left p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors ${
+                      selectedFeedback?.id === tr.id ? "bg-orange-50" : ""
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs px-2 py-0.5 bg-red-100 text-red-800 rounded font-medium">
+                        REJECTED
+                      </span>
+                      <span className="text-xs text-gray-400">
+                        {new Date(tr.reviewedAt || tr.submittedAt).toLocaleString()}
+                      </span>
+                    </div>
+                    <p className="text-sm font-medium text-gray-900 truncate">
+                      {tr.recording.prompt.englishText}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {tr.recording.language.name} • {tr.recording.durationSec.toFixed(1)}s
+                    </p>
+                    {tr.reviewNotes && (
+                      <p className="text-xs text-orange-700 mt-1 truncate">
+                        {tr.reviewNotes}
+                      </p>
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              {/* Detail panel */}
+              <div className="lg:col-span-2 p-6">
+                {selectedFeedback ? (
+                  <div>
+                    <div className="flex items-start justify-between gap-4 mb-4">
+                      <div>
+                        <p className="text-sm text-gray-500 mb-1">
+                          {selectedFeedback.recording.prompt.englishText}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          {selectedFeedback.recording.language.name} • {selectedFeedback.recording.durationSec.toFixed(1)}s
+                        </p>
+                      </div>
+                      <Link
+                        href={`/${locale}/transcriber/v2/task/${selectedFeedback.recording.id}`}
+                        className="px-4 py-2 text-sm bg-orange-600 text-white rounded-lg hover:bg-orange-700 whitespace-nowrap"
+                      >
+                        {t('transcriber.fixAndResubmit')}
+                      </Link>
+                    </div>
+
+                    {/* Audio */}
+                    <div className="mb-4 p-3 bg-gray-50 rounded-lg border">
+                      <p className="text-xs font-medium text-gray-500 mb-2">
+                        {t('transcriber.listenToRecording')}
+                      </p>
+                      {feedbackAudioUrl ? (
+                        <audio controls className="w-full" src={feedbackAudioUrl} key={feedbackAudioUrl} />
+                      ) : (
+                        <div className="flex items-center justify-center h-10 bg-gray-200 rounded-lg">
+                          <span className="text-xs text-gray-500">
+                            {feedbackAudioLoading ? t('transcriber.loadingAudio') : t('transcriber.loadingAudio')}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Notes from language lead */}
+                    <div className="mb-4 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                      <p className="text-xs font-semibold text-orange-800 mb-1 uppercase tracking-wide">
+                        {t('transcriber.languageLeadFeedback')}
+                      </p>
+                      <p className="text-sm text-orange-900">
+                        {selectedFeedback.reviewNotes || t('transcriber.noFeedbackProvided')}
+                      </p>
+                    </div>
+
+                    {/* Your previous submission */}
+                    <div className="p-4 bg-gray-50 rounded-lg border">
+                      <p className="text-xs font-medium text-gray-500 mb-1">
+                        {t('transcriber.previousSubmission')}
+                      </p>
+                      <p className="text-sm text-gray-700 italic">“{selectedFeedback.text}”</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center h-full text-gray-400">
+                    {t('transcriber.selectFeedbackPrompt')}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Active Assignments */}
         {activeAssignments.length > 0 && (

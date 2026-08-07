@@ -177,14 +177,32 @@ export async function POST(req: NextRequest) {
         data: { status: "APPROVED" },
       });
     } else {
-      // Transcription rejected: audio was already approved — send back to transcription queue
-      // Delete the bad transcription so another transcriber can claim it
-      await prisma.transcription.delete({
-        where: { id: transcriptionId },
-      });
+      // Transcription rejected: keep the rejected row (with reviewNotes) so the
+      // transcriber can see feedback, and send the recording back to the queue
+      // for re-transcription. Persist the feedback on the recording keyed to the
+      // original transcriber so it survives even if another transcriber resubmits.
+      const existingMeta: any = (transcription.recording as any).transcriptMetadata || {};
+      const existingFeedback = Array.isArray(existingMeta.rejectionFeedback)
+        ? existingMeta.rejectionFeedback
+        : [];
       await prisma.recording.update({
         where: { id: transcription.recordingId },
-        data: { status: "PENDING_TRANSCRIPTION" },
+        data: {
+          status: "PENDING_TRANSCRIPTION",
+          transcriptMetadata: {
+            ...existingMeta,
+            rejectionFeedback: [
+              ...existingFeedback,
+              {
+                transcriberId: transcription.transcriberId,
+                text: transcription.text,
+                reviewNotes: reviewNotes || null,
+                reviewedAt: now.toISOString(),
+                reviewerName: (user as any).displayName || null,
+              },
+            ],
+          },
+        },
       });
       return NextResponse.json({ success: true, requeued: true });
     }

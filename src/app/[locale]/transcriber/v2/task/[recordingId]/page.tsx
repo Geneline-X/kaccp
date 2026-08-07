@@ -42,6 +42,12 @@ export default function TranscriptionTaskPage() {
   const [error, setError] = useState("");
   const [playCount, setPlayCount] = useState(0);
   const [audioPlayUrl, setAudioPlayUrl] = useState<string | null>(null);
+  const [previousRejection, setPreviousRejection] = useState<{
+    text: string;
+    reviewNotes: string | null;
+    reviewedAt: string | null;
+    reviewer: { displayName: string | null } | null;
+  } | null>(null);
 
   const FLAG_REASONS = [
     { value: "NOISE", label: t('transcriber.flagNoise') },
@@ -91,6 +97,7 @@ export default function TranscriptionTaskPage() {
 
         if (rec) {
           setRecording(rec);
+          setPreviousRejection(data.previousTranscription || null);
           // Fetch signed audio URL
           const audioRes = await fetch(`/api/v2/audio/${recordingId}`, {
             headers: { Authorization: `Bearer ${token}` },
@@ -238,6 +245,29 @@ export default function TranscriptionTaskPage() {
         {error && (
           <div className="mb-6 p-4 bg-red-900/50 border border-red-500 rounded-lg text-red-200">
             {error}
+          </div>
+        )}
+
+        {previousRejection && (
+          <div className="mb-6 p-4 bg-orange-900/40 border border-orange-500 rounded-lg">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-orange-400 font-semibold">
+                ⚠️ {t('transcriber.previousRejected')}
+              </span>
+              {previousRejection.reviewedAt && (
+                <span className="text-xs text-orange-300">
+                  {new Date(previousRejection.reviewedAt).toLocaleString()}
+                </span>
+              )}
+            </div>
+            {previousRejection.reviewNotes && (
+              <p className="text-sm text-orange-200 mb-2">
+                <span className="font-medium">Reviewer:</span> {previousRejection.reviewNotes}
+              </p>
+            )}
+            <p className="text-xs text-orange-300">
+              {t('transcriber.previousSubmission')}: “{previousRejection.text}”
+            </p>
           </div>
         )}
 

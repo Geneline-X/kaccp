@@ -93,9 +93,20 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Create transcription
-    const transcription = await prisma.transcription.create({
-      data: {
+    // Create or replace transcription. A previous rejected transcription may still
+    // exist for this recording (kept for feedback), so upsert on recordingId.
+    const transcription = await prisma.transcription.upsert({
+      where: { recordingId },
+      update: {
+        transcriberId: user.id,
+        text: text.trim(),
+        status: "PENDING_REVIEW",
+        reviewerId: null,
+        reviewedAt: null,
+        reviewNotes: null,
+        submittedAt: new Date(),
+      },
+      create: {
         recordingId,
         transcriberId: user.id,
         text: text.trim(),
@@ -109,6 +120,26 @@ export async function POST(req: NextRequest) {
         status: "TRANSCRIBED",
       },
     });
+
+    // Clear this transcriber's rejection feedback on the recording now that they
+    // have resubmitted. Feedback for OTHER transcribers is preserved.
+    const meta: any = recording.transcriptMetadata || {};
+    if (Array.isArray(meta.rejectionFeedback)) {
+      const remaining = meta.rejectionFeedback.filter(
+        (f: any) => f.transcriberId !== user.id
+      );
+      if (remaining.length !== meta.rejectionFeedback.length) {
+        await prisma.recording.update({
+          where: { id: recordingId },
+          data: {
+            transcriptMetadata: {
+              ...meta,
+              rejectionFeedback: remaining,
+            },
+          },
+        });
+      }
+    }
 
     // Release assignment
     await prisma.transcriptionAssignment.update({
