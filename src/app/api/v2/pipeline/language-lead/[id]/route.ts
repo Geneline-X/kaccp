@@ -38,10 +38,37 @@ export async function PATCH(
     const updateData: any = {
       languageLeadId: user.id,
       languageLeadNotes: notes || null,
-      status: action === "approve" ? "approved" : "rejected",
     };
+
     if (action === "approve") {
+      updateData.status = "approved";
       updateData.languageLeadApprovedAt = new Date();
+    } else {
+      // Reject: record feedback for the correcting transcriber, then requeue the
+      // item back to "pending" (clearing the correction) so it can be redone.
+      // The rejection entry is stored on rejectionFeedback so the original
+      // corrector sees the lead's notes even after another transcriber redoes it.
+      const existingFeedback = Array.isArray(existing.rejectionFeedback)
+        ? existing.rejectionFeedback
+        : [];
+      const correctingTranscriberId = existing.reviewerId || existing.secondReviewerId || null;
+      const correctedText = existing.correctedTranscript || existing.secondTranscript || null;
+      updateData.status = "pending";
+      updateData.correctedTranscript = null;
+      updateData.secondTranscript = null;
+      updateData.reviewerId = null;
+      updateData.secondReviewerId = null;
+      updateData.disagreementFlag = false;
+      updateData.rejectionFeedback = [
+        ...existingFeedback,
+        {
+          transcriberId: correctingTranscriberId,
+          text: correctedText,
+          reviewNotes: notes || null,
+          reviewedAt: new Date().toISOString(),
+          reviewerName: (user as any).displayName || null,
+        },
+      ];
     }
 
     const updated = await prisma.reviewQueue.update({

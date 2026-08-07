@@ -47,6 +47,8 @@ interface RecentTranscription {
   reviewNotes: string | null;
   reviewedAt: string | null;
   submittedAt: string;
+  kind?: "transcription" | "reviewQueue";
+  audioPath?: string;
   recording: {
     id: string;
     audioUrl: string;
@@ -256,18 +258,36 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
     if (!token) return;
     setFeedbackAudioLoading(true);
     try {
-      const res = await fetch(`/api/v2/audio/${tr.recording.id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      if (data.signedUrl || data.url) {
-        setFeedbackAudioUrl(data.signedUrl || data.url);
+      if (tr.kind === "reviewQueue" && tr.audioPath) {
+        // Pipeline items are served by the pipeline audio endpoint (GCS path).
+        const res = await fetch(`/api/v2/pipeline/audio?path=${encodeURIComponent(tr.audioPath)}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (data.signedUrl || data.url) {
+          setFeedbackAudioUrl(data.signedUrl || data.url);
+        }
+      } else {
+        const res = await fetch(`/api/v2/audio/${tr.recording.id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (data.signedUrl || data.url) {
+          setFeedbackAudioUrl(data.signedUrl || data.url);
+        }
       }
     } catch {
       // ignore audio load errors — notes still shown
     } finally {
       setFeedbackAudioLoading(false);
     }
+  };
+
+  const goToPipelineReview = () => {
+    setPipelineExpanded(true);
+    setTimeout(() => {
+      document.getElementById("pipeline-review")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
   };
 
   const submitPipelineCorrection = async () => {
@@ -460,12 +480,21 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
                           {selectedFeedback.recording.language.name} • {selectedFeedback.recording.durationSec.toFixed(1)}s
                         </p>
                       </div>
-                      <Link
-                        href={`/${locale}/transcriber/v2/task/${selectedFeedback.recording.id}`}
-                        className="px-4 py-2 text-sm bg-orange-600 text-white rounded-lg hover:bg-orange-700 whitespace-nowrap"
-                      >
-                        {t('transcriber.fixAndResubmit')}
-                      </Link>
+                      {selectedFeedback.kind !== "reviewQueue" ? (
+                        <Link
+                          href={`/${locale}/transcriber/v2/task/${selectedFeedback.recording.id}`}
+                          className="px-4 py-2 text-sm bg-orange-600 text-white rounded-lg hover:bg-orange-700 whitespace-nowrap"
+                        >
+                          {t('transcriber.fixAndResubmit')}
+                        </Link>
+                      ) : (
+                        <button
+                          onClick={goToPipelineReview}
+                          className="px-4 py-2 text-sm bg-orange-600 text-white rounded-lg hover:bg-orange-700 whitespace-nowrap"
+                        >
+                          {t('transcriber.fixAndResubmit')}
+                        </button>
+                      )}
                     </div>
 
                     {/* Audio */}
@@ -563,7 +592,7 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
         )}
 
         {/* Pipeline Review Section */}
-        <div className="bg-white rounded-lg shadow mb-8">
+        <div id="pipeline-review" className="bg-white rounded-lg shadow mb-8 scroll-mt-4">
           <button
             onClick={() => setPipelineExpanded(!pipelineExpanded)}
             className="w-full px-6 py-4 border-b border-gray-200 flex items-center justify-between hover:bg-gray-50 transition-colors"

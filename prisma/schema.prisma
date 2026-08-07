@@ -519,6 +519,11 @@ model ReviewQueue {
   languageLeadNotes     String?  @db.Text
   languageLeadApprovedAt DateTime?
 
+  // Rejection feedback delivered to the correcting transcriber. Array of
+  // { transcriberId, text, reviewNotes, reviewedAt, reviewerName }. Persists
+  // across re-corrections so the original corrector always sees the lead's notes.
+  rejectionFeedback Json?
+
   // Version tracking
   datasetVersionId   String?
   datasetVersion     DatasetVersion? @relation(fields: [datasetVersionId], references: [id])

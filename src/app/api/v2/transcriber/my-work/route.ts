@@ -143,6 +143,32 @@ export async function GET(req: NextRequest) {
     });
 
     const feedback: any[] = [];
+    const seenRecordingIds = new Set<string>();
+
+    // Source 1: the transcriber's own REJECTED transcription rows (covers
+    // existing rejections, which carry reviewNotes on the Transcription row).
+    for (const tr of recentTranscriptions) {
+      if (tr.status !== "REJECTED") continue;
+      seenRecordingIds.add(tr.recordingId);
+      feedback.push({
+        id: tr.id,
+        text: tr.text,
+        status: "REJECTED",
+        reviewNotes: tr.reviewNotes || null,
+        reviewedAt: tr.reviewedAt ? tr.reviewedAt.toISOString() : null,
+        submittedAt: tr.submittedAt ? tr.submittedAt.toISOString() : null,
+        recording: {
+          id: tr.recording?.id || tr.recordingId,
+          audioUrl: tr.recording?.audioUrl || "",
+          durationSec: tr.recording?.durationSec || 0,
+          prompt: { englishText: tr.recording?.prompt?.englishText || "" },
+          language: { name: tr.recording?.language?.name || "" },
+        },
+      });
+    }
+
+    // Source 2: persistent feedback on the recording metadata (survives a
+    // different transcriber resubmitting the same recording).
     for (const r of feedbackRecordings) {
       const meta = r.transcriptMetadata as any;
       const entries = Array.isArray(meta?.rejectionFeedback)
@@ -150,6 +176,7 @@ export async function GET(req: NextRequest) {
         : [];
       for (const e of entries) {
         if (e.transcriberId !== user.id) continue;
+        seenRecordingIds.add(r.id);
         feedback.push({
           id: `${r.id}:${e.reviewedAt}`,
           text: e.text,
@@ -163,6 +190,54 @@ export async function GET(req: NextRequest) {
             durationSec: r.durationSec,
             prompt: { englishText: r.prompt?.englishText || "" },
             language: { name: r.language?.name || "" },
+          },
+        });
+      }
+    }
+
+    // Source 3: pipeline (ReviewQueue) corrections that the language lead
+    // rejected. Feedback is stored on the item's rejectionFeedback array, keyed
+    // to the correcting transcriber, so it survives re-correction by anyone.
+    const rejectedPipeline = await prisma.reviewQueue.findMany({
+      where: {
+        rejectionFeedback: {
+          array_contains: [{ transcriberId: user.id }],
+        },
+      },
+      select: {
+        id: true,
+        status: true,
+        audioPath: true,
+        source: true,
+        rejectionFeedback: true,
+        audioSession: { select: { audioDurationS: true } },
+      },
+      orderBy: { updatedAt: "desc" },
+      take: 50,
+    });
+
+    for (const r of rejectedPipeline) {
+      const entries = Array.isArray((r as any).rejectionFeedback)
+        ? (r as any).rejectionFeedback
+        : [];
+      for (const e of entries) {
+        if (e.transcriberId !== user.id) continue;
+        seenRecordingIds.add(r.id);
+        feedback.push({
+          id: `rq:${r.id}:${e.reviewedAt}`,
+          kind: "reviewQueue",
+          text: e.text,
+          status: "REJECTED",
+          reviewNotes: e.reviewNotes || null,
+          reviewedAt: e.reviewedAt || null,
+          submittedAt: e.reviewedAt || null,
+          audioPath: r.audioPath,
+          recording: {
+            id: r.id,
+            audioUrl: r.audioPath,
+            durationSec: r.audioSession?.audioDurationS || 0,
+            prompt: { englishText: e.text || "Pipeline review" },
+            language: { name: r.source === "pilot" ? "Flot" : "KACCP" },
           },
         });
       }
