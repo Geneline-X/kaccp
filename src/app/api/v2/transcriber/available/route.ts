@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/infra/db/prisma";
 import { getAuthUser } from "@/lib/infra/auth/auth";
+import { transcriberCents } from "@/lib/domain/payments";
 
 // GET /api/v2/transcriber/available - Get recordings available for transcription
 export async function GET(req: NextRequest) {
@@ -97,8 +98,18 @@ export async function GET(req: NextRequest) {
       },
     });
 
+    // Expected payout for each clip, using the same formula as the review
+    // route (transcriberCents), so the shown estimate equals what is paid.
+    const recordingsWithEstimate = recordings.map((r) => ({
+      ...r,
+      estimatedCents: transcriberCents(
+        r.durationSec,
+        r.language?.transcriberRatePerMin || 0
+      ),
+    }));
+
     return NextResponse.json({
-      recordings,
+      recordings: recordingsWithEstimate,
       totalAvailable,
     });
   } catch (error) {

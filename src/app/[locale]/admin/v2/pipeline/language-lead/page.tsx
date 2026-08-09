@@ -198,8 +198,22 @@ export default function LanguageLeadPage() {
             Final verification of corrected pipeline transcripts
           </p>
         </div>
-        <div className="text-sm text-muted-foreground">
-          {total} item{total !== 1 ? "s" : ""}
+        <div className="flex items-center gap-3">
+          <div className="text-sm text-muted-foreground">
+            {total} item{total !== 1 ? "s" : ""}
+          </div>
+          <button
+            onClick={() => window.open(`/api/v2/admin/export/corrected?source=kaccp&format=csv`, "_blank")}
+            className="px-3 py-1.5 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+          >
+            Export TTS (KACCP seed)
+          </button>
+          <button
+            onClick={() => window.open(`/api/v2/admin/export/corrected?source=pilot&format=csv`, "_blank")}
+            className="px-3 py-1.5 text-sm bg-purple-600 text-white rounded hover:bg-purple-700"
+          >
+            Export ASR (Flot pilot)
+          </button>
         </div>
       </div>
 

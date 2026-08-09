@@ -258,6 +258,52 @@ export async function GET(req: NextRequest) {
       }),
     ]);
 
+    // Minutes of audio transcribed (based on the length of the audio), used to
+    // show the transcriber how much work they have done at Le 3.00/minute.
+    const [approvedClassic, approvedPipeline] = await Promise.all([
+      prisma.transcription.findMany({
+        where: { transcriberId: user.id, status: "APPROVED" },
+        select: { recording: { select: { durationSec: true } } },
+      }),
+      prisma.reviewQueue.findMany({
+        where: { status: "approved", ...pipelineContributor },
+        select: { audioSessionId: true, recordingId: true },
+      }),
+    ]);
+    const classicSeconds = approvedClassic.reduce(
+      (sum, t) => sum + (t.recording?.durationSec || 0),
+      0
+    );
+    // Resolve pipeline clip lengths from audio sessions (pilot) or recordings
+    // (kaccp_recording source). ReviewQueue has no recording relation, only the id.
+    const sessionIds = approvedPipeline
+      .map((r) => r.audioSessionId)
+      .filter((id): id is string => Boolean(id));
+    const recordingIds = approvedPipeline
+      .map((r) => r.recordingId)
+      .filter((id): id is string => Boolean(id));
+    const [sessions, recordings] = await Promise.all([
+      prisma.audioSession.findMany({
+        where: { id: { in: sessionIds } },
+        select: { id: true, audioDurationS: true },
+      }),
+      prisma.recording.findMany({
+        where: { id: { in: recordingIds } },
+        select: { id: true, durationSec: true },
+      }),
+    ]);
+    const sessionSeconds = new Map(sessions.map((s) => [s.id, s.audioDurationS || 0]));
+    const recordingSeconds = new Map(recordings.map((r) => [r.id, r.durationSec || 0]));
+    const pipelineSeconds = approvedPipeline.reduce(
+      (sum, r) =>
+        sum +
+        (r.audioSessionId
+          ? sessionSeconds.get(r.audioSessionId) || 0
+          : recordingSeconds.get(r.recordingId || "") || 0),
+      0
+    );
+    const totalSecondsTranscribed = classicSeconds + pipelineSeconds;
+
     return NextResponse.json({
       activeAssignments: activeRecordings.filter((r) => r.recording),
       recentTranscriptions,
@@ -265,6 +311,7 @@ export async function GET(req: NextRequest) {
       stats: {
         byStatus: stats,
         total: totalTranscriptions,
+        totalSecondsTranscribed,
         pipeline: {
           total: pipelineTotal,
           approved: pipelineApproved,

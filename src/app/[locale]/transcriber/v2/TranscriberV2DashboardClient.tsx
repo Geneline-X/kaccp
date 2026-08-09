@@ -10,6 +10,7 @@ interface Recording {
   id: string;
   audioUrl: string;
   durationSec: number;
+  estimatedCents?: number;
   prompt: {
     englishText: string;
     category: string;
@@ -37,6 +38,7 @@ interface Assignment {
 interface Stats {
   total: number;
   byStatus: { status: string; _count: number }[];
+  totalSecondsTranscribed?: number;
   pipeline?: { total: number; approved: number; pending: number };
 }
 
@@ -109,6 +111,8 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
   const [releasingId, setReleasingId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [totalAvailable, setTotalAvailable] = useState(0);
+  const [languages, setLanguages] = useState<{ id: string; code: string; name: string }[]>([]);
+  const [languageFilter, setLanguageFilter] = useState("");
   const limit = 10;
 
   const [pipelineItems, setPipelineItems] = useState<ReviewItem[]>([]);
@@ -151,7 +155,18 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
         setFeedbackItems(data.feedback || []);
       });
 
-    fetch(`/api/v2/transcriber/available?limit=${limit}&offset=${(page - 1) * limit}`, {
+    fetch("/api/v2/languages?activeOnly=true", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setLanguages((data.languages || []).map((l: any) => ({ id: l.id, code: l.code, name: l.name })));
+      });
+
+    const availableParams = new URLSearchParams({ limit: String(limit), offset: String((page - 1) * limit) });
+    if (languageFilter) availableParams.set("languageId", languageFilter);
+
+    fetch(`/api/v2/transcriber/available?${availableParams}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -181,7 +196,7 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
     loadData();
     loadPipelineData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, page, pipelineFilterSource]);
+  }, [token, page, pipelineFilterSource, languageFilter]);
 
   useEffect(() => {
     if (!pipelineSelected || !token || !pipelineSelected.audioPath) return;
@@ -328,6 +343,7 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
   const totalTranscriptionsCount = (stats?.total || 0) + (stats?.pipeline?.total || 0);
   const approvedCount = classicApproved + (stats?.pipeline?.approved || 0);
   const pendingCount = classicPending + (stats?.pipeline?.pending || 0);
+  const totalMinutes = (stats?.totalSecondsTranscribed || 0) / 60;
 
   const rejectedFeedbacks = feedbackItems;
 
@@ -379,6 +395,12 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
               </p>
               <p className="text-sm text-blue-100 mt-2">
                 {t('transcriber.fromApproved', { count: approvedCount })}
+              </p>
+              <p className="text-sm text-blue-100 mt-1">
+                {t('transcriber.minutesTranscribed', { minutes: totalMinutes.toFixed(1) })}
+              </p>
+              <p className="text-xs text-blue-200 mt-1">
+                {t('transcriber.rateNote')}
               </p>
             </div>
             <div className="text-right">
@@ -759,13 +781,35 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
 
         {/* Available Recordings */}
         <div className="bg-white rounded-lg shadow">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">
-              {t('transcriber.availableRecordings')}
-            </h2>
-            <p className="text-sm text-gray-500">
-              {t('transcriber.claimToStart')}
-            </p>
+          <div className="px-6 py-4 border-b border-gray-200 flex items-start justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">
+                {t('transcriber.availableRecordings')}
+              </h2>
+              <p className="text-sm text-gray-500">
+                {t('transcriber.claimToStart')}
+              </p>
+            </div>
+            <div className="min-w-[180px]">
+              <label className="block text-xs font-medium text-gray-500 mb-1">
+                {t('transcriber.filterByLanguage')}
+              </label>
+              <select
+                value={languageFilter}
+                onChange={(e) => {
+                  setLanguageFilter(e.target.value);
+                  setPage(1);
+                }}
+                className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg bg-white"
+              >
+                <option value="">{t('transcriber.allLanguages')}</option>
+                {languages.map((lang) => (
+                  <option key={lang.id} value={lang.id}>
+                    {lang.name} ({lang.code})
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
           <div className="divide-y divide-gray-200">
             {availableRecordings.length === 0 ? (
@@ -791,8 +835,8 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
                       {recording.prompt.englishText}
                     </p>
                     <p className="text-sm text-gray-500">
-                      {recording.durationSec.toFixed(1)}s •{" "}
-                      Le{(recording.language.transcriberRatePerMin * (recording.durationSec / 60)).toFixed(2)} {t('transcriber.est')}
+                      {recording.durationSec.toFixed(1)}s ({(recording.durationSec / 60).toFixed(2)} min) •{" "}
+                      Le{((recording.estimatedCents ?? 0) / 100).toFixed(2)} {t('transcriber.est')}
                     </p>
                   </div>
                   <button
