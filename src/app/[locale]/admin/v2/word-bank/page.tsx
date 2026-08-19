@@ -69,10 +69,10 @@ export default function AdminWordBankPage() {
     }
 
     setLoading(true);
-    const params = new URLSearchParams({ languageId: selectedLanguage });
+    const params = new URLSearchParams({ languageId: selectedLanguage, admin: "true" });
     if (searchQuery) params.set("q", searchQuery);
 
-    fetch(`/api/v2/word-bank/admin?${params}`, {
+    fetch(`/api/v2/word-bank?${params}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
