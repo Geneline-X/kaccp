@@ -49,6 +49,9 @@ export default function TranscriptionTaskPage() {
     reviewer: { displayName: string | null } | null;
   } | null>(null);
 
+  // Draft cache key for localStorage persistence
+  const draftKey = `transcription_draft_${recordingId}`;
+
   const FLAG_REASONS = [
     { value: "NOISE", label: t('transcriber.flagNoise') },
     { value: "UNCLEAR", label: t('transcriber.flagUnclear') },
@@ -97,7 +100,19 @@ export default function TranscriptionTaskPage() {
 
         if (rec) {
           setRecording(rec);
-          setPreviousRejection(data.previousTranscription || null);
+          const rejected = data.previousTranscription || null;
+          setPreviousRejection(rejected);
+
+          // Check for cached draft in localStorage first
+          const cachedDraft = localStorage.getItem(draftKey);
+          if (cachedDraft) {
+            setTranscription(cachedDraft);
+          } else if (rejected && rejected.text) {
+            // Pre-fill with rejected text so transcriber only edits what was rejected
+            setTranscription(rejected.text);
+            localStorage.setItem(draftKey, rejected.text);
+          }
+
           // Fetch signed audio URL
           const audioRes = await fetch(`/api/v2/audio/${recordingId}`, {
             headers: { Authorization: `Bearer ${token}` },
@@ -116,6 +131,13 @@ export default function TranscriptionTaskPage() {
         setLoading(false);
       });
   }, [token, recordingId, router, t]);
+
+  // Save transcription draft to localStorage whenever it changes
+  useEffect(() => {
+    if (transcription) {
+      localStorage.setItem(draftKey, transcription);
+    }
+  }, [transcription, draftKey]);
 
   // Handle audio play
   const handlePlay = () => {
@@ -151,7 +173,8 @@ export default function TranscriptionTaskPage() {
         return;
       }
 
-      // Success - go back to dashboard
+      // Success - clear cached draft and go back to dashboard
+      localStorage.removeItem(draftKey);
       router.push("/transcriber/v2");
     } catch {
       setError(t('transcriber.failedToSubmitTranscription'));
@@ -190,7 +213,8 @@ export default function TranscriptionTaskPage() {
         return;
       }
 
-      // Success - go back to dashboard
+      // Success - clear cached draft and go back to dashboard
+      localStorage.removeItem(draftKey);
       router.push("/transcriber/v2");
     } catch {
       setError(t('transcriber.failedToFlagRecording'));
@@ -262,11 +286,11 @@ export default function TranscriptionTaskPage() {
             </div>
             {previousRejection.reviewNotes && (
               <p className="text-sm text-orange-200 mb-2">
-                <span className="font-medium">Reviewer:</span> {previousRejection.reviewNotes}
+                <span className="font-medium">Reviewer feedback:</span> {previousRejection.reviewNotes}
               </p>
             )}
             <p className="text-xs text-orange-300">
-              {t('transcriber.previousSubmission')}: “{previousRejection.text}”
+              Your previous submission has been pre-filled in the editor below. Please review the feedback and make corrections as needed.
             </p>
           </div>
         )}
