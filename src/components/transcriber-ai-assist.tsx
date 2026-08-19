@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Edit3, AlertCircle, RotateCcw } from "lucide-react";
+import { WordBankAutocomplete } from "@/components/word-bank-autocomplete";
 
 interface TranscriberAIAssistProps {
   recording: {
@@ -10,6 +11,7 @@ interface TranscriberAIAssistProps {
   };
   promptText: string; // English prompt shown to speaker
   languageName?: string;
+  languageId?: string; // For word bank autocomplete
   onSaveTranscription: (text: string) => Promise<void> | void;
   value?: string; // Controlled value (was initialValue)
 }
@@ -20,6 +22,7 @@ export function TranscriberAIAssist({
   recording,
   promptText,
   languageName = "Krio",
+  languageId,
   onSaveTranscription,
   value = "",
 }: TranscriberAIAssistProps) {
@@ -92,15 +95,25 @@ export function TranscriberAIAssist({
           </span>
         </div>
 
-        <textarea
-          id="transcription"
-          value={value}
-          onChange={(e) => {
-            onSaveTranscription(e.target.value);
-          }}
-          className="w-full min-h-[120px] rounded-md border border-gray-300 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder={t('placeholder', { language: languageName })}
-        />
+        {languageId ? (
+          <WordBankAutocomplete
+            value={value}
+            onChange={(text) => onSaveTranscription(text)}
+            languageId={languageId}
+            placeholder={t('placeholder', { language: languageName })}
+            className="w-full min-h-[120px] rounded-md border border-gray-300 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        ) : (
+          <textarea
+            id="transcription"
+            value={value}
+            onChange={(e) => {
+              onSaveTranscription(e.target.value);
+            }}
+            className="w-full min-h-[120px] rounded-md border border-gray-300 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder={t('placeholder', { language: languageName })}
+          />
+        )}
       </div>
     </div>
   );

@@ -21,6 +21,7 @@ interface Recording {
     isFreeForm?: boolean;
   };
   language: {
+    id: string;
     code: string;
     name: string;
   };
@@ -367,6 +368,7 @@ export default function TranscriptionTaskPage() {
             }}
             promptText={recording.prompt.englishText}
             languageName={recording.language.name}
+            languageId={recording.language.id}
             onSaveTranscription={async (text) => {
               setTranscription(text);
             }}

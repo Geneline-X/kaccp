@@ -125,11 +125,25 @@ model Language {
 
   prompts    Prompt[]
   recordings Recording[]
+  wordBankEntries WordBank[]
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
 
   @@index([countryId])
   @@index([isActive])
+}
+
+model WordBank {
+  id         String   @id @default(cuid())
+  languageId String
+  language   Language @relation(fields: [languageId], references: [id])
+  word       String
+  category   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([languageId, word])
+  @@index([languageId])
 }
 
 model Prompt {

@@ -54,6 +54,7 @@ export async function POST(req: NextRequest) {
         },
         language: {
           select: {
+            id: true,
             code: true,
             name: true,
           },
