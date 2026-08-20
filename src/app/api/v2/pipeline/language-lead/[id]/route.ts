@@ -29,7 +29,7 @@ export async function PATCH(
     }
 
     const body = await req.json();
-    const { action, notes } = body;
+    const { action, notes, editedText } = body;
 
     if (action !== "approve" && action !== "reject") {
       return NextResponse.json({ error: "Action must be 'approve' or 'reject'" }, { status: 400 });
@@ -43,6 +43,10 @@ export async function PATCH(
     if (action === "approve") {
       updateData.status = "approved";
       updateData.languageLeadApprovedAt = new Date();
+      // Apply language lead's edits to the corrected transcript
+      if (editedText && editedText !== existing.correctedTranscript) {
+        updateData.correctedTranscript = editedText;
+      }
     } else {
       // Reject: record feedback for the correcting transcriber, then requeue the
       // item back to "pending" (clearing the correction) so it can be redone.

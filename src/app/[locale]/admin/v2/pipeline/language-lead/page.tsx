@@ -110,6 +110,7 @@ export default function LanguageLeadPage() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [selectedTab, setSelectedTab] = useState<"corrected" | "approved" | "rejected">("corrected");
+  const [editedTexts, setEditedTexts] = useState<Record<string, string>>({});
   const limit = 20;
 
   const token = typeof window !== "undefined" ? getToken() : null;
@@ -132,6 +133,12 @@ export default function LanguageLeadPage() {
         }
         setItems(d.items || []);
         setTotal(d.total || 0);
+        // Initialize edited texts from corrected transcripts
+        const initialTexts: Record<string, string> = {};
+        (d.items || []).forEach((item: ReviewItem) => {
+          initialTexts[item.id] = item.correctedTranscript || "";
+        });
+        setEditedTexts(initialTexts);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -144,6 +151,7 @@ export default function LanguageLeadPage() {
   const handleAction = async (item: ReviewItem, action: "approve" | "reject", notes?: string) => {
     if (item.kind === "transcription") {
       // KACCP transcription corrections go through the admin review API
+      const editedText = editedTexts[item.id];
       const res = await fetch(`/api/v2/admin/review`, {
         method: "POST",
         headers: {
@@ -154,6 +162,7 @@ export default function LanguageLeadPage() {
           transcriptionId: item.transcriptionId,
           decision: action === "approve" ? "APPROVED" : "REJECTED",
           reviewNotes: notes,
+          editedText: editedText && editedText !== item.correctedTranscript ? editedText : undefined,
         }),
       });
       const data = await res.json();
@@ -165,13 +174,14 @@ export default function LanguageLeadPage() {
       return;
     }
 
+    const editedText = editedTexts[item.id];
     const res = await fetch(`/api/v2/pipeline/language-lead/${item.id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ action, notes }),
+      body: JSON.stringify({ action, notes, editedText: editedText && editedText !== item.correctedTranscript ? editedText : undefined }),
     });
     const data = await res.json();
     if (data.error) {
@@ -335,9 +345,22 @@ export default function LanguageLeadPage() {
                         </span>
                       )}
                     </p>
-                    <p className="text-sm bg-green-50 rounded p-2 border border-green-200">
-                      {item.correctedTranscript || "(none)"}
-                    </p>
+                    {selectedTab === "corrected" ? (
+                      <textarea
+                        value={editedTexts[item.id] || ""}
+                        onChange={(e) => setEditedTexts((prev) => ({ ...prev, [item.id]: e.target.value }))}
+                        rows={3}
+                        className="text-sm bg-green-50 rounded p-2 border border-green-200 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        style={{ fontSize: "16px" }}
+                      />
+                    ) : (
+                      <p className="text-sm bg-green-50 rounded p-2 border border-green-200">
+                        {item.correctedTranscript || "(none)"}
+                      </p>
+                    )}
+                    {selectedTab === "corrected" && editedTexts[item.id] && editedTexts[item.id] !== item.correctedTranscript && (
+                      <p className="text-xs text-orange-600 mt-1">Modified from original correction</p>
+                    )}
                   </div>
                 </div>
 
