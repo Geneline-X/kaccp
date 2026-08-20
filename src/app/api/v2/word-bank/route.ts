@@ -115,11 +115,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Clean and deduplicate words
+    // Clean and deduplicate words (preserve original casing for Krio phonetics)
     const cleanWords = [
       ...new Set(
         words
-          .map((w: string) => w.trim().toLowerCase())
+          .map((w: string) => w.trim())
           .filter((w: string) => w.length > 0)
       ),
     ];
