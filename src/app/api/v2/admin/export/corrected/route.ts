@@ -8,6 +8,17 @@ function isAdmin(user: any) {
   return roles.includes("ADMIN") || user.role === "ADMIN";
 }
 
+// Ensure every audio path is a full, queryable `gs://bucket/...` URI so dataset
+// preparation (gsutil cp, manifest matching) points at the real audio object.
+function resolveGcsPath(path?: string | null): string {
+  if (!path) return "";
+  if (path.startsWith("gs://")) return path;
+  if (path.startsWith("/uploads/") || /^https?:\/\//.test(path)) return path;
+  const bucket = process.env.GCS_BUCKET;
+  if (bucket) return `gs://${bucket}/${path.replace(/^\/+/, "")}`;
+  return path;
+}
+
 // GET /api/v2/admin/export/corrected — Export approved corrected texts as a dataset.
 // Splits the two datasets so they stay clean:
 //   source=kaccp (default) — approved KACCP seed transcriptions (clean studio audio, English
@@ -109,7 +120,7 @@ export async function GET(req: NextRequest) {
 
       exportData.push({
         id: `${rec.language.code.toUpperCase()}_KACCP_${String(count).padStart(5, "0")}`,
-        audio_path: rec.audioUrl,
+        audio_path: resolveGcsPath(rec.audioUrl),
         transcription: tx.text,
         english_text: rec.prompt?.englishText ?? "",
         source: "kaccp_transcription",
@@ -135,7 +146,7 @@ export async function GET(req: NextRequest) {
 
       exportData.push({
         id: `${languageCode}_PILOT_${String(count).padStart(5, "0")}`,
-        audio_path: rec?.audioUrl ?? rq.audioPath,
+        audio_path: resolveGcsPath(rec?.audioUrl ?? rq.audioPath),
         transcription: rq.correctedTranscript ?? "",
         english_text: rec?.prompt?.englishText ?? "",
         source: rq.source === "kaccp_recording" ? "kaccp_recording" : "pilot",
@@ -165,7 +176,7 @@ export async function GET(req: NextRequest) {
       );
       const csvContent = [csvHeader, ...csvRows].join("\n");
 
-      const filename = source === "pilot" ? `asr_pilot_dataset.csv` : source === "all" ? `corrected_texts_dataset.csv` : `tts_kaccp_dataset.csv`;
+      const filename = source === "pilot" ? `asr_pilot_dataset.csv` : source === "all" ? `combined_tts_asr_dataset.csv` : `tts_kaccp_dataset.csv`;
 
       return new NextResponse(csvContent, {
         headers: {

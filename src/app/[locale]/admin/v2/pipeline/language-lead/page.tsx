@@ -192,7 +192,7 @@ export default function LanguageLeadPage() {
     loadItems();
   };
 
-  const handleExport = async (source: "kaccp" | "pilot") => {
+  const handleExport = async (source: "kaccp" | "pilot" | "all") => {
     if (!token) {
       router.push("/admin/login");
       return;
@@ -213,8 +213,12 @@ export default function LanguageLeadPage() {
       a.href = url;
       const disposition = res.headers.get("Content-Disposition");
       a.download = disposition?.match(/filename=(.+)/)?.[1] || `${source}_dataset.csv`;
+      // Anchor must be in the document for the click to trigger a download in Firefox,
+      // and the blob URL has to outlive the click.
+      document.body.appendChild(a);
       a.click();
-      URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch {
       alert("Failed to download export");
     } finally {
@@ -256,6 +260,13 @@ export default function LanguageLeadPage() {
             className="px-3 py-1.5 text-sm bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50"
           >
             {exporting === "pilot" ? "Exporting..." : "Export ASR (Flot pilot)"}
+          </button>
+          <button
+            onClick={() => handleExport("all")}
+            disabled={!!exporting}
+            className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+          >
+            {exporting === "all" ? "Exporting..." : "Export Combined (ASR + TTS)"}
           </button>
         </div>
       </div>
