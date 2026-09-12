@@ -109,6 +109,7 @@ export default function LanguageLeadPage() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState<string | null>(null);
   const [selectedTab, setSelectedTab] = useState<"corrected" | "approved" | "rejected">("corrected");
   const [editedTexts, setEditedTexts] = useState<Record<string, string>>({});
   const limit = 20;
@@ -191,6 +192,36 @@ export default function LanguageLeadPage() {
     loadItems();
   };
 
+  const handleExport = async (source: "kaccp" | "pilot") => {
+    if (!token) {
+      router.push("/admin/login");
+      return;
+    }
+    setExporting(source);
+    try {
+      const res = await fetch(`/api/v2/admin/export/corrected?source=${source}&format=csv`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Failed to download export");
+        return;
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const disposition = res.headers.get("Content-Disposition");
+      a.download = disposition?.match(/filename=(.+)/)?.[1] || `${source}_dataset.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      alert("Failed to download export");
+    } finally {
+      setExporting(null);
+    }
+  };
+
   const formatDuration = (s: number) => {
     const min = Math.floor(s / 60);
     const sec = Math.round(s % 60);
@@ -213,16 +244,18 @@ export default function LanguageLeadPage() {
             {total} item{total !== 1 ? "s" : ""}
           </div>
           <button
-            onClick={() => window.open(`/api/v2/admin/export/corrected?source=kaccp&format=csv`, "_blank")}
-            className="px-3 py-1.5 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+            onClick={() => handleExport("kaccp")}
+            disabled={!!exporting}
+            className="px-3 py-1.5 text-sm bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
           >
-            Export TTS (KACCP seed)
+            {exporting === "kaccp" ? "Exporting..." : "Export TTS (KACCP seed)"}
           </button>
           <button
-            onClick={() => window.open(`/api/v2/admin/export/corrected?source=pilot&format=csv`, "_blank")}
-            className="px-3 py-1.5 text-sm bg-purple-600 text-white rounded hover:bg-purple-700"
+            onClick={() => handleExport("pilot")}
+            disabled={!!exporting}
+            className="px-3 py-1.5 text-sm bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50"
           >
-            Export ASR (Flot pilot)
+            {exporting === "pilot" ? "Exporting..." : "Export ASR (Flot pilot)"}
           </button>
         </div>
       </div>
