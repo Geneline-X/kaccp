@@ -112,6 +112,8 @@ export default function LanguageLeadPage() {
   const [exporting, setExporting] = useState<string | null>(null);
   const [selectedTab, setSelectedTab] = useState<"corrected" | "approved" | "rejected">("corrected");
   const [editedTexts, setEditedTexts] = useState<Record<string, string>>({});
+  const [languages, setLanguages] = useState<{ id: string; code: string; name: string }[]>([]);
+  const [selectedLanguage, setSelectedLanguage] = useState("");
   const limit = 20;
 
   const token = typeof window !== "undefined" ? getToken() : null;
@@ -148,6 +150,22 @@ export default function LanguageLeadPage() {
   useEffect(() => {
     loadItems();
   }, [token, selectedTab, page]);
+
+  useEffect(() => {
+    if (!token) return;
+    fetch(`/api/v2/languages?activeOnly=true`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((r) => r.json())
+      .then((d) => {
+        const langs = d.languages || [];
+        setLanguages(langs);
+        const kri = langs.find((l: { code: string }) => l.code === "kri");
+        if (kri) setSelectedLanguage(kri.id);
+        else if (langs.length > 0) setSelectedLanguage(langs[0].id);
+      })
+      .catch(() => {});
+  }, [token]);
 
   const handleAction = async (item: ReviewItem, action: "approve" | "reject", notes?: string) => {
     if (item.kind === "transcription") {
@@ -197,9 +215,11 @@ export default function LanguageLeadPage() {
       router.push("/admin/login");
       return;
     }
-    setExporting(source);
+    setExporting(`csv:${source}`);
     try {
-      const res = await fetch(`/api/v2/admin/export/corrected?source=${source}&format=csv`, {
+      const params = new URLSearchParams({ source, format: "csv" });
+      if (selectedLanguage) params.set("languageId", selectedLanguage);
+      const res = await fetch(`/api/v2/admin/export/corrected?${params.toString()}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) {
@@ -226,6 +246,43 @@ export default function LanguageLeadPage() {
     }
   };
 
+  // Download the approved audios (as .wav) for the selected language in one ZIP.
+  // The ZIP is a single artifact ready for upload to Google Drive.
+  const handleDownloadAudio = async () => {
+    if (!token) {
+      router.push("/admin/login");
+      return;
+    }
+    setExporting("audio");
+    try {
+      const params = new URLSearchParams({ source: "all" });
+      if (selectedLanguage) params.set("languageId", selectedLanguage);
+      const res = await fetch(`/api/v2/admin/export/audio?${params.toString()}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Failed to download audio");
+        return;
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const disposition = res.headers.get("Content-Disposition");
+      const lang = languages.find((l) => l.id === selectedLanguage);
+      a.download = disposition?.match(/filename=(.+)/)?.[1] || `${lang?.code || "dataset"}_audio.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch {
+      alert("Failed to download audio");
+    } finally {
+      setExporting(null);
+    }
+  };
+
   const formatDuration = (s: number) => {
     const min = Math.floor(s / 60);
     const sec = Math.round(s % 60);
@@ -247,26 +304,46 @@ export default function LanguageLeadPage() {
           <div className="text-sm text-muted-foreground">
             {total} item{total !== 1 ? "s" : ""}
           </div>
+          <select
+            value={selectedLanguage}
+            onChange={(e) => setSelectedLanguage(e.target.value)}
+            className="px-3 py-2 text-sm border rounded bg-background"
+            title="Filter exports by language"
+          >
+            <option value="">All languages</option>
+            {languages.map((l) => (
+              <option key={l.id} value={l.id}>
+                {l.name}
+              </option>
+            ))}
+          </select>
           <button
             onClick={() => handleExport("kaccp")}
             disabled={!!exporting}
             className="px-3 py-1.5 text-sm bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
           >
-            {exporting === "kaccp" ? "Exporting..." : "Export TTS (KACCP seed)"}
+            {exporting === "csv:kaccp" ? "Exporting..." : "Export TTS (KACCP seed)"}
           </button>
           <button
             onClick={() => handleExport("pilot")}
             disabled={!!exporting}
             className="px-3 py-1.5 text-sm bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50"
           >
-            {exporting === "pilot" ? "Exporting..." : "Export ASR (Flot pilot)"}
+            {exporting === "csv:pilot" ? "Exporting..." : "Export ASR (Flot pilot)"}
           </button>
           <button
             onClick={() => handleExport("all")}
             disabled={!!exporting}
             className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
           >
-            {exporting === "all" ? "Exporting..." : "Export Combined (ASR + TTS)"}
+            {exporting === "csv:all" ? "Exporting..." : "Export Combined (ASR + TTS)"}
+          </button>
+          <button
+            onClick={handleDownloadAudio}
+            disabled={!!exporting}
+            className="px-3 py-1.5 text-sm bg-slate-800 text-white rounded hover:bg-slate-900 disabled:opacity-50"
+          >
+            {exporting === "audio" ? "Bundling audio..." : "Download audio (.wav) ZIP"}
           </button>
         </div>
       </div>
