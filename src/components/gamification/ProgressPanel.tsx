@@ -7,6 +7,7 @@ import { CelebrationModal, type Celebration } from "./CelebrationModal";
 import { AvatarPicker } from "./AvatarPicker";
 import { CelebrationToast, type ToastData } from "./Toast";
 import { BadgeCard } from "./BadgeCard";
+import { cacheAvatar } from "./DanceBreak";
 import {
   DAILY_MILESTONES,
   milestonesCrossed,
@@ -236,6 +237,9 @@ export function ProgressPanel({
             if (light.length) setToasts((t) => [...t, ...light]);
           }
           prev.current = { done: p.doneToday, level: p.level.level, badges: earned };
+          // Stash the avatar so the editor can show it dancing without making a
+          // profile request of its own.
+          if (p.user?.avatar) cacheAvatar(p.user.avatar);
           setProfile(p);
           setMe(p.leaderboard?.me || null);
           setTop(p.leaderboard?.top || []);

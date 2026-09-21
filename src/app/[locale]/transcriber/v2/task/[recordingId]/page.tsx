@@ -5,6 +5,12 @@ import { useRouter, useParams } from "next/navigation";
 import { getToken } from "@/lib/infra/client/client";
 import { TranscriberAIAssist } from "@/components/transcriber-ai-assist";
 import { useTranslations } from "next-intl";
+import {
+  DanceBreak,
+  recordSubmission,
+  tierFor,
+  type DanceTier,
+} from "@/components/gamification/DanceBreak";
 
 interface Recording {
   id: string;
@@ -43,6 +49,8 @@ export default function TranscriptionTaskPage() {
   const [error, setError] = useState("");
   const [playCount, setPlayCount] = useState(0);
   const [audioPlayUrl, setAudioPlayUrl] = useState<string | null>(null);
+  // Celebration shown between clips, every few submissions.
+  const [dance, setDance] = useState<{ count: number; tier: DanceTier } | null>(null);
   const [previousRejection, setPreviousRejection] = useState<{
     text: string;
     reviewNotes: string | null;
@@ -174,8 +182,17 @@ export default function TranscriptionTaskPage() {
         return;
       }
 
-      // Success - clear cached draft and go back to dashboard
+      // Success - clear cached draft
       localStorage.removeItem(draftKey);
+
+      // Celebrate first, then leave: the reward has to land on the work that
+      // earned it, not after a page transition has already moved on.
+      const count = recordSubmission();
+      const tier = tierFor(count);
+      if (tier) {
+        setDance({ count, tier });
+        return;
+      }
       router.push("/transcriber/v2");
     } catch {
       setError(t('transcriber.failedToSubmitTranscription'));
@@ -251,6 +268,15 @@ export default function TranscriptionTaskPage() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
+      <DanceBreak
+        count={dance?.count ?? 0}
+        tier={dance?.tier ?? null}
+        onDone={() => {
+          setDance(null);
+          router.push("/transcriber/v2");
+        }}
+      />
+
       {/* Header */}
       <header className="bg-gray-800 px-4 py-3">
         <div className="max-w-4xl mx-auto flex justify-between items-center">
