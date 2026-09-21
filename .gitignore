@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.db-host-ip
+krio_dataset*.csv
+drive_a.csv
+drive_b.csv
+*_final.csv
+extra_*.csv
+krio_tts_dataset*.csv
+richard_new_wavs/
+jojo_new_wavs/
+*.skipped.tsv

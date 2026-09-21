@@ -124,6 +124,10 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
   const [pipelineSignedAudioUrl, setPipelineSignedAudioUrl] = useState<string | null>(null);
   const [pipelineMessage, setPipelineMessage] = useState<string | null>(null);
   const [pipelineExpanded, setPipelineExpanded] = useState(true);
+  // The queue is far larger than one page. Track the server's total so the badge
+  // reports the real backlog instead of however many rows this page happens to hold.
+  const [pipelineTotal, setPipelineTotal] = useState(0);
+  const [pipelinePage, setPipelinePage] = useState(1);
 
   const token = typeof window !== "undefined" ? getToken() : null;
 
@@ -177,9 +181,15 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
       });
   };
 
+  const PIPELINE_LIMIT = 50;
+
   const loadPipelineData = () => {
     if (!token) return;
-    const params = new URLSearchParams({ status: "pending", limit: "50" });
+    const params = new URLSearchParams({
+      status: "pending",
+      limit: String(PIPELINE_LIMIT),
+      page: String(pipelinePage),
+    });
     if (pipelineFilterSource) params.set("source", pipelineFilterSource);
     fetch(`/api/v2/pipeline/review-queue?${params}`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -187,6 +197,7 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
       .then(r => r.json())
       .then(d => {
         setPipelineItems(d.items || []);
+        setPipelineTotal(d.pagination?.total ?? (d.items || []).length);
         setPipelineLoading(false);
       })
       .catch(() => setPipelineLoading(false));
@@ -194,9 +205,19 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
 
   useEffect(() => {
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, page, languageFilter]);
+
+  useEffect(() => {
     loadPipelineData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, page, pipelineFilterSource, languageFilter]);
+  }, [token, pipelinePage, pipelineFilterSource]);
+
+  // Changing the source filter re-pages from the start, otherwise a page number
+  // from the previous filter can land past the end of the new result set.
+  useEffect(() => {
+    setPipelinePage(1);
+  }, [pipelineFilterSource]);
 
   useEffect(() => {
     if (!pipelineSelected || !token || !pipelineSelected.audioPath) return;
@@ -319,10 +340,19 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
       const data = await res.json();
       if (data.error) { setPipelineMessage(`Error: ${data.error}`); return; }
       const newList = pipelineItems.filter(i => i.id !== pipelineSelected.id);
+      const remaining = Math.max(0, pipelineTotal - 1);
       setPipelineItems(newList);
+      setPipelineTotal(remaining);
       setPipelineSelected(newList[0] || null);
       setPipelineEditedText(newList[0]?.correctedTranscript || newList[0]?.asrTranscript || "");
       setPipelineMessage(isSecondPass ? "Double verification submitted" : "Correction submitted");
+      // Clearing the last item on a page would otherwise show an empty queue while
+      // hundreds still wait. Pull the next page (or step back off a now-empty tail).
+      if (newList.length === 0 && remaining > 0) {
+        const lastPage = Math.max(1, Math.ceil(remaining / PIPELINE_LIMIT));
+        if (pipelinePage > lastPage) setPipelinePage(lastPage);
+        else loadPipelineData();
+      }
       // Refresh stats + earnings so the cards reflect the credit for this pass.
       loadData();
     } catch { setPipelineMessage("Failed to submit"); }
@@ -622,8 +652,8 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
             <div className="flex items-center gap-3">
               <h2 className="text-lg font-semibold text-gray-900">Pipeline Review</h2>
               {!pipelineLoading && (
-                <span className={`px-2 py-0.5 text-xs rounded font-medium ${pipelineItems.length > 0 ? "bg-purple-100 text-purple-700" : "bg-gray-100 text-gray-500"}`}>
-                  {pipelineItems.length} pending
+                <span className={`px-2 py-0.5 text-xs rounded font-medium ${pipelineTotal > 0 ? "bg-purple-100 text-purple-700" : "bg-gray-100 text-gray-500"}`}>
+                  {pipelineTotal} pending
                 </span>
               )}
             </div>
@@ -666,8 +696,12 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   {/* Queue List */}
                   <div className="lg:col-span-1 bg-gray-50 rounded-lg border overflow-hidden">
-                    <div className="px-4 py-3 bg-gray-100 border-b">
+                    <div className="px-4 py-3 bg-gray-100 border-b flex items-center justify-between">
                       <h3 className="font-semibold text-sm">Review Queue</h3>
+                      <span className="text-xs text-gray-500">
+                        {(pipelinePage - 1) * PIPELINE_LIMIT + 1}–
+                        {Math.min(pipelinePage * PIPELINE_LIMIT, pipelineTotal)} of {pipelineTotal}
+                      </span>
                     </div>
                     <div className="divide-y max-h-80 overflow-y-auto">
                       {pipelineItems.map(item => (
@@ -694,6 +728,27 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
                         </button>
                       ))}
                     </div>
+                    {pipelineTotal > PIPELINE_LIMIT && (
+                      <div className="px-3 py-2 bg-gray-100 border-t flex items-center justify-between">
+                        <button
+                          onClick={() => setPipelinePage(p => Math.max(1, p - 1))}
+                          disabled={pipelinePage <= 1}
+                          className="px-3 py-1 text-xs border rounded bg-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
+                        >
+                          Previous
+                        </button>
+                        <span className="text-xs text-gray-600">
+                          Page {pipelinePage} of {Math.ceil(pipelineTotal / PIPELINE_LIMIT)}
+                        </span>
+                        <button
+                          onClick={() => setPipelinePage(p => p + 1)}
+                          disabled={pipelinePage >= Math.ceil(pipelineTotal / PIPELINE_LIMIT)}
+                          className="px-3 py-1 text-xs border rounded bg-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
+                        >
+                          Next
+                        </button>
+                      </div>
+                    )}
                   </div>
 
                   {/* Review Panel */}

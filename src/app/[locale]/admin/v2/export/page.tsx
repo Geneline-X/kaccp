@@ -36,12 +36,16 @@ interface ExportData {
     totalDurationSec: number;
     totalDurationHours: number;
     uniqueSpeakers: number;
+    humanApproved?: number;
+    importedOnly?: number;
   };
   speakers: Speaker[];
   data: Array<{
     id: string;
     audio_file: string;
+    english_text: string;
     transcription?: string;
+    transcript_source?: string;
     duration_sec: number;
     speaker_id: string;
     speaker_name: string;
@@ -57,6 +61,7 @@ export default function AdminExportPage() {
   const [selectedLanguage, setSelectedLanguage] = useState<string>("");
   const [selectedSpeaker, setSelectedSpeaker] = useState<string>("");
   const [includeTranscriptions, setIncludeTranscriptions] = useState(true);
+  const [transcriptSource, setTranscriptSource] = useState<"approved" | "all">("approved");
   const [speakers, setSpeakers] = useState<Speaker[]>([]);
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
@@ -117,6 +122,7 @@ export default function AdminExportPage() {
     const params = new URLSearchParams({ languageId: selectedLanguage, format });
     if (selectedSpeaker) params.set("speakerId", selectedSpeaker);
     if (!includeTranscriptions) params.set("includeTranscriptions", "false");
+    if (includeTranscriptions && transcriptSource === "all") params.set("transcriptSource", "all");
     if (preview) params.set("preview", "true");
     return params.toString();
   };
@@ -298,6 +304,25 @@ export default function AdminExportPage() {
               </label>
             </div>
 
+            {includeTranscriptions && (
+              <div className="min-w-[240px]">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Transcript source
+                </label>
+                <select
+                  value={transcriptSource}
+                  onChange={(e) => {
+                    setTranscriptSource(e.target.value as "approved" | "all");
+                    setExportData(null);
+                  }}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                >
+                  <option value="approved">Human-approved only</option>
+                  <option value="all">Approved + imported transcripts</option>
+                </select>
+              </div>
+            )}
+
             <button
               onClick={handlePreview}
               disabled={exporting || !selectedLanguage}
@@ -365,6 +390,16 @@ export default function AdminExportPage() {
                     {exportData.stats.uniqueSpeakers}
                   </p>
                 </div>
+                {includeTranscriptions && (
+                  <div>
+                    <p className="text-sm text-gray-500">Approved / imported</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {exportData.stats.humanApproved ?? 0}
+                      <span className="text-gray-400"> / </span>
+                      {exportData.stats.importedOnly ?? 0}
+                    </p>
+                  </div>
+                )}
                 <div>
                   <p className="text-sm text-gray-500">{t('admin.exportPage.exportedAt')}</p>
                   <p className="text-sm font-medium text-gray-900">
@@ -389,10 +424,18 @@ export default function AdminExportPage() {
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
                         {t('admin.exportPage.audioPath')}
                       </th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                        English text
+                      </th>
                       {includeTranscriptions && (
-                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                          {t('admin.recordingsPage.transcription')}
-                        </th>
+                        <>
+                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                            {t('admin.recordingsPage.transcription')}
+                          </th>
+                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                            Source
+                          </th>
+                        </>
                       )}
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
                         {t('admin.exportPage.duration')}
@@ -414,10 +457,26 @@ export default function AdminExportPage() {
                         <td className="px-4 py-2 text-xs font-mono text-gray-500 max-w-[200px] truncate" title={row.audio_file}>
                           {row.audio_file?.split('/').slice(-2).join('/')}
                         </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 max-w-xs truncate" title={row.english_text}>
+                          {row.english_text}
+                        </td>
                         {includeTranscriptions && (
-                          <td className="px-4 py-2 text-sm text-gray-900 max-w-xs truncate">
-                            {row.transcription}
-                          </td>
+                          <>
+                            <td className="px-4 py-2 text-sm text-gray-900 max-w-xs truncate" title={row.transcription}>
+                              {row.transcription}
+                            </td>
+                            <td className="px-4 py-2 text-xs">
+                              <span
+                                className={`px-2 py-0.5 rounded ${
+                                  row.transcript_source === "human_approved"
+                                    ? "bg-green-100 text-green-800"
+                                    : "bg-amber-100 text-amber-800"
+                                }`}
+                              >
+                                {row.transcript_source === "human_approved" ? "approved" : "imported"}
+                              </span>
+                            </td>
+                          </>
                         )}
                         <td className="px-4 py-2 text-sm text-gray-500">
                           {row.duration_sec?.toFixed(1)}s
@@ -445,9 +504,20 @@ export default function AdminExportPage() {
               </p>
               <code className="block bg-blue-100 p-3 rounded text-sm text-blue-900 overflow-x-auto">
                 {includeTranscriptions
-                  ? "id|audio_path|transcription"
-                  : "id|audio_path|english_prompt|duration_sec|speaker_id|speaker_name|category"}
+                  ? "id|audio_path|english_text|transcription|transcript_source|duration_sec|speaker_id|speaker_name|speaker_label|category"
+                  : "id|audio_path|english_text|duration_sec|speaker_id|speaker_name|speaker_label|category"}
               </code>
+              {includeTranscriptions && (
+                <p className="text-sm text-blue-700 mt-2">
+                  <code className="bg-blue-100 px-1 rounded">english_text</code> is the prompt-bank
+                  sentence the speaker read; <code className="bg-blue-100 px-1 rounded">transcription</code>{" "}
+                  is what they actually said in {exportData.language.name}.{" "}
+                  <code className="bg-blue-100 px-1 rounded">transcript_source</code> is{" "}
+                  <code className="bg-blue-100 px-1 rounded">human_approved</code> for reviewed text and{" "}
+                  <code className="bg-blue-100 px-1 rounded">imported</code> for transcripts brought in
+                  from CSV/auto-transcription that no reviewer has approved yet.
+                </p>
+              )}
               <div className="mt-4 text-sm text-blue-700">
                 <p className="font-medium mb-1">{t('admin.exportPage.audioPathFormat')}</p>
                 <code className="bg-blue-100 px-2 py-1 rounded text-xs">

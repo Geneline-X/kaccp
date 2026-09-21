@@ -19,6 +19,11 @@
     "seed:admin": "node scripts/seed-admin.js",
     "seed:v2": "npx tsx prisma/seed-v2.ts",
     "download:audios": "tsx scripts/download-dataset-audio.ts",
+    "krio:dl:richard": "tsx scripts/export-krio-dataset.ts --drive-csv=drive_a.csv --drive-csv=drive_b.csv --only-speaker=kri_speaker_0015 --speaker-alias=kri_speaker_0015=richard --only-missing --parallel=16 --download-audio=./richard_new_wavs --drive-prefix=/PLACEHOLDER --out=./richard_TEMP.csv",
+    "krio:dl:jojo": "tsx scripts/export-krio-dataset.ts --drive-csv=drive_a.csv --drive-csv=drive_b.csv --only-speaker=kri_speaker_0018 --speaker-alias=kri_speaker_0018=jojo --only-missing --parallel=16 --download-audio=./jojo_new_wavs --drive-prefix=/PLACEHOLDER --out=./jojo_TEMP.csv",
+    "krio:final:richard": "tsx scripts/export-krio-dataset.ts --drive-csv=drive_a.csv --drive-csv=drive_b.csv --only-speaker=kri_speaker_0015 --speaker-alias=kri_speaker_0015=richard --only-missing --download-audio=./richard_new_wavs --drive-prefix=/content/drive/MyDrive/krio/richard/richard_new_wavs --out=./richard_final.csv",
+    "krio:combine": "tsx scripts/combine-krio-datasets.ts --require-english --out=./krio_tts_dataset.csv richard_final.csv jojo_final.csv extra_jojo_freeform.csv extra_fatmata.csv",
+    "krio:final:jojo": "tsx scripts/export-krio-dataset.ts --drive-csv=drive_a.csv --drive-csv=drive_b.csv --only-speaker=kri_speaker_0018 --speaker-alias=kri_speaker_0018=jojo --only-missing --download-audio=./jojo_new_wavs --drive-prefix=/content/drive/MyDrive/krio/jojo/jojo_new_wavs --out=./jojo_final.csv",
     "db:reset": "prisma migrate reset --force && npm run seed:v2",
     "test": "vitest run",
     "test:watch": "vitest"
