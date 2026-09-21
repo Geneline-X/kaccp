@@ -41,24 +41,28 @@ model Notification {
 // ============================================================================
 
 model User {
-  id           String    @id @default(cuid())
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  email        String    @unique
-  passwordHash String
-  isActive     Boolean   @default(true)
-  lastLoginAt  DateTime?
-  resetToken       String?   @unique
+  id               String     @id @default(cuid())
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  email            String     @unique
+  passwordHash     String
+  isActive         Boolean    @default(true)
+  lastLoginAt      DateTime?
+  resetToken       String?    @unique
   resetTokenExpiry DateTime?
-  displayName  String?
-  role         UserRole  @default(SPEAKER) // Primary role (for backward compatibility)
-  roles        UserRole[] // Multiple roles a user can have (e.g., [SPEAKER, TRANSCRIBER])
-  phone        String?   @unique
-  avatarUrl    String?
-  bio          String?
+  displayName      String?
+  role             UserRole   @default(SPEAKER) // Primary role (for backward compatibility)
+  roles            UserRole[] // Multiple roles a user can have (e.g., [SPEAKER, TRANSCRIBER])
+  phone            String?    @unique
+  avatarUrl        String?
+  bio              String?
 
   // Speaker label (assigned once, never changes) e.g. "speaker_0017"
-  speakerLabel String?   @unique
+  speakerLabel String? @unique
+
+  // Chosen gamification avatar (id from AVATAR_CATALOG). Null = deterministic
+  // starter derived from the user id. Never inferred from the person's name.
+  avatarId String?
 
   // Language capabilities
   speaksLanguages String[] // Language codes they can speak (e.g., ["kri", "men"])
@@ -77,16 +81,18 @@ model User {
   walletTxns    WalletTransaction[]
 
   // V2 Relations
-  speakerRecordings        Recording[]               @relation("SpeakerRecordings")
-  transcriberWork          Transcription[]           @relation("TranscriberWork")
-  reviewerWork             Transcription[]           @relation("ReviewerWork")
-  transcriptionAssignments TranscriptionAssignment[]
-  skippedPrompts           SkippedPrompt[]
+  speakerRecordings         Recording[]               @relation("SpeakerRecordings")
+  transcriberWork           Transcription[]           @relation("TranscriberWork")
+  reviewerWork              Transcription[]           @relation("ReviewerWork")
+  transcriptionAssignments  TranscriptionAssignment[]
+  skippedPrompts            SkippedPrompt[]
+  englishTranslations       Recording[]               @relation("EnglishTranslations")
+  englishTranslationReviews Recording[]               @relation("EnglishTranslationReviews")
 
   // Pipeline Relations
-  reviewedQueueItems     ReviewQueue[]           @relation("ReviewerQueueItems")
-  secondReviewedItems    ReviewQueue[]           @relation("SecondReviewer")
-  languageLeadReviews    ReviewQueue[]           @relation("LanguageLeadReviews")
+  reviewedQueueItems  ReviewQueue[] @relation("ReviewerQueueItems")
+  secondReviewedItems ReviewQueue[] @relation("SecondReviewer")
+  languageLeadReviews ReviewQueue[] @relation("LanguageLeadReviews")
 }
 
 // ============================================================================
@@ -123,11 +129,11 @@ model Language {
 
   includeUniversalPrompts Boolean @default(true) // Whether to mix in generic prompts (languageId=null)
 
-  prompts    Prompt[]
-  recordings Recording[]
+  prompts         Prompt[]
+  recordings      Recording[]
   wordBankEntries WordBank[]
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 
   @@index([countryId])
   @@index([isActive])
@@ -147,26 +153,26 @@ model WordBank {
 }
 
 model Prompt {
-  id                String         @id @default(cuid())
-  languageId        String?
-  language          Language?      @relation(fields: [languageId], references: [id])
+  id         String    @id @default(cuid())
+  languageId String?
+  language   Language? @relation(fields: [languageId], references: [id])
 
   // English text that speaker translates and speaks
-  englishText       String
-  category          PromptCategory          // Scenario category
-  emotion           PromptEmotion  @default(NEUTRAL)
-  instruction       String?                 // Extra guidance: "Say with excitement"
+  englishText String
+  category    PromptCategory // Scenario category
+  emotion     PromptEmotion  @default(NEUTRAL)
+  instruction String? // Extra guidance: "Say with excitement"
 
-  targetDurationSec Int            @default(5)   // Expected: 3-10 seconds
-  hint              String?        // Simple plain-language explanation to help speakers understand what to say
-  isFreeForm        Boolean        @default(false) // Topic/scenario mode: speaker talks freely
-  isActive          Boolean        @default(true)
-  timesRecorded     Int            @default(0)
+  targetDurationSec Int     @default(5) // Expected: 3-10 seconds
+  hint              String? // Simple plain-language explanation to help speakers understand what to say
+  isFreeForm        Boolean @default(false) // Topic/scenario mode: speaker talks freely
+  isActive          Boolean @default(true)
+  timesRecorded     Int     @default(0)
 
-  recordings        Recording[]
-  skippedBy         SkippedPrompt[]
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
+  recordings Recording[]
+  skippedBy  SkippedPrompt[]
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
 
   @@index([languageId, category])
   @@index([languageId, isActive])
@@ -212,6 +218,21 @@ model Recording {
   autoTranscribedAt       DateTime?
   transcriptMetadata      Json? // Additional Kay X response data
 
+  // English translation of what was actually said.
+  //
+  // Only needed for free-form prompts: there, Prompt.englishText is an instruction
+  // ("Describe how to prepare yams"), not a sentence the speaker translated, so it
+  // cannot serve as the English side of a training pair. It also lives on the shared
+  // Prompt row, so it must never be overwritten. This column is per-recording.
+  englishTranslation       String?
+  englishTranslatedById    String?
+  englishTranslatedBy      User?                @relation("EnglishTranslations", fields: [englishTranslatedById], references: [id])
+  englishTranslatedAt      DateTime?
+  englishTranslationStatus TranscriptionStatus?
+  englishReviewedById      String?
+  englishReviewedBy        User?                @relation("EnglishTranslationReviews", fields: [englishReviewedById], references: [id])
+  englishReviewNotes       String?
+
   // Consent
   consentGiven Boolean @default(true)
 
@@ -221,13 +242,14 @@ model Recording {
   transcription            Transcription?
   transcriptionAssignments TranscriptionAssignment[]
   exportRecord             ExportRecord?
-  createdAt                DateTime       @default(now())
-  updatedAt                DateTime       @updatedAt
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
 
   @@index([languageId, status])
   @@index([speakerId])
   @@index([status])
   @@index([autoTranscriptionStatus])
+  @@index([englishTranslationStatus])
 }
 
 model Transcription {
@@ -342,12 +364,12 @@ enum UserRole {
 }
 
 enum RecordingStatus {
-  PENDING_REVIEW        // Newly submitted, awaiting reviewer audio check
+  PENDING_REVIEW // Newly submitted, awaiting reviewer audio check
   PENDING_TRANSCRIPTION // Audio approved, waiting for transcriber to claim
-  TRANSCRIBED           // Has transcription, pending text review
-  APPROVED              // Audio + transcription approved, export-ready
-  REJECTED              // Audio rejected or permanently unusable
-  FLAGGED               // Transcriber flagged audio issue
+  TRANSCRIBED // Has transcription, pending text review
+  APPROVED // Audio + transcription approved, export-ready
+  REJECTED // Audio rejected or permanently unusable
+  FLAGGED // Transcriber flagged audio issue
 }
 
 enum TranscriptionStatus {
@@ -366,33 +388,33 @@ enum PaymentStatus {
 enum Currency {
   USD
   SLE
-  GNF   // Guinean Franc
-  LRD   // Liberian Dollar
+  GNF // Guinean Franc
+  LRD // Liberian Dollar
 }
 
 // Prompt categories (scenarios for speakers)
 enum PromptCategory {
-  GREETINGS           // "Good morning", "How are you?"
-  NUMBERS_MONEY       // "One hundred", "The price is fifty thousand"
-  QUESTIONS           // "What is your name?", "Where is the market?"
-  COMMANDS_REQUESTS   // "Come here", "Please help me"
-  EMOTIONS_HAPPY      // "I am so happy!", "This is wonderful!"
-  EMOTIONS_SAD        // "I am very sad", "This makes me angry"
-  DAILY_LIFE          // "I'm going to work", "The food is ready"
-  MARKET_SHOPPING     // "How much?", "Too expensive"
-  DIRECTIONS_PLACES   // "Turn left", "Near the school"
-  FAMILY_PEOPLE       // "My mother is home", "The children are playing"
-  HEALTH              // "I feel sick", "Where is the hospital?"
-  WEATHER_TIME        // "It's raining", "Tomorrow morning"
-  LOCAL_SCENARIOS     // Sierra Leone specific situations
-  PHONETIC_COVERAGE   // Words covering all sounds
-  CONVERSATIONS       // Short dialogue lines
-  SHORT_PHRASES       // Very short 1-4s utterances: "Yes", "No problem", "Come here"
-  PLACE_NAMES         // Regional place names: Freetown, Conakry, Banjul, Labé
-  PROVERBS            // Traditional proverbs and fixed expressions
-  PASTORAL_LIFE       // Cattle herding, farming, rural life (Fula-relevant)
-  RELIGION_FAITH      // Prayers, Islamic greetings, faith expressions
-  FUNCTIONAL_PHRASES  // Basic responses: yes/no, I don't know, wait, thank you
+  GREETINGS // "Good morning", "How are you?"
+  NUMBERS_MONEY // "One hundred", "The price is fifty thousand"
+  QUESTIONS // "What is your name?", "Where is the market?"
+  COMMANDS_REQUESTS // "Come here", "Please help me"
+  EMOTIONS_HAPPY // "I am so happy!", "This is wonderful!"
+  EMOTIONS_SAD // "I am very sad", "This makes me angry"
+  DAILY_LIFE // "I'm going to work", "The food is ready"
+  MARKET_SHOPPING // "How much?", "Too expensive"
+  DIRECTIONS_PLACES // "Turn left", "Near the school"
+  FAMILY_PEOPLE // "My mother is home", "The children are playing"
+  HEALTH // "I feel sick", "Where is the hospital?"
+  WEATHER_TIME // "It's raining", "Tomorrow morning"
+  LOCAL_SCENARIOS // Sierra Leone specific situations
+  PHONETIC_COVERAGE // Words covering all sounds
+  CONVERSATIONS // Short dialogue lines
+  SHORT_PHRASES // Very short 1-4s utterances: "Yes", "No problem", "Come here"
+  PLACE_NAMES // Regional place names: Freetown, Conakry, Banjul, Labé
+  PROVERBS // Traditional proverbs and fixed expressions
+  PASTORAL_LIFE // Cattle herding, farming, rural life (Fula-relevant)
+  RELIGION_FAITH // Prayers, Islamic greetings, faith expressions
+  FUNCTIONAL_PHRASES // Basic responses: yes/no, I don't know, wait, thank you
 }
 
 enum PromptEmotion {
@@ -420,11 +442,11 @@ enum AutoTranscriptionStatus {
 
 model Translation {
   id             String   @id @default(cuid())
-  entityType     String   // e.g., "country", "language", "prompt"
-  entityId       String   // The ID of the entity being translated
-  fieldName      String   // The field being translated (e.g., "name", "description")
-  sourceLanguage String   // ISO language code (e.g., "en")
-  targetLanguage String   // ISO language code (e.g., "fr", "es")
+  entityType     String // e.g., "country", "language", "prompt"
+  entityId       String // The ID of the entity being translated
+  fieldName      String // The field being translated (e.g., "name", "description")
+  sourceLanguage String // ISO language code (e.g., "en")
+  targetLanguage String // ISO language code (e.g., "fr", "es")
   sourceText     String   @db.Text
   translatedText String   @db.Text
   createdAt      DateTime @default(now())
@@ -440,11 +462,11 @@ model Translation {
 // ============================================================================
 
 model ApiKey {
-  id        String   @id @default(cuid())
-  name      String   @unique // e.g. "flot-prod", "flot-staging"
-  keyHash   String   @unique // sha256 of the raw key
-  prefix    String   // e.g. "kaccp_sk_a1b2..." — first 12 chars for identification
-  isActive  Boolean  @default(true)
+  id         String    @id @default(cuid())
+  name       String    @unique // e.g. "flot-prod", "flot-staging"
+  keyHash    String    @unique // sha256 of the raw key
+  prefix     String // e.g. "kaccp_sk_a1b2..." — first 12 chars for identification
+  isActive   Boolean   @default(true)
   lastUsedAt DateTime?
 
   createdAt DateTime @default(now())
@@ -459,38 +481,38 @@ model ApiKey {
 
 // Every voice interaction on Flot is captured here
 model AudioSession {
-  id              String   @id @default(cuid())
-  sessionId       String   @unique // External session ID from Flot
-  userIdHash      String   // Anonymized — never store raw identifiers
-  timestamp       DateTime @default(now())
+  id         String   @id @default(cuid())
+  sessionId  String   @unique // External session ID from Flot
+  userIdHash String // Anonymized — never store raw identifiers
+  timestamp  DateTime @default(now())
 
   // Audio
-  audioPath       String   // GCS path to raw audio
-  audioDurationS  Float
+  audioPath      String // GCS path to raw audio
+  audioDurationS Float
 
   // ASR output
-  asrTranscript   String   @db.Text
-  asrConfidence   Float?
+  asrTranscript String @db.Text
+  asrConfidence Float?
 
   // Intent & extracted fields
   detectedIntent  String?
-  extractedFields Json?    // Amount, recipient, channel, etc.
+  extractedFields Json? // Amount, recipient, channel, etc.
 
   // Outcome
-  outcome         String?  // success, retry, abandoned, agent_escalation
+  outcome String? // success, retry, abandoned, agent_escalation
 
   // TTS (for future TTS quality loop)
-  ttsAudioPath    String?
+  ttsAudioPath String?
 
   // Metadata
-  deviceInfo      String?
-  metadata        Json?
+  deviceInfo String?
+  metadata   Json?
 
   // Relations
   reviewQueueItems ReviewQueue[]
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([userIdHash])
   @@index([timestamp])
@@ -499,38 +521,38 @@ model AudioSession {
 
 // Triage → KACCP review items
 model ReviewQueue {
-  id                 String   @id @default(cuid())
-  audioSessionId     String?
-  audioSession       AudioSession? @relation(fields: [audioSessionId], references: [id], onDelete: Cascade)
+  id             String        @id @default(cuid())
+  audioSessionId String?
+  audioSession   AudioSession? @relation(fields: [audioSessionId], references: [id], onDelete: Cascade)
 
   // Existing KACCP recording integration (for originally-recorded training data)
-  recordingId        String?
+  recordingId String?
 
-  source             String   @default("pilot") // "pilot" | "kaccp_recording"
+  source String @default("pilot") // "pilot" | "kaccp_recording"
 
-  priorityTier       Int      @default(3) // 1=Critical 2=Standard 3=Sample 4=Disagreement
-  status             String   @default("pending") // pending | in_review | corrected | approved | rejected
+  priorityTier Int    @default(3) // 1=Critical 2=Standard 3=Sample 4=Disagreement
+  status       String @default("pending") // pending | in_review | corrected | approved | rejected
 
   // Context for reviewer
-  asrTranscript      String?  @db.Text
-  audioPath          String   // GCS path
-  extractedFields    Json?    // Transaction context for critical items
+  asrTranscript   String? @db.Text
+  audioPath       String // GCS path
+  extractedFields Json? // Transaction context for critical items
 
   // Correction
   correctedTranscript String? @db.Text
-  reviewerId         String?
-  reviewer           User?    @relation("ReviewerQueueItems", fields: [reviewerId], references: [id])
+  reviewerId          String?
+  reviewer            User?   @relation("ReviewerQueueItems", fields: [reviewerId], references: [id])
 
   // Double verification
-  secondReviewerId   String?
-  secondReviewer     User?    @relation("SecondReviewer", fields: [secondReviewerId], references: [id])
-  secondTranscript   String?  @db.Text
-  disagreementFlag   Boolean  @default(false)
+  secondReviewerId String?
+  secondReviewer   User?   @relation("SecondReviewer", fields: [secondReviewerId], references: [id])
+  secondTranscript String? @db.Text
+  disagreementFlag Boolean @default(false)
 
   // Language Lead (admin) final verification
-  languageLeadId        String?
-  languageLead          User?    @relation("LanguageLeadReviews", fields: [languageLeadId], references: [id])
-  languageLeadNotes     String?  @db.Text
+  languageLeadId         String?
+  languageLead           User?     @relation("LanguageLeadReviews", fields: [languageLeadId], references: [id])
+  languageLeadNotes      String?   @db.Text
   languageLeadApprovedAt DateTime?
 
   // Rejection feedback delivered to the correcting transcriber. Array of
@@ -539,12 +561,12 @@ model ReviewQueue {
   rejectionFeedback Json?
 
   // Version tracking
-  datasetVersionId   String?
-  datasetVersion     DatasetVersion? @relation(fields: [datasetVersionId], references: [id])
-  mergedAt           DateTime?
+  datasetVersionId String?
+  datasetVersion   DatasetVersion? @relation(fields: [datasetVersionId], references: [id])
+  mergedAt         DateTime?
 
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([status])
   @@index([priorityTier])
@@ -554,41 +576,41 @@ model ReviewQueue {
 
 // Versioned training snapshots with full lineage
 model DatasetVersion {
-  id                String   @id @default(cuid())
-  versionId         String   @unique // e.g. "krio_asr_v3"
-  description       String?
+  id          String  @id @default(cuid())
+  versionId   String  @unique // e.g. "krio_asr_v3"
+  description String?
 
   // Source tracking
-  sourceReviewIds   Json?    // List of review_queue entry IDs merged in
-  totalHours        Float    @default(0)
-  totalSessions     Int      @default(0)
+  sourceReviewIds Json? // List of review_queue entry IDs merged in
+  totalHours      Float @default(0)
+  totalSessions   Int   @default(0)
 
   // Separation by data source
-  pilotHours        Float    @default(0)
-  kaccpHours        Float    @default(0)
+  pilotHours Float @default(0)
+  kaccpHours Float @default(0)
 
   // Evaluation
-  evalWer           Float?
-  evalDate          DateTime?
+  evalWer  Float?
+  evalDate DateTime?
 
   // Artifact (GCS path to trained model checkpoint)
   modelArtifactPath String?
 
   // Training metadata
-  trainingConfig    Json?
-  trainingStartedAt DateTime?
+  trainingConfig      Json?
+  trainingStartedAt   DateTime?
   trainingCompletedAt DateTime?
 
   // Export artifact (GCS path to LJSpeech-format export)
-  exportPath        String?
+  exportPath String?
 
-  status            String   @default("draft") // draft | training | evaluated | promoted | archived
+  status String @default("draft") // draft | training | evaluated | promoted | archived
 
   // Relations
-  reviewQueueItems  ReviewQueue[]
+  reviewQueueItems ReviewQueue[]
 
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([status])
   @@index([versionId])
@@ -596,18 +618,17 @@ model DatasetVersion {
 
 // Living annotation standard — API-queryable for KACCP reviewers
 model AnnotationRule {
-  id          String   @id @default(cuid())
-  ruleId      String   @unique
+  id          String  @id @default(cuid())
+  ruleId      String  @unique
   title       String
-  description String   @db.Text
-  examples    Json?    // Approved vs not-approved pairs
-  category    String?  // spelling | numbers | fillers | code_switching | etc.
-  isActive    Boolean  @default(true)
+  description String  @db.Text
+  examples    Json? // Approved vs not-approved pairs
+  category    String? // spelling | numbers | fillers | code_switching | etc.
+  isActive    Boolean @default(true)
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([category])
   @@index([isActive])
 }
-

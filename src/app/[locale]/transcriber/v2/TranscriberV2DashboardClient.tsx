@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getToken, clearToken } from "@/lib/infra/client/client";
 import { useTranslations } from "next-intl";
+import { ProgressPanel } from "@/components/gamification/ProgressPanel";
 
 interface Recording {
   id: string;
@@ -40,6 +41,23 @@ interface Stats {
   byStatus: { status: string; _count: number }[];
   totalSecondsTranscribed?: number;
   pipeline?: { total: number; approved: number; pending: number };
+}
+
+// A free-form clip awaiting its English side. `promptInstruction` is the prompt the
+// speaker was given ("Describe how to prepare yams") — context only, never the answer.
+interface EnglishTask {
+  id: string;
+  audioUrl: string;
+  durationSec: number;
+  krioText: string;
+  krioSource: string;
+  englishTranslation: string | null;
+  englishTranslationStatus: string | null;
+  englishReviewNotes: string | null;
+  promptInstruction: string;
+  category: string;
+  language: { code: string; name: string } | null;
+  speaker: { displayName: string | null } | null;
 }
 
 interface RecentTranscription {
@@ -128,6 +146,24 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
   // reports the real backlog instead of however many rows this page happens to hold.
   const [pipelineTotal, setPipelineTotal] = useState(0);
   const [pipelinePage, setPipelinePage] = useState(1);
+
+  // English translation queue: free-form clips that have Krio text but no English,
+  // because their prompt was an instruction rather than a sentence to translate.
+  const [englishItems, setEnglishItems] = useState<EnglishTask[]>([]);
+  const [englishTotal, setEnglishTotal] = useState(0);
+  const [englishPage, setEnglishPage] = useState(1);
+  const [englishSelected, setEnglishSelected] = useState<EnglishTask | null>(null);
+  const [englishDraft, setEnglishDraft] = useState("");
+  const [englishAudioUrl, setEnglishAudioUrl] = useState<string | null>(null);
+  const [englishLoading, setEnglishLoading] = useState(true);
+  const [englishSubmitting, setEnglishSubmitting] = useState(false);
+  const [englishMessage, setEnglishMessage] = useState<string | null>(null);
+  const [englishExpanded, setEnglishExpanded] = useState(true);
+  const [englishMine, setEnglishMine] = useState(0);
+
+  // Bumped after any submission so the progress panel refetches and can fire the
+  // milestone / level-up celebration straight away.
+  const [progressSignal, setProgressSignal] = useState(0);
 
   const token = typeof window !== "undefined" ? getToken() : null;
 
@@ -218,6 +254,84 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
   useEffect(() => {
     setPipelinePage(1);
   }, [pipelineFilterSource]);
+
+  const ENGLISH_LIMIT = 25;
+
+  const loadEnglishData = () => {
+    if (!token) return;
+    const params = new URLSearchParams({
+      limit: String(ENGLISH_LIMIT),
+      page: String(englishPage),
+    });
+    if (languageFilter) params.set("languageId", languageFilter);
+    fetch(`/api/v2/transcriber/english?${params}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(r => r.json())
+      .then(d => {
+        setEnglishItems(d.items || []);
+        setEnglishTotal(d.total || 0);
+        setEnglishMine(d.myTranslations || 0);
+        setEnglishLoading(false);
+      })
+      .catch(() => setEnglishLoading(false));
+  };
+
+  useEffect(() => {
+    loadEnglishData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, englishPage, languageFilter]);
+
+  useEffect(() => {
+    if (!englishSelected || !token) return;
+    setEnglishAudioUrl(null);
+    fetch(`/api/v2/audio/${englishSelected.id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(r => r.json())
+      .then(d => { if (d.signedUrl || d.url) setEnglishAudioUrl(d.signedUrl || d.url); })
+      .catch(() => {});
+  }, [englishSelected, token]);
+
+  const selectEnglishTask = (task: EnglishTask) => {
+    setEnglishSelected(task);
+    setEnglishDraft(task.englishTranslation || "");
+    setEnglishMessage(null);
+  };
+
+  const submitEnglishTranslation = async () => {
+    if (!englishSelected || !englishDraft.trim()) return;
+    setEnglishSubmitting(true);
+    setEnglishMessage(null);
+    try {
+      const res = await fetch(`/api/v2/transcriber/english`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ recordingId: englishSelected.id, englishText: englishDraft.trim() }),
+      });
+      const data = await res.json();
+      if (data.error) { setEnglishMessage(`Error: ${data.error}`); return; }
+
+      const remaining = englishItems.filter(i => i.id !== englishSelected.id);
+      const total = Math.max(0, englishTotal - 1);
+      setEnglishItems(remaining);
+      setEnglishTotal(total);
+      setEnglishMine(m => m + 1);
+      setEnglishMessage("Translation saved");
+      setProgressSignal(n => n + 1);
+      const next = remaining[0] || null;
+      setEnglishSelected(next);
+      setEnglishDraft(next?.englishTranslation || "");
+      // Same trap as the pipeline queue: an emptied page must pull the next one
+      // rather than look finished while hundreds remain.
+      if (remaining.length === 0 && total > 0) {
+        const lastPage = Math.max(1, Math.ceil(total / ENGLISH_LIMIT));
+        if (englishPage > lastPage) setEnglishPage(lastPage);
+        else loadEnglishData();
+      }
+    } catch { setEnglishMessage("Failed to save"); }
+    finally { setEnglishSubmitting(false); }
+  };
 
   useEffect(() => {
     if (!pipelineSelected || !token || !pipelineSelected.audioPath) return;
@@ -346,6 +460,7 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
       setPipelineSelected(newList[0] || null);
       setPipelineEditedText(newList[0]?.correctedTranscript || newList[0]?.asrTranscript || "");
       setPipelineMessage(isSecondPass ? "Double verification submitted" : "Correction submitted");
+      setProgressSignal(n => n + 1);
       // Clearing the last item on a page would otherwise show an empty queue while
       // hundreds still wait. Pull the next page (or step back off a now-empty tail).
       if (newList.length === 0 && remaining > 0) {
@@ -392,6 +507,12 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
               </p>
             </div>
             <div className="flex items-center gap-3">
+              <Link
+                href={`/${locale}/transcriber/leaderboard`}
+                className="px-4 py-2 text-sm bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:from-indigo-600 hover:to-purple-700 transition-colors font-medium"
+              >
+                🏆 Leaderboard
+              </Link>
               {user?.roles?.includes("SPEAKER") && (
                 <Link
                   href={`/${locale}/speaker`}
@@ -415,6 +536,9 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        {/* Level, streak, daily goal and where you stand this week */}
+        <ProgressPanel token={token} locale={locale} refreshSignal={progressSignal} />
+
         {/* Earnings Card */}
         <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl shadow-lg p-6 mb-8 text-white">
           <div className="flex justify-between items-start">
@@ -644,6 +768,178 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
         )}
 
         {/* Pipeline Review Section */}
+        {/* English translation queue */}
+        <div id="english-translation" className="bg-white rounded-lg shadow mb-8 scroll-mt-4">
+          <button
+            onClick={() => setEnglishExpanded(!englishExpanded)}
+            className="w-full px-6 py-4 border-b border-gray-200 flex items-center justify-between hover:bg-gray-50 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <h2 className="text-lg font-semibold text-gray-900">English Translation</h2>
+              {!englishLoading && (
+                <span className={`px-2 py-0.5 text-xs rounded font-medium ${englishTotal > 0 ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-500"}`}>
+                  {englishTotal} waiting
+                </span>
+              )}
+              {englishMine > 0 && (
+                <span className="px-2 py-0.5 text-xs rounded font-medium bg-blue-100 text-blue-700">
+                  {englishMine} done by you
+                </span>
+              )}
+            </div>
+            <svg className={`w-5 h-5 text-gray-400 transition-transform ${englishExpanded ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          {englishExpanded && (
+            <div className="p-6">
+              <p className="text-sm text-gray-500 mb-4">
+                These clips already have their Krio written down, but no English. Listen, read the
+                Krio, and write what it means in English.
+              </p>
+
+              {englishMessage && (
+                <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">{englishMessage}</div>
+              )}
+
+              {englishLoading ? (
+                <div className="flex items-center justify-center h-32">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+                </div>
+              ) : englishItems.length === 0 ? (
+                <div className="bg-gray-50 rounded-lg p-12 text-center">
+                  <div className="text-4xl mb-3">✅</div>
+                  <h3 className="text-lg font-bold mb-1">All caught up</h3>
+                  <p className="text-sm text-gray-500">No clips are waiting for an English translation.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {/* Queue */}
+                  <div className="lg:col-span-1 bg-gray-50 rounded-lg border overflow-hidden">
+                    <div className="px-4 py-3 bg-gray-100 border-b flex items-center justify-between">
+                      <h3 className="font-semibold text-sm">Queue</h3>
+                      <span className="text-xs text-gray-500">
+                        {(englishPage - 1) * ENGLISH_LIMIT + 1}–
+                        {Math.min(englishPage * ENGLISH_LIMIT, englishTotal)} of {englishTotal}
+                      </span>
+                    </div>
+                    <div className="divide-y max-h-80 overflow-y-auto">
+                      {englishItems.map(item => (
+                        <button
+                          key={item.id}
+                          onClick={() => selectEnglishTask(item)}
+                          className={`w-full text-left p-3 hover:bg-gray-100 transition-colors ${englishSelected?.id === item.id ? "bg-emerald-50" : ""}`}
+                        >
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="px-1.5 py-0.5 text-xs rounded font-medium bg-emerald-100 text-emerald-700">
+                              {item.language?.code || "?"}
+                            </span>
+                            <span className="text-xs text-gray-400">{item.durationSec?.toFixed(1)}s</span>
+                          </div>
+                          <div className="text-sm text-gray-900 line-clamp-2">{item.krioText || "(no text)"}</div>
+                        </button>
+                      ))}
+                    </div>
+                    {englishTotal > ENGLISH_LIMIT && (
+                      <div className="px-3 py-2 bg-gray-100 border-t flex items-center justify-between">
+                        <button
+                          onClick={() => setEnglishPage(p => Math.max(1, p - 1))}
+                          disabled={englishPage <= 1}
+                          className="px-3 py-1 text-xs border rounded bg-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
+                        >
+                          Previous
+                        </button>
+                        <span className="text-xs text-gray-600">
+                          Page {englishPage} of {Math.ceil(englishTotal / ENGLISH_LIMIT)}
+                        </span>
+                        <button
+                          onClick={() => setEnglishPage(p => p + 1)}
+                          disabled={englishPage >= Math.ceil(englishTotal / ENGLISH_LIMIT)}
+                          className="px-3 py-1 text-xs border rounded bg-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
+                        >
+                          Next
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Editor */}
+                  <div className="lg:col-span-2">
+                    {!englishSelected ? (
+                      <div className="bg-gray-50 rounded-lg border p-12 text-center text-sm text-gray-500">
+                        Pick a clip from the queue to start.
+                      </div>
+                    ) : (
+                      <div className="bg-gray-50 rounded-lg border p-4 space-y-4">
+                        {englishAudioUrl ? (
+                          <audio controls src={englishAudioUrl} className="w-full" />
+                        ) : (
+                          <div className="h-12 flex items-center text-sm text-gray-400">Loading audio…</div>
+                        )}
+
+                        <div>
+                          <label className="block text-xs font-medium text-gray-500 uppercase mb-1">
+                            What was said (Krio)
+                          </label>
+                          <div className="p-3 bg-white border rounded text-sm text-gray-900">
+                            {englishSelected.krioText || "(no transcript)"}
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-medium text-gray-500 uppercase mb-1">
+                            English translation
+                          </label>
+                          <textarea
+                            value={englishDraft}
+                            onChange={e => setEnglishDraft(e.target.value)}
+                            rows={4}
+                            placeholder="Write what the speaker said, in English…"
+                            className="w-full p-3 border rounded text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                          />
+                        </div>
+
+                        {englishSelected.promptInstruction && (
+                          <details className="text-xs text-gray-500">
+                            <summary className="cursor-pointer select-none">
+                              Topic they were asked to talk about (context only — do not copy)
+                            </summary>
+                            <p className="mt-2 p-2 bg-amber-50 border border-amber-200 rounded text-amber-800">
+                              {englishSelected.promptInstruction}
+                            </p>
+                          </details>
+                        )}
+
+                        <div className="flex items-center gap-3">
+                          <button
+                            onClick={submitEnglishTranslation}
+                            disabled={englishSubmitting || !englishDraft.trim()}
+                            className="px-5 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {englishSubmitting ? "Saving…" : "Save translation"}
+                          </button>
+                          <button
+                            onClick={() => {
+                              const rest = englishItems.filter(i => i.id !== englishSelected.id);
+                              const next = rest[0] || null;
+                              setEnglishSelected(next);
+                              setEnglishDraft(next?.englishTranslation || "");
+                            }}
+                            className="px-4 py-2 border rounded-lg text-sm text-gray-600 hover:bg-gray-100"
+                          >
+                            Skip
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
         <div id="pipeline-review" className="bg-white rounded-lg shadow mb-8 scroll-mt-4">
           <button
             onClick={() => setPipelineExpanded(!pipelineExpanded)}
