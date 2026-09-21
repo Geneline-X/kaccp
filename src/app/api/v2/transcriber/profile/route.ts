@@ -29,27 +29,28 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const [transcriptions, english, pipeline] = await Promise.all([
-      prisma.transcription.findMany({
-        where: { transcriberId: user.id },
-        select: {
-          status: true,
-          submittedAt: true,
-          recording: { select: { durationSec: true } },
-        },
-      }),
-      prisma.recording.findMany({
-        where: { englishTranslatedById: user.id },
-        select: { englishTranslatedAt: true, englishTranslationStatus: true },
-      }),
-      prisma.reviewQueue.findMany({
-        where: {
-          status: "approved",
-          OR: [{ reviewerId: user.id }, { secondReviewerId: user.id }],
-        },
-        select: { updatedAt: true },
-      }),
-    ]);
+    // Sequential, not Promise.all: with a serverless-sized pool, firing these
+    // together makes one request hold several connections at once, which is what
+    // exhausts a small managed database.
+    const transcriptions = await prisma.transcription.findMany({
+      where: { transcriberId: user.id },
+      select: {
+        status: true,
+        submittedAt: true,
+        recording: { select: { durationSec: true } },
+      },
+    });
+    const english = await prisma.recording.findMany({
+      where: { englishTranslatedById: user.id },
+      select: { englishTranslatedAt: true, englishTranslationStatus: true },
+    });
+    const pipeline = await prisma.reviewQueue.findMany({
+      where: {
+        status: "approved",
+        OR: [{ reviewerId: user.id }, { secondReviewerId: user.id }],
+      },
+      select: { updatedAt: true },
+    });
 
     const today = dayKey(new Date());
     const perDay = new Map<string, number>();
@@ -182,16 +183,18 @@ export async function PATCH(req: NextRequest) {
 
     // Recompute the level server-side: the unlock requirement has to be enforced
     // here, not just hidden in the picker.
-    const [transcriptions, english, pipeline] = await Promise.all([
-      prisma.transcription.count({ where: { transcriberId: user.id, status: "APPROVED" } }),
-      prisma.recording.count({ where: { englishTranslatedById: user.id } }),
-      prisma.reviewQueue.count({
-        where: {
-          status: "approved",
-          OR: [{ reviewerId: user.id }, { secondReviewerId: user.id }],
-        },
-      }),
-    ]);
+    const transcriptions = await prisma.transcription.count({
+      where: { transcriberId: user.id, status: "APPROVED" },
+    });
+    const english = await prisma.recording.count({
+      where: { englishTranslatedById: user.id },
+    });
+    const pipeline = await prisma.reviewQueue.count({
+      where: {
+        status: "approved",
+        OR: [{ reviewerId: user.id }, { secondReviewerId: user.id }],
+      },
+    });
     const xp =
       transcriptions * POINTS.transcription +
       english * POINTS.english +

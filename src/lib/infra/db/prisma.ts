@@ -11,19 +11,37 @@ import { PrismaClient } from '@prisma/client'
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient }
 
-// Prisma's default pool is num_cpus*2+1 per client, which is far too generous
-// when several app instances share a small managed database. Pin it explicitly
-// rather than relying on whoever set DATABASE_URL to have thought about it.
+// Each API route is deployed as its own serverless function, i.e. its own
+// process, so the global cache above cannot be shared *between* routes — only
+// within one. The connection budget is therefore:
+//
+//     routes answering concurrently  x  connection_limit  x  app instances
+//
+// One dashboard load touches ~7 routes. At Prisma's default pool of
+// num_cpus*2+1 that is ~60 connections against a managed database offering ~22,
+// which is the P2037 "remaining connection slots are reserved" failure.
+//
+// So the default here is 1: in a per-request serverless process a larger pool
+// buys almost nothing, because the process handles one request at a time.
+// Parallel queries inside a route simply queue instead of opening more sockets.
+//
+// The durable fix is a server-side pooler (DigitalOcean's connection pool /
+// PgBouncer), which multiplexes many clients onto few backend connections.
+// Point DATABASE_URL at it and add &pgbouncer=true; then raise
+// DB_CONNECTION_LIMIT again.
 function withPoolLimits(url: string): string {
   if (!url) return url
   try {
     const parsed = new URL(url)
     if (!parsed.searchParams.has('connection_limit')) {
-      parsed.searchParams.set('connection_limit', process.env.DB_CONNECTION_LIMIT || '5')
+      parsed.searchParams.set('connection_limit', process.env.DB_CONNECTION_LIMIT || '1')
     }
     if (!parsed.searchParams.has('pool_timeout')) {
       // Wait for a free connection instead of failing instantly under a burst.
       parsed.searchParams.set('pool_timeout', process.env.DB_POOL_TIMEOUT || '20')
+    }
+    if (!parsed.searchParams.has('connect_timeout')) {
+      parsed.searchParams.set('connect_timeout', process.env.DB_CONNECT_TIMEOUT || '10')
     }
     return parsed.toString()
   } catch {

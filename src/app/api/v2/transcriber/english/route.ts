@@ -74,8 +74,8 @@ export async function GET(req: NextRequest) {
       ? { englishTranslatedById: user!.id }
       : pendingWhere(languageIds);
 
-    const [items, total, myCount] = await Promise.all([
-      prisma.recording.findMany({
+    // Sequential to keep one connection per request. See lib/infra/db/prisma.ts.
+    const items = await prisma.recording.findMany({
         where,
         select: {
           id: true,
@@ -91,13 +91,14 @@ export async function GET(req: NextRequest) {
           language: { select: { code: true, name: true } },
           speaker: { select: { displayName: true } },
         },
-        orderBy: mine ? { englishTranslatedAt: "desc" } : { createdAt: "asc" },
-        skip,
-        take: limit,
-      }),
-      prisma.recording.count({ where }),
-      prisma.recording.count({ where: { englishTranslatedById: user!.id } }),
-    ]);
+      orderBy: mine ? { englishTranslatedAt: "desc" } : { createdAt: "asc" },
+      skip,
+      take: limit,
+    });
+    const total = await prisma.recording.count({ where });
+    const myCount = await prisma.recording.count({
+      where: { englishTranslatedById: user!.id },
+    });
 
     // The Krio text is what the translator renders into English; prefer the
     // reviewer-approved version over the imported one.

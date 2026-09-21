@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/infra/db/prisma";
 import { getAuthUser } from "@/lib/infra/auth/auth";
-import { POINTS, avatarFor, dayKey, periodStart } from "@/lib/domain/gamification";
+import { POINTS, avatarFor, periodStart } from "@/lib/domain/gamification";
 
 export const dynamic = "force-dynamic";
 
@@ -10,6 +10,11 @@ export const dynamic = "force-dynamic";
 // Ranks transcribers on APPROVED work only. Ranking on raw submissions would pay
 // out for speed regardless of correctness and quietly degrade the dataset, so a
 // rejected item subtracts points instead of being ignored.
+//
+// Aggregated in the database rather than by loading rows into the app: the naive
+// version pulled every transcription in the period (thousands of rows) and ran
+// its queries with Promise.all, holding several pool connections per request.
+// These run in sequence and return one row per user.
 export async function GET(req: NextRequest) {
   try {
     const user = await getAuthUser(req);
@@ -23,115 +28,97 @@ export async function GET(req: NextRequest) {
     const limit = Math.min(parseInt(searchParams.get("limit") || "50"), 200);
 
     const since = periodStart(period);
-    const timeFilter = since ? { gte: since } : undefined;
-
-    const recordingFilter = languageId ? { recording: { languageId } } : {};
-
-    // --- Work in the requested window -------------------------------------
-    const [transcriptions, englishRecords, pipelineItems] = await Promise.all([
-      prisma.transcription.findMany({
-        where: {
-          ...(timeFilter ? { submittedAt: timeFilter } : {}),
-          ...recordingFilter,
-        },
-        select: {
-          transcriberId: true,
-          status: true,
-          submittedAt: true,
-          recording: { select: { durationSec: true } },
-        },
-      }),
-      prisma.recording.findMany({
-        where: {
-          englishTranslatedById: { not: null },
-          ...(timeFilter ? { englishTranslatedAt: timeFilter } : {}),
-          ...(languageId ? { languageId } : {}),
-        },
-        select: {
-          englishTranslatedById: true,
-          englishTranslatedAt: true,
-          englishTranslationStatus: true,
-        },
-      }),
-      // Pipeline items carry no language, so a language filter excludes them.
-      languageId
-        ? Promise.resolve([])
-        : prisma.reviewQueue.findMany({
-            where: {
-              status: "approved",
-              ...(timeFilter ? { updatedAt: timeFilter } : {}),
-            },
-            select: { reviewerId: true, secondReviewerId: true, updatedAt: true },
-          }),
-    ]);
 
     interface Row {
       userId: string;
       approved: number;
       rejected: number;
-      pending: number;
       english: number;
       pipeline: number;
       seconds: number;
       points: number;
-      days: Set<string>;
     }
     const rows = new Map<string, Row>();
     const row = (id: string): Row => {
       let r = rows.get(id);
       if (!r) {
-        r = {
-          userId: id,
-          approved: 0,
-          rejected: 0,
-          pending: 0,
-          english: 0,
-          pipeline: 0,
-          seconds: 0,
-          points: 0,
-          days: new Set(),
-        };
+        r = { userId: id, approved: 0, rejected: 0, english: 0, pipeline: 0, seconds: 0, points: 0 };
         rows.set(id, r);
       }
       return r;
     };
 
-    for (const t of transcriptions) {
-      const r = row(t.transcriberId);
+    // --- 1. Transcriptions: counts and audio seconds, grouped in the database ---
+    const txRows = await prisma.$queryRaw<
+      { user_id: string; status: string; n: bigint; seconds: number | null }[]
+    >`
+      SELECT t."transcriberId" AS user_id,
+             t.status::text     AS status,
+             COUNT(*)           AS n,
+             SUM(r."durationSec") AS seconds
+      FROM "Transcription" t
+      JOIN "Recording" r ON r.id = t."recordingId"
+      WHERE (${since}::timestamptz IS NULL OR t."submittedAt" >= ${since}::timestamptz)
+        AND (${languageId}::text IS NULL OR r."languageId" = ${languageId}::text)
+      GROUP BY 1, 2
+    `;
+
+    for (const t of txRows) {
+      const r = row(t.user_id);
+      const n = Number(t.n);
       if (t.status === "APPROVED") {
-        r.approved++;
-        r.points += POINTS.transcription;
-        r.seconds += t.recording?.durationSec || 0;
-        r.days.add(dayKey(t.submittedAt));
+        r.approved += n;
+        r.points += n * POINTS.transcription;
+        r.seconds += Number(t.seconds || 0);
       } else if (t.status === "REJECTED") {
-        r.rejected++;
-        r.points += POINTS.rejectionPenalty;
+        r.rejected += n;
+        r.points += n * POINTS.rejectionPenalty;
+      }
+    }
+
+    // --- 2. English translations ---
+    const enRows = await prisma.$queryRaw<{ user_id: string; status: string | null; n: bigint }[]>`
+      SELECT r."englishTranslatedById" AS user_id,
+             r."englishTranslationStatus"::text AS status,
+             COUNT(*) AS n
+      FROM "Recording" r
+      WHERE r."englishTranslatedById" IS NOT NULL
+        AND (${since}::timestamptz IS NULL OR r."englishTranslatedAt" >= ${since}::timestamptz)
+        AND (${languageId}::text IS NULL OR r."languageId" = ${languageId}::text)
+      GROUP BY 1, 2
+    `;
+
+    for (const e of enRows) {
+      const r = row(e.user_id);
+      const n = Number(e.n);
+      if (e.status === "REJECTED") {
+        r.rejected += n;
+        r.points += n * POINTS.rejectionPenalty;
       } else {
-        r.pending++;
+        r.english += n;
+        r.points += n * POINTS.english;
       }
     }
 
-    for (const e of englishRecords) {
-      if (!e.englishTranslatedById) continue;
-      const r = row(e.englishTranslatedById);
-      // Translations are not rejected outright today; count anything not REJECTED.
-      if (e.englishTranslationStatus === "REJECTED") {
-        r.rejected++;
-        r.points += POINTS.rejectionPenalty;
-        continue;
-      }
-      r.english++;
-      r.points += POINTS.english;
-      if (e.englishTranslatedAt) r.days.add(dayKey(e.englishTranslatedAt));
-    }
-
-    for (const p of pipelineItems as any[]) {
-      for (const id of [p.reviewerId, p.secondReviewerId]) {
-        if (!id) continue;
-        const r = row(id);
-        r.pipeline++;
-        r.points += POINTS.pipeline;
-        if (p.updatedAt) r.days.add(dayKey(p.updatedAt));
+    // --- 3. Pipeline corrections (no language, so skipped when filtering) ---
+    if (!languageId) {
+      const pipeRows = await prisma.$queryRaw<{ user_id: string; n: bigint }[]>`
+        SELECT user_id, COUNT(*) AS n FROM (
+          SELECT "reviewerId" AS user_id FROM "ReviewQueue"
+          WHERE status = 'approved' AND "reviewerId" IS NOT NULL
+            AND (${since}::timestamptz IS NULL OR "updatedAt" >= ${since}::timestamptz)
+          UNION ALL
+          SELECT "secondReviewerId" AS user_id FROM "ReviewQueue"
+          WHERE status = 'approved' AND "secondReviewerId" IS NOT NULL
+            AND (${since}::timestamptz IS NULL OR "updatedAt" >= ${since}::timestamptz)
+        ) q
+        GROUP BY 1
+      `;
+      for (const p of pipeRows) {
+        const r = row(p.user_id);
+        const n = Number(p.n);
+        r.pipeline += n;
+        r.points += n * POINTS.pipeline;
       }
     }
 
@@ -149,10 +136,8 @@ export async function GET(req: NextRequest) {
       .map((r) => {
         const u = userById.get(r.userId);
         const reviewed = r.approved + r.rejected;
-        // Anonymise the handle: first name only, so a public board never leaks
-        // an email address.
-        const name =
-          u?.displayName?.trim() || (u?.email ? u.email.split("@")[0] : "Someone");
+        // First name only, so a shared board never exposes an email address.
+        const name = u?.displayName?.trim() || (u?.email ? u.email.split("@")[0] : "Someone");
         return {
           userId: r.userId,
           name,
@@ -160,12 +145,10 @@ export async function GET(req: NextRequest) {
           points: Math.max(0, r.points),
           approved: r.approved,
           rejected: r.rejected,
-          pending: r.pending,
           english: r.english,
           pipeline: r.pipeline,
           minutes: Math.round((r.seconds / 60) * 10) / 10,
           accuracy: reviewed > 0 ? Math.round((r.approved / reviewed) * 100) : null,
-          activeDays: r.days.size,
         };
       })
       .filter((e) => e.points > 0 || e.approved > 0)
