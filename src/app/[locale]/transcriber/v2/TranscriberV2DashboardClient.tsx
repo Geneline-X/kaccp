@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getToken, clearToken } from "@/lib/infra/client/client";
@@ -43,23 +43,6 @@ interface Stats {
   pipeline?: { total: number; approved: number; pending: number };
 }
 
-// A free-form clip awaiting its English side. `promptInstruction` is the prompt the
-// speaker was given ("Describe how to prepare yams") — context only, never the answer.
-interface EnglishTask {
-  id: string;
-  audioUrl: string;
-  durationSec: number;
-  krioText: string;
-  krioSource: string;
-  englishTranslation: string | null;
-  englishTranslationStatus: string | null;
-  englishReviewNotes: string | null;
-  promptInstruction: string;
-  category: string;
-  language: { code: string; name: string } | null;
-  speaker: { displayName: string | null } | null;
-}
-
 interface RecentTranscription {
   id: string;
   text: string;
@@ -78,44 +61,11 @@ interface RecentTranscription {
   };
 }
 
-interface ReviewItem {
-  id: string;
-  source: string;
-  priorityTier: number;
-  status: string;
-  asrTranscript: string | null;
-  correctedTranscript: string | null;
-  secondTranscript: string | null;
-  audioPath: string;
-  extractedFields: any;
-  disagreementFlag: boolean;
-  audioSession: {
-    audioDurationS: number;
-    timestamp: string;
-    detectedIntent: string | null;
-    outcome: string | null;
-  } | null;
-  createdAt: string;
-}
 
-const TIER_LABELS: Record<number, string> = { 1: "Critical", 2: "Standard", 3: "Sample", 4: "Disagreement" };
-const TIER_COLORS: Record<number, string> = {
-  1: "bg-red-100 text-red-800", 2: "bg-yellow-100 text-yellow-800",
-  3: "bg-gray-100 text-gray-600", 4: "bg-purple-100 text-purple-800",
-};
-const SOURCE_LABELS: Record<string, string> = {
-  pilot: "Flot",
-  kaccp_recording: "KACCP",
-};
-const SOURCE_COLORS: Record<string, string> = {
-  pilot: "bg-green-100 text-green-700",
-  kaccp_recording: "bg-blue-100 text-blue-700",
-};
 
 export default function TranscriberV2DashboardClient({ locale }: { locale: string }) {
   const router = useRouter();
   const t = useTranslations();
-  const audioRef = useRef<HTMLAudioElement>(null);
   const [user, setUser] = useState<any>(null);
   const [activeAssignments, setActiveAssignments] = useState<Assignment[]>([]);
   const [availableRecordings, setAvailableRecordings] = useState<Recording[]>([]);
@@ -133,37 +83,17 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
   const [languageFilter, setLanguageFilter] = useState("");
   const limit = 10;
 
-  const [pipelineItems, setPipelineItems] = useState<ReviewItem[]>([]);
-  const [pipelineSelected, setPipelineSelected] = useState<ReviewItem | null>(null);
-  const [pipelineEditedText, setPipelineEditedText] = useState("");
-  const [pipelineSubmitting, setPipelineSubmitting] = useState(false);
-  const [pipelineLoading, setPipelineLoading] = useState(true);
-  const [pipelineFilterSource, setPipelineFilterSource] = useState("");
-  const [pipelineSignedAudioUrl, setPipelineSignedAudioUrl] = useState<string | null>(null);
-  const [pipelineMessage, setPipelineMessage] = useState<string | null>(null);
-  const [pipelineExpanded, setPipelineExpanded] = useState(true);
   // The queue is far larger than one page. Track the server's total so the badge
   // reports the real backlog instead of however many rows this page happens to hold.
-  const [pipelineTotal, setPipelineTotal] = useState(0);
-  const [pipelinePage, setPipelinePage] = useState(1);
 
   // English translation queue: free-form clips that have Krio text but no English,
   // because their prompt was an instruction rather than a sentence to translate.
-  const [englishItems, setEnglishItems] = useState<EnglishTask[]>([]);
-  const [englishTotal, setEnglishTotal] = useState(0);
-  const [englishPage, setEnglishPage] = useState(1);
-  const [englishSelected, setEnglishSelected] = useState<EnglishTask | null>(null);
-  const [englishDraft, setEnglishDraft] = useState("");
-  const [englishAudioUrl, setEnglishAudioUrl] = useState<string | null>(null);
-  const [englishLoading, setEnglishLoading] = useState(true);
-  const [englishSubmitting, setEnglishSubmitting] = useState(false);
-  const [englishMessage, setEnglishMessage] = useState<string | null>(null);
-  const [englishExpanded, setEnglishExpanded] = useState(true);
-  const [englishMine, setEnglishMine] = useState(0);
 
   // Bumped after any submission so the progress panel refetches and can fire the
   // milestone / level-up celebration straight away.
-  const [progressSignal, setProgressSignal] = useState(0);
+  const [progressSignal] = useState(0);
+  // Supplied by ProgressPanel from the profile payload it already fetches.
+  const [queueCounts, setQueueCounts] = useState<{ english: number; pipeline: number } | null>(null);
 
   const token = typeof window !== "undefined" ? getToken() : null;
 
@@ -217,132 +147,19 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
       });
   };
 
-  const PIPELINE_LIMIT = 50;
-
-  const loadPipelineData = () => {
-    if (!token) return;
-    const params = new URLSearchParams({
-      status: "pending",
-      limit: String(PIPELINE_LIMIT),
-      page: String(pipelinePage),
-    });
-    if (pipelineFilterSource) params.set("source", pipelineFilterSource);
-    fetch(`/api/v2/pipeline/review-queue?${params}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(r => r.json())
-      .then(d => {
-        setPipelineItems(d.items || []);
-        setPipelineTotal(d.pagination?.total ?? (d.items || []).length);
-        setPipelineLoading(false);
-      })
-      .catch(() => setPipelineLoading(false));
-  };
 
   useEffect(() => {
     loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, page, languageFilter]);
 
-  useEffect(() => {
-    loadPipelineData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, pipelinePage, pipelineFilterSource]);
 
-  // Changing the source filter re-pages from the start, otherwise a page number
-  // from the previous filter can land past the end of the new result set.
-  useEffect(() => {
-    setPipelinePage(1);
-  }, [pipelineFilterSource]);
 
-  const ENGLISH_LIMIT = 25;
 
-  const loadEnglishData = () => {
-    if (!token) return;
-    const params = new URLSearchParams({
-      limit: String(ENGLISH_LIMIT),
-      page: String(englishPage),
-    });
-    if (languageFilter) params.set("languageId", languageFilter);
-    fetch(`/api/v2/transcriber/english?${params}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(r => r.json())
-      .then(d => {
-        setEnglishItems(d.items || []);
-        setEnglishTotal(d.total || 0);
-        setEnglishMine(d.myTranslations || 0);
-        setEnglishLoading(false);
-      })
-      .catch(() => setEnglishLoading(false));
-  };
 
-  useEffect(() => {
-    loadEnglishData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, englishPage, languageFilter]);
 
-  useEffect(() => {
-    if (!englishSelected || !token) return;
-    setEnglishAudioUrl(null);
-    fetch(`/api/v2/audio/${englishSelected.id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(r => r.json())
-      .then(d => { if (d.signedUrl || d.url) setEnglishAudioUrl(d.signedUrl || d.url); })
-      .catch(() => {});
-  }, [englishSelected, token]);
 
-  const selectEnglishTask = (task: EnglishTask) => {
-    setEnglishSelected(task);
-    setEnglishDraft(task.englishTranslation || "");
-    setEnglishMessage(null);
-  };
 
-  const submitEnglishTranslation = async () => {
-    if (!englishSelected || !englishDraft.trim()) return;
-    setEnglishSubmitting(true);
-    setEnglishMessage(null);
-    try {
-      const res = await fetch(`/api/v2/transcriber/english`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ recordingId: englishSelected.id, englishText: englishDraft.trim() }),
-      });
-      const data = await res.json();
-      if (data.error) { setEnglishMessage(`Error: ${data.error}`); return; }
-
-      const remaining = englishItems.filter(i => i.id !== englishSelected.id);
-      const total = Math.max(0, englishTotal - 1);
-      setEnglishItems(remaining);
-      setEnglishTotal(total);
-      setEnglishMine(m => m + 1);
-      setEnglishMessage("Translation saved");
-      setProgressSignal(n => n + 1);
-      const next = remaining[0] || null;
-      setEnglishSelected(next);
-      setEnglishDraft(next?.englishTranslation || "");
-      // Same trap as the pipeline queue: an emptied page must pull the next one
-      // rather than look finished while hundreds remain.
-      if (remaining.length === 0 && total > 0) {
-        const lastPage = Math.max(1, Math.ceil(total / ENGLISH_LIMIT));
-        if (englishPage > lastPage) setEnglishPage(lastPage);
-        else loadEnglishData();
-      }
-    } catch { setEnglishMessage("Failed to save"); }
-    finally { setEnglishSubmitting(false); }
-  };
-
-  useEffect(() => {
-    if (!pipelineSelected || !token || !pipelineSelected.audioPath) return;
-    setPipelineSignedAudioUrl(null);
-    fetch(`/api/v2/pipeline/audio?path=${encodeURIComponent(pipelineSelected.audioPath)}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(r => r.json())
-      .then(d => { if (d.signedUrl) setPipelineSignedAudioUrl(d.signedUrl); })
-      .catch(() => {});
-  }, [pipelineSelected, token]);
 
   const releaseAssignment = async (recordingId: string) => {
     setReleasingId(recordingId);
@@ -396,11 +213,6 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
     }
   };
 
-  const selectPipelineItem = (item: ReviewItem) => {
-    setPipelineSelected(item);
-    setPipelineEditedText(item.correctedTranscript || item.asrTranscript || "");
-    setPipelineMessage(null);
-  };
 
   const selectFeedbackItem = async (tr: RecentTranscription) => {
     setSelectedFeedback(tr);
@@ -433,46 +245,7 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
     }
   };
 
-  const goToPipelineReview = () => {
-    setPipelineExpanded(true);
-    setTimeout(() => {
-      document.getElementById("pipeline-review")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 50);
-  };
 
-  const submitPipelineCorrection = async () => {
-    if (!pipelineSelected || !pipelineEditedText.trim()) return;
-    setPipelineSubmitting(true);
-    setPipelineMessage(null);
-    const isSecondPass = pipelineSelected.correctedTranscript !== null && pipelineSelected.secondTranscript === null;
-    try {
-      const res = await fetch(`/api/v2/pipeline/review-queue/${pipelineSelected.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ correctedTranscript: pipelineEditedText.trim() }),
-      });
-      const data = await res.json();
-      if (data.error) { setPipelineMessage(`Error: ${data.error}`); return; }
-      const newList = pipelineItems.filter(i => i.id !== pipelineSelected.id);
-      const remaining = Math.max(0, pipelineTotal - 1);
-      setPipelineItems(newList);
-      setPipelineTotal(remaining);
-      setPipelineSelected(newList[0] || null);
-      setPipelineEditedText(newList[0]?.correctedTranscript || newList[0]?.asrTranscript || "");
-      setPipelineMessage(isSecondPass ? "Double verification submitted" : "Correction submitted");
-      setProgressSignal(n => n + 1);
-      // Clearing the last item on a page would otherwise show an empty queue while
-      // hundreds still wait. Pull the next page (or step back off a now-empty tail).
-      if (newList.length === 0 && remaining > 0) {
-        const lastPage = Math.max(1, Math.ceil(remaining / PIPELINE_LIMIT));
-        if (pipelinePage > lastPage) setPipelinePage(lastPage);
-        else loadPipelineData();
-      }
-      // Refresh stats + earnings so the cards reflect the credit for this pass.
-      loadData();
-    } catch { setPipelineMessage("Failed to submit"); }
-    finally { setPipelineSubmitting(false); }
-  };
 
   if (loading) {
     return (
@@ -537,7 +310,12 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
 
       <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         {/* Level, streak, daily goal and where you stand this week */}
-        <ProgressPanel token={token} locale={locale} refreshSignal={progressSignal} />
+        <ProgressPanel
+          token={token}
+          locale={locale}
+          refreshSignal={progressSignal}
+          onQueues={setQueueCounts}
+        />
 
         {/* Earnings Card */}
         <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl shadow-lg p-6 mb-8 text-white">
@@ -664,12 +442,12 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
                           {t('transcriber.fixAndResubmit')}
                         </Link>
                       ) : (
-                        <button
-                          onClick={goToPipelineReview}
+                        <Link
+                          href={`/${locale}/transcriber/pipeline`}
                           className="px-4 py-2 text-sm bg-orange-600 text-white rounded-lg hover:bg-orange-700 whitespace-nowrap"
                         >
                           {t('transcriber.fixAndResubmit')}
-                        </button>
+                        </Link>
                       )}
                     </div>
 
@@ -767,367 +545,56 @@ export default function TranscriberV2DashboardClient({ locale }: { locale: strin
           </div>
         )}
 
-        {/* Pipeline Review Section */}
-        {/* English translation queue */}
-        <div id="english-translation" className="bg-white rounded-lg shadow mb-8 scroll-mt-4">
-          <button
-            onClick={() => setEnglishExpanded(!englishExpanded)}
-            className="w-full px-6 py-4 border-b border-gray-200 flex items-center justify-between hover:bg-gray-50 transition-colors"
+        {/* Other work queues live on their own pages: loading them here made a
+            dashboard visit fetch them whether or not anyone used them. */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+          <Link
+            href={`/${locale}/transcriber/english`}
+            className="group bg-white rounded-lg shadow p-5 hover:shadow-md transition-shadow border-l-4 border-emerald-500"
           >
-            <div className="flex items-center gap-3">
-              <h2 className="text-lg font-semibold text-gray-900">English Translation</h2>
-              {!englishLoading && (
-                <span className={`px-2 py-0.5 text-xs rounded font-medium ${englishTotal > 0 ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-500"}`}>
-                  {englishTotal} waiting
-                </span>
-              )}
-              {englishMine > 0 && (
-                <span className="px-2 py-0.5 text-xs rounded font-medium bg-blue-100 text-blue-700">
-                  {englishMine} done by you
-                </span>
-              )}
-            </div>
-            <svg className={`w-5 h-5 text-gray-400 transition-transform ${englishExpanded ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-
-          {englishExpanded && (
-            <div className="p-6">
-              <p className="text-sm text-gray-500 mb-4">
-                These clips already have their Krio written down, but no English. Listen, read the
-                Krio, and write what it means in English.
-              </p>
-
-              {englishMessage && (
-                <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">{englishMessage}</div>
-              )}
-
-              {englishLoading ? (
-                <div className="flex items-center justify-center h-32">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
-                </div>
-              ) : englishItems.length === 0 ? (
-                <div className="bg-gray-50 rounded-lg p-12 text-center">
-                  <div className="text-4xl mb-3">✅</div>
-                  <h3 className="text-lg font-bold mb-1">All caught up</h3>
-                  <p className="text-sm text-gray-500">No clips are waiting for an English translation.</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  {/* Queue */}
-                  <div className="lg:col-span-1 bg-gray-50 rounded-lg border overflow-hidden">
-                    <div className="px-4 py-3 bg-gray-100 border-b flex items-center justify-between">
-                      <h3 className="font-semibold text-sm">Queue</h3>
-                      <span className="text-xs text-gray-500">
-                        {(englishPage - 1) * ENGLISH_LIMIT + 1}–
-                        {Math.min(englishPage * ENGLISH_LIMIT, englishTotal)} of {englishTotal}
-                      </span>
-                    </div>
-                    <div className="divide-y max-h-80 overflow-y-auto">
-                      {englishItems.map(item => (
-                        <button
-                          key={item.id}
-                          onClick={() => selectEnglishTask(item)}
-                          className={`w-full text-left p-3 hover:bg-gray-100 transition-colors ${englishSelected?.id === item.id ? "bg-emerald-50" : ""}`}
-                        >
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="px-1.5 py-0.5 text-xs rounded font-medium bg-emerald-100 text-emerald-700">
-                              {item.language?.code || "?"}
-                            </span>
-                            <span className="text-xs text-gray-400">{item.durationSec?.toFixed(1)}s</span>
-                          </div>
-                          <div className="text-sm text-gray-900 line-clamp-2">{item.krioText || "(no text)"}</div>
-                        </button>
-                      ))}
-                    </div>
-                    {englishTotal > ENGLISH_LIMIT && (
-                      <div className="px-3 py-2 bg-gray-100 border-t flex items-center justify-between">
-                        <button
-                          onClick={() => setEnglishPage(p => Math.max(1, p - 1))}
-                          disabled={englishPage <= 1}
-                          className="px-3 py-1 text-xs border rounded bg-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
-                        >
-                          Previous
-                        </button>
-                        <span className="text-xs text-gray-600">
-                          Page {englishPage} of {Math.ceil(englishTotal / ENGLISH_LIMIT)}
-                        </span>
-                        <button
-                          onClick={() => setEnglishPage(p => p + 1)}
-                          disabled={englishPage >= Math.ceil(englishTotal / ENGLISH_LIMIT)}
-                          className="px-3 py-1 text-xs border rounded bg-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
-                        >
-                          Next
-                        </button>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Editor */}
-                  <div className="lg:col-span-2">
-                    {!englishSelected ? (
-                      <div className="bg-gray-50 rounded-lg border p-12 text-center text-sm text-gray-500">
-                        Pick a clip from the queue to start.
-                      </div>
-                    ) : (
-                      <div className="bg-gray-50 rounded-lg border p-4 space-y-4">
-                        {englishAudioUrl ? (
-                          <audio controls src={englishAudioUrl} className="w-full" />
-                        ) : (
-                          <div className="h-12 flex items-center text-sm text-gray-400">Loading audio…</div>
-                        )}
-
-                        <div>
-                          <label className="block text-xs font-medium text-gray-500 uppercase mb-1">
-                            What was said (Krio)
-                          </label>
-                          <div className="p-3 bg-white border rounded text-sm text-gray-900">
-                            {englishSelected.krioText || "(no transcript)"}
-                          </div>
-                        </div>
-
-                        <div>
-                          <label className="block text-xs font-medium text-gray-500 uppercase mb-1">
-                            English translation
-                          </label>
-                          <textarea
-                            value={englishDraft}
-                            onChange={e => setEnglishDraft(e.target.value)}
-                            rows={4}
-                            placeholder="Write what the speaker said, in English…"
-                            className="w-full p-3 border rounded text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                          />
-                        </div>
-
-                        {englishSelected.promptInstruction && (
-                          <details className="text-xs text-gray-500">
-                            <summary className="cursor-pointer select-none">
-                              Topic they were asked to talk about (context only — do not copy)
-                            </summary>
-                            <p className="mt-2 p-2 bg-amber-50 border border-amber-200 rounded text-amber-800">
-                              {englishSelected.promptInstruction}
-                            </p>
-                          </details>
-                        )}
-
-                        <div className="flex items-center gap-3">
-                          <button
-                            onClick={submitEnglishTranslation}
-                            disabled={englishSubmitting || !englishDraft.trim()}
-                            className="px-5 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            {englishSubmitting ? "Saving…" : "Save translation"}
-                          </button>
-                          <button
-                            onClick={() => {
-                              const rest = englishItems.filter(i => i.id !== englishSelected.id);
-                              const next = rest[0] || null;
-                              setEnglishSelected(next);
-                              setEnglishDraft(next?.englishTranslation || "");
-                            }}
-                            className="px-4 py-2 border rounded-lg text-sm text-gray-600 hover:bg-gray-100"
-                          >
-                            Skip
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        <div id="pipeline-review" className="bg-white rounded-lg shadow mb-8 scroll-mt-4">
-          <button
-            onClick={() => setPipelineExpanded(!pipelineExpanded)}
-            className="w-full px-6 py-4 border-b border-gray-200 flex items-center justify-between hover:bg-gray-50 transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <h2 className="text-lg font-semibold text-gray-900">Pipeline Review</h2>
-              {!pipelineLoading && (
-                <span className={`px-2 py-0.5 text-xs rounded font-medium ${pipelineTotal > 0 ? "bg-purple-100 text-purple-700" : "bg-gray-100 text-gray-500"}`}>
-                  {pipelineTotal} pending
-                </span>
-              )}
-            </div>
-            <svg className={`w-5 h-5 text-gray-400 transition-transform ${pipelineExpanded ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-
-          {pipelineExpanded && (
-            <div className="p-6">
-              {/* Filter */}
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-sm text-gray-500">Correct ASR transcripts from voice interactions</p>
-                <select
-                  value={pipelineFilterSource}
-                  onChange={e => setPipelineFilterSource(e.target.value)}
-                  className="px-3 py-1.5 border rounded-md text-sm"
-                >
-                  <option value="">All Sources</option>
-                  <option value="pilot">Flot</option>
-                  <option value="kaccp_recording">KACCP</option>
-                </select>
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+                  🌉 English Translation
+                </h3>
+                <p className="text-sm text-gray-500 mt-1">
+                  Clips with Krio written down but no English yet.
+                </p>
               </div>
-
-              {pipelineMessage && (
-                <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">{pipelineMessage}</div>
-              )}
-
-              {pipelineLoading ? (
-                <div className="flex items-center justify-center h-32">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                </div>
-              ) : pipelineItems.length === 0 ? (
-                <div className="bg-gray-50 rounded-lg p-12 text-center">
-                  <div className="text-4xl mb-3">✅</div>
-                  <h3 className="text-lg font-bold mb-1">All caught up</h3>
-                  <p className="text-sm text-gray-500">No pending pipeline review items.</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  {/* Queue List */}
-                  <div className="lg:col-span-1 bg-gray-50 rounded-lg border overflow-hidden">
-                    <div className="px-4 py-3 bg-gray-100 border-b flex items-center justify-between">
-                      <h3 className="font-semibold text-sm">Review Queue</h3>
-                      <span className="text-xs text-gray-500">
-                        {(pipelinePage - 1) * PIPELINE_LIMIT + 1}–
-                        {Math.min(pipelinePage * PIPELINE_LIMIT, pipelineTotal)} of {pipelineTotal}
-                      </span>
-                    </div>
-                    <div className="divide-y max-h-80 overflow-y-auto">
-                      {pipelineItems.map(item => (
-                        <button
-                          key={item.id}
-                          onClick={() => selectPipelineItem(item)}
-                          className={`w-full text-left p-3 hover:bg-gray-100 transition-colors ${pipelineSelected?.id === item.id ? "bg-blue-50" : ""}`}
-                        >
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className={`px-1.5 py-0.5 text-xs rounded font-medium ${TIER_COLORS[item.priorityTier]}`}>T{item.priorityTier}</span>
-                            <span className={`px-1.5 py-0.5 text-xs rounded font-medium ${SOURCE_COLORS[item.source] || "bg-gray-100 text-gray-600"}`}>
-                              {SOURCE_LABELS[item.source] || item.source}
-                            </span>
-                            {item.audioSession?.detectedIntent && (
-                              <span className="text-xs text-gray-500 truncate">{item.audioSession.detectedIntent}</span>
-                            )}
-                          </div>
-                          <div className="text-sm text-gray-900 truncate">{item.asrTranscript || "(no transcript)"}</div>
-                          <div className="text-xs text-gray-400 mt-1">
-                            {item.audioSession?.audioDurationS.toFixed(1)}s
-                            {item.audioSession?.outcome && ` • ${item.audioSession.outcome}`}
-                            {item.disagreementFlag && " • ⚠️ Disagreement"}
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                    {pipelineTotal > PIPELINE_LIMIT && (
-                      <div className="px-3 py-2 bg-gray-100 border-t flex items-center justify-between">
-                        <button
-                          onClick={() => setPipelinePage(p => Math.max(1, p - 1))}
-                          disabled={pipelinePage <= 1}
-                          className="px-3 py-1 text-xs border rounded bg-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
-                        >
-                          Previous
-                        </button>
-                        <span className="text-xs text-gray-600">
-                          Page {pipelinePage} of {Math.ceil(pipelineTotal / PIPELINE_LIMIT)}
-                        </span>
-                        <button
-                          onClick={() => setPipelinePage(p => p + 1)}
-                          disabled={pipelinePage >= Math.ceil(pipelineTotal / PIPELINE_LIMIT)}
-                          className="px-3 py-1 text-xs border rounded bg-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
-                        >
-                          Next
-                        </button>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Review Panel */}
-                  <div className="lg:col-span-2">
-                    {pipelineSelected ? (
-                      <div className="bg-white rounded-lg border">
-                        <div className="p-4 border-b">
-                          <div className="flex items-center gap-2 mb-2 flex-wrap">
-                            <span className={`px-2 py-0.5 text-xs rounded font-medium ${TIER_COLORS[pipelineSelected.priorityTier]}`}>
-                              Tier {pipelineSelected.priorityTier} — {TIER_LABELS[pipelineSelected.priorityTier]}
-                            </span>
-                            <span className={`px-2 py-0.5 text-xs rounded font-medium ${SOURCE_COLORS[pipelineSelected.source] || "bg-gray-100"}`}>
-                              Source: {SOURCE_LABELS[pipelineSelected.source] || pipelineSelected.source}
-                            </span>
-                            {pipelineSelected.audioSession?.detectedIntent && (
-                              <span className="px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded">{pipelineSelected.audioSession.detectedIntent}</span>
-                            )}
-                          </div>
-                          {pipelineSelected.extractedFields && (
-                            <div className="text-xs text-gray-500">
-                              {Object.entries(pipelineSelected.extractedFields).map(([k, v]) => (
-                                <span key={k} className="mr-3">{k}: {String(v)}</span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="p-4 border-b bg-gray-50">
-                          <label className="block text-sm font-medium mb-2">Audio ({pipelineSelected.audioSession?.audioDurationS.toFixed(1)}s)</label>
-                          {pipelineSignedAudioUrl ? (
-                            <audio ref={audioRef} controls className="w-full" src={pipelineSignedAudioUrl} key={pipelineSignedAudioUrl} />
-                          ) : (
-                            <div className="flex items-center justify-center h-12 bg-gray-200 rounded-lg">
-                              <span className="text-sm text-gray-500">Loading audio...</span>
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="p-4 border-b">
-                          {pipelineSelected.asrTranscript && (
-                            <div className="mb-4 p-3 bg-gray-50 rounded-lg border">
-                              <div className="text-xs font-medium text-gray-500 mb-1">ASR Transcript (auto-generated)</div>
-                              <div className="text-sm text-gray-900">{pipelineSelected.asrTranscript}</div>
-                            </div>
-                          )}
-
-                          <label className="block text-sm font-medium mb-2">
-                            {!pipelineSelected.correctedTranscript ? "Correction (first pass)" : "Verification (second pass)"}
-                          </label>
-                          <textarea
-                            value={pipelineEditedText}
-                            onChange={e => setPipelineEditedText(e.target.value)}
-                            rows={3}
-                            className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
-                            placeholder="Type corrected transcript..."
-                          />
-                          {pipelineSelected.correctedTranscript && !pipelineSelected.secondTranscript && (
-                            <p className="text-xs text-orange-600 mt-1">
-                              First correction exists. Your submission will be the second pass (double verification).
-                            </p>
-                          )}
-                        </div>
-
-                        <div className="p-4 flex justify-end gap-3">
-                          <button
-                            onClick={submitPipelineCorrection}
-                            disabled={pipelineSubmitting || !pipelineEditedText.trim()}
-                            className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 text-sm font-medium"
-                          >
-                            {pipelineSubmitting ? "Submitting..." : !pipelineSelected.correctedTranscript ? "Submit Correction" : "Submit Verification"}
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="bg-gray-50 rounded-lg border p-12 text-center">
-                        <p className="text-gray-500">Select an item from the queue to review</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
+              {queueCounts && (
+                <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-sm font-semibold shrink-0">
+                  {queueCounts.english}
+                </span>
               )}
             </div>
-          )}
+            <span className="inline-block mt-3 text-sm text-emerald-700 font-medium group-hover:underline">
+              Open →
+            </span>
+          </Link>
+
+          <Link
+            href={`/${locale}/transcriber/pipeline`}
+            className="group bg-white rounded-lg shadow p-5 hover:shadow-md transition-shadow border-l-4 border-purple-500"
+          >
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+                  🎧 Pipeline Review
+                </h3>
+                <p className="text-sm text-gray-500 mt-1">
+                  Correct machine transcripts from real calls.
+                </p>
+              </div>
+              {queueCounts && (
+                <span className="px-2 py-0.5 bg-purple-100 text-purple-700 rounded text-sm font-semibold shrink-0">
+                  {queueCounts.pipeline}
+                </span>
+              )}
+            </div>
+            <span className="inline-block mt-3 text-sm text-purple-700 font-medium group-hover:underline">
+              Open →
+            </span>
+          </Link>
         </div>
 
         {/* Available Recordings */}

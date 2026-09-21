@@ -14,6 +14,8 @@ import {
   projectedDailyTotal,
   AVATAR_CATALOG,
 } from "@/lib/domain/gamification";
+import { buildLeaderboard, standingFor } from "@/lib/domain/leaderboard";
+import { cached } from "@/lib/infra/cache";
 
 export const dynamic = "force-dynamic";
 
@@ -125,6 +127,28 @@ export async function GET(req: NextRequest) {
       englishTotal: englishCount,
     });
 
+    // Folded in rather than served from /api/v2/leaderboard: the dashboard already
+    // fans out to several routes, and each is a serverless process with a pool of
+    // one, so every request saved is a connection saved.
+    const board = await buildLeaderboard("week");
+    const me = standingFor(board, user.id);
+
+    // Queue depths for the dashboard cards. Cached and shared across users: the
+    // backlog is the same for everyone and a minute stale is harmless, so this
+    // costs one query a minute rather than two per page load.
+    const queues = await cached("queue-depths", 60_000, async () => {
+      const english = await prisma.recording.count({
+        where: {
+          prompt: { isFreeForm: true },
+          status: { notIn: ["REJECTED", "FLAGGED"] },
+          englishTranslation: null,
+          OR: [{ transcription: { status: "APPROVED" } }, { transcript: { not: null } }],
+        },
+      });
+      const pipeline = await prisma.reviewQueue.count({ where: { status: "pending" } });
+      return { english, pipeline };
+    });
+
     return NextResponse.json({
       user: {
         id: user.id,
@@ -159,6 +183,11 @@ export async function GET(req: NextRequest) {
         projected: projectedDailyTotal(doneToday),
         onTrack: projectedDailyTotal(doneToday) >= DEFAULT_DAILY_GOAL,
       },
+      leaderboard: {
+        me,
+        top: board.slice(0, 3),
+      },
+      queues,
     });
   } catch (error) {
     console.error("Error building transcriber profile:", error);

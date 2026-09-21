@@ -37,6 +37,7 @@ interface Profile {
   badges: Badge[];
   milestone: { reached: Milestone | null; next: Milestone | null; toNext: number | null };
   pace: { projected: number; onTrack: boolean };
+  leaderboard: { me: Me | null; top: LeaderEntry[] };
 }
 
 interface LeaderEntry {
@@ -140,11 +141,14 @@ export function ProgressPanel({
   token,
   locale,
   refreshSignal = 0,
+  onQueues,
 }: {
   token: string | null;
   locale: string;
   /** Bump to refetch after a submission, so celebrations fire promptly. */
   refreshSignal?: number;
+  /** Queue depths ride along on the profile payload, saving the parent a request. */
+  onQueues?: (q: { english: number; pipeline: number }) => void;
 }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [me, setMe] = useState<Me | null>(null);
@@ -163,11 +167,10 @@ export function ProgressPanel({
   const load = useCallback(() => {
     if (!token) return;
     const headers = { Authorization: `Bearer ${token}` };
-    Promise.all([
-      fetch("/api/v2/transcriber/profile", { headers }).then((r) => r.json()),
-      fetch("/api/v2/leaderboard?period=week&limit=3", { headers }).then((r) => r.json()),
-    ])
-      .then(([p, lb]) => {
+    // One request, not two: the profile endpoint carries the leaderboard summary.
+    fetch("/api/v2/transcriber/profile", { headers })
+      .then((r) => r.json())
+      .then((p) => {
         if (!p.error) {
           const earned = new Set<string>(
             (p.badges as Badge[]).filter((b) => b.earned).map((b) => b.id)
@@ -234,14 +237,14 @@ export function ProgressPanel({
           }
           prev.current = { done: p.doneToday, level: p.level.level, badges: earned };
           setProfile(p);
-        }
-        if (!lb.error) {
-          setMe(lb.me || null);
-          setTop(lb.entries || []);
+          setMe(p.leaderboard?.me || null);
+          setTop(p.leaderboard?.top || []);
+          if (p.queues) onQueues?.(p.queues);
         }
       })
       .catch(() => {})
       .finally(() => setLoading(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   useEffect(() => {
