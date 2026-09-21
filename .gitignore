@@ -49,3 +49,4 @@ krio_tts_dataset*.csv
 richard_new_wavs/
 jojo_new_wavs/
 *.skipped.tsv
+scripts/_*.ts
