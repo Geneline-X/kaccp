@@ -32,7 +32,6 @@ export default function TranscriptionTaskPage() {
   const t = useTranslations();
   const params = useParams();
   const recordingId = params.recordingId as string;
-  const locale = (params?.locale as string) || "en";
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const [recording, setRecording] = useState<Recording | null>(null);
@@ -44,13 +43,6 @@ export default function TranscriptionTaskPage() {
   const [error, setError] = useState("");
   const [playCount, setPlayCount] = useState(0);
   const [audioPlayUrl, setAudioPlayUrl] = useState<string | null>(null);
-  // Keeping the transcriber in the editor is the single biggest throughput win:
-  // the old loop was submit -> dashboard -> find a row -> claim -> open, four
-  // interactions between one clip and the next.
-  const [autoNext, setAutoNext] = useState(true);
-  const [advancing, setAdvancing] = useState(false);
-  const [doneCount, setDoneCount] = useState(0);
-  const [noMore, setNoMore] = useState(false);
   const [previousRejection, setPreviousRejection] = useState<{
     text: string;
     reviewNotes: string | null;
@@ -71,78 +63,6 @@ export default function TranscriptionTaskPage() {
   ];
 
   const token = typeof window !== "undefined" ? getToken() : null;
-
-  // Remember the choice across clips and sessions.
-  useEffect(() => {
-    const saved = localStorage.getItem("transcriber_auto_next");
-    if (saved !== null) setAutoNext(saved === "true");
-    const session = sessionStorage.getItem("transcriber_session_done");
-    if (session) setDoneCount(parseInt(session) || 0);
-  }, []);
-
-  const toggleAutoNext = (value: boolean) => {
-    setAutoNext(value);
-    localStorage.setItem("transcriber_auto_next", String(value));
-  };
-
-  // Keyboard submit: at 500 items a day, reaching for the mouse between every
-  // clip is a meaningful share of the work.
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
-        e.preventDefault();
-        if (!submitting && !advancing && transcription.trim()) handleSubmit();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transcription, submitting, advancing, autoNext, doneCount]);
-
-  // Claim the next clip and swap it in without a full page load, so the audio
-  // element and text box are ready immediately.
-  const goToNext = async () => {
-    setAdvancing(true);
-    setError("");
-    try {
-      const res = await fetch("/api/v2/transcriber/claim-next", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({}),
-      });
-      const data = await res.json();
-
-      if (data.done) {
-        setNoMore(true);
-        return;
-      }
-      if (data.error || !data.recording) {
-        setError(data.error || "Could not load the next recording");
-        return;
-      }
-      router.replace(`/${locale}/transcriber/v2/task/${data.recording.id}`);
-    } catch {
-      setError("Could not load the next recording");
-    } finally {
-      setAdvancing(false);
-    }
-  };
-
-  // Advancing to the next clip changes the route param without unmounting this
-  // component, so every field has to be cleared explicitly. Without this the
-  // previous clip's text stays in the box and can be submitted against the wrong
-  // audio. Declared before the fetch effect so it runs first.
-  useEffect(() => {
-    setTranscription("");
-    setRecording(null);
-    setPreviousRejection(null);
-    setAudioPlayUrl(null);
-    setPlayCount(0);
-    setError("");
-    setShowFlagModal(false);
-    setFlagReason("");
-    setLoading(true);
-  }, [recordingId]);
 
   // Fetch recording details
   useEffect(() => {
@@ -254,17 +174,9 @@ export default function TranscriptionTaskPage() {
         return;
       }
 
-      // Success — clear the draft and keep the transcriber in the editor.
+      // Success - clear cached draft and go back to dashboard
       localStorage.removeItem(draftKey);
-      const done = doneCount + 1;
-      setDoneCount(done);
-      sessionStorage.setItem("transcriber_session_done", String(done));
-
-      if (autoNext) {
-        await goToNext();
-      } else {
-        router.push(`/${locale}/transcriber/v2`);
-      }
+      router.push("/transcriber/v2");
     } catch {
       setError(t('transcriber.failedToSubmitTranscription'));
     } finally {
@@ -302,17 +214,9 @@ export default function TranscriptionTaskPage() {
         return;
       }
 
-      // Success — clear the draft and keep the transcriber in the editor.
+      // Success - clear cached draft and go back to dashboard
       localStorage.removeItem(draftKey);
-      const done = doneCount + 1;
-      setDoneCount(done);
-      sessionStorage.setItem("transcriber_session_done", String(done));
-
-      if (autoNext) {
-        await goToNext();
-      } else {
-        router.push(`/${locale}/transcriber/v2`);
-      }
+      router.push("/transcriber/v2");
     } catch {
       setError(t('transcriber.failedToFlagRecording'));
     } finally {
@@ -473,82 +377,21 @@ export default function TranscriptionTaskPage() {
         </div>
 
         {/* Actions */}
-        <div className="flex flex-wrap justify-between items-center gap-3">
+        <div className="flex justify-between items-center">
           <button
             onClick={() => setShowFlagModal(true)}
-            disabled={submitting || advancing}
-            className="px-6 py-3 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 disabled:opacity-50"
+            className="px-6 py-3 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600"
           >
             🚩 {t('transcriber.flagIssue')}
           </button>
-
-          <div className="flex items-center gap-3 flex-wrap">
-            {doneCount > 0 && (
-              <span className="text-sm text-gray-400" title="Completed in this session">
-                ✅ <strong className="text-white">{doneCount}</strong> this session
-              </span>
-            )}
-
-            <label
-              className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer select-none"
-              title="Jump straight to the next clip after submitting"
-            >
-              <input
-                type="checkbox"
-                checked={autoNext}
-                onChange={(e) => toggleAutoNext(e.target.checked)}
-                className="h-4 w-4 rounded border-gray-500 bg-gray-700 text-green-500 focus:ring-green-500"
-              />
-              Auto-next
-            </label>
-
-            {/* Skip without submitting — a clip you can't do shouldn't cost a
-                trip back to the dashboard either. */}
-            <button
-              onClick={goToNext}
-              disabled={submitting || advancing}
-              className="px-4 py-3 bg-gray-700 text-gray-200 rounded-lg hover:bg-gray-600 disabled:opacity-50"
-              title="Leave this one and load the next"
-            >
-              {advancing ? "Loading…" : "Skip →"}
-            </button>
-
-            <button
-              onClick={handleSubmit}
-              disabled={submitting || advancing || !transcription.trim()}
-              className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 font-medium"
-            >
-              {submitting
-                ? t('transcriber.submitting')
-                : advancing
-                  ? "Loading next…"
-                  : autoNext
-                    ? `${t('transcriber.submitTranscription')} → Next`
-                    : t('transcriber.submitTranscription')}
-            </button>
-          </div>
+          <button
+            onClick={handleSubmit}
+            disabled={submitting || !transcription.trim()}
+            className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+          >
+            {submitting ? t('transcriber.submitting') : t('transcriber.submitTranscription')}
+          </button>
         </div>
-
-        <p className="mt-2 text-right text-xs text-gray-500">
-          Tip: press <kbd className="px-1 py-0.5 bg-gray-700 rounded">Ctrl</kbd>+
-          <kbd className="px-1 py-0.5 bg-gray-700 rounded">Enter</kbd> to submit
-        </p>
-
-        {noMore && (
-          <div className="mt-4 p-4 bg-gray-800 border border-gray-700 rounded-lg text-center">
-            <p className="text-lg font-semibold">🎉 Queue cleared</p>
-            <p className="text-sm text-gray-400 mt-1">
-              No more recordings waiting in your languages.
-              {doneCount > 0 && ` You did ${doneCount} this session.`}
-            </p>
-            <button
-              onClick={() => router.push(`/${locale}/transcriber/v2`)}
-              className="mt-3 px-5 py-2 bg-green-600 rounded-lg hover:bg-green-700"
-            >
-              Back to dashboard
-            </button>
-          </div>
-        )}
 
         {/* Tips */}
         <div className="mt-8 p-4 bg-gray-800/50 rounded-lg">
