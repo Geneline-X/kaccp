@@ -30,6 +30,9 @@ export default function TranscriberRegisterClient({ locale }: { locale: string }
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  // Contributing means being paid and granting rights over a recording of your own
+  // voice. Both require legal capacity, so 18+ is confirmed explicitly.
+  const [confirmedAge, setConfirmedAge] = useState(false);
 
   // Fetch available languages
   useEffect(() => {
@@ -67,6 +70,11 @@ export default function TranscriberRegisterClient({ locale }: { locale: string }
       return;
     }
 
+    if (!confirmedAge) {
+      setError("You must be 18 or older to create an account.");
+      return;
+    }
+
     if (!agreedToTerms) {
       setError(t('auth.agreeToTerms'));
       return;
@@ -84,6 +92,8 @@ export default function TranscriberRegisterClient({ locale }: { locale: string }
           phone: formData.phone,
           password: formData.password,
           role: "TRANSCRIBER",
+          ageConfirmed: confirmedAge,
+          termsAccepted: agreedToTerms,
           writesLanguages: selectedLanguages,
         }),
       });
@@ -233,6 +243,21 @@ export default function TranscriberRegisterClient({ locale }: { locale: string }
               {languages.length === 0 && (
                 <p className="text-gray-500 text-sm">{t('auth.loadingLanguages')}</p>
               )}
+            </div>
+
+            {/* Age eligibility */}
+            <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg">
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={confirmedAge}
+                  onChange={(e) => setConfirmedAge(e.target.checked)}
+                  className="mt-1"
+                />
+                <span className="text-sm text-gray-800">
+                  I confirm that I am <strong>18 years of age or older</strong>.
+                </span>
+              </label>
             </div>
 
             {/* Terms */}

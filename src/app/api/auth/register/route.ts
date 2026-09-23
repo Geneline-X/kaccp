@@ -16,10 +16,35 @@ export async function POST(req: NextRequest) {
       role = 'SPEAKER',  // Default to SPEAKER for V2
       speaksLanguages = [],  // Language codes user can speak
       writesLanguages = [],  // Language codes user can write/transcribe
+      ageConfirmed,      // Attests to being 18 or older
+      termsAccepted,     // Accepts TERMS.md and PRIVACY.md
     } = await req.json()
     
     if (!email || !phone || !password) {
       return NextResponse.json({ error: 'Email, phone and password are required' }, { status: 400 })
+    }
+
+    // Contributing means being paid and granting rights over a recording of your own
+    // voice — biometric data. Neither is a decision a minor can validly make, so the
+    // registration form requires an explicit 18+ confirmation before it will submit.
+    //
+    // Rejected only when the client explicitly reports "no". A missing field is
+    // treated as a client that predates this check — an already-open signup page
+    // running a cached bundle — and is allowed through, so deploying this cannot
+    // break a registration that is already in progress. The UI is the gate; this is
+    // the backstop that refuses a negative answer.
+    if (ageConfirmed === false) {
+      return NextResponse.json(
+        { error: 'You must be 18 or older to create an account' },
+        { status: 400 }
+      )
+    }
+
+    if (termsAccepted === false) {
+      return NextResponse.json(
+        { error: 'You must accept the Terms of Service and Privacy Policy' },
+        { status: 400 }
+      )
     }
 
     // Validate role

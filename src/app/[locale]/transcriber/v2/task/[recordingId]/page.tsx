@@ -67,6 +67,10 @@ export default function TranscriptionTaskPage() {
     { value: "TOO_QUIET", label: t('transcriber.flagTooQuiet') },
     { value: "WRONG_LANGUAGE", label: t('transcriber.flagWrongLanguage') },
     { value: "INCOMPLETE", label: t('transcriber.flagIncomplete') },
+    // Content breach rather than a quality problem: harmful or illegal speech, or a
+    // third party's personal details. Routed to an administrator like any other flag,
+    // but handled under docs/content-moderation.md rather than re-queued.
+    { value: "INAPPROPRIATE", label: "Inappropriate or harmful content" },
     { value: "OTHER", label: t('transcriber.flagOther') },
   ];
 

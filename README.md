@@ -13,14 +13,26 @@
 - [Usage](#usage)
 - [How It Works](#how-it-works)
 - [Contributing](#contributing)
-- [License](#license)
+- [Scope and licensing](#scope-and-licensing)
 - [Acknowledgements](#acknowledgements)
 
 ---
 
 ## About
 
-**KACCP** (Krio Audio Corpus Curation Platform) is an open-source web platform for transcribing Krio audio clips into English, helping to build a high-quality, low-resource language dataset. Developed by [Geneline-X](https://geneline-x.net), KACCP enables collaborative transcription, review, and dataset export for research and language technology. The platform is designed for scalability and future support for additional languages.
+**KACCP** (Krio Audio Corpus Curation Platform) is an open-source web platform for building
+speech datasets in languages that have none.
+
+Roughly 88% of the world's languages are unsupported by language technology. The barrier is
+rarely that nobody cares — it is that caring is not enough when you must first build a data
+collection platform. KACCP is that platform, already built: prompt-driven recording,
+multi-stage human review, contributor payment and export in standard training formats.
+
+A university department, a community organisation, a ministry, or a group of speakers
+determined to see their language online can deploy it and begin collecting on day one,
+without writing software. Language, country, prompt bank and payment rates are configuration,
+not code. Developed by [Geneline-X](https://geneline-x.net) and proven on Krio; currently
+configured for Krio, Mende, Temne, Susu and Mandinka.
 
 **Audience:**  
 - Language researchers  
@@ -168,9 +180,24 @@ We welcome contributions to KACCP! See [CONTRIBUTING.md](CONTRIBUTING.md) for se
 
 ---
 
-## License
+## Scope and licensing
 
-KACCP is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
+**The KACCP platform is open source under the MIT License.** Anyone may deploy, modify
+and operate it — including commercially — for any language. See [LICENSE.md](LICENSE.md).
+
+**Speech corpora are not part of this release.** Audio recordings and transcriptions
+collected through a KACCP deployment belong to whoever operates that deployment, and are
+licensed by them. The Krio corpus collected by Geneline-X is proprietary: contributors
+were compensated for their work under agreements specific to that programme.
+
+We open-source the means of collection, not our dataset — so that anyone can build a
+corpus for a language that has none, on the same terms we built ours.
+
+### Ownership
+
+KACCP is built and maintained by [Geneline-X](https://geneline-x.net), Freetown, Sierra
+Leone. Copyright in this software is held by Geneline-X. The canonical repository is
+[github.com/Geneline-X/kaccp](https://github.com/Geneline-X/kaccp).
 
 ---
 

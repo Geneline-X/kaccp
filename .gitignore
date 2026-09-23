@@ -50,3 +50,7 @@ richard_new_wavs/
 jojo_new_wavs/
 *.skipped.tsv
 scripts/_*.ts
+
+# stray export artifacts — never commit contributor data
+metadata.csv
+*_metadata.csv

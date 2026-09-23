@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KACCP — Digital Public Goods Alliance Application Pack</title>
+<style>
+  :root{
+    --ink:#14171f; --muted:#5b6472; --line:#e3e7ee; --bg:#ffffff;
+    --accent:#1f6feb; --ok:#0f7b4f; --okbg:#e8f6ef;
+    --warn:#8a5a00; --warnbg:#fff4e0; --bad:#a3252b; --badbg:#fdeced;
+    --code:#f5f7fa;
+  }
+  *{box-sizing:border-box}
+  body{
+    font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink); background:var(--bg); margin:0; padding:0;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:48px 32px 96px}
+  header.cover{border-bottom:3px solid var(--ink);padding-bottom:28px;margin-bottom:40px}
+  h1{font-size:34px;line-height:1.2;margin:0 0 8px;letter-spacing:-.02em}
+  .sub{color:var(--muted);font-size:17px;margin:0}
+  .meta{margin-top:18px;font-size:14px;color:var(--muted)}
+  .meta b{color:var(--ink)}
+  h2{font-size:23px;margin:44px 0 6px;padding-top:22px;border-top:1px solid var(--line);letter-spacing:-.01em}
+  h2:first-of-type{border-top:none}
+  h3{font-size:17px;margin:26px 0 8px}
+  h4{font-size:14px;margin:18px 0 6px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  p{margin:10px 0}
+  ul,ol{margin:10px 0;padding-left:22px}
+  li{margin:5px 0}
+  code{background:var(--code);padding:2px 6px;border-radius:4px;font-size:13.5px;
+       font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  pre{background:var(--code);padding:14px 16px;border-radius:8px;overflow-x:auto;font-size:13px;
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;line-height:1.5}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14.5px}
+  th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+  th{background:#f7f9fc;font-weight:600}
+  .q{background:#f7f9fc;border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0 12px;
+     border-radius:0 6px 6px 0}
+  .q .qid{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.06em}
+  .q p{margin:4px 0 0;font-weight:600}
+  .q .hint{font-weight:400;color:var(--muted);font-size:14px;margin-top:4px}
+  .ans{border-left:4px solid var(--ok);padding:12px 16px;margin:0 0 20px;background:#fbfefc;
+       border-radius:0 6px 6px 0}
+  .ans h4{margin-top:0;color:var(--ok)}
+  .badge{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:99px;
+         letter-spacing:.04em;text-transform:uppercase}
+  .b-ok{background:var(--okbg);color:var(--ok)}
+  .b-warn{background:var(--warnbg);color:var(--warn)}
+  .b-bad{background:var(--badbg);color:var(--bad)}
+  .callout{padding:14px 18px;border-radius:8px;margin:18px 0;font-size:15px}
+  .c-bad{background:var(--badbg);border:1px solid #f3c2c5}
+  .c-warn{background:var(--warnbg);border:1px solid #f0dcb4}
+  .c-ok{background:var(--okbg);border:1px solid #bfe5d4}
+  .callout b{display:block;margin-bottom:4px}
+  .fill{background:#fffbe6;border-bottom:1px dashed #c9a227;padding:0 3px}
+  .toc{background:#f7f9fc;border:1px solid var(--line);border-radius:8px;padding:18px 24px;margin:28px 0}
+  .toc ol{columns:2;column-gap:36px;margin:6px 0 0}
+  .toc a{color:var(--ink);text-decoration:none}
+  .toc a:hover{text-decoration:underline}
+  footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);
+         color:var(--muted);font-size:13px}
+  figure{margin:18px 0;padding:0}
+  figure img{width:100%;height:auto;border:1px solid var(--line);border-radius:8px;display:block}
+  figcaption{font-size:13px;color:var(--muted);margin-top:8px;text-align:center}
+  @media print{
+    .wrap{max-width:none;padding:0 12mm}
+    h2{page-break-after:avoid;break-after:avoid}
+    .q,.ans,table,pre,.callout,figure{page-break-inside:avoid;break-inside:avoid}
+    a{color:var(--ink);text-decoration:none}
+    body{font-size:11.5pt}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <h1>KACCP — Digital Public Goods Alliance Application Pack</h1>
+  <p class="sub">Krio Audio Corpus Crowdsourcing Platform · Application ID 14890</p>
+  <div class="meta">
+    <b>Applicant:</b> Geneline-X · Freetown, Sierra Leone · info@geneline-x.net<br>
+    <b>Prepared:</b> 22 September 2026 &nbsp;·&nbsp;
+    <b>Assessed against:</b> DPG Standard v2 (9 indicators, incl. 2025 privacy revisions to 7 &amp; 9A)
+  </div>
+</header>
+
+<div class="callout c-ok">
+  <b>Status: 16 of 17 checklist items complete.</b>
+  Repository transferred to the Geneline-X organisation; README scope section added;
+  <code>.env.example</code>, Terms of Service with an enforced 18+ requirement, content
+  moderation policy, architecture, data dictionary, API reference, deployment guide,
+  replication walkthrough, DPIA and a sample export are all in the repository. Sierra Leone's
+  legal status is verified and the 7a wording is settled.
+  <br><br>
+  <b>One item outstanding, and only you can supply it:</b> your contributor and throughput
+  figures for Scale of Solution (item 17). Everything else is done. See the
+  <a href="#checklist">checklist</a>.
+</div>
+
+<div class="callout c-warn">
+  <b>Scope — the one thing to keep straight.</b>
+  <b>What is being submitted is the platform (software), not the speech corpus.</b> The corpus is
+  proprietary: contributors were paid for it and it remains Geneline-X's commercial asset. That is
+  a perfectly normal DPG submission — many DPGs are tools — and MIT alone is sufficient. But it
+  makes one thing critical: the repository and the public narrative must state the boundary
+  unmistakably, or an assessor reading "open-sourcing KACCP so anyone can collect speech data" will
+  assume the data is open too and assess you against a claim you never made.
+  See <a href="#gaps">Resolved gaps</a>.
+</div>
+
+<div class="toc">
+  <b>Contents</b>
+  <ol>
+    <li><a href="#positioning">Positioning</a></li>
+    <li><a href="#gaps">Gaps — status</a></li>
+    <li><a href="#i1">1. SDG Relevance</a></li>
+    <li><a href="#i2">2. Open Licensing</a></li>
+    <li><a href="#i3">3. Clear Ownership</a></li>
+    <li><a href="#i4">4. Platform Independence</a></li>
+    <li><a href="#i5">5. Documentation</a></li>
+    <li><a href="#i6">6. Extracting Data</a></li>
+    <li><a href="#i7">7. Privacy &amp; Laws</a></li>
+    <li><a href="#i8">8. Standards</a></li>
+    <li><a href="#i9a">9A. Privacy &amp; Security</a></li>
+    <li><a href="#i9b">9B. Illegal Content</a></li>
+    <li><a href="#i9c">9C. Harassment</a></li>
+    <li><a href="#scale">Scale of Solution</a></li>
+    <li><a href="#checklist">Pre-submission checklist</a></li>
+  </ol>
+</div>
+
+<h2 id="positioning">Positioning — the sentence the assessor should remember</h2>
+
+<p>Most applications describe a product. The strongest framing for KACCP describes
+<em>infrastructure that removes a barrier for everyone else</em>:</p>
+
+<div class="callout c-ok">
+  <b>A linguist in Conakry, a university department in Bamako, or a handful of determined speakers
+  anywhere, can run what we run — for their own language, without writing software.</b>
+  KACCP is a working, in-production platform for building speech corpora in languages that have
+  none: recording against a curated prompt bank, multi-stage human review, contributor payment,
+  and export in standard training formats. It is MIT-licensed and free to deploy. Krio is our
+  proof; the platform is language-agnostic and already configured for five.
+</div>
+
+<p><b>Frame the beneficiary as people, not businesses.</b> The DPG Standard is about public
+benefit. "Any business can collect speech data" is a commercial pitch and reads weaker here. The
+accurate and stronger claim is that KACCP removes the engineering barrier entirely: the reason
+Pular, Susu or Mandinka have no voice technology is not that nobody cares — it is that caring is
+not enough when you must first build a data platform. We have built it. Someone in Guinea can now
+start collecting on day one.</p>
+
+<p><b>Why the software-only scope is a feature, not a hedge.</b> A single open corpus helps the
+languages it covers. An open collection platform helps every language that has none — including
+languages we will never work in ourselves. That is a broader public good than releasing one
+dataset, and it is honest about how the work is funded.</p>
+
+<figure>
+  <img src="images/architecture.svg"
+       alt="KACCP architecture: a speaker records against a prompt; a reviewer checks the audio; a transcriber writes what was said; a reviewer approves the text; a language lead verifies; the result becomes an exportable dataset. Beneath sit role-scoped API routes, domain and infrastructure libraries, PostgreSQL, and pluggable local or cloud storage.">
+  <figcaption>The quality guarantee is structural: every recording is heard by at least two
+  people before it can be exported. This diagram doubles as evidence for Indicators 5 and 4.</figcaption>
+</figure>
+
+<p>Three supporting points to reuse throughout the form:</p>
+<ul>
+  <li><b>It is running right now, not proposed.</b> In daily production use with real contributors
+      in Sierra Leone. 48 hours of studio-quality Krio audio collected; a Krio ASR/TTS model trained
+      on it; deployed behind Flot Chat, which understands Krio voice notes over WhatsApp; 200
+      further hours in collection with the Masakhane Foundation for open release.</li>
+  <li><b>It is replicable by design.</b> Language, country, prompt bank and payment rates are
+      configuration, not code. Already runs Krio, Mende, Temne, Susu and Mandinka. Adding a sixth
+      language requires no development work.</li>
+  <li><b>It pays contributors, and keeps them.</b> Speakers and transcribers earn per accepted
+      contribution via Orange Money. It also ships a full contributor-retention layer — levels,
+      streaks, daily goals, badges, leaderboards, milestone celebrations — because the hardest part
+      of crowdsourced data collection is not starting, it is people staying past week two. Scoring
+      is tied to <em>approved</em> work, so the incentives push quality rather than volume. Most
+      data-collection tools have neither payment nor retention; this is a genuine differentiator.</li>
+</ul>
+
+<h3>Including OpenMOS</h3>
+<p>OpenMOS — your TTS Mean Opinion Score evaluator — strengthens the application, but
+<b>only if it is submitted correctly</b>. Two options:</p>
+<table>
+  <tr><th>Option</th><th>Effect</th><th>Recommendation</th></tr>
+  <tr>
+    <td><b>A.</b> One application, KACCP + OpenMOS described as a toolchain</td>
+    <td>Every indicator must hold for <em>both</em> codebases — licence, docs, privacy, ownership.
+        A weakness in OpenMOS becomes a weakness in KACCP.</td>
+    <td><b>Only if OpenMOS is already public, MIT-licensed and documented.</b></td>
+  </tr>
+  <tr>
+    <td><b>B.</b> Submit KACCP now; mention OpenMOS as a companion tool under Indicator 8</td>
+    <td>KACCP is assessed on its own merits. OpenMOS still demonstrates a quality-measurement
+        practice, which is a genuine Indicator 8 asset.</td>
+    <td><b>Recommended.</b> Submit OpenMOS separately once it meets the standard.</td>
+  </tr>
+</table>
+<div class="callout c-ok">
+  <b>Decision: Option B — and inspecting OpenMOS confirms it.</b> Submit KACCP now, cite OpenMOS
+  under Indicator 8 as evidence of a quality-measurement practice, and submit OpenMOS separately
+  once it meets the standard on its own terms. The argument: KACCP <em>collects</em> the data,
+  OpenMOS <em>measures whether models trained on it are any good</em> — a closed quality loop,
+  which is precisely the "best practices" evidence Indicator 8 asks for.
+</div>
+
+<h3>OpenMOS — what it needs before its own submission</h3>
+<p><code>github.com/Geneline-X/OpenMos</code> — public, MIT-licensed, Next.js/TypeScript/Drizzle,
+deployed at <code>open-mos.vercel.app</code>. Inspected 23 September 2026:</p>
+<table>
+  <tr><th>Indicator</th><th>Status</th><th>What is needed</th></tr>
+  <tr><td>2 — Licensing</td><td><span class="badge b-ok">pass</span></td>
+      <td>MIT, OSI-approved. Nothing to do.</td></tr>
+  <tr><td>3 — Ownership</td><td><span class="badge b-bad">fix</span></td>
+      <td><b>The LICENSE says “Copyright (c) 2026 Abdullah Mustapha”, not Geneline-X.</b> KACCP
+          claims Geneline-X ownership; an assessor comparing the two will see an inconsistency.
+          Align the copyright holder, or state the assignment explicitly.</td></tr>
+  <tr><td>5 — Documentation</td><td><span class="badge b-bad">fix</span></td>
+      <td><b><code>README.md</code> is empty (0 bytes).</b> This alone fails Indicator 5. Needs at
+          minimum: what MOS is and why it matters, install and run instructions, how to submit a
+          model for evaluation, and how scores are computed.</td></tr>
+  <tr><td>7, 9A — Privacy</td><td><span class="badge b-warn">check</span></td>
+      <td>MOS evaluation means <b>human listeners rating audio</b>. If raters register, that is
+          PII and needs a privacy policy. If ratings are linked to individuals, say so.</td></tr>
+  <tr><td>9B, 9C</td><td><span class="badge b-warn">check</span></td>
+      <td>No <code>CODE_OF_CONDUCT.md</code> or <code>SECURITY.md</code>. KACCP’s versions can be
+          adapted directly.</td></tr>
+</table>
+<p class="hint">Submitting OpenMOS today would likely fail on the empty README alone. Citing it
+   under Indicator 8 costs nothing and still earns the quality-loop credit.</p>
+
+<h2 id="gaps">Gaps — status</h2>
+<p>All four items originally identified as blocking have been fixed. Recorded here with what changed, so the evidence is easy to cite on the form.</p>
+
+<table>
+  <tr><th>#</th><th>Gap</th><th>Indicator</th><th>Fix</th></tr>
+  <tr>
+    <td><span class="badge b-ok">1</span></td>
+    <td><b>Done — scope of the open release is now explicit.</b> Ambiguity about whether the
+        corpus was included could have failed Indicator 2 for a claim never made.</td>
+    <td>2</td>
+    <td><code>README.md</code> now carries a <b>Scope and licensing</b> section: the platform is
+        MIT; speech corpora belong to whoever operates the deployment; the Geneline-X Krio corpus
+        is proprietary. The About section was also rewritten around replication rather than
+        commercial use.</td>
+  </tr>
+  <tr>
+    <td><span class="badge b-ok">2</span></td>
+    <td><b>Done — repository transferred.</b> The canonical repository is now
+        <code>github.com/Geneline-X/kaccp</code>, owned by the organisation named in
+        <code>LICENSE.md</code>. Existing README badges and <code>CONTRIBUTING.md</code> links
+        became correct on transfer.</td>
+    <td>3</td>
+    <td>One step remains: <b>link back from geneline-x.net</b> to the repository, so ownership is
+        evidenced from both directions. See <a href="#i3">Indicator 3</a>.</td>
+  </tr>
+  <tr>
+    <td><span class="badge b-ok">3</span></td>
+    <td><b>Done — documented setup now works.</b> <code>CONTRIBUTING.md</code> instructed
+        <code>cp .env.example .env</code> against a file that did not exist, so a reviewer
+        following the instructions failed at step one.</td>
+    <td>5</td>
+    <td><code>.env.example</code> created, covering all 33 variables the code reads, grouped as
+        Required / Storage / Workflow / Optional, each commented. The required block is four
+        variables; everything else is optional, which also evidences the Indicator 4
+        independence claim.</td>
+  </tr>
+  <tr>
+    <td><span class="badge b-ok">4</span></td>
+    <td><b>Done — minimum age published and enforced.</b> 9C explicitly requires processes
+        addressing underage users; nothing in the repo previously mentioned age.</td>
+    <td>9C</td>
+    <td><code>TERMS.md</code> sets a firm <b>18+</b> requirement with the reasoning (contributors
+        are paid and grant rights over biometric data). Both registration forms require an
+        explicit confirmation checkbox, and the API refuses a negative answer.</td>
+  </tr>
+</table>
+
+<div class="callout c-warn">
+  <b>Strongly recommended, not strictly blocking</b>
+  <ul style="margin-bottom:0">
+    <li><b>Terms of Service</b> — you have <code>PRIVACY.md</code> but no ToS. 9C asks for policies;
+        7b asks for "privacy policy, terms of service or other relevant legal documentation".</li>
+    <li><b>Content moderation policy</b> — the flagging and review workflow exists in code
+        (NOISE / UNCLEAR / WRONG_LANGUAGE / INCOMPLETE, plus two-stage review) but is undocumented.
+        9B wants a written policy, not just an implementation.</li>
+    <li><b>Architecture &amp; data dictionary docs</b> — Indicator 5 asks for technical architecture
+        and data dictionaries. You have a strong dataset doc already
+        (<code>docs/krio-tts-dataset.md</code>); extend that pattern.</li>
+    <li><b>DPIA</b> — voice is biometric data. A short Data Protection Impact Assessment is named
+        in the DPGA's 2025 privacy annex as a compliance proof.</li>
+  </ul>
+</div>
+
+<!-- ================= INDICATOR 1 ================= -->
+<h2 id="i1">Indicator 1 — SDG Relevance <span class="badge b-ok">ready</span></h2>
+
+<div class="q">
+  <span class="qid">1a</span>
+  <p>Which SDGs is your solution relevant to?</p>
+  <p class="hint">Select the SDG/s that are MOST relevant to your solution.</p>
+</div>
+<div class="ans">
+  <h4>Select</h4>
+  <p><b>SDG 9</b> (Industry, Innovation and Infrastructure) · <b>SDG 10</b> (Reduced Inequalities)
+     · <b>SDG 8</b> (Decent Work and Economic Growth) · <b>SDG 4</b> (Quality Education)</p>
+  <p class="hint">Resist adding more. Four well-argued links score better than eight thin ones.</p>
+</div>
+
+<div class="q">
+  <span class="qid">1b</span>
+  <p>How is your solution relevant to each SDG you've selected above?</p>
+  <p class="hint">State in a couple of sentences the relationship to each SDG's targets.</p>
+</div>
+<div class="ans">
+  <h4>Draft answer</h4>
+  <p><b>SDG 9 (target 9.c — universal and affordable access to ICT).</b> Sierra Leone has
+  near-universal mobile coverage yet roughly 79% of the population is not online, and the Ministry
+  of Communication reports a 60% usage gap despite ~$400m of telecoms investment and a fibre
+  backbone reaching 14 of 16 districts. The barrier is no longer infrastructure but interface:
+  services exist only in English. KACCP is the infrastructure that lets a service be operated by voice in a language
+  people already speak, converting existing connectivity into usable access — and because it is
+  open source, the community that speaks a language can build that capability themselves rather
+  than waiting for a vendor to decide the market is large enough.</p>
+
+  <p><b>SDG 10 (target 10.2 — social, economic and political inclusion of all).</b> About 96% of
+  Sierra Leoneans speak Krio but only about half of adults can read and write a simple sentence, so
+  text-based, English-only digital services systematically exclude the majority. Globally, 88% of
+  languages are unsupported by language technology. KACCP is explicitly built for languages that
+  commercial providers will never serve, because the barrier it removes is engineering capacity,
+  not commercial interest. A university department, a community organisation or a group of speakers
+  in any country can deploy it and begin collecting for their own language on day one. It is
+  already configured for Krio, Mende, Temne, Susu and Mandinka.</p>
+
+  <p><b>SDG 8 (target 8.5 — full and productive employment and decent work).</b> Contributors are
+  not unpaid volunteers. Speakers and transcribers earn per minute of accepted audio and per
+  approved transcription, paid through Orange Money, with transparent per-language rates, a wallet
+  ledger and a documented review process determining what is accepted. This creates paid remote digital work whose
+  only qualification is fluency in one's own language — work that did not previously exist, in
+  places where formal employment is scarce. The platform also includes a contributor progression
+  and recognition system, because sustained participation, not initial sign-up, is what determines
+  whether a corpus ever reaches usable size.</p>
+
+  <p><b>SDG 4 (target 4.6 — youth and adult literacy and numeracy).</b> Where literacy is the
+  binding constraint, voice interfaces let people use services they currently cannot read. KACCP
+  supplies the corpus such interfaces require, so a health hotline, agricultural advisory or
+  government information line can be operated by speech rather than text.</p>
+</div>
+
+<!-- ================= INDICATOR 2 ================= -->
+<h2 id="i2">Indicator 2 — Open Licensing <span class="badge b-ok">MIT is sufficient</span></h2>
+
+<div class="callout c-ok">
+  <b>Your scope is software. MIT is OSI-approved and satisfies this indicator outright.</b>
+  No data or content licence is required, because the speech corpus is not part of the submission.
+  The DPG Standard asks for approved licences covering the assets the solution <em>is</em>, not
+  every asset the applicant happens to own.
+</div>
+
+<div class="q">
+  <span class="qid">2a</span>
+  <p>Which open license(s) is/are used by your solution?</p>
+  <p class="hint">If you do not currently use one of the approved licenses, your solution cannot be
+     approved as a DPG.</p>
+</div>
+<div class="ans">
+  <h4>Answer</h4>
+  <p><b>MIT</b> — OSI-approved, already in <code>LICENSE.md</code>, covering the entire KACCP
+  platform: application source, database schema, migrations, export tooling and documentation.</p>
+</div>
+
+<div class="q">
+  <span class="qid">2b</span>
+  <p>Provide evidence of use of the selected open license(s).</p>
+  <p class="hint">Link(s) to public pages where the licences are hosted.</p>
+</div>
+<div class="ans">
+  <ul>
+    <li><code>https://github.com/Geneline-X/kaccp/blob/master/LICENSE.md</code> — MIT,
+        "Copyright (c) 2026 Geneline-X"</li>
+    <li><code>package.json</code> → <code>"license": "MIT"</code></li>
+    <li>README licence badge and Scope section</li>
+  </ul>
+</div>
+
+<h3>The one thing to fix here: state the boundary</h3>
+<div class="callout c-warn">
+  Nothing above fails. The risk is that a reader assumes more is on offer than is. Your own
+  materials say you are "open-sourcing KACCP so any business, researcher or public service can
+  collect high-quality speech data" — true of the <em>tool</em>, but easily misread as the corpus.
+  Remove the ambiguity yourself rather than letting an assessor resolve it.
+</div>
+<div class="ans">
+  <h4>Add to README.md</h4>
+  <pre>## Scope and licensing
+
+**The KACCP platform is open source under the MIT licence.** Anyone may deploy,
+modify and operate it, including commercially, for any language.
+
+**Speech corpora are not part of this release.** Audio and transcriptions
+collected through a KACCP deployment belong to whoever operates that
+deployment and are licensed by them. The corpus Geneline-X has collected for
+Krio is proprietary: contributors were compensated for their work under
+agreements specific to that programme.
+
+We open-source the means of collection, not our dataset — so that any
+organisation can build a corpus for a language that has none, on the same
+terms we built ours.</pre>
+  <p class="hint">This paragraph does real work. It converts a potential Indicator 2 objection into
+     a clear statement of a legitimate commercial model, and it reinforces the replication story
+     that is the core of your SDG argument.</p>
+
+  <h4>Also update the company narrative itself</h4>
+  <p>The same ambiguity sits in your public copy, and an assessor may read geneline-x.net before
+  the repository. Change the beneficiary from businesses to people:</p>
+  <table>
+    <tr><th>Currently reads</th><th>Change to</th></tr>
+    <tr>
+      <td>"We are open-sourcing KACCP so any business, researcher or public service can collect
+          high-quality speech data and train language models for their own products."</td>
+      <td>"We are open-sourcing KACCP so that anyone — a university department, a community
+          organisation, a ministry, or a group of speakers determined to see their language
+          online — can collect high-quality speech data for a language that has none, without
+          first having to build the platform to do it."</td>
+    </tr>
+  </table>
+  <p class="hint">Two gains at once: it removes the "is the data open?" ambiguity, and it states a
+     public-benefit case rather than a commercial one, which is what the DPG Standard is assessing.</p>
+</div>
+
+<h3>Check before submitting: data files inside the repo</h3>
+<div class="ans">
+  <p>The repository currently ships content files — <code>prompts_batch_*.csv</code>,
+  <code>metadata.csv</code>, <code>dpg-results.json</code>. Under an MIT repo these are MIT-licensed
+  by implication. That is acceptable (you authored the prompts), but confirm two things:</p>
+  <ul>
+    <li><b>No contributor audio, transcripts or PII is committed anywhere in the repo or its
+        history.</b> Verify with <code>git log --all --name-only</code> before submitting — a
+        reviewer may clone and look, and a stray export file would contradict both your privacy
+        answers and your licensing scope.</li>
+    <li>Prompt banks are original Geneline-X work, not scraped or copied from a licensed source.
+        Indicator 3e asks exactly this.</li>
+  </ul>
+</div>
+
+<!-- ================= INDICATOR 3 ================= -->
+<h2 id="i3">Indicator 3 — Clear Ownership <span class="badge b-warn">evidence it</span></h2>
+
+<div class="callout c-ok">
+  <b>Done — the repository now lives at <code>github.com/Geneline-X/kaccp</code>.</b>
+  The organisation name, the copyright line in <code>LICENSE.md</code>, the
+  <code>package.json</code> author field and the company website now all name the same owner. That
+  is about as clean as Indicator 3 evidence gets, and the README badges that previously pointed
+  nowhere are correct as a result.
+</div>
+
+<div class="q"><span class="qid">3a</span><p>Who owns this digital solution?</p></div>
+<div class="ans"><p><b>Geneline-X</b>, Freetown, Sierra Leone.</p></div>
+
+<div class="q"><span class="qid">3b</span><p>Provide evidence(s) of ownership.</p></div>
+<div class="ans">
+  <ul>
+    <li>Copyright notice: <code>LICENSE.md</code> — "Copyright (c) 2026 Geneline-X"</li>
+    <li><code>MAINTAINERS.md</code> naming Geneline-X as primary maintainer</li>
+    <li><code>package.json</code> author field: <code>Geneline-X &lt;info@geneline-x.net&gt;</code></li>
+    <li>Company site: <code>https://geneline-x.net</code></li>
+    <li>Business registration certificate <span class="fill">(attach — strongest single proof)</span></li>
+  </ul>
+  <h4>After the transfer — a four-step check</h4>
+  <ol>
+    <li><b><s>Transfer to <code>Geneline-X/kaccp</code></s> — complete.</b> Git remotes updated.
+        GitHub keeps a permanent redirect from the old URL, so existing clones and any deployment
+        integration continue to work; still worth repointing them at the canonical URL.</li>
+    <li><b>Verify every link now resolves.</b> The README badges and <code>CONTRIBUTING.md</code>
+        already point at <code>Geneline-X/kaccp</code> — after the transfer they become correct.
+        Click each one before submitting; an assessor certainly will.</li>
+    <li><b>Company → repo.</b> Link to <code>github.com/Geneline-X/kaccp</code> from
+        geneline-x.net as "our open source platform". A public company page naming the repository
+        is the strongest ownership evidence available short of a registration document, because
+        only the company controls that page.</li>
+    <li><b>Name the maintainers.</b> <code>MAINTAINERS.md</code> already names Geneline-X as
+        primary maintainer. Add the individual maintainer and state they act on behalf of
+        Geneline-X, which holds copyright.</li>
+  </ol>
+  <p><b>Resulting evidence chain, all pointing the same way:</b> organisation-owned repository →
+  <code>LICENSE.md</code> "Copyright (c) 2026 Geneline-X" → <code>package.json</code> author →
+  <code>MAINTAINERS.md</code> → geneline-x.net linking back to the repo → business registration.</p>
+</div>
+
+<div class="q"><span class="qid">3c–3d</span><p>Type of organisation · Where is the owner based?</p></div>
+<div class="ans"><p>Private company (for-profit) · <b>Sierra Leone</b>.</p>
+<p class="hint">Being a for-profit is not a disadvantage. The DPG registry includes many; what
+matters is that the good itself is openly licensed.</p></div>
+
+<div class="q"><span class="qid">3e–3f</span><p>Do you own all of the code, content and/or data in this solution?</p>
+<p class="hint">For open content collections and open datasets, indicate whether all content/data is owned/licensed by the owner indicated above.</p></div>
+<div class="ans">
+  <p><b>Yes.</b> Suggested wording:</p>
+  <p>"Geneline-X owns all source code, database schema, documentation and prompt content in this
+  repository. All code is original work by Geneline-X or incorporated third-party open-source
+  dependencies under their respective permissive licences. Prompt banks are originally authored by
+  Geneline-X and contain no third-party copyrighted material.</p>
+  <p>Speech corpora collected using the platform are not part of this submission. Audio and
+  transcriptions collected through a KACCP deployment are owned by the operator of that deployment.
+  Geneline-X's own Krio corpus is proprietary and separately licensed; contributors were
+  compensated for their work and granted Geneline-X rights to the material under programme-specific
+  agreements."</p>
+  <div class="callout c-ok" style="margin-bottom:0">
+    <b>This is now a simple answer.</b> Because the corpus is out of scope, you avoid the hardest
+    version of 3f entirely — no need to evidence redistribution rights over thousands of
+    contributor recordings. Keep the scope boundary crisp and this indicator is trivial.
+  </div>
+</div>
+
+<!-- ================= INDICATOR 4 ================= -->
+<h2 id="i4">Indicator 4 — Platform Independence <span class="badge b-ok">strong</span></h2>
+
+<p>This is a genuine strength: the codebase already abstracts its closed dependencies behind
+provider interfaces with working open implementations.</p>
+
+<div class="q"><span class="qid">4a</span><p>Which are the core technologies your solution depends on?</p></div>
+<div class="ans">
+  <p>Next.js 16 · React 19 · TypeScript · PostgreSQL 15+ · Prisma ORM · Tailwind CSS · Node.js 20+.
+  All open source. PostgreSQL is the only required data store; no proprietary database.</p>
+</div>
+
+<div class="q"><span class="qid">4b</span><p>Does this solution use any closed components that create proprietary dependency?</p></div>
+<div class="ans"><p><b>No</b> — every closed service is optional and swappable. Detail in 4c.</p></div>
+
+<div class="q"><span class="qid">4c</span><p>How can these closed component(s) be replaced with open alternative(s)?</p></div>
+<div class="ans">
+  <table>
+    <tr><th>Closed service</th><th>Role</th><th>Open alternative &amp; how to switch</th></tr>
+    <tr>
+      <td>Google Cloud Storage</td><td>Audio storage</td>
+      <td><b>Already abstracted.</b> <code>src/lib/infra/storage/provider.ts</code> defines the
+          interface; <code>local-provider.ts</code> ships a filesystem implementation. Set
+          <code>STORAGE_PROVIDER=local</code>. MinIO or any S3-compatible store slots in by adding
+          one provider file — no changes elsewhere.</td>
+    </tr>
+    <tr>
+      <td>Orange Money</td><td>Contributor payouts</td>
+      <td>Payment records are plain database rows (<code>Payment</code>,
+          <code>WalletTransaction</code>). Operators may settle by any means — bank transfer, cash,
+          another mobile-money provider — and mark payments settled. Payout is not on the critical
+          path for data collection.</td>
+    </tr>
+    <tr>
+      <td>OpenAI API</td><td>Optional transcription assist</td>
+      <td>Optional convenience only. Omit <code>OPENAI_API_KEY</code> and the platform runs as a
+          fully manual transcription workflow. Any OpenAI-compatible endpoint (vLLM, Ollama,
+          LocalAI) works by changing the base URL, as does Whisper self-hosted.</td>
+    </tr>
+    <tr>
+      <td>Google Translate</td><td>Optional UI translation</td>
+      <td><b>Already abstracted.</b> <code>src/lib/translation-providers/</code> carries multiple
+          implementations selected by <code>TRANSLATION_PROVIDER</code>; LibreTranslate can be added
+          as a provider. Feature is optional.</td>
+    </tr>
+    <tr>
+      <td>UploadThing</td><td>Optional browser upload helper</td>
+      <td>Superseded by the storage abstraction above; local and signed-URL paths do not require it.</td>
+    </tr>
+  </table>
+  <p><b>Closing line:</b> "A complete, functional KACCP deployment is possible using only open-source
+  components: PostgreSQL for data, local or MinIO storage for audio, and manual transcription.
+  Every proprietary integration is an optional enhancement selected by environment variable."</p>
+</div>
+
+<!-- ================= INDICATOR 5 ================= -->
+<h2 id="i5">Indicator 5 — Documentation <span class="badge b-ok">strong</span></h2>
+
+<div class="q"><span class="qid">5a</span><p>Where is your solution's documentation?</p>
+<p class="hint">Developer docs, technical architecture, user guides, data dictionaries, metadata.</p></div>
+<div class="ans">
+  <h4>Already have</h4>
+  <ul>
+    <li><code>README.md</code> — overview, features, install, usage</li>
+    <li><code>CONTRIBUTING.md</code> — local setup, workflow, PR guidelines</li>
+    <li><code>docs/krio-tts-dataset.md</code> — dataset spec, validation script, known gaps
+        <i>(a genuinely strong artifact — reviewers like reproducibility)</i></li>
+    <li><code>docs/pipeline-integration.md</code></li>
+    <li><b><code>docs/images/architecture.svg</code></b> — system diagram (scalable, embedded
+        in the architecture doc and in this pack)</li>
+    <li><b><code>docs/architecture.md</code></b> — pipeline diagram, role model, data model,
+        request lifecycle, directory layout, and how to run with no proprietary components</li>
+    <li><b><code>docs/data-dictionary.md</code></b> — every exported field with type,
+        nullability and meaning; all enumerations; which fields are PII and never published</li>
+    <li><b><code>docs/adapting-to-a-new-language.md</code></b> — the replication walkthrough</li>
+    <li><b><code>docs/api.md</code></b> — every endpoint, auth model, roles, export API</li>
+    <li><b><code>docs/deployment.md</code></b> — production deploy, migrations, connection
+        budget, security checklist, and a fully open configuration using no proprietary service</li>
+    <li><b><code>docs/dpia.md</code></b> — Data Protection Impact Assessment for voice as
+        biometric data</li>
+    <li><b><code>docs/sample-export.csv</code></b> — anonymised sample of the dataset format</li>
+    <li><b><code>docs/content-moderation.md</code></b> — prohibited content, detection,
+        removal, escalation</li>
+    <li><b><code>TERMS.md</code></b> — Terms of Service, including the 18+ requirement</li>
+    <li><b><code>.env.example</code></b> — all 33 configuration variables, documented</li>
+    <li><code>SECURITY.md</code>, <code>CODE_OF_CONDUCT.md</code>, <code>MAINTAINERS.md</code>,
+        <code>PRIVACY.md</code></li>
+  </ul>
+  <div class="callout c-ok"><b>Indicator 5 is complete.</b> Architecture, data dictionary, API reference, deployment guide, replication walkthrough, content moderation policy, DPIA, Terms of Service and a documented <code>.env.example</code> are all in the repository, plus a sample export as concrete evidence.</div>
+</div>
+
+<!-- ================= INDICATOR 6 ================= -->
+<h2 id="i6">Indicator 6 — Mechanism for Extracting Data <span class="badge b-ok">strong</span></h2>
+
+<div class="q"><span class="qid">6a</span><p>Does your solution collect, use or generate non-PII data and/or content?</p></div>
+<div class="ans"><p><b>Yes.</b></p></div>
+
+<div class="q"><span class="qid">6b</span><p>Describe the mechanism for extracting or importing non-PII data in a non-proprietary format.</p></div>
+<div class="ans">
+  <p>Answer with specifics — this indicator is easy to pass and easy to underclaim:</p>
+  <ul>
+    <li><b>CSV export</b> (<code>text/csv</code>) and <b>JSON export</b> via the admin export API,
+        also available in the web UI. Fields: audio path, speaker label, target-language transcript,
+        English text, duration, transcript provenance, category, language.</li>
+    <li><b>LJSpeech-compatible layout</b> — a ZIP of <code>wavs/</code> plus
+        <code>metadata.csv</code>, the standard interchange format for speech-synthesis training,
+        readable by every major TTS toolkit.</li>
+    <li><b>Audio</b> as uncompressed <b>WAV</b> (PCM), not a proprietary codec.</li>
+    <li><b>Bulk import</b> of prompt banks and existing transcripts from CSV, so an operator can
+        seed a new language from material they already hold.</li>
+    <li><b>Command-line export</b> (<code>scripts/export-krio-dataset.ts</code>) for reproducible,
+        scriptable dataset builds independent of the web UI.</li>
+    <li><b>Direct database access</b> — PostgreSQL with an open, documented Prisma schema; nothing
+        is locked in an opaque store.</li>
+    <li><b>Privacy-preserving by construction:</b> exports carry anonymous speaker labels
+        (<code>kri_speaker_0018</code>), never names, emails or phone numbers. The exported corpus
+        contains no direct PII.</li>
+  </ul>
+  <p class="hint"><b>Evidence attached:</b> <code>docs/sample-export.csv</code> — 10 anonymised rows showing the exact format, including a row with empty target-language text to show the nullable case, and Krio orthography (ɔ, ɛ, ŋ) to show UTF-8 handling. Field definitions in <code>docs/data-dictionary.md</code>.</p>
+</div>
+
+<!-- ================= INDICATOR 7 ================= -->
+<h2 id="i7">Indicator 7 — Privacy &amp; Applicable Laws <span class="badge b-ok">wording confirmed</span></h2>
+
+<div class="q"><span class="qid">7a</span><p>Provide a list of relevant privacy, domestic and other applicable international laws your solution complies with.</p></div>
+<div class="ans">
+  <table>
+    <tr><th>Law / framework</th><th>Status &amp; relevance</th></tr>
+    <tr><td><b>Sierra Leone Data Protection and Right to Access Information Bill</b></td>
+        <td><b>Not yet in force — checked 23 September 2026.</b> Completed national validation
+            November 2025; Cabinet approved the national Data Protection Policy and authorised
+            drafting of the Act in April 2026. No evidence of parliamentary passage or
+            presidential assent. Describe as <b>"aligned with"</b>, never "compliant with".</td></tr>
+    <tr><td><b>Sierra Leone Cyber Security and Crime Act, 2021</b></td>
+        <td>In force. Governs computer misuse, data security obligations and illegal content.</td></tr>
+    <tr><td><b>EU GDPR (2016/679)</b></td>
+        <td>Applied as the design baseline, and binding where EU-based researchers or contributors
+            use the platform. Voice handled as Article 9 biometric data.</td></tr>
+    <tr><td><b>AU Convention on Cyber Security and Personal Data Protection (Malabo, 2014)</b></td>
+        <td>Regional framework; the Sierra Leone bill is drafted to align with it.</td></tr>
+  </table>
+  <div class="callout c-ok" style="margin-bottom:0">
+    <b>Confirmed: Sierra Leone has no comprehensive data protection statute in force.</b>
+    Verified 23 September 2026 — the Bill reached Cabinet approval in April 2026 but has not
+    been passed by Parliament or assented to. Use this wording verbatim for 7a; it is accurate,
+    and it turns an apparent weakness into evidence of diligence:
+    <br><br>
+    <i>"Sierra Leone has no comprehensive data protection statute in force. Rather than treat
+    that as an absence of obligation, KACCP was designed to GDPR standards from the outset,
+    including treating voice as Article 9 biometric data. The platform is aligned with the
+    Data Protection and Right to Access Information Bill ahead of its coming into force, and
+    complies with the Cyber Security and Crime Act 2021, which is in force. A Data Protection
+    Impact Assessment has been completed and is published in the repository."</i>
+  </div>
+</div>
+
+<div class="q"><span class="qid">7b</span><p>Provide evidence(s) of adherence with the laws mentioned above.</p></div>
+<div class="ans">
+  <ul>
+    <li><code>PRIVACY.md</code> — lawful basis per data type, biometric handling, retention,
+        subject rights <i>(already well written; this is a strength)</i></li>
+    <li><code>SECURITY.md</code> — vulnerability disclosure, 48-hour acknowledgement, 90-day
+        coordinated disclosure</li>
+    <li>Terms of Service <span class="fill">(to be created)</span></li>
+    <li><b><code>docs/dpia.md</code></b> — Data Protection Impact Assessment covering voice as
+        biometric data, consent under economic asymmetry, re-identification risk, minors, and
+        the payment channel</li>
+    <li>In-product consent screens at registration and before each recording session</li>
+  </ul>
+</div>
+
+<!-- ================= INDICATOR 8 ================= -->
+<h2 id="i8">Indicator 8 — Standards &amp; Best Practices <span class="badge b-ok">good</span></h2>
+
+<div class="q"><span class="qid">8a</span><p>Provide a list of the open standards your solution adheres to and demonstrate adherence.</p></div>
+<div class="ans">
+  <table>
+    <tr><th>Standard</th><th>How KACCP adheres</th></tr>
+    <tr><td><b>ISO 639-3</b> language codes</td>
+        <td>Languages keyed by ISO 639-3 (<code>kri</code>, <code>men</code>, <code>tem</code>,
+            <code>sus</code>, <code>man</code>) — see the <code>Language</code> model.</td></tr>
+    <tr><td><b>ISO 3166-1 alpha-2</b> country codes</td>
+        <td><code>Country.code</code> (e.g. <code>SL</code>).</td></tr>
+    <tr><td><b>RIFF/WAVE (PCM)</b> audio</td>
+        <td>16 kHz mono target; uncompressed, non-proprietary.</td></tr>
+    <tr><td><b>LJSpeech</b> dataset convention</td>
+        <td>Export produces <code>wavs/</code> + <code>metadata.csv</code>, the de-facto TTS
+            interchange layout.</td></tr>
+    <tr><td><b>RFC 4180</b> CSV</td>
+        <td>Exports quote and escape per RFC 4180 — necessary because transcripts contain commas.</td></tr>
+    <tr><td><b>ISO 8601</b> timestamps · <b>JSON</b> · <b>HTTP/REST</b> · <b>JWT (RFC 7519)</b></td>
+        <td>Throughout the API surface.</td></tr>
+    <tr><td><b>Unicode / UTF-8</b></td>
+        <td>Required for Krio orthography (ɔ, ɛ, ŋ); exports are UTF-8 end to end.</td></tr>
+    <tr><td><b>WCAG 2.1</b> accessibility</td>
+        <td>Semantic HTML, keyboard navigation, <code>prefers-reduced-motion</code> respected.
+            <span class="fill">State the conformance level you can honestly claim.</span></td></tr>
+  </table>
+</div>
+
+<div class="q"><span class="qid">8b</span><p>Provide a list of best practices &amp; principles your solution adheres to and demonstrate adherence.</p></div>
+<div class="ans">
+  <table>
+    <tr><th>Practice</th><th>Evidence</th></tr>
+    <tr><td><b>Principles for Digital Development</b></td>
+        <td>Design with the user (built in Sierra Leone with Krio speakers); Reuse and improve
+            (open source, language-agnostic); Build for sustainability (contributors paid); Use open
+            standards, open data, open source; Address privacy and security.</td></tr>
+    <tr><td><b>FAIR data principles</b></td>
+        <td>Findable (public dataset docs), Accessible (CSV/JSON/WAV export), Interoperable
+            (ISO codes, LJSpeech, RFC 4180 CSV, PCM WAV), Reusable (MIT platform; exports carry
+            documented provenance and transcript source so downstream users know what they have).</td></tr>
+    <tr><td><b>Documented quality control</b></td>
+        <td>Multi-stage review: audio review → transcription → reviewer approval → language-lead
+            verification, with rejection feedback returned to the contributor. Dataset exports
+            record transcript provenance and exclude failed-QC audio.</td></tr>
+    <tr><td><b>Dataset integrity verification</b></td>
+        <td><code>docs/krio-tts-dataset.md</code> ships a validation script that confirms every
+            exported path resolves to readable audio, plus an automated prompt-to-transcript
+            agreement check that detects mislinked records.</td></tr>
+    <tr><td><b>Model quality evaluation — OpenMOS</b></td>
+        <td>Companion open-source tool (MIT) computing Mean Opinion Score for TTS models trained
+            on KACCP-collected data, closing the loop from collection to measured output
+            quality:<br>
+            <code>https://github.com/Geneline-X/OpenMos</code> · live at
+            <code>open-mos.vercel.app</code><br>
+            Collecting data is only half of a quality claim; being able to measure whether the
+            resulting model actually sounds good is the other half.</td></tr>
+    <tr><td><b>Ethical data collection</b></td>
+        <td>Informed consent per session; fair per-minute compensation; anonymous speaker labels in
+            all published data; right to withdraw and delete.</td></tr>
+    <tr><td><b>Semantic Versioning · Conventional Commits · CI</b></td>
+        <td><code>CONTRIBUTING.md</code>; GitHub Actions workflow.</td></tr>
+  </table>
+</div>
+
+<!-- ================= INDICATOR 9A ================= -->
+<h2 id="i9a">Indicator 9A — Data Privacy &amp; Security <span class="badge b-warn">answer carefully · DPIA done</span></h2>
+
+<div class="callout c-warn">
+  <b>Highest-scrutiny section for this application.</b> KACCP collects <b>voice</b>, which is
+  biometric data, from contributors in a country with limited data-protection enforcement. The
+  2025 revisions added six explicit requirements: data minimisation, consent mechanism, usage
+  transparency, privacy-by-design, retention/deletion, and governance/access control. Answer all
+  six by name.
+</div>
+
+<div class="q"><span class="qid">9Aa</span><p>Does your solution allow the collection / storage / distribution of PII data?</p></div>
+<div class="ans">
+  <p><b>Select: "PII data can be collected and stored but NOT distributed."</b></p>
+  <p>This is accurate and defensible: PII is collected and stored for accounts and payment, but the
+  published corpus uses anonymous speaker labels and contains no names, emails or phone numbers.
+  Say that explicitly — it is a strong design point.</p>
+  <p class="hint">Note honestly that voice itself is biometric and <em>is</em> published as part of
+  the corpus, under explicit consent naming the licence. Do not hide this; an assessor who finds it
+  unstated will treat everything else with suspicion.</p>
+</div>
+
+<div class="q"><span class="qid">9Ab</span><p>What are the types of data that can be collected / stored / distributed?</p></div>
+<div class="ans">
+  <table>
+    <tr><th>Data</th><th>Purpose</th><th>Published?</th></tr>
+    <tr><td>Email address</td><td>Authentication, notifications</td><td>No</td></tr>
+    <tr><td>Phone number</td><td>Identification, Orange Money payout</td><td>No</td></tr>
+    <tr><td>Display name</td><td>Profile, in-platform attribution</td><td>No</td></tr>
+    <tr><td>Password (bcrypt hash)</td><td>Authentication</td><td>No</td></tr>
+    <tr><td>Voice recordings <i>(biometric)</i></td><td>Corpus — core function</td>
+        <td><b>Yes</b>, under explicit consent, with anonymous speaker labels</td></tr>
+    <tr><td>Transcription text</td><td>Corpus — core function</td><td>Yes</td></tr>
+    <tr><td>Payment amounts, wallet balances</td><td>Contributor compensation</td><td>No</td></tr>
+    <tr><td>IP address (server logs)</td><td>Security, abuse prevention</td><td>No</td></tr>
+  </table>
+</div>
+
+<div class="q"><span class="qid">9Ac</span><p>How does your solution ensure data privacy &amp; security?</p></div>
+<div class="ans">
+  <h4>Structure the answer against the six 2025 requirements</h4>
+  <p><b>1 — Data minimisation.</b> Only what payment and authentication require: email, phone,
+  display name. No address, date of birth, government ID, gender or demographic profiling. Speaker
+  metadata in the corpus is reduced to an opaque label.</p>
+
+  <p><b>2 — Consent mechanism.</b> Explicit consent at registration and reconfirmed before each
+  recording session, stating what the recording will be used for and who will hold it.
+  Consent is recorded per recording (<code>consentGiven</code>), not assumed once.
+  <span class="fill">Ensure the consent wording matches your actual practice — that recordings are
+  retained by the deployment operator for building speech datasets — and does not promise open
+  publication.</span></p>
+
+  <p><b>3 — Transparency of use and access.</b> <code>PRIVACY.md</code> states what is collected,
+  the lawful basis for each item, how it is used, who can access it and what is published. Roles are
+  least-privilege: transcribers see audio and text but not contributor contact details or payment
+  records; only administrators access PII.</p>
+
+  <p><b>4 — Privacy by design.</b> Pseudonymisation is structural, not a post-processing step:
+  exports are generated from anonymous speaker labels, so publishing personal data would require
+  deliberately changing the export code. Audio is served only through short-lived signed URLs
+  (1 hour read, 15 minutes write) — no public bucket, no permanent link.</p>
+
+  <p><b>5 — Retention and deletion.</b> <span class="fill">State your retention period explicitly —
+  e.g. account data retained while the account is active plus N months.</span> Contributors may
+  delete their account, which removes their PII. Because corpora are not published openly, deletion
+  is genuinely effective here: there are no downstream public copies to recall. Where a dataset has
+  already been delivered to a partner, say so plainly and describe what the agreement requires of
+  them. Disclose the position before consent is given rather than leaving it to be discovered.</p>
+
+  <p><b>6 — Governance and access control.</b> Role-based access (Speaker, Transcriber, Reviewer,
+  Language Lead, Admin) enforced server-side on every request, not merely hidden in the UI.
+  Passwords hashed with bcrypt; sessions via signed JWTs; all traffic over TLS; database access
+  restricted to the application with credentials held in environment configuration; object storage
+  private with no anonymous access. Vulnerability reporting and disclosure timelines in
+  <code>SECURITY.md</code>.</p>
+</div>
+
+<!-- ================= INDICATOR 9B ================= -->
+<h2 id="i9b">Indicator 9B — Inappropriate, Misleading &amp; Illegal Content <span class="badge b-ok">documented</span></h2>
+
+<div class="q"><span class="qid">9Ba</span><p>Does your solution allow the collection / storage / distribution of content?</p></div>
+<div class="ans">
+  <p><b>Select: "Content is collected and stored but NOT distributed."</b></p>
+  <p>Accurate for the platform as submitted: KACCP has no public publishing surface. Recordings and
+  transcripts are visible only to authenticated users holding the relevant role within a
+  deployment, and dataset export is restricted to administrators. Nothing is served to the open
+  internet.</p>
+  <div class="callout c-warn" style="margin-bottom:0">
+    <b>Be precise, and say the rest yourself.</b> The platform <em>enables</em> an operator to
+    export a dataset and distribute it under whatever terms they choose. State that in the answer
+    rather than leaving it implicit: "The platform provides export tooling; any onward distribution
+    is a decision of the deployment operator, who is the data controller for their corpus."
+    Volunteering the nuance reads as candour; having an assessor find it reads as omission.
+  </div>
+</div>
+
+<div class="q"><span class="qid">9Bb</span><p>What are the types of content that can be collected / stored / distributed?</p></div>
+<div class="ans"><p>Audio recordings of speech in the target language; text transcriptions of that
+speech; English translations of the transcriptions; prompt text authored by Geneline-X.</p></div>
+
+<div class="q"><span class="qid">9Bc</span><p>How does your solution handle inappropriate, misleading and illegal content?</p>
+<p class="hint">Describe (1) mechanisms for identifying such content and (2) processes for detecting, moderating, reporting and removing it.</p></div>
+<div class="ans">
+  <p><b>Link to <code>docs/content-moderation.md</code></b>, which documents everything below.</p>
+
+  <p><b>Structural prevention.</b> KACCP is prompt-driven, not open submission: speakers record
+  responses to a curated prompt bank authored by Geneline-X, so the content space is bounded by
+  design. There is no free-text public posting, no user-to-user messaging and no file upload of
+  arbitrary media.</p>
+
+  <p><b>Detection.</b> Every recording passes human review before it can enter a dataset.
+  Transcribers and reviewers can flag any clip with a reason —
+  <code>NOISE</code>, <code>UNCLEAR</code>, <code>TOO_QUIET</code>, <code>WRONG_LANGUAGE</code>,
+  <code>INCOMPLETE</code>, <code>OTHER</code> — which removes it from the working queue and routes
+  it to an administrator. An <code>INAPPROPRIATE</code> reason has been added for content breaches, so the flag list
+  names harmful content rather than only quality problems.</p>
+
+  <p><b>Multi-stage moderation.</b> Audio review → transcription → reviewer approval → language-lead
+  verification. Content reaches a published dataset only after clearing every stage; anything
+  rejected or flagged is excluded from export by default.</p>
+
+  <p><b>Removal.</b> Administrators can reject or delete any recording. Rejected and flagged audio
+  is programmatically excluded from dataset exports (the export tooling drops
+  <code>REJECTED</code> and <code>FLAGGED</code> records by default), so removal at source is
+  sufficient — there is no separate publication path to police.</p>
+
+  <p><b>Reporting.</b> Illegal content, including CSAM, is reported to Sierra Leone Police and the
+  relevant authority under the Cyber Security and Crime Act 2021, and the contributing account is
+  suspended. Public reporting channel: <b>info@geneline-x.net</b>.
+  The escalation table is in the policy document.</p>
+</div>
+
+<!-- ================= INDICATOR 9C ================= -->
+<h2 id="i9c">Indicator 9C — Protection from Harassment <span class="badge b-ok">resolved</span></h2>
+
+<div class="q"><span class="qid">9Ca</span><p>Does your solution facilitate or enable interactions with or between users and/or contributors?</p></div>
+<div class="ans">
+  <p><b>Yes — but limited, and say so.</b> There is no direct messaging, no public profiles and no
+  social feed. Interaction is confined to structured, one-directional workflow feedback: a reviewer
+  may return written notes to a transcriber explaining why work was rejected. Contributors cannot
+  contact one another.</p>
+  <p class="hint">Answering "yes" with a tightly-scoped description is far stronger than answering
+  "no" and having an assessor find the review-feedback feature.</p>
+</div>
+
+<div class="q"><span class="qid">9Cb</span><p>How does your solution enable users and contributors to protect themselves from harassment?</p>
+<p class="hint">Describe (1) policies such as a code of conduct and (2) processes that address the safety and security of underage users.</p></div>
+<div class="ans">
+  <h4>(1) Policies — mostly in place</h4>
+  <ul>
+    <li><code>CODE_OF_CONDUCT.md</code> — Contributor Covenant 2.1; explicitly prohibits harassment,
+        trolling, insults and publishing others' private information; enforcement contact
+        <b>info@geneline-x.net</b>; confidentiality for reporters.</li>
+    <li>Review feedback is workflow-scoped and attributable to a named reviewer, creating
+        accountability for its tone.</li>
+    <li>Administrators can suspend or deactivate any account
+        (<code>User.isActive</code>), immediately revoking access.</li>
+    <li><b>The Code of Conduct explicitly covers the platform, not only the repository.</b> A
+        <i>Where This Applies</i> section names in-product review feedback, and the prohibited
+        list includes <i>demeaning review feedback</i> and <i>retaliatory rejection</i> —
+        recognising that a reviewer decides whether someone gets paid, so the power imbalance
+        is real.</li>
+  </ul>
+
+  <h4>(2) Underage users — <span class="badge b-ok">implemented</span></h4>
+  <div class="callout c-ok">
+    Published in <code>TERMS.md</code> §1, restated in <code>PRIVACY.md</code> §6 and the Code
+    of Conduct, and enforced in both registration forms with a required confirmation. The
+    reasoning is stated rather than asserted:
+  </div>
+  <ul>
+    <li><b>Minimum age 18</b> to register as a contributor, stated in the Terms of Service and
+        confirmed at registration. This is the cleanest answer given that contributors are paid and
+        their voice is published under an irrevocable open licence — both are decisions a minor
+        cannot validly make.</li>
+    <li>If recordings of minors are ever in scope, require verifiable guardian consent, keep those
+        recordings segregated, and document it. <b>Simpler: exclude minors entirely for now</b> and
+        say so.</li>
+    <li>Accounts found to belong to under-18s are deactivated and their unpublished recordings
+        deleted.</li>
+  </ul>
+</div>
+
+<!-- ================= SCALE ================= -->
+<h2 id="scale">Scale of Solution</h2>
+<div class="ans">
+  <p>Report only what you can evidence. Suggested framing:</p>
+  <ul>
+    <li><b>Deployment:</b> In production in Sierra Leone; deployed by Geneline-X and used by
+        contributor cohorts across five languages (Krio, Mende, Temne, Susu, Mandinka).</li>
+    <li><b>Data:</b> 48 hours of studio-quality Krio speech collected and used to train a working
+        ASR/TTS model; a further 200 hours in collection with the Masakhane Foundation for open
+        release.</li>
+    <li><b>Contributors:</b> <span class="fill">state registered speakers and transcribers</span>,
+        compensated via Orange Money.</li>
+    <li><b>Downstream use:</b> Flot Chat — Krio voice notes over WhatsApp understood and acted on —
+        built on models trained with KACCP data.</li>
+    <li><b>Replication potential:</b> language, country, prompt bank and payment rates are
+        configuration, not code. A researcher, community group or ministry in any country can
+        deploy KACCP for a language of their choice without writing software — which is the point
+        of submitting it as a digital public good rather than simply publishing a dataset.</li>
+    <li><b>Contributor retention:</b> the platform ships levels, streaks, daily goals, badges and
+        leaderboards, all scored on reviewer-approved work so the incentive is accuracy rather than
+        speed. <span class="fill">Report retention or throughput figures if you have them</span> —
+        evidence that contributors stay is unusually persuasive for a crowdsourcing tool.</li>
+  </ul>
+</div>
+
+<!-- ================= CHECKLIST ================= -->
+<h2 id="checklist">Pre-submission checklist</h2>
+<table>
+  <tr><th>#</th><th>Action</th><th>Indicator</th><th>Priority</th></tr>
+  <tr><td>1</td><td><s>README <b>Scope and licensing</b> section</s> — done; About section also rewritten around replication</td><td>2</td><td><span class="badge b-ok">done</span></td></tr>
+  <tr><td>2</td><td><s>Transfer repo to <code>Geneline-X</code> org</s> — done. Remaining: verify README/CONTRIBUTING links resolve, and link back from geneline-x.net</td><td>3</td><td><span class="badge b-warn">high</span></td></tr>
+  <tr><td>3</td><td><s>Working <code>.env.example</code></s> — done, 33 variables documented</td><td>5</td><td><span class="badge b-ok">done</span></td></tr>
+  <tr><td>4</td><td><s>Minimum-age policy, enforced at registration</s> — done, 18+ in TERMS.md and both signup forms</td><td>9C</td><td><span class="badge b-ok">done</span></td></tr>
+  <tr><td>5</td><td><s>Publish Terms of Service</s> — done, <code>TERMS.md</code></td><td>7, 9C</td><td><span class="badge b-ok">done</span></td></tr>
+  <tr><td>6</td><td><s>Content moderation policy + <code>INAPPROPRIATE</code> flag</s> — done</td><td>9B</td><td><span class="badge b-ok">done</span></td></tr>
+  <tr><td>7</td><td><s><code>docs/architecture.md</code> and <code>docs/data-dictionary.md</code></s> — done</td><td>5</td><td><span class="badge b-ok">done</span></td></tr>
+  <tr><td>8</td><td><s><code>docs/adapting-to-a-new-language.md</code></s> — done</td><td>5, 1</td><td><span class="badge b-ok">done</span></td></tr>
+  <tr><td>9</td><td><s>Audit git history for contributor data</s> — done. No audio ever committed. Found and removed a stray <code>metadata.csv</code> containing one live transcript, a speaker id and a name</td><td>2, 9A</td><td><span class="badge b-ok">done</span></td></tr>
+  <tr><td>10</td><td><s>Confirm enactment status of the Sierra Leone Bill</s> — done, 23 Sep 2026: Cabinet-approved April 2026, <b>not enacted</b>. 7a wording supplied</td><td>7</td><td><span class="badge b-ok">done</span></td></tr>
+  <tr><td>11</td><td><s>Explicit retention periods in <code>PRIVACY.md</code></s> — already present: account data until deletion, payments 7 years, logs 90 days</td><td>9A</td><td><span class="badge b-ok">done</span></td></tr>
+  <tr><td>12</td><td><s>Extend the Code of Conduct to in-product review feedback</s> — done, incl. demeaning feedback and retaliatory rejection</td><td>9C</td><td><span class="badge b-ok">done</span></td></tr>
+  <tr><td>13</td><td><s><code>docs/api.md</code> and <code>docs/deployment.md</code></s> — done; deployment includes a no-proprietary-service configuration</td><td>5, 6</td><td><span class="badge b-ok">done</span></td></tr>
+  <tr><td>14</td><td><s>DPIA for voice/biometric processing</s> — done, <code>docs/dpia.md</code>: 7 risks assessed, R1 re-identification recorded as inherent and disclosed</td><td>9A</td><td><span class="badge b-ok">done</span></td></tr>
+  <tr><td>15</td><td><s>Sample export CSV</s> — done, <code>docs/sample-export.csv</code>: 10 anonymised rows incl. the nullable-text case and Krio orthography</td><td>6</td><td><span class="badge b-ok">done</span></td></tr>
+  <tr><td>16</td><td><s>Cite OpenMOS under Indicator 8</s> — done, <code>github.com/Geneline-X/OpenMos</code>. Separate submission blocked on an empty README and a copyright holder that is not Geneline-X</td><td>8</td><td><span class="badge b-ok">done</span></td></tr>
+  <tr><td>17</td><td>Report registered speakers, transcribers and throughput under Scale — <b>needs your figures</b></td><td>Scale</td><td><span class="badge b-warn">you</span></td></tr>
+</table>
+
+<footer>
+  <p><b>Sources.</b> DPG Standard indicators and the verbatim application questions are taken from
+  the DPGA's own repository (<code>DPGAlliance/dpg-standard</code>, <code>standard.md</code> and
+  <code>standard-questions.md</code>, CC-BY-SA 4.0) and the DPGA site, including the 2025 privacy
+  and data security framework update to Indicators 7 and 9A. Licence categories follow DPGA
+  guidance: OSI-approved for software, Creative Commons for content, Open Data Commons for data.</p>
+  <p>Prepared for Geneline-X · Application ID 14890 · Assess against the live form before
+  submitting, as the DPGA revises the Standard periodically.</p>
+</footer>
+
+</div>
+</body>
+</html>
