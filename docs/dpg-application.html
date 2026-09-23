@@ -87,16 +87,16 @@
 </header>
 
 <div class="callout c-ok">
-  <b>Status: 16 of 17 checklist items complete.</b>
+  <b>Status: all 17 checklist items complete.</b>
   Repository transferred to the Geneline-X organisation; README scope section added;
   <code>.env.example</code>, Terms of Service with an enforced 18+ requirement, content
   moderation policy, architecture, data dictionary, API reference, deployment guide,
   replication walkthrough, DPIA and a sample export are all in the repository. Sierra Leone's
   legal status is verified and the 7a wording is settled.
   <br><br>
-  <b>One item outstanding, and only you can supply it:</b> your contributor and throughput
-  figures for Scale of Solution (item 17). Everything else is done. See the
-  <a href="#checklist">checklist</a>.
+  Scale figures are queried and verified against production. <b>One correction is needed in
+  your public materials before submitting:</b> they name Mende, Susu and Mandinka, which have
+  no recordings, and omit Fulani, which has 4,723 — see <a href="#scale">Scale of Solution</a>.
 </div>
 
 <div class="callout c-warn">
@@ -935,28 +935,103 @@ speech; English translations of the transcriptions; prompt text authored by Gene
 </div>
 
 <!-- ================= SCALE ================= -->
-<h2 id="scale">Scale of Solution</h2>
+<h2 id="scale">Scale of Solution <span class="badge b-ok">figures verified</span></h2>
+
+<p>All figures below were queried directly from the production database on 23 September 2026.
+Report what you can evidence — an assessor can and sometimes does ask.</p>
+
+<h3>Headline numbers</h3>
+<table>
+  <tr><th>Measure</th><th>Figure</th><th>Note</th></tr>
+  <tr><td><b>Recordings collected</b></td><td><b>15,392</b></td><td>across 4 languages</td></tr>
+  <tr><td><b>Audio collected</b></td><td><b>50.0 hours</b></td><td>total recorded</td></tr>
+  <tr><td>Audio fully approved</td><td>8.8 hours</td><td>cleared every review stage</td></tr>
+  <tr><td><b>Transcriptions submitted</b></td><td><b>2,920</b></td><td>2,830 approved (97%)</td></tr>
+  <tr><td><b>Registered users</b></td><td><b>64</b></td><td>30 speakers · 34 transcribers · 3 admins</td></tr>
+  <tr><td>Contributors who have produced work</td><td>16 speakers · 18 transcribers</td>
+      <td>Report this <i>alongside</i> registrations. It is the honest number, and 34 active
+          contributors in a pilot is a credible figure</td></tr>
+  <tr><td>Contributor earnings paid out</td><td>1,819.83</td><td>platform currency</td></tr>
+  <tr><td>External audio processed</td><td>941 items</td>
+      <td>pipeline queue: 153 approved, 82 corrected, 676 pending, 30 rejected</td></tr>
+</table>
+
+<h3>Throughput — the strongest evidence you have</h3>
+<table>
+  <tr><th>Measure</th><th>Figure</th></tr>
+  <tr><td>Collection window</td><td>19 Dec 2025 – 1 May 2026 (133 days)</td></tr>
+  <tr><td>Active collection days</td><td>66</td></tr>
+  <tr><td><b>Mean recordings per active day</b></td><td><b>233</b></td></tr>
+  <tr><td><b>Best single day</b></td><td><b>1,427 recordings</b></td></tr>
+  <tr><td>Mean transcriptions per active day</td><td>49 (best day 279)</td></tr>
+</table>
+<p class="hint">233 recordings a day sustained, peaking at 1,427, is the number that demonstrates
+   this is an operating system rather than a prototype. Lead with it.</p>
+
+<h3>Languages — correct the public copy before submitting</h3>
+<div class="callout c-bad">
+  <b>Your materials say "Krio, Mende, Temne, Susu and Mandinka". The database says otherwise.</b>
+  Mende, Susu and Mandinka have <b>zero</b> recordings. Meanwhile <b>Fulani has 4,723</b> and is
+  not mentioned anywhere in your narrative. Submitting the current wording would claim three
+  languages you have no data for — trivially checkable, and exactly the kind of inaccuracy that
+  undermines an otherwise strong application.
+</div>
+<table>
+  <tr><th>Language</th><th>ISO 639-3</th><th>Recordings</th><th>Status</th></tr>
+  <tr><td>Krio</td><td><code>kri</code></td><td><b>10,282</b></td><td>primary corpus</td></tr>
+  <tr><td>Fulani / Pular</td><td><code>ful</code></td><td><b>4,723</b></td><td>active collection</td></tr>
+  <tr><td>Temne</td><td><code>tem</code></td><td>271</td><td>early</td></tr>
+  <tr><td>Madingo</td><td><code>mad</code></td><td>116</td><td>early</td></tr>
+  <tr><td>Mende · Susu · Mandinka · Wolof</td><td><code>men sus man wol</code></td><td>0</td>
+      <td><b>configured, no data</b></td></tr>
+</table>
+<div class="callout c-ok">
+  <b>Fulani is a gift to your argument — use it.</b> Fulani is spoken across Guinea, Senegal, Mali
+  and northern Nigeria, not just Sierra Leone. 4,723 recordings in a second, cross-border language
+  is direct evidence that KACCP is not a Krio-specific tool. It turns "someone in Guinea could do
+  this" from a claim into something you have already demonstrated. Accurate wording:
+  <br><br>
+  <i>"Configured for 8 languages, with active collection in 4: Krio (10,282 recordings),
+  Fulani (4,723), Temne (271) and Madingo (116). Fulani is spoken across Guinea, Senegal and Mali,
+  demonstrating that the platform is not specific to a single language or country."</i>
+</div>
+
+<h3>Suggested answer</h3>
 <div class="ans">
-  <p>Report only what you can evidence. Suggested framing:</p>
-  <ul>
-    <li><b>Deployment:</b> In production in Sierra Leone; deployed by Geneline-X and used by
-        contributor cohorts across five languages (Krio, Mende, Temne, Susu, Mandinka).</li>
-    <li><b>Data:</b> 48 hours of studio-quality Krio speech collected and used to train a working
-        ASR/TTS model; a further 200 hours in collection with the Masakhane Foundation for open
-        release.</li>
-    <li><b>Contributors:</b> <span class="fill">state registered speakers and transcribers</span>,
-        compensated via Orange Money.</li>
-    <li><b>Downstream use:</b> Flot Chat — Krio voice notes over WhatsApp understood and acted on —
-        built on models trained with KACCP data.</li>
-    <li><b>Replication potential:</b> language, country, prompt bank and payment rates are
-        configuration, not code. A researcher, community group or ministry in any country can
-        deploy KACCP for a language of their choice without writing software — which is the point
-        of submitting it as a digital public good rather than simply publishing a dataset.</li>
-    <li><b>Contributor retention:</b> the platform ships levels, streaks, daily goals, badges and
-        leaderboards, all scored on reviewer-approved work so the incentive is accuracy rather than
-        speed. <span class="fill">Report retention or throughput figures if you have them</span> —
-        evidence that contributors stay is unusually persuasive for a crowdsourcing tool.</li>
-  </ul>
+  <p><b>Deployment.</b> One production deployment, operated by Geneline-X in Sierra Leone, in
+  continuous use since December 2025.</p>
+
+  <p><b>Reach.</b> 64 registered users — 30 speakers, 34 transcribers — of whom 34 have produced
+  accepted work. Contributors are paid per accepted contribution through Orange Money.</p>
+
+  <p><b>Volume.</b> 15,392 recordings totalling 50 hours of audio, and 2,920 transcriptions of
+  which 2,830 were approved, across four languages. A further 941 items of externally-captured
+  audio have been processed through the correction pipeline.</p>
+
+  <p><b>Throughput.</b> Over 66 active collection days the platform sustained a mean of 233
+  recordings per day, peaking at 1,427 in a single day.</p>
+
+  <p><b>Downstream use.</b> A Krio ASR/TTS model trained on KACCP-collected data is deployed in
+  production behind Flot Chat, which understands Krio voice notes sent over WhatsApp. A further
+  200 hours of Krio speech is in collection with the Masakhane Foundation for open release.</p>
+
+  <p><b>Replication.</b> Language, country, prompt bank and payment rates are configuration rather
+  than code. Eight languages are configured and four are in active collection, including Fulani,
+  which is spoken across Guinea, Senegal and Mali — so the platform is already demonstrated beyond
+  a single language and a single country.</p>
+</div>
+
+<div class="callout c-warn">
+  <b>Two numbers to reconcile before you submit.</b>
+  <ol style="margin-bottom:0">
+    <li><b>"48 hours of studio-quality audio"</b> in your company materials vs <b>50.0 hours
+        collected / 8.8 hours fully approved</b> in the database. All three are defensible, but
+        say which you mean. "50 hours collected, 8.8 hours through full review" is precise and
+        still impressive; an unqualified "48 hours" invites the question of what state it is in.</li>
+    <li><b>11,591 recordings sit in PENDING_TRANSCRIPTION.</b> That is a healthy pipeline, not a
+        problem — but it is why approved hours trail collected hours, and it is better volunteered
+        than discovered.</li>
+  </ol>
 </div>
 
 <!-- ================= CHECKLIST ================= -->
@@ -979,7 +1054,7 @@ speech; English translations of the transcriptions; prompt text authored by Gene
   <tr><td>14</td><td><s>DPIA for voice/biometric processing</s> — done, <code>docs/dpia.md</code>: 7 risks assessed, R1 re-identification recorded as inherent and disclosed</td><td>9A</td><td><span class="badge b-ok">done</span></td></tr>
   <tr><td>15</td><td><s>Sample export CSV</s> — done, <code>docs/sample-export.csv</code>: 10 anonymised rows incl. the nullable-text case and Krio orthography</td><td>6</td><td><span class="badge b-ok">done</span></td></tr>
   <tr><td>16</td><td><s>Cite OpenMOS under Indicator 8</s> — done, <code>github.com/Geneline-X/OpenMos</code>. Separate submission blocked on an empty README and a copyright holder that is not Geneline-X</td><td>8</td><td><span class="badge b-ok">done</span></td></tr>
-  <tr><td>17</td><td>Report registered speakers, transcribers and throughput under Scale — <b>needs your figures</b></td><td>Scale</td><td><span class="badge b-warn">you</span></td></tr>
+  <tr><td>17</td><td><s>Scale figures</s> — done, queried from production 23 Sep 2026. Surfaced a language-claim discrepancy to fix in your public copy</td><td>Scale</td><td><span class="badge b-ok">done</span></td></tr>
 </table>
 
 <footer>
