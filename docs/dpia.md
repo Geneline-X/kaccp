@@ -120,8 +120,10 @@ personal data are deleted rather than edited, since the data is in the audio its
 A minor cannot validly consent to publication of their biometric data, nor to a paid work
 agreement.
 
-*Mitigations:* contributors must be **18 or older**, stated in the Terms of Service and confirmed
-explicitly at registration in both signup flows; accounts found to belong to under-18s are
+*Mitigations:* contributors must be **18 or older**, stated in the Terms of Service. There is no
+self-registration: an administrator creates every account and must attest that the person is 18+
+(stored as `ageVerifiedAt` / `ageVerifiedById`), and the contributor confirms it again when
+accepting the Terms on first login; accounts found to belong to under-18s are
 deactivated and unpublished recordings deleted; no recordings of children are solicited by any
 prompt.
 
@@ -136,11 +138,17 @@ seven years for accounting obligations and are administrator-access only.
 
 ## 5. Consent — how it is obtained
 
-1. **At registration** — the contributor confirms they are 18 or older and accepts the Terms of
-   Service and Privacy Policy. Both are linked, not merely referenced.
-2. **Per recording** — consent is recorded on each `Recording` (`consentGiven`), so it is a
+1. **At account creation** — accounts are created by an administrator only (self-registration
+   was removed). The administrator attests the person is 18 or older; the attestation, the
+   administrator and the time are stored on the `User` row.
+2. **At first login** — before anything else works, the contributor replaces their
+   administrator-set password and personally accepts the Terms of Service and Privacy Policy
+   (linked, not merely referenced). `termsAcceptedAt` and `termsVersion` are stored; bumping
+   `TERMS_VERSION` makes every contributor accept again. The server refuses all other API calls
+   until this is done.
+3. **Per recording** — consent is recorded on each `Recording` (`consentGiven`), so it is a
    repeated act rather than a one-time click.
-3. **Withdrawable** — a contributor may stop at any time and delete their account, which removes
+4. **Withdrawable** — a contributor may stop at any time and delete their account, which removes
    their personal data.
 
 Consent language must state, in plain terms: what is recorded, what it will be used for, who holds

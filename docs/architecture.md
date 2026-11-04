@@ -153,7 +153,7 @@ src/
   app/
     [locale]/           Pages, by role: speaker/ transcriber/ admin/
     api/
-      auth/             register, login, password reset
+      auth/             login, me, first-login onboarding, password reset
       v2/
         speaker/        prompts, recordings, wallet
         transcriber/    available, claim, submit, english, profile

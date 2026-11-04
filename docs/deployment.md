@@ -27,6 +27,7 @@ one that substantiates the platform-independence claim.
 DATABASE_URL="postgresql://kaccp:password@localhost:5432/kaccp"
 JWT_SECRET="$(openssl rand -base64 32)"
 NEXT_PUBLIC_APP_URL="https://your-domain"
+NEXT_PUBLIC_SUPPORT_CONTACT="073787064"   # who would-be contributors contact for an account
 
 STORAGE_PROVIDER="local"
 LOCAL_STORAGE_ROOT="/var/lib/kaccp/audio"

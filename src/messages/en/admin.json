@@ -127,7 +127,15 @@
             "speaker": "Speaker",
             "transcriber": "Transcriber",
             "reviewer": "Reviewer",
-            "admin": "Admin"
+            "admin": "Admin",
+            "rolesLabel": "Roles (first selected is the primary role)",
+            "primaryRole": "primary",
+            "selectAtLeastOneRole": "Select at least one role",
+            "speaksLanguagesLabel": "Languages they speak",
+            "writesLanguagesLabel": "Languages they can transcribe",
+            "startingPasswordHint": "Starting password (min. 8 characters). Share it with the person directly — they must change it on first login.",
+            "ageVerifiedLabel": "I have verified that this person is 18 or older.",
+            "ageVerificationRequired": "Confirm you have verified this person is 18 or older"
         },
         "userDetailPage": {
             "profile": "Profile",
@@ -382,7 +390,7 @@
             "instruction3": "Download in CSV format (LJSpeech-compatible) or JSON format",
             "instruction4": "Use the audio file paths to download the corresponding WAV files from GCS",
             "noteOnAudioFiles": "Note on Audio Files",
-            "audioFilesNote": "Audio files are stored in Google Cloud Storage. The export contains the GCS paths. You\u0027ll need to use gsutil or the GCS console to download the actual audio files for TTS training.",
+            "audioFilesNote": "Audio files are stored in Google Cloud Storage. The export contains the GCS paths. You'll need to use gsutil or the GCS console to download the actual audio files for TTS training.",
             "fetchFailed": "Failed to fetch export data"
         },
         "tables": {
@@ -428,7 +436,7 @@
                 },
                 "deactivateDialog": {
                     "title": "Deactivate User",
-                    "description": "This will disable login for {user}. You can\u0027t delete the last active admin.",
+                    "description": "This will disable login for {user}. You can't delete the last active admin.",
                     "cancel": "Cancel",
                     "confirm": "Deactivate",
                     "working": "Working...",

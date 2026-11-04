@@ -117,13 +117,18 @@ they will be usable only for same-language tasks.
 
 ## 4. Onboard people
 
-**Speakers** register and select the language under "languages I speak". Then:
+Contributors cannot register themselves. An admin creates each account at **Admin → Users →
+Add User**, ticks the roles, selects the languages, confirms the person is 18 or older, and
+gives them a starting password. On first login they choose their own password and accept the
+Terms.
+
+**Speakers** get the language under "languages they speak". Then:
 
 - Record somewhere quiet. A quiet room beats an expensive microphone.
 - Same device, same position, every session — consistency matters more than absolute quality.
 - Speak naturally. Over-enunciated speech produces unnatural models.
 
-**Transcribers** register and select the language under "languages I write". Give them the
+**Transcribers** get the language under "languages they can transcribe". Give them the
 orthography guide from §2 before their first task.
 
 **Reviewers** are transcribers you promote once you trust their judgement. They approve or reject

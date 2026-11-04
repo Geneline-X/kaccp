@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/infra/db/prisma'
 import { signJwt, verifyPassword } from '@/lib/infra/auth/auth'
 import { rateLimit, RATE_LIMITS } from '@/lib/infra/rate-limit'
+import { pendingOnboardingSteps } from '@/lib/domain/users/onboarding'
 
 export async function POST(req: NextRequest) {
   const limited = rateLimit(req, RATE_LIMITS.auth);
@@ -57,6 +58,8 @@ export async function POST(req: NextRequest) {
         speaksLanguages: user.speaksLanguages,
         writesLanguages: user.writesLanguages,
       },
+      // Non-empty => the client must send the user to /onboarding first.
+      onboarding: pendingOnboardingSteps(user),
       token,
     })
   } catch (e) {

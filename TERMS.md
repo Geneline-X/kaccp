@@ -10,13 +10,15 @@ software; organisations running their own deployment are responsible for their o
 
 ## 1. Eligibility — you must be 18 or older
 
-**You must be at least 18 years old to create an account and contribute.**
+**You must be at least 18 years old to hold an account and contribute.**
 
 This is a firm requirement, not a formality. Contributing to KACCP means being paid for your
 work and granting rights over recordings of your own voice. Both are decisions we do not
 consider a minor able to make on their own behalf.
 
-- You confirm you are 18 or older when you register.
+- Accounts are created by the KACCP team, not by self-registration. The administrator who
+  creates your account verifies that you are 18 or older, and you confirm it yourself when you
+  accept these terms on your first login.
 - If we find an account belongs to someone under 18, we deactivate it and delete their
   unpublished recordings.
 - We do not knowingly collect voice recordings from children. If you believe a child has
@@ -24,7 +26,7 @@ consider a minor able to make on their own behalf.
 
 ## 2. Your account
 
-- Provide accurate registration details. Your phone number is used to pay you, so an
+- Provide accurate details to the team creating your account. Your phone number is used to pay you, so an
   incorrect one means you will not be paid.
 - Keep your password secure. You are responsible for activity under your account.
 - One account per person. Duplicate accounts created to claim more work may be suspended.

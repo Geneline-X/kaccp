@@ -1,11 +1,12 @@
-import TranscriberRegisterClient from './TranscriberRegisterClient';
+import { redirect } from 'next/navigation';
 
-export default async function TranscriberRegister({
+// Self-registration was removed: accounts are created by an admin only.
+// Old signup links and bookmarks land on the matching login page instead.
+export default async function RegisterRedirect({
   params,
 }: {
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-
-  return <TranscriberRegisterClient locale={locale} />;
+  redirect(`/${locale}/transcriber/login`);
 }

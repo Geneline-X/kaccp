@@ -43,8 +43,17 @@ export default function AdminUsersPage() {
   const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
   const [displayName, setDisplayName] = useState('')
-  const [role, setRole] = useState<string>('SPEAKER')
+  // First selected role is the primary role.
+  const [roles, setRoles] = useState<string[]>(['SPEAKER'])
+  const [speaksLanguages, setSpeaksLanguages] = useState<string[]>([])
+  const [writesLanguages, setWritesLanguages] = useState<string[]>([])
+  const [ageVerified, setAgeVerified] = useState(false)
+  const [availableLanguages, setAvailableLanguages] = useState<{ code: string; name: string }[]>([])
   const [creating, setCreating] = useState(false)
+
+  const isContributorSelection = roles.includes('SPEAKER') || roles.includes('TRANSCRIBER')
+  const toggleIn = (list: string[], value: string) =>
+    list.includes(value) ? list.filter(v => v !== value) : [...list, value]
 
   const token = typeof window !== 'undefined' ? getToken() : null
 
@@ -73,8 +82,24 @@ export default function AdminUsersPage() {
     if (token) loadUsers()
   }, [token])
 
+  useEffect(() => {
+    if (!showCreateForm || availableLanguages.length > 0) return
+    fetch('/api/v2/languages')
+      .then(r => r.json())
+      .then(d => setAvailableLanguages(d.languages || []))
+      .catch(() => {})
+  }, [showCreateForm, availableLanguages.length])
+
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (roles.length === 0) {
+      alert(t('admin.usersPage.selectAtLeastOneRole'))
+      return
+    }
+    if (isContributorSelection && !ageVerified) {
+      alert(t('admin.usersPage.ageVerificationRequired'))
+      return
+    }
     setCreating(true)
     try {
       const res = await fetch('/api/admin/users', {
@@ -83,7 +108,16 @@ export default function AdminUsersPage() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ email, phone, password, displayName, role }),
+        body: JSON.stringify({
+          email,
+          phone,
+          password,
+          displayName,
+          roles,
+          speaksLanguages: roles.includes('SPEAKER') ? speaksLanguages : [],
+          writesLanguages: roles.includes('TRANSCRIBER') ? writesLanguages : [],
+          ageVerified: isContributorSelection ? ageVerified : undefined,
+        }),
       })
       const data = await res.json()
       if (data.error) throw new Error(data.error)
@@ -91,7 +125,10 @@ export default function AdminUsersPage() {
       setPhone('')
       setPassword('')
       setDisplayName('')
-      setRole('SPEAKER')
+      setRoles(['SPEAKER'])
+      setSpeaksLanguages([])
+      setWritesLanguages([])
+      setAgeVerified(false)
       setShowCreateForm(false)
       loadUsers()
     } catch (e: any) {
@@ -172,12 +209,15 @@ export default function AdminUsersPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('common.password')} *</label>
                 <input
-                  type="password"
+                  type="text"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  minLength={8}
+                  autoComplete="off"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                 />
+                <p className="text-xs text-gray-500 mt-1">{t('admin.usersPage.startingPasswordHint')}</p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin.usersPage.displayName')}</label>
@@ -188,19 +228,79 @@ export default function AdminUsersPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin.usersPage.role')}</label>
-                <select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                >
-                  <option value="SPEAKER">{t('admin.usersPage.speaker')}</option>
-                  <option value="TRANSCRIBER">{t('admin.usersPage.transcriber')}</option>
-                  <option value="REVIEWER">{t('admin.usersPage.reviewer')}</option>
-                  <option value="ADMIN">{t('admin.usersPage.admin')}</option>
-                </select>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin.usersPage.rolesLabel')} *</label>
+                <div className="flex flex-wrap gap-4">
+                  {([
+                    ['SPEAKER', t('admin.usersPage.speaker')],
+                    ['TRANSCRIBER', t('admin.usersPage.transcriber')],
+                    ['REVIEWER', t('admin.usersPage.reviewer')],
+                    ['ADMIN', t('admin.usersPage.admin')],
+                  ] as const).map(([value, label]) => (
+                    <label key={value} className="flex items-center gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={roles.includes(value)}
+                        onChange={() => setRoles(prev => toggleIn(prev, value))}
+                        className="rounded border-gray-300"
+                      />
+                      {label}
+                      {roles[0] === value && roles.length > 1 && (
+                        <span className="text-xs text-gray-500">({t('admin.usersPage.primaryRole')})</span>
+                      )}
+                    </label>
+                  ))}
+                </div>
               </div>
+              {roles.includes('SPEAKER') && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin.usersPage.speaksLanguagesLabel')}</label>
+                  <div className="max-h-40 overflow-y-auto border border-gray-200 rounded-lg p-2 space-y-1">
+                    {availableLanguages.map(lang => (
+                      <label key={lang.code} className="flex items-center gap-2 text-sm">
+                        <input
+                          type="checkbox"
+                          checked={speaksLanguages.includes(lang.code)}
+                          onChange={() => setSpeaksLanguages(prev => toggleIn(prev, lang.code))}
+                          className="rounded border-gray-300"
+                        />
+                        {lang.name} ({lang.code})
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {roles.includes('TRANSCRIBER') && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin.usersPage.writesLanguagesLabel')}</label>
+                  <div className="max-h-40 overflow-y-auto border border-gray-200 rounded-lg p-2 space-y-1">
+                    {availableLanguages.map(lang => (
+                      <label key={lang.code} className="flex items-center gap-2 text-sm">
+                        <input
+                          type="checkbox"
+                          checked={writesLanguages.includes(lang.code)}
+                          onChange={() => setWritesLanguages(prev => toggleIn(prev, lang.code))}
+                          className="rounded border-gray-300"
+                        />
+                        {lang.name} ({lang.code})
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {isContributorSelection && (
+                <div className="md:col-span-2">
+                  <label className="flex items-start gap-2 text-sm text-gray-800 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                    <input
+                      type="checkbox"
+                      checked={ageVerified}
+                      onChange={(e) => setAgeVerified(e.target.checked)}
+                      className="mt-0.5 rounded border-gray-300"
+                    />
+                    <span>{t('admin.usersPage.ageVerifiedLabel')}</span>
+                  </label>
+                </div>
+              )}
               <div className="flex items-end">
                 <button
                   type="submit"

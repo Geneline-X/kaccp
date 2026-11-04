@@ -77,7 +77,7 @@ configured for Krio, Mende, Temne, Susu and Mandinka.
 │   │   │   ├── (transcriber)/ # Transcriber pages
 │   │   │   └── legal/       # Terms, privacy pages
 │   │   └── api/             # API route handlers
-│   │       ├── auth/        # login, register, forgot-password
+│   │       ├── auth/        # login, me, onboarding, forgot/reset-password
 │   │       └── v2/          # Versioned API (speaker, transcriber, admin, reviewer)
 │   ├── components/          # Shared React components (UI, layout, forms)
 │   ├── lib/

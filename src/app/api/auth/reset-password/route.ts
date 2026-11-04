@@ -31,6 +31,8 @@ export async function POST(req: NextRequest) {
                 passwordHash,
                 resetToken: null,
                 resetTokenExpiry: null,
+                // They chose this password themselves via their own reset link.
+                mustChangePassword: false,
             },
         });
 

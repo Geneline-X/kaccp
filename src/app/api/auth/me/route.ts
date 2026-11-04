@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/infra/db/prisma'
 import { getAuthUser } from '@/lib/infra/auth/auth'
+import { pendingOnboardingSteps } from '@/lib/domain/users/onboarding'
 
 export async function GET(req: NextRequest) {
   try {
@@ -25,10 +26,17 @@ export async function GET(req: NextRequest) {
         totalTranscriptions: true,
         createdAt: true,
         lastLoginAt: true,
+        mustChangePassword: true,
+        termsVersion: true,
+        termsAcceptedAt: true,
       },
     })
 
-    return NextResponse.json({ user: enriched })
+    return NextResponse.json({
+      user: enriched,
+      // Non-empty => the client must send the user to /onboarding first.
+      onboarding: enriched ? pendingOnboardingSteps(enriched) : [],
+    })
   } catch (e) {
     console.error('Me error', e)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
