@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { setToken } from "@/lib/infra/client/client";
+import { postLoginPath } from "@/lib/infra/client/onboarding";
+import { SUPPORT_CONTACT } from "@/lib/infra/client/support";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 
@@ -36,7 +38,7 @@ export default function TranscriberLoginClient({ locale }: { locale: string }) {
 
       setToken(data.token);
       toast.success(t('auth.welcomeBack'));
-      router.replace(`/${locale}/transcriber/v2`);
+      router.replace(postLoginPath(locale, `/${locale}/transcriber/v2`, data.onboarding));
     } catch (e: any) {
       toast.error(e.message || t('auth.loginFailed'));
     } finally {
@@ -109,14 +111,8 @@ export default function TranscriberLoginClient({ locale }: { locale: string }) {
           </form>
 
           <div className="mt-6 text-center space-y-4">
-            <p className="text-gray-600">
-              {t('auth.dontHaveAccount')} {" "}
-              <button
-                onClick={() => router.push(`/${locale}/transcriber/v2/register`)}
-                className="text-blue-600 hover:underline font-medium"
-              >
-                {t('auth.registerHere')}
-              </button>
+            <p className="text-gray-600 text-sm">
+              {t('auth.noAccountContact', { contact: SUPPORT_CONTACT })}
             </p>
 
             <div className="pt-2 border-t border-gray-100">

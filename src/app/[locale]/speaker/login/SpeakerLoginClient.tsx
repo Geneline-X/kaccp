@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { setToken } from "@/lib/infra/client/client";
+import { postLoginPath } from "@/lib/infra/client/onboarding";
+import { SUPPORT_CONTACT } from "@/lib/infra/client/support";
 import { useTranslations } from "next-intl";
 
 export default function SpeakerLoginClient({ locale }: { locale: string }) {
@@ -34,7 +36,7 @@ export default function SpeakerLoginClient({ locale }: { locale: string }) {
       }
 
       setToken(data.token);
-      router.push(`/${locale}/speaker`);
+      router.push(postLoginPath(locale, `/${locale}/speaker`, data.onboarding));
     } catch {
       setError(t('auth.errorOccurred'));
     } finally {
@@ -103,11 +105,8 @@ export default function SpeakerLoginClient({ locale }: { locale: string }) {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-gray-600">
-              {t('auth.dontHaveAccount')} {" "}
-              <Link href={`/${locale}/speaker/register`} className="text-blue-600 hover:underline">
-                {t('auth.registerHere')}
-              </Link>
+            <p className="text-gray-600 text-sm">
+              {t('auth.noAccountContact', { contact: SUPPORT_CONTACT })}
             </p>
           </div>
 

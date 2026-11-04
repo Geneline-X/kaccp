@@ -11,8 +11,6 @@
         "name": "Name",
         "minutes": "Minutes",
         "wantToSee": "Want to see your name on the leaderboard?",
-        "becomeSpeaker": "[Microphone] Become a Speaker",
-        "becomeTranscriber": "[Checkmark] Become a Transcriber",
         "builtBy": "Built by",
         "preserving": "Preserving African Languages"
     },
@@ -40,7 +38,7 @@
             },
             "payment": {
                 "title": "Payment and Compensation",
-                "content": "Payment for your transcription work is based solely on the amount of work that is reviewed and approved by the KACCP Platform. The current rate is specified on the Platform and is subject to change at our discretion. Payment will be made through an agreed-upon method as specified in the Platform\u0027s payment policy."
+                "content": "Payment for your transcription work is based solely on the amount of work that is reviewed and approved by the KACCP Platform. The current rate is specified on the Platform and is subject to change at our discretion. Payment will be made through an agreed-upon method as specified in the Platform's payment policy."
             },
             "disclaimer": {
                 "title": "Disclaimers and Limitation of Liability",
@@ -100,7 +98,7 @@
                 }
             }
         },
-        "footer": "Questions? Visit \u003clink\u003egeneline-x.net\u003c/link\u003e."
+        "footer": "Questions? Visit <link>geneline-x.net</link>."
     },
     "notifications": {
         "title": "Notifications",
@@ -124,7 +122,6 @@
             "benefit2": "Translate English prompts to your language",
             "benefit3": "Earn per minute of approved audio",
             "benefit4": "Work from anywhere with a phone",
-            "registerBtn": "Register as Speaker",
             "loginBtn": "Speaker Login"
         },
         "transcriber": {
@@ -134,13 +131,12 @@
             "benefit2": "Write transcriptions in the original language",
             "benefit3": "Flag poor quality recordings",
             "benefit4": "Earn per transcription approved",
-            "registerBtn": "Register as Transcriber",
             "loginBtn": "Transcriber Login"
         },
         "howItWorks": {
             "title": "How It Works",
-            "step1Title": "Register \u0026 Select Languages",
-            "step1Desc": "Create an account and choose which languages you speak or can transcribe.",
+            "step1Title": "Get Your Account",
+            "step1Desc": "The KACCP team creates your account and sets the languages you speak or can transcribe.",
             "step2Title": "Record or Transcribe",
             "step2Desc": "Speakers record voice clips. Transcribers listen and write what they hear.",
             "step3Title": "Get Paid",
@@ -183,39 +179,14 @@
         "adminLogin": "Admin Login",
         "signingIn": "Signing in...",
         "signIn": "Sign In",
-        "dontHaveAccount": "Don\u0027t have an account?",
-        "registerHere": "Register here",
-        "alreadyHaveAccount": "Already have an account?",
-        "signInHere": "Sign in here",
         "areYouTranscriber": "Are you a transcriber? Login here →",
         "areYouSpeaker": "Are you a speaker? Login here →",
         "loginFailed": "Login failed",
         "errorOccurred": "An error occurred. Please try again.",
-        "registerAsSpeaker": "Register as Speaker",
-        "registerAsTranscriber": "Register as Transcriber",
-        "helpPreserve": "Help preserve African languages by contributing your voice",
         "displayName": "Display Name",
-        "phoneNumber": "Phone Number",
-        "yourName": "Your name",
-        "languagesYouSpeak": "Languages You Speak Natively",
-        "selectLanguagesFlluent": "Select all languages you can speak fluently",
-        "loadingLanguages": "Loading languages...",
         "passwordsNoMatch": "Passwords do not match",
-        "selectOneLanguage": "Please select at least one language you speak",
-        "agreeToTerms": "Please agree to the terms and consent",
-        "consentText": "I agree to contribute my voice recordings under the CC0 Public Domain license. I understand that my recordings will be used to train AI models for African languages and will be freely available for research and development.",
-        "creatingAccount": "Creating Account...",
-        "createAccount": "Create Account",
-        "registrationFailed": "Registration failed",
-        "helpTranscribe": "Help create accurate text for AI training by transcribing audio",
-        "selectOneLanguageTranscribe": "Please select at least one language you can write",
-        "languagesYouTranscribe": "Languages You Transcribe",
-        "selectLanguagesWrite": "Select all languages you can write fluently",
-        "transcriberConsentText": "I agree to contribute my transcriptions under the CC0 Public Domain license. I understand that my transcriptions will be used to train AI models for African languages and will be freely available for research and development.",
-        "wantToBeSpeaker": "Want to be a speaker instead? Register here",
         "emailOrPhone": "Email or Phone Number",
         "emailOrPhonePlaceholder": "email@example.com or +232...",
-        "phoneFormatExample": "+232 XX XXX XXXX",
         "confirmNewPassword": "Confirm New Password",
         "updating": "Updating...",
         "resetPassword": "Reset Password",
@@ -239,7 +210,8 @@
         "accessDeniedReviewer": "Your account does not have reviewer access. Please contact an admin.",
         "noAdminAccess": "Not an admin account",
         "signInToManagement": "Sign in to management platform",
-        "backToPlatformLogin": "Back to platform login"
+        "backToPlatformLogin": "Back to platform login",
+        "noAccountContact": "Don't have an account? Accounts are created by the KACCP team. Contact {contact} to get one."
     },
     "tos": {
         "title": "Terms of Service",
@@ -358,5 +330,26 @@
         "secondsShort": "s",
         "toggleMenu": "Toggle menu",
         "backToHome": "Back to Home"
+    },
+    "onboarding": {
+        "loading": "Loading…",
+        "stepCounter": "Before you start: {total} quick steps",
+        "changePasswordTitle": "Choose your own password",
+        "changePasswordIntro": "Your account was created by an administrator. Replace the password you were given with one only you know.",
+        "currentPassword": "Password you were given",
+        "newPassword": "New password",
+        "confirmPassword": "Confirm new password",
+        "savePassword": "Save password",
+        "passwordTooShort": "Password must be at least {min} characters",
+        "passwordsDoNotMatch": "Passwords do not match",
+        "termsTitle": "Terms of Service and Privacy Policy",
+        "termsIntro": "Before contributing, please read how your voice recordings and transcriptions are used, licensed, and paid for.",
+        "readTerms": "Read the Terms of Service and Privacy Policy (opens in a new tab)",
+        "acceptLabel": "I am 18 or older, and I have read and accept the Terms of Service and Privacy Policy.",
+        "acceptButton": "Accept and continue",
+        "mustAccept": "You must accept the Terms of Service and Privacy Policy to continue",
+        "saving": "Saving…",
+        "signOut": "Sign out",
+        "genericError": "Something went wrong. Please try again."
     }
 }
