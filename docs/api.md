@@ -6,10 +6,7 @@ All endpoints are JSON over HTTPS. Paths are relative to your deployment root.
 
 ## Authentication
 
-Every endpoint except login and password reset requires a bearer token. There is no
-self-registration endpoint: accounts are created by admins via `POST /api/admin/users`.
-Until a user has completed first-login onboarding (see below), every endpoint outside
-`/api/auth/*` and `/api/v2/account/*` answers as if the token were invalid:
+Every endpoint except registration and login requires a bearer token:
 
 ```
 Authorization: Bearer <jwt>
@@ -30,18 +27,11 @@ alone.
 
 | Method | Path | Body | Notes |
 |---|---|---|---|
-| `POST` | `/api/auth/login` | `email`, `password` | Returns `{ token, user, onboarding }`. `onboarding` lists pending steps (`CHANGE_PASSWORD`, `ACCEPT_TERMS`); non-empty means send the user to `/onboarding` |
-| `GET` | `/api/auth/me` | — | Current user, plus `onboarding` (same as login) |
-| `POST` | `/api/auth/onboarding/change-password` | `currentPassword`, `newPassword` | First-login step 1. New password ≥ 8 chars and different from the admin-set one. Clears `mustChangePassword` |
-| `POST` | `/api/auth/onboarding/accept-terms` | `accepted: true`, `version` | First-login step 2 (speakers/transcribers). `version` must equal the server's `TERMS_VERSION` (409 otherwise). Requires step 1 done |
+| `POST` | `/api/auth/register` | `email`, `phone`, `password`, `displayName?`, `role`, `speaksLanguages[]`, `writesLanguages[]`, `ageConfirmed`, `termsAccepted` | `role` is `SPEAKER` or `TRANSCRIBER`. Rejects when `ageConfirmed` is explicitly `false` |
+| `POST` | `/api/auth/login` | `email`, `password` | Returns `{ token, user }` |
+| `GET` | `/api/auth/me` | — | Current user |
 | `POST` | `/api/auth/forgot-password` | `email` | |
 | `POST` | `/api/auth/reset-password` | `token`, `password` | |
-
-### Account creation (admin only)
-
-| Method | Path | Body | Notes |
-|---|---|---|---|
-| `POST` | `/api/admin/users` | `email`, `password`, `phone?`, `displayName?`, `roles[]` (first = primary), `speaksLanguages[]?`, `writesLanguages[]?`, `ageVerified` | The only way to create an account. `password` ≥ 8 chars; the account is created with `mustChangePassword = true`. For `SPEAKER`/`TRANSCRIBER`, `ageVerified` must be `true` and is stored as `ageVerifiedAt` + `ageVerifiedById` |
 
 ---
 

@@ -274,16 +274,16 @@ export default function LeaderboardPage() {
           <p className="text-blue-200 mb-4">{t('leaderboard.wantToSee')}</p>
           <div className="flex justify-center gap-4">
             <Link
-              href="/speaker/login"
+              href="/speaker/register"
               className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-500 transition"
             >
-              {t('home.speaker.loginBtn')}
+              {t('leaderboard.becomeSpeaker')}
             </Link>
             <Link
-              href="/transcriber/login"
+              href="/transcriber/v2/register"
               className="px-6 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-500 transition"
             >
-              {t('home.transcriber.loginBtn')}
+              {t('leaderboard.becomeTranscriber')}
             </Link>
           </div>
         </div>

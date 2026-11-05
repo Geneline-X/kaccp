@@ -64,16 +64,6 @@ model User {
   // starter derived from the user id. Never inferred from the person's name.
   avatarId String?
 
-  // Admin-only account creation. Contributors cannot register themselves: an admin
-  // creates the account, attests the person is 18+, and hands over a starting
-  // password. The contributor must replace that password and accept the current
-  // Terms before they can do anything else (see lib/domain/users/onboarding.ts).
-  ageVerifiedAt      DateTime? // When an admin attested this person is 18 or older
-  ageVerifiedById    String? // Which admin made that attestation
-  termsAcceptedAt    DateTime? // When the contributor themselves accepted the Terms
-  termsVersion       String? // Which Terms version they accepted (TERMS_VERSION)
-  mustChangePassword Boolean   @default(false) // Set when an admin chose the password
-
   // Language capabilities
   speaksLanguages String[] // Language codes they can speak (e.g., ["kri", "men"])
   writesLanguages String[] // Language codes they can write/transcribe

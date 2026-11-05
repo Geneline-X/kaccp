@@ -11,6 +11,8 @@
         "name": "Nom",
         "minutes": "Minutes",
         "wantToSee": "Voulez-vous voir votre nom au classement ?",
+        "becomeSpeaker": "[Microphone] Devenir Locuteur",
+        "becomeTranscriber": "[Checkmark] Devenir Transcripteur",
         "builtBy": "DÃ©veloppÃ© par",
         "preserving": "PrÃ©servation des Langues Africaines"
     },
@@ -122,6 +124,7 @@
             "benefit2": "Traduisez les instructions de l'anglais vers votre langue",
             "benefit3": "Gagnez par minute d'audio approuvÃ©",
             "benefit4": "Travaillez de n'importe oÃ¹ avec un tÃ©lÃ©phone",
+            "registerBtn": "S'inscrire comme Locuteur",
             "loginBtn": "Connexion Locuteur"
         },
         "transcriber": {
@@ -131,12 +134,13 @@
             "benefit2": "Ã‰crivez les transcriptions dans la langue originale",
             "benefit3": "Signalez les enregistrements de mauvaise qualitÃ©",
             "benefit4": "Gagnez par transcription approuvÃ©e",
+            "registerBtn": "S'inscrire comme Transcripteur",
             "loginBtn": "Connexion Transcripteur"
         },
         "howItWorks": {
             "title": "Comment Ã‡a Marche",
-            "step1Title": "Obtenez votre compte",
-            "step1Desc": "L'équipe KACCP crée votre compte et définit les langues que vous parlez ou pouvez transcrire.",
+            "step1Title": "Inscrivez-vous et SÃ©lectionnez les Langues",
+            "step1Desc": "CrÃ©ez un compte et choisissez les langues que vous parlez ou pouvez transcrire.",
             "step2Title": "Enregistrez ou Transcrivez",
             "step2Desc": "Les locuteurs enregistrent des clips vocaux. Les transcripteurs Ã©coutent et Ã©crivent ce qu'ils entendent.",
             "step3Title": "Recevez Votre Paiement",
@@ -176,14 +180,37 @@
         "adminLogin": "Connexion Administrateur",
         "signingIn": "Connexion en cours...",
         "signIn": "Se Connecter",
+        "dontHaveAccount": "Vous n'avez pas de compte ?",
+        "registerHere": "Inscrivez-vous ici",
+        "alreadyHaveAccount": "Vous avez dÃ©jÃ  un compte ?",
+        "signInHere": "Connectez-vous ici",
         "areYouTranscriber": "ÃŠtes-vous transcripteur ? Connectez-vous ici â†’",
         "areYouSpeaker": "ÃŠtes-vous locuteur ? Connectez-vous ici â†’",
         "loginFailed": "Ã‰chec de la connexion",
         "errorOccurred": "Une erreur s'est produite. Veuillez rÃ©essayer.",
+        "registerAsSpeaker": "S'inscrire comme Locuteur",
+        "registerAsTranscriber": "S'inscrire comme Transcripteur",
+        "helpPreserve": "Aidez Ã  prÃ©server les langues africaines en contribuant avec votre voix",
         "displayName": "Nom d'Affichage",
+        "phoneNumber": "NumÃ©ro de TÃ©lÃ©phone",
+        "yourName": "Votre nom",
+        "languagesYouSpeak": "Langues que Vous Parlez Nativement",
+        "selectLanguagesFlluent": "SÃ©lectionnez toutes les langues que vous parlez couramment",
+        "loadingLanguages": "Chargement des langues...",
         "passwordsNoMatch": "Les mots de passe ne correspondent pas",
-        "accessDeniedReviewer": "Votre compte n'a pas l'accès réviseur. Veuillez contacter un administrateur.",
-        "noAccountContact": "Vous n'avez pas de compte ? Les comptes sont créés par l'équipe KACCP. Contactez le {contact} pour en obtenir un."
+        "selectOneLanguage": "Veuillez sÃ©lectionner au moins une langue que vous parlez",
+        "agreeToTerms": "Veuillez accepter les conditions et le consentement",
+        "consentText": "J'accepte de contribuer mes enregistrements vocaux sous la licence CC0 Domaine Public. Je comprends que mes enregistrements seront utilisÃ©s pour entraÃ®ner des modÃ¨les d'IA pour les langues africaines et seront librement disponibles pour la recherche et le dÃ©veloppement.",
+        "creatingAccount": "CrÃ©ation du Compte...",
+        "createAccount": "CrÃ©er un Compte",
+        "registrationFailed": "Ã‰chec de l'inscription",
+        "helpTranscribe": "Aidez Ã  crÃ©er un texte prÃ©cis pour l'entraÃ®nement de l'IA en transcrivant l'audio",
+        "selectOneLanguageTranscribe": "Veuillez sÃ©lectionner au moins une langue que vous pouvez Ã©crire",
+        "languagesYouTranscribe": "Langues que vous transcrivez",
+        "selectLanguagesWrite": "SÃ©lectionnez toutes les langues que vous pouvez Ã©crire couramment",
+        "transcriberConsentText": "J'accepte de contribuer mes transcriptions sous la licence CC0 Domaine Public. Je comprends que mes transcriptions seront utilisÃ©es pour entraÃ®ner des modÃ¨les d'IA pour les langues africaines et seront librement disponibles pour la recherche et le dÃ©veloppement.",
+        "wantToBeSpeaker": "Vous voulez Ãªtre locuteur Ã  la place ? Inscrivez-vous ici",
+        "accessDeniedReviewer": "Votre compte n'a pas l'accès réviseur. Veuillez contacter un administrateur."
     },
     "common": {
         "loading": "Chargement...",
@@ -325,26 +352,5 @@
                 "content": "Vous avez le droit de demander l'accès à, la correction ou la suppression de vos données personnelles."
             }
         }
-    },
-    "onboarding": {
-        "loading": "Chargement…",
-        "stepCounter": "Avant de commencer : {total} étapes rapides",
-        "changePasswordTitle": "Choisissez votre propre mot de passe",
-        "changePasswordIntro": "Votre compte a été créé par un administrateur. Remplacez le mot de passe reçu par un mot de passe que vous seul connaissez.",
-        "currentPassword": "Mot de passe reçu",
-        "newPassword": "Nouveau mot de passe",
-        "confirmPassword": "Confirmer le nouveau mot de passe",
-        "savePassword": "Enregistrer le mot de passe",
-        "passwordTooShort": "Le mot de passe doit contenir au moins {min} caractères",
-        "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
-        "termsTitle": "Conditions d'utilisation et politique de confidentialité",
-        "termsIntro": "Avant de contribuer, veuillez lire comment vos enregistrements vocaux et transcriptions sont utilisés, licenciés et rémunérés.",
-        "readTerms": "Lire les conditions d'utilisation et la politique de confidentialité (nouvel onglet)",
-        "acceptLabel": "J'ai 18 ans ou plus, et j'ai lu et j'accepte les conditions d'utilisation et la politique de confidentialité.",
-        "acceptButton": "Accepter et continuer",
-        "mustAccept": "Vous devez accepter les conditions d'utilisation et la politique de confidentialité pour continuer",
-        "saving": "Enregistrement…",
-        "signOut": "Se déconnecter",
-        "genericError": "Une erreur s'est produite. Veuillez réessayer."
     }
 }

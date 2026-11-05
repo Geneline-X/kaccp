@@ -1,12 +1,19 @@
-import { redirect } from 'next/navigation';
+"use client"
 
-// Self-registration was removed: accounts are created by an admin only.
-// Old signup links and bookmarks land on the matching login page instead.
-export default async function RegisterRedirect({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
-  redirect(`/${locale}/transcriber/login`);
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+
+// Redirect to V2 Transcriber Registration
+export default function TranscriberRegisterPage() {
+  const router = useRouter()
+  
+  useEffect(() => {
+    router.replace('/transcriber/v2/register')
+  }, [router])
+  
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    </div>
+  )
 }

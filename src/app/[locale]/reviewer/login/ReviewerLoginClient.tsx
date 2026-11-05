@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { setToken, getToken } from "@/lib/infra/client/client";
-import { postLoginPath } from "@/lib/infra/client/onboarding";
 import { useTranslations } from "next-intl";
 
 export default function ReviewerLoginClient({ locale }: { locale: string }) {
@@ -63,7 +62,7 @@ export default function ReviewerLoginClient({ locale }: { locale: string }) {
       }
 
       setToken(data.token);
-      router.push(postLoginPath(locale, `/${locale}/reviewer`, data.onboarding));
+      router.push(`/${locale}/reviewer`);
     } catch {
       setError(t('auth.errorOccurred'));
     } finally {

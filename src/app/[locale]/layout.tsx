@@ -1,7 +1,6 @@
 import { Toaster } from 'sonner';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
-import OnboardingGate from '@/components/auth/OnboardingGate';
 
 export default async function LocaleLayout({
     children,
@@ -15,7 +14,6 @@ export default async function LocaleLayout({
 
     return (
         <NextIntlClientProvider locale={locale} messages={messages}>
-            <OnboardingGate locale={locale} />
             {children}
             <Toaster position="top-right" richColors closeButton />
         </NextIntlClientProvider>
