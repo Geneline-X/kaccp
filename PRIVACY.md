@@ -28,7 +28,7 @@ Voice recordings are biometric data and receive heightened protection:
 - Recordings are used exclusively for building open speech corpora for low-resource African languages
 - Recordings are not sold to or shared with third parties beyond the open dataset export
 
-**Consent:** You provide explicit consent for voice recording use when you accept these terms on your first login (we record the date and the version you accepted) and before each recording session. You may withdraw consent at any time by deleting your account.
+**Consent:** You provide explicit consent for voice recording use at registration and before each recording session. You may withdraw consent at any time by deleting your account.
 
 ## 3. How We Use Your Data
 
@@ -66,7 +66,7 @@ Note: payment records may be retained for 7 years for legal compliance even afte
 
 ## 6. Age Restriction
 
-KACCP is not intended for users under 18. Accounts are created only by KACCP administrators, who verify that each contributor is 18 or older before creating the account; we record which administrator made that check and when. You also confirm you are 18 or older when you accept these terms on first login. We do not knowingly collect data from minors. If we discover an account belongs to a minor, we will delete their account and data immediately.
+KACCP is not intended for users under 18. By registering, you confirm you are 18 or older. We do not knowingly collect data from minors. If we discover a minor has registered, we will delete their account and data immediately.
 
 ## 7. Data Transfers
 

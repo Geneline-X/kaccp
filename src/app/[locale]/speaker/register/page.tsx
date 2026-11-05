@@ -1,12 +1,11 @@
-import { redirect } from 'next/navigation';
+import SpeakerRegisterClient from './SpeakerRegisterClient';
 
-// Self-registration was removed: accounts are created by an admin only.
-// Old signup links and bookmarks land on the matching login page instead.
-export default async function RegisterRedirect({
+export default async function SpeakerRegister({
   params,
 }: {
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  redirect(`/${locale}/speaker/login`);
+
+  return <SpeakerRegisterClient locale={locale} />;
 }

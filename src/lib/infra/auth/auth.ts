@@ -5,7 +5,6 @@ import prisma from '@/lib/infra/db/prisma'
 
 import { UserRole } from '@prisma/client'
 import { cached, invalidate } from '@/lib/infra/cache'
-import { pendingOnboardingSteps, isOnboardingExemptPath } from '@/lib/domain/users/onboarding'
 
 export type JwtPayload = {
   sub: string // user id
@@ -67,22 +66,6 @@ export async function getAuthUser(req: NextRequest) {
     prisma.user.findUnique({ where: { id: payload.sub } })
   )
   if (!user || !user.isActive) return null
-
-  // Server-side backstop for first-login onboarding: until the user has replaced
-  // their admin-set password and (contributors) accepted the current Terms, only
-  // the onboarding/auth and account-data endpoints work. The UI redirects them to
-  // /onboarding; this stops anyone skipping it by calling the API directly.
-  if (
-    pendingOnboardingSteps(user).length > 0 &&
-    !isOnboardingExemptPath(req.nextUrl?.pathname ?? '')
-  ) {
-    // The cached row may predate onboarding completed on another instance —
-    // re-read before refusing so a just-onboarded user is not locked out.
-    const fresh = await prisma.user.findUnique({ where: { id: payload.sub } })
-    if (!fresh || !fresh.isActive || pendingOnboardingSteps(fresh).length > 0) return null
-    invalidate(`user:${payload.sub}`)
-    return fresh
-  }
   return user
 }
 
