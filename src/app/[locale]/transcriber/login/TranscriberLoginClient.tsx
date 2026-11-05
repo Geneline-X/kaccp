@@ -109,16 +109,6 @@ export default function TranscriberLoginClient({ locale }: { locale: string }) {
           </form>
 
           <div className="mt-6 text-center space-y-4">
-            <p className="text-gray-600">
-              {t('auth.dontHaveAccount')} {" "}
-              <button
-                onClick={() => router.push(`/${locale}/transcriber/v2/register`)}
-                className="text-blue-600 hover:underline font-medium"
-              >
-                {t('auth.registerHere')}
-              </button>
-            </p>
-
             <div className="pt-2 border-t border-gray-100">
               <Link href={`/${locale}/speaker/login`} className="text-sm text-gray-500 hover:text-gray-700">
                 {t('auth.areYouSpeaker')}

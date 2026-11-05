@@ -76,9 +76,6 @@ export default function HomeClient({ locale }: { locale: string }) {
               </ul>
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 flex-1">
-                  <Link href={`/${locale}/speaker/register`}>{t('home.speaker.registerBtn')}</Link>
-                </Button>
-                <Button asChild variant="outline" size="lg" className="flex-1">
                   <Link href={`/${locale}/speaker/login`}>{t('home.speaker.loginBtn')}</Link>
                 </Button>
               </div>
@@ -99,9 +96,6 @@ export default function HomeClient({ locale }: { locale: string }) {
               </ul>
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button asChild size="lg" className="bg-green-600 hover:bg-green-700 flex-1">
-                  <Link href={`/${locale}/transcriber/v2/register`}>{t('home.transcriber.registerBtn')}</Link>
-                </Button>
-                <Button asChild variant="outline" size="lg" className="flex-1">
                   <Link href={`/${locale}/transcriber/login`}>{t('home.transcriber.loginBtn')}</Link>
                 </Button>
               </div>
