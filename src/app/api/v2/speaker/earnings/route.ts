@@ -4,8 +4,7 @@ import { getAuthUser } from "@/lib/infra/auth/auth";
 import {
   getWeekRange,
   APPROVED_STATUSES,
-  MILESTONE_MINUTES,
-  MILESTONE_PAYOUT_LE,
+  speakerWeeklyPayout,
 } from "@/lib/utils/week";
 
 // GET /api/v2/speaker/earnings - Get speaker's weekly earnings history
@@ -89,36 +88,21 @@ export async function GET(req: NextRequest) {
         const { start, end } = getWeekRange(weekKey);
         const weekRef = `weekly:${weekKey}`;
         const approvedMinutes = data.approvedSec / 60;
-        const milestonesReached = Math.floor(approvedMinutes / MILESTONE_MINUTES);
-        const milestoneHit = milestonesReached >= 1;
-
-        let payoutLe: number;
-        if (milestoneHit) {
-          const remainderMinutes = approvedMinutes - milestonesReached * MILESTONE_MINUTES;
-          const avgRate =
-            approvedMinutes > 0
-              ? data.approvedPerMinute / approvedMinutes
-              : 2.5;
-          payoutLe = milestonesReached * MILESTONE_PAYOUT_LE + remainderMinutes * avgRate;
-        } else {
-          payoutLe = data.approvedPerMinute;
-        }
+        const { payoutLe, milestoneHit } = speakerWeeklyPayout(
+          weekKey,
+          approvedMinutes,
+          data.approvedPerMinute
+        );
 
         // Estimated including pending
         const totalMinutes = approvedMinutes + data.pendingSec / 60;
         const totalPerMinute =
           data.approvedPerMinute + data.pendingPerMinute;
-        const estMilestonesReached = Math.floor(totalMinutes / MILESTONE_MINUTES);
-        const estMilestoneHit = estMilestonesReached >= 1;
-        let estimatedPayoutLe: number;
-        if (estMilestoneHit) {
-          const remainderMinutes = totalMinutes - estMilestonesReached * MILESTONE_MINUTES;
-          const avgRate =
-            totalMinutes > 0 ? totalPerMinute / totalMinutes : 2.5;
-          estimatedPayoutLe = estMilestonesReached * MILESTONE_PAYOUT_LE + remainderMinutes * avgRate;
-        } else {
-          estimatedPayoutLe = totalPerMinute;
-        }
+        const { payoutLe: estimatedPayoutLe } = speakerWeeklyPayout(
+          weekKey,
+          totalMinutes,
+          totalPerMinute
+        );
 
         const paidAmountCents = paymentMap.get(weekRef);
 

@@ -4,8 +4,7 @@ import { getAuthUser } from "@/lib/infra/auth/auth";
 import {
   getWeekRange,
   APPROVED_STATUSES,
-  MILESTONE_MINUTES,
-  MILESTONE_PAYOUT_LE,
+  speakerWeeklyPayout,
 } from "@/lib/utils/week";
 
 // GET /api/v2/admin/payouts/weekly - Get payout summary for a week
@@ -96,30 +95,21 @@ export async function GET(req: NextRequest) {
       const data = speakerMap.get(s.id) || { totalSec: 0, perMinuteTotal: 0 };
       const pending = pendingMap.get(s.id) || { totalSec: 0, perMinuteTotal: 0 };
       const approvedMinutes = data.totalSec / 60;
-      const milestonesReached = Math.floor(approvedMinutes / MILESTONE_MINUTES);
-      const milestoneHit = milestonesReached >= 1;
-      let payoutLe: number;
-      if (milestoneHit) {
-        const remainderMinutes = approvedMinutes - milestonesReached * MILESTONE_MINUTES;
-        const avgRate = approvedMinutes > 0 ? data.perMinuteTotal / approvedMinutes : 2.5;
-        payoutLe = milestonesReached * MILESTONE_PAYOUT_LE + remainderMinutes * avgRate;
-      } else {
-        payoutLe = data.perMinuteTotal;
-      }
+      const weekKey = start.toISOString().slice(0, 10);
+      const { payoutLe, milestoneHit } = speakerWeeklyPayout(
+        weekKey,
+        approvedMinutes,
+        data.perMinuteTotal
+      );
 
       // Estimated payout if all pending recordings were also approved
       const totalMinutes = approvedMinutes + pending.totalSec / 60;
       const totalPerMinute = data.perMinuteTotal + pending.perMinuteTotal;
-      const estMilestonesReached = Math.floor(totalMinutes / MILESTONE_MINUTES);
-      const estMilestoneHit = estMilestonesReached >= 1;
-      let estimatedPayoutLe: number;
-      if (estMilestoneHit) {
-        const remainderMinutes = totalMinutes - estMilestonesReached * MILESTONE_MINUTES;
-        const avgRate = totalMinutes > 0 ? totalPerMinute / totalMinutes : 2.5;
-        estimatedPayoutLe = estMilestonesReached * MILESTONE_PAYOUT_LE + remainderMinutes * avgRate;
-      } else {
-        estimatedPayoutLe = totalPerMinute;
-      }
+      const { payoutLe: estimatedPayoutLe } = speakerWeeklyPayout(
+        weekKey,
+        totalMinutes,
+        totalPerMinute
+      );
 
       return {
         id: s.id,
@@ -414,16 +404,11 @@ export async function POST(req: NextRequest) {
       }
 
       const approvedMinutes = data.totalSec / 60;
-      const milestonesReached = Math.floor(approvedMinutes / MILESTONE_MINUTES);
-      const milestoneHit = milestonesReached >= 1;
-      let payoutLe: number;
-      if (milestoneHit) {
-        const remainderMinutes = approvedMinutes - milestonesReached * MILESTONE_MINUTES;
-        const avgRate = approvedMinutes > 0 ? data.perMinuteTotal / approvedMinutes : 2.5;
-        payoutLe = milestonesReached * MILESTONE_PAYOUT_LE + remainderMinutes * avgRate;
-      } else {
-        payoutLe = data.perMinuteTotal;
-      }
+      const { payoutLe, milestoneHit } = speakerWeeklyPayout(
+        start.toISOString().slice(0, 10),
+        approvedMinutes,
+        data.perMinuteTotal
+      );
       const amountCents = Math.round(payoutLe * 100);
 
       if (amountCents <= 0) {
