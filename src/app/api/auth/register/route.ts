@@ -8,8 +8,9 @@ export async function POST(req: NextRequest) {
   const limited = rateLimit(req, RATE_LIMITS.auth);
   if (limited) return limited;
   try {
-    const { 
-      email, 
+    const body = await req.json()
+    const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : ''
+    const {
       phone, 
       password, 
       displayName,
@@ -18,7 +19,7 @@ export async function POST(req: NextRequest) {
       writesLanguages = [],  // Language codes user can write/transcribe
       ageConfirmed,      // Attests to being 18 or older
       termsAccepted,     // Accepts TERMS.md and PRIVACY.md
-    } = await req.json()
+    } = body
     
     if (!email || !phone || !password) {
       return NextResponse.json({ error: 'Email, phone and password are required' }, { status: 400 })
@@ -53,7 +54,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid role. Must be SPEAKER or TRANSCRIBER' }, { status: 400 })
     }
 
-    const existing = await prisma.user.findUnique({ where: { email } })
+    const existing = await prisma.user.findFirst({ where: { email: { equals: email, mode: 'insensitive' } } })
     if (existing) {
       return NextResponse.json({ error: 'Email already in use' }, { status: 409 })
     }

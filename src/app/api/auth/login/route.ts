@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
   if (limited) return limited;
   try {
     const body = await req.json()
-    const emailOrPhone = body.emailOrPhone || body.email
+    const emailOrPhone = String(body.emailOrPhone || body.email || '').trim()
     const password = body.password
     const requestedRole = body.requestedRole // Optional: which role they want to login as
 
@@ -16,14 +16,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Email/Phone and password are required' }, { status: 400 })
     }
 
-    const user = emailOrPhone.includes('@')
-      ? await prisma.user.findUnique({ where: { email: emailOrPhone } })
-      : await prisma.user.findFirst({ where: { phone: emailOrPhone } })
-    if (!user || !user.isActive) {
-      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
+    // Case-insensitive because older accounts were stored as typed, and a few
+    // emails exist twice differing only by case: pick the one the password fits.
+    const candidates = emailOrPhone.includes('@')
+      ? await prisma.user.findMany({ where: { email: { equals: emailOrPhone, mode: 'insensitive' }, isActive: true } })
+      : await prisma.user.findMany({ where: { phone: emailOrPhone, isActive: true } })
+    let user = null
+    for (const c of candidates) {
+      if (await verifyPassword(password, c.passwordHash)) {
+        user = c
+        break
+      }
     }
-    const ok = await verifyPassword(password, user.passwordHash)
-    if (!ok) {
+    if (!user) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
     }
 

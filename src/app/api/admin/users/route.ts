@@ -8,7 +8,9 @@ export async function POST(req: NextRequest) {
     const admin = await requireAdmin(req)
     if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-    const { email, phone, password, displayName, role } = await req.json()
+    const body = await req.json()
+    const { phone, password, displayName, role } = body
+    const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : ''
     if (!email || !password) {
       return NextResponse.json({ error: 'Email and password are required' }, { status: 400 })
     }
@@ -17,7 +19,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid role' }, { status: 400 })
     }
 
-    const exists = await prisma.user.findUnique({ where: { email } })
+    const exists = await prisma.user.findFirst({ where: { email: { equals: email, mode: 'insensitive' } } })
     if (exists) return NextResponse.json({ error: 'User already exists' }, { status: 409 })
 
     const passwordHash = await hashPassword(password)
