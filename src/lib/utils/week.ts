@@ -4,6 +4,29 @@
 
 export const MILESTONE_MINUTES = 240; // 4 hours
 export const MILESTONE_PAYOUT_LE = 1000;
+// Milestone bonus retired; weeks starting on or after this date pay per minute only.
+// Earlier unpaid weeks keep the milestone amount speakers were promised.
+export const MILESTONE_LAST_WEEK_BEFORE = "2026-11-23";
+
+/**
+ * Speaker payout for one Monday-start week. `perMinuteTotal` is the sum of
+ * minutes × language rate, so mixed-language weeks stay exact without milestones.
+ */
+export function speakerWeeklyPayout(
+  weekStart: string,
+  minutes: number,
+  perMinuteTotal: number
+): { payoutLe: number; milestoneHit: boolean } {
+  const milestonesReached =
+    weekStart < MILESTONE_LAST_WEEK_BEFORE ? Math.floor(minutes / MILESTONE_MINUTES) : 0;
+  if (milestonesReached < 1) return { payoutLe: perMinuteTotal, milestoneHit: false };
+  const remainderMinutes = minutes - milestonesReached * MILESTONE_MINUTES;
+  const avgRate = minutes > 0 ? perMinuteTotal / minutes : 2.5;
+  return {
+    payoutLe: milestonesReached * MILESTONE_PAYOUT_LE + remainderMinutes * avgRate,
+    milestoneHit: true,
+  };
+}
 
 /** Returns the Monday–Sunday UTC week range containing the given date (or now). */
 export function getWeekRange(dateOrWeekStart?: string): { start: Date; end: Date } {

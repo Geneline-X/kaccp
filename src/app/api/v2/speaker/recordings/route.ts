@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/infra/db/prisma";
 import { getAuthUser } from "@/lib/infra/auth/auth";
-import { getWeekRange, APPROVED_STATUSES, MILESTONE_MINUTES, MILESTONE_PAYOUT_LE } from "@/lib/utils/week";
+import { getWeekRange, APPROVED_STATUSES, speakerWeeklyPayout } from "@/lib/utils/week";
 
 // GET /api/v2/speaker/recordings - Get speaker's recording history
 export async function GET(req: NextRequest) {
@@ -94,6 +94,8 @@ export async function GET(req: NextRequest) {
         },
         select: {
           durationSec: true,
+          status: true,
+          language: { select: { speakerRatePerMinute: true } },
         },
       }),
       // Current week's payment record (if admin has already paid)
@@ -116,19 +118,23 @@ export async function GET(req: NextRequest) {
     const weeklyPerMinuteTotal = weeklyRecordings.reduce((sum, r) => {
       return sum + (r.durationSec / 60) * (r.language.speakerRatePerMinute ?? 2.5);
     }, 0);
-    const milestonesReached = Math.floor(weeklyApprovedMin / MILESTONE_MINUTES);
-    const milestoneHit = milestonesReached >= 1;
-    let weeklyPayout: number;
-    if (milestoneHit) {
-      const remainderMinutes = weeklyApprovedMin - milestonesReached * MILESTONE_MINUTES;
-      const avgRate = weeklyApprovedMin > 0 ? weeklyPerMinuteTotal / weeklyApprovedMin : 2.5;
-      weeklyPayout = milestonesReached * MILESTONE_PAYOUT_LE + remainderMinutes * avgRate;
-    } else {
-      weeklyPayout = weeklyPerMinuteTotal;
-    }
+    const weekKey = weekStart.toISOString().slice(0, 10);
+    const { payoutLe: weeklyPayout } = speakerWeeklyPayout(weekKey, weeklyApprovedMin, weeklyPerMinuteTotal);
 
     // Total submitted this week (excluding rejected)
     const weeklySubmittedSec = weeklyAllRecordings.reduce((sum, r) => sum + r.durationSec, 0);
+
+    const weeklyPending = weeklyAllRecordings.filter((r) => r.status === "PENDING_REVIEW");
+    const weeklyPendingMin = weeklyPending.reduce((sum, r) => sum + r.durationSec, 0) / 60;
+    const weeklyPendingPerMinute = weeklyPending.reduce(
+      (sum, r) => sum + (r.durationSec / 60) * (r.language.speakerRatePerMinute ?? 2.5),
+      0
+    );
+    const { payoutLe: weeklyEstimate } = speakerWeeklyPayout(
+      weekKey,
+      weeklyApprovedMin + weeklyPendingMin,
+      weeklyPerMinuteTotal + weeklyPendingPerMinute
+    );
 
     return NextResponse.json({
       recordings,
@@ -139,9 +145,8 @@ export async function GET(req: NextRequest) {
         weekEnd: weekEnd.toISOString().slice(0, 10),
         approvedDurationSec: weeklyApprovedSec,
         submittedDurationSec: weeklySubmittedSec,
-        milestoneTargetSec: MILESTONE_MINUTES * 60,
-        milestoneHit,
         estimatedPayoutLe: Math.round(weeklyPayout * 100) / 100,
+        estimatedTotalLe: Math.round(weeklyEstimate * 100) / 100,
         isPaid: !!weeklyPayment,
         paidAmountLe: weeklyPayment ? weeklyPayment.amountCents / 100 : null,
       },

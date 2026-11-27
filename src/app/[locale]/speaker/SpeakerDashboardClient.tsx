@@ -23,11 +23,11 @@ interface WeeklyProgress {
   weekEnd: string;
   approvedDurationSec: number;
   submittedDurationSec: number;
-  milestoneTargetSec: number;
-  milestoneHit: boolean;
   estimatedPayoutLe: number;
+  estimatedTotalLe: number;
   isPaid: boolean;
   paidAmountLe: number | null;
+  daysLeft: number;
 }
 
 interface Recording {
@@ -107,7 +107,15 @@ export default function SpeakerDashboardClient({ locale }: { locale: string }) {
             totalDurationSec: totalDuration,
             approvedDurationSec: approvedDuration,
             estimatedEarnings: data.estimatedEarnings || 0,
-            weeklyProgress: data.weeklyProgress || null,
+            weeklyProgress: data.weeklyProgress
+              ? {
+                  ...data.weeklyProgress,
+                  daysLeft: Math.max(
+                    0,
+                    Math.ceil((new Date(data.weeklyProgress.weekEnd + "T23:59:59Z").getTime() - Date.now()) / 86_400_000)
+                  ),
+                }
+              : null,
             byStatus: data.stats,
           });
         }
@@ -161,187 +169,57 @@ export default function SpeakerDashboardClient({ locale }: { locale: string }) {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        {/* Earnings Card */}
-        <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl shadow-lg p-6 mb-8 text-white">
-          <div className="flex justify-between items-start">
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-sm font-medium text-green-100">{t('speaker.thisWeeksEarnings')}</h3>
-                {stats?.weeklyProgress?.isPaid && (
-                  <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full">
-                    PAID
-                  </span>
-                )}
-              </div>
-              <p className="text-4xl font-bold mt-1">
-                Le{(stats?.weeklyProgress?.isPaid
-                  ? (stats.weeklyProgress.paidAmountLe ?? stats.weeklyProgress.estimatedPayoutLe)
-                  : (stats?.weeklyProgress?.estimatedPayoutLe ?? 0)
-                ).toFixed(2)}
-              </p>
-              <p className="text-sm text-green-100 mt-2">
-                {t('speaker.basedOnApproved', { duration: formatDuration(stats?.weeklyProgress?.approvedDurationSec || 0) })}
-              </p>
-              <p className="text-xs text-green-200 mt-1">
-                {t('speaker.totalAllTime')}: Le{(stats?.estimatedEarnings || 0).toFixed(2)}
-              </p>
-              <Link
-                href={`/${locale}/speaker/earnings`}
-                className="inline-block mt-2 text-xs text-green-100 underline hover:text-white"
-              >
-                {t('speaker.viewEarningsHistory')}
-              </Link>
-            </div>
-            <div className="text-right space-y-2">
-              <div className="bg-white/20 rounded-lg px-4 py-2">
-                <p className="text-xs text-green-100">{t('speaker.thisWeekRecorded')}</p>
-                <p className="text-lg font-semibold">
-                  {formatDuration(stats?.weeklyProgress?.submittedDurationSec || 0)}
-                </p>
-              </div>
-              <div className="bg-white/20 rounded-lg px-4 py-2">
-                <p className="text-xs text-green-100">{t('speaker.pendingReview')}</p>
-                <p className="text-lg font-semibold">
-                  {formatDuration(Math.max(0, (stats?.weeklyProgress?.submittedDurationSec || 0) - (stats?.weeklyProgress?.approvedDurationSec || 0)))}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Weekly Progress Card */}
-        {stats?.weeklyProgress && (() => {
-          const wp = stats.weeklyProgress;
-          const approvedHours = wp.approvedDurationSec / 3600;
-          const submittedHours = (wp.submittedDurationSec || 0) / 3600;
-          const targetHours = wp.milestoneTargetSec / 3600;
-          const approvedPct = Math.min(100, Math.round((approvedHours / targetHours) * 100));
-          const submittedPct = Math.min(100, Math.round((submittedHours / targetHours) * 100));
-          const hoursLeft = Math.max(0, targetHours - submittedHours);
-          const perMinuteEarnings = (wp.approvedDurationSec / 60) * 2.5;
-          const pendingReviewHours = submittedHours - approvedHours;
-
-          // Gamified milestones along the progress bar
-          const milestones = [
-            { pct: 25, label: "1h", title: t('speaker.milestoneWarmup') },
-            { pct: 50, label: "2h", title: t('speaker.milestoneHalfway') },
-            { pct: 75, label: "3h", title: t('speaker.milestoneAlmostThere') },
-            { pct: 100, label: "4h", title: t('speaker.milestonePayout') },
-          ];
-          // Find the next unachieved milestone for encouragement
-          const nextMilestone = milestones.find((m) => submittedPct < m.pct);
-          const lastReached = [...milestones].reverse().find((m) => submittedPct >= m.pct);
-
-          // Calculate days until end of week
-          const now = new Date();
-          const endDate = new Date(wp.weekEnd + "T23:59:59Z");
-          const daysLeft = Math.max(0, Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
-
+        {(() => {
+          const wp = stats?.weeklyProgress;
+          const submittedSec = wp?.submittedDurationSec || 0;
+          const approvedSec = wp?.approvedDurationSec || 0;
           return (
-            <div className="bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl shadow-lg p-6 mb-8 text-white">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="text-sm font-medium text-purple-100">{t('speaker.weeklyProgress')}</h3>
-                  <p className="text-xs text-purple-200 mt-1">
-                    {wp.weekStart} – {wp.weekEnd}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <div className="bg-white/20 rounded-lg px-3 py-1">
-                    <p className="text-xs text-purple-100">{t('speaker.endsIn')}</p>
-                    <p className="text-sm font-semibold">{daysLeft} {t('speaker.days')}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex justify-between items-end mb-1">
-                <p className="text-2xl font-bold">
-                  {formatDuration(wp.submittedDurationSec)} / {targetHours.toFixed(1)} {t('speaker.hours')}
-                </p>
-                <p className="text-lg font-semibold">
-                  Le{wp.estimatedPayoutLe.toFixed(2)}
-                </p>
-              </div>
-              {pendingReviewHours > 0.01 && (
-                <p className="text-xs text-purple-200 mb-2">
-                  {t('speaker.approvedOfSubmitted', {
-                    approved: formatDuration(wp.approvedDurationSec),
-                    pending: formatDuration(Math.max(0, wp.submittedDurationSec - wp.approvedDurationSec)),
-                  })}
-                </p>
-              )}
-
-              {/* Progress bar with milestone markers */}
-              <div className="relative mt-1 mb-1">
-                <div className="w-full bg-white/20 rounded-full h-4 relative overflow-hidden">
-                  {/* Submitted (pending review) bar */}
-                  <div
-                    className="absolute h-4 rounded-full transition-all duration-500 bg-white/30"
-                    style={{ width: `${submittedPct}%` }}
-                  ></div>
-                  {/* Approved bar */}
-                  <div
-                    className={`absolute h-4 rounded-full transition-all duration-500 ${wp.milestoneHit ? 'bg-yellow-400' : 'bg-white'}`}
-                    style={{ width: `${approvedPct}%` }}
-                  ></div>
-                </div>
-
-                {/* Milestone markers */}
-                {milestones.map((m) => {
-                  const reached = submittedPct >= m.pct;
-                  return (
-                    <div
-                      key={m.pct}
-                      className="absolute top-0 flex flex-col items-center"
-                      style={{ left: `${m.pct}%`, transform: 'translateX(-50%)' }}
-                    >
-                      <div
-                        className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
-                          reached
-                            ? 'bg-yellow-400 border-yellow-300 scale-110'
-                            : 'bg-purple-700 border-white/40'
-                        }`}
-                      >
-                        {reached && (
-                          <svg width="8" height="8" viewBox="0 0 12 12" fill="none">
-                            <path d="M2 6L5 9L10 3" stroke={m.pct === 100 ? '#7c3aed' : '#7c3aed'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                        )}
-                      </div>
-                      <span className={`text-[10px] mt-0.5 font-medium ${reached ? 'text-yellow-200' : 'text-purple-300'}`}>
-                        {m.label}
+            <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl shadow-lg p-6 mb-8 text-white">
+              <div className="flex justify-between items-start">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-sm font-medium text-green-100">{t('speaker.thisWeeksEarnings')}</h3>
+                    {wp && (
+                      <span className="bg-white/20 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
+                        {wp.isPaid ? t('speaker.paid') : t('speaker.unpaid')}
                       </span>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Milestone feedback */}
-              <div className="mt-4">
-                {wp.milestoneHit ? (
-                  <div className="bg-yellow-400/20 border border-yellow-400/30 rounded-lg px-4 py-2">
-                    <p className="text-sm text-yellow-200 font-semibold">
-                      {t('speaker.milestoneReached')}
-                    </p>
-                  </div>
-                ) : lastReached ? (
-                  <div className="bg-white/10 rounded-lg px-4 py-2">
-                    <p className="text-sm text-purple-100 font-medium">{lastReached.title}</p>
-                    {nextMilestone && (
-                      <p className="text-xs text-purple-300 mt-0.5">
-                        {t('speaker.nextMilestone', { label: nextMilestone.label, hours: hoursLeft.toFixed(1) })}
-                      </p>
                     )}
                   </div>
-                ) : nextMilestone ? (
-                  <p className="text-sm text-purple-200">
-                    {t('speaker.nextMilestone', { label: nextMilestone.label, hours: hoursLeft.toFixed(1) })}
+                  {wp && (
+                    <p className="text-xs text-green-100">
+                      {wp.weekStart} – {wp.weekEnd} · {t('speaker.endsInDays', { count: wp.daysLeft })}
+                    </p>
+                  )}
+                  <p className="text-4xl font-bold pt-1">
+                    Le{(wp?.isPaid ? (wp.paidAmountLe ?? wp.estimatedPayoutLe) : (wp?.estimatedPayoutLe ?? 0)).toFixed(2)}
                   </p>
-                ) : (
-                  <p className="text-sm text-purple-200">
-                    {t('speaker.milestoneTarget', { hours: targetHours.toFixed(0) })}
+                  <p className="text-sm text-green-100 pt-1">
+                    {t('speaker.basedOnApproved', { duration: formatDuration(approvedSec) })}
                   </p>
-                )}
+                  <p className="text-xs text-green-100">
+                    {t('speaker.totalAllTime')}: Le{(stats?.estimatedEarnings || 0).toFixed(2)}
+                  </p>
+                  <Link
+                    href={`/${locale}/speaker/earnings`}
+                    className="inline-block pt-1 text-xs text-green-100 underline hover:text-white"
+                  >
+                    {t('speaker.viewEarningsHistory')}
+                  </Link>
+                </div>
+                <div className="text-right space-y-2">
+                  <div className="bg-white/20 rounded-lg px-4 py-2">
+                    <p className="text-xs text-green-100">{t('speaker.thisWeekRecorded')}</p>
+                    <p className="text-lg font-semibold">{formatDuration(submittedSec)}</p>
+                  </div>
+                  <div className="bg-white/20 rounded-lg px-4 py-2">
+                    <p className="text-xs text-green-100">{t('speaker.pendingReview')}</p>
+                    <p className="text-lg font-semibold">{formatDuration(Math.max(0, submittedSec - approvedSec))}</p>
+                  </div>
+                  <div className="bg-white/20 rounded-lg px-4 py-2">
+                    <p className="text-xs text-green-100">{t('speaker.estimatedEarnings')}</p>
+                    <p className="text-lg font-semibold">Le{(wp?.estimatedTotalLe ?? 0).toFixed(2)}</p>
+                  </div>
+                </div>
               </div>
             </div>
           );
@@ -360,7 +238,7 @@ export default function SpeakerDashboardClient({ locale }: { locale: string }) {
                   className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
                     recordMode === "prompts"
                       ? "bg-white text-gray-900 shadow-sm"
-                      : "text-gray-500 hover:text-gray-700"
+                      : "text-gray-600 hover:text-gray-800"
                   }`}
                 >
                   {t('speaker.modePrompts')}
@@ -370,7 +248,7 @@ export default function SpeakerDashboardClient({ locale }: { locale: string }) {
                   className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
                     recordMode === "topics"
                       ? "bg-white text-gray-900 shadow-sm"
-                      : "text-gray-500 hover:text-gray-700"
+                      : "text-gray-600 hover:text-gray-800"
                   }`}
                 >
                   {t('speaker.modeTopics')}
@@ -415,7 +293,7 @@ export default function SpeakerDashboardClient({ locale }: { locale: string }) {
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold text-gray-900">{t('speaker.recentRecordings')}</h2>
               <span className="text-sm text-gray-500">
-                {stats?.totalRecordings || 0} {t('speaker.totalRecordings').toLowerCase()}
+                {t('speaker.recordingCount', { count: stats?.totalRecordings || 0 })}
               </span>
             </div>
           </div>
