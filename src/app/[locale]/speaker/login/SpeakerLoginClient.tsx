@@ -66,6 +66,10 @@ export default function SpeakerLoginClient({ locale }: { locale: string }) {
               </label>
               <input
                 type="email"
+                autoCapitalize="none"
+                autoCorrect="off"
+                autoComplete="email"
+                spellCheck={false}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
